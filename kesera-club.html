@@ -1,4 +1,4 @@
-<!doctype html><html lang="ja" data-theme="light" data-look="gentle"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ケセラ</title>
+<!doctype html><html lang="ja" data-theme="light" data-look="stylish"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ケセラ</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&display=swap">
 <style>
@@ -172,7 +172,7 @@ input[type="range"] { width: 100%; height: 36px; accent-color: var(--accent); }
 :root[data-theme="dark"] .alert.warn { background: #4a3410; color: #ffefcf; }
 
 /* お好みのデザイン：明るい色と読みやすい紙面 */
-:root { color-scheme: light; --bg:#eef7fc; --surface:#fff; --fg:#263749; --muted:#526476; --line:#cddfe9; --accent:#276d99; --accent-ink:#fff; --accent-soft:#e1f1fb; --leaf:#306c58; --leaf-soft:#e4f2e9; --warn:#805000; --warn-soft:#fff2da; --radius:22px; --photo:none; }
+:root { color-scheme: light; --bg:#fff3f6; --surface:#fff; --fg:#263749; --muted:#526476; --line:#ead0dc; --accent:#a43760; --accent-ink:#fff; --accent-soft:#fce4ed; --leaf:#306c58; --leaf-soft:#e4f2e9; --warn:#805000; --warn-soft:#fff2da; --radius:22px; --photo:none; }
 html { min-height:100%; scroll-padding-top:24px; }
 body { padding-top:26px; background:var(--bg); overflow-wrap:break-word; isolation:isolate; }
 body::before { content:""; position:fixed; inset:0; z-index:-1; pointer-events:none; background:radial-gradient(ellipse at 0 0,var(--accent-soft),transparent 65%),radial-gradient(ellipse at 100% 70%,var(--leaf-soft),transparent 60%); }
@@ -1180,7 +1180,7 @@ button[aria-pressed="true"] { font-weight:700; }
   };
   function cleanDesign(d) {
     if (!d || typeof d !== 'object') d = {};
-    return {look:Object.prototype.hasOwnProperty.call(DESIGN_LOOKS,d.look)?d.look:'gentle',color:Object.prototype.hasOwnProperty.call(DESIGN_COLORS,d.color)?d.color:'blue',photo:typeof d.photo==='string' && /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(d.photo) && d.photo.length<2200000?d.photo:''};
+    return {look:Object.prototype.hasOwnProperty.call(DESIGN_LOOKS,d.look)?d.look:'stylish',color:Object.prototype.hasOwnProperty.call(DESIGN_COLORS,d.color)?d.color:'pink',photo:typeof d.photo==='string' && /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(d.photo) && d.photo.length<2200000?d.photo:''};
   }
   var design = cleanDesign(load('kesera-design-v1',{})), designDraft = null, photoJob = 0, designScroll = '';
   var designDialog = $('designDialog');
@@ -1220,7 +1220,7 @@ button[aria-pressed="true"] { font-weight:700; }
   });
   ['designClose','designCancel'].forEach(function(id){$(id).addEventListener('click',function(){finishDesign(false);});});
   designDialog.addEventListener('cancel',function(e){e.preventDefault();finishDesign(false);});
-  $('designReset').addEventListener('click',function(){photoJob++;$('designSave').disabled=false;designDraft={look:'gentle',color:'blue',photo:''};syncDesign();$('designMessage').textContent='最初のデザインをお試し表示しています。';});
+  $('designReset').addEventListener('click',function(){photoJob++;$('designSave').disabled=false;designDraft={look:'stylish',color:'pink',photo:''};syncDesign();$('designMessage').textContent='最初のデザインをお試し表示しています。';});
   $('designPhotoRemove').addEventListener('click',function(){photoJob++;$('designSave').disabled=false;designDraft.photo='';$('designPhotoFile').value='';syncDesign();$('designMessage').textContent='写真を外しました。別の写真を選べます。';});
   $('designSave').addEventListener('click',function(){
     if(designDraft.look==='photo'&&!designDraft.photo){$('designMessage').textContent='写真を選ぶか、ほかの雰囲気を選んでください。';$('designPhotoFile').focus();return;}
@@ -2496,9 +2496,9 @@ button[aria-pressed="true"] { font-weight:700; }
       gimgs = { closed: cl, open: null };
       $('gavatar').innerHTML = ''; $('gavatar').appendChild(cl);
       op.onload = function () { if (gimgs) gimgs.open = op; };
-      op.alt = cl.alt; op.src = 'images/guide-open.png';
+      op.alt = cl.alt; op.src = 'images/guide-open.png?v=20261018b';
     };
-    cl.src = 'images/guide-closed.png';
+    cl.src = 'images/guide-closed.png?v=20261018b';
   })();
 
   renderHome(); renderCount(); renderMine(); setGuide('home');
