@@ -1,4 +1,4 @@
-<!doctype html><html lang="ja" data-theme="light" data-look="stylish"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ケセラ｜50代・60代・70代・80代のおともに</title><link rel="icon" type="image/png" sizes="192x192" href="favicon.png?v=20261018"><link rel="apple-touch-icon" href="favicon.png?v=20261018">
+<!doctype html><html lang="ja" data-theme="light" data-look="stylish"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ケセラ｜50代・60代・70代・80代のおともに</title><script>/* AI中継所のアドレス。中継所を作ったら、下の '' の中に貼ります。例：'https://kesera-ai.あなたの名前.workers.dev' */ window.KESERA_AI_ENDPOINT = 'https://kesera-ai.kogentext.workers.dev';</script><link rel="icon" type="image/png" sizes="192x192" href="favicon.png?v=20261018"><link rel="apple-touch-icon" href="favicon.png?v=20261018">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&display=swap">
 <style>
@@ -385,6 +385,9 @@ button[aria-pressed="true"] { font-weight:700; }
       <div class="row"><span class="muted" id="callInfo"></span><button class="btn small" id="callIcs" type="button" hidden>スマホのカレンダーに入れる</button></div>
       <p class="muted" id="callIcsNote" role="status"></p>
       <div class="row"><button class="btn primary" id="profOpen" type="button">登録する</button><span class="muted" id="profNote" role="status"></span></div>
+      <details style="margin-top:10px"><summary>声の設定・声が出ないとき</summary><div style="margin-top:8px">
+        <div class="row"><label for="voiceRate">読む速さ</label><select id="voiceRate" style="min-height:46px;padding:6px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg)"><option value="0.85">ゆっくり</option><option value="0.97">ふつう</option><option value="1.1">スラスラ（明るく）</option><option value="1.25">はやめ</option></select></div>
+        <div class="row" style="margin-top:6px"><label for="voiceName">声の種類</label><select id="voiceName" style="min-height:46px;padding:6px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg);max-width:100%"><option value="">おまかせ（女性の声）</option></select></div><button class="btn small" id="voiceTest" type="button">声のテスト</button><p class="muted" id="voiceStat" role="status" style="white-space:pre-wrap;margin:8px 0 0"></p></div></details>
       <details>
         <summary>お名前・お住まい・今日の天気を入れる</summary>
         <div class="row" style="margin-top:8px"><label for="wxPref">お住まい</label><select id="wxPref" style="min-height:46px;padding:6px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg)"><option value="016000">北海道(札幌)</option><option value="020000">青森県</option><option value="030000">岩手県</option><option value="040000">宮城県</option><option value="050000">秋田県</option><option value="060000">山形県</option><option value="070000">福島県</option><option value="080000">茨城県</option><option value="090000">栃木県</option><option value="100000">群馬県</option><option value="110000">埼玉県</option><option value="120000">千葉県</option><option value="130000">東京都</option><option value="140000">神奈川県</option><option value="150000">新潟県</option><option value="160000">富山県</option><option value="170000">石川県</option><option value="180000">福井県</option><option value="190000">山梨県</option><option value="200000">長野県</option><option value="210000">岐阜県</option><option value="220000">静岡県</option><option value="230000">愛知県</option><option value="240000">三重県</option><option value="250000">滋賀県</option><option value="260000">京都府</option><option value="270000">大阪府</option><option value="280000">兵庫県</option><option value="290000">奈良県</option><option value="300000">和歌山県</option><option value="310000">鳥取県</option><option value="320000">島根県</option><option value="330000">岡山県</option><option value="340000">広島県</option><option value="350000">山口県</option><option value="360000">徳島県</option><option value="370000">香川県</option><option value="380000">愛媛県</option><option value="390000">高知県</option><option value="400000">福岡県</option><option value="410000">佐賀県</option><option value="420000">長崎県</option><option value="430000">熊本県</option><option value="440000">大分県</option><option value="450000">宮崎県</option><option value="460100">鹿児島県</option><option value="471000">沖縄県(本島)</option></select></div>
@@ -1493,6 +1496,59 @@ button[aria-pressed="true"] { font-weight:700; }
   function refreshProfBtn() { var has = !!loadProf(); $('profOpen').textContent = has ? '登録を修正する' : '登録する'; if (!has) $('profNote').textContent = 'お名前・年齢などを登録すると、お声掛けや天気がもっと合います。'; }
   $('profOpen').addEventListener('click', openProf);
   refreshProfBtn();
+
+  /* 声のしくみ：エラーを拾い、「声のテスト」で原因を調べる */
+  var voiceLast = { started: false, err: '' }; var voiceRate = 1.1;
+  (function () {
+    if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') return;
+    var ss = window.speechSynthesis, orig = ss.speak.bind(ss);
+    ss.speak = function (u) {
+      try { u.addEventListener('start', function () { voiceLast.started = true; voiceLast.err = ''; }); u.addEventListener('error', function (e) { if (e && e.error && e.error !== 'canceled' && e.error !== 'interrupted') voiceLast.err = e.error; }); } catch (e) {}
+      voiceLast.started = false;
+      try {
+        var vr = Number(load('kesera-voice-rate', 1.1)) || 1.1;
+        u.rate = Math.max(0.5, Math.min(1.5, (u.rate || 0.9) / 0.9 * vr));
+        u.text = String(u.text).replace(/[「」『』（）()［］\[\]【】※＊*]/g, '、').replace(/[\r\n]+/g, '。').replace(/\s{2,}/g, ' ').replace(/、{2,}/g, '、').replace(/。{2,}/g, '。');
+      } catch (e) {}
+      try { if (ss.paused) ss.resume(); } catch (e) {}
+      setTimeout(function () { try { orig(u); } catch (e) { voiceLast.err = 'exception'; } }, 60);
+    };
+    try { ss.addEventListener('voiceschanged', function () {}); } catch (e) {}
+  })();
+  function fillVoices() {
+    var sel = $('voiceName'), cur = load('kesera-voice-name', ''), all = [];
+    try { all = window.speechSynthesis.getVoices().filter(function (v) { return /^ja/i.test(v.lang); }); } catch (e) {}
+    sel.innerHTML = '<option value="">おまかせ（女性の声）</option>';
+    all.forEach(function (v) { var o = document.createElement('option'); o.value = v.name; o.textContent = v.name; sel.appendChild(o); });
+    sel.value = cur;
+  }
+  try { window.speechSynthesis.addEventListener('voiceschanged', fillVoices); } catch (e) {}
+  fillVoices();
+  $('voiceRate').value = String(load('kesera-voice-rate', 1.1));
+  if ($('voiceRate').value === '') $('voiceRate').value = '1.1';
+  $('voiceRate').addEventListener('change', function () { save('kesera-voice-rate', Number(this.value)); });
+  $('voiceName').addEventListener('change', function () { save('kesera-voice-name', this.value); });
+  $('voiceTest').addEventListener('click', function () {
+    var out = $('voiceStat'), lines = [];
+    if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') { out.textContent = 'このブラウザは、声の読み上げに対応していません。Chrome、Safari、Edgeなどの新しいものでお試しください。'; return; }
+    var all = []; try { all = window.speechSynthesis.getVoices(); } catch (e) {}
+    var ja = all.filter(function (v) { return /^ja/i.test(v.lang); });
+    lines.push('この端末の声：全部で ' + all.length + ' 種類、日本語は ' + ja.length + ' 種類' + (ja.length ? '（' + ja.slice(0, 3).map(function (v) { return v.name; }).join('、') + '）' : ''));
+    out.textContent = lines.join('\n') + '\n声を出しています…「こんにちは。ケセラです。」';
+    var u = new SpeechSynthesisUtterance('こんにちは。ケセラです。今日も、すこしずつ、たのしくいきましょうね。'); u.lang = 'ja-JP'; u.rate = 0.9; u.pitch = 1.2; u.volume = 1; var jv = jaVoice(); if (jv) u.voice = jv;
+    try { window.speechSynthesis.cancel(); } catch (e) {}
+    window.speechSynthesis.speak(u);
+    setTimeout(function () {
+      var tips = [];
+      if (voiceLast.started) tips.push('声は、出せています。聞こえないときは、端末の音量と、マナーモード(消音)を確かめてください。');
+      else {
+        tips.push('声が、始まりませんでした' + (voiceLast.err ? '（' + voiceLast.err + '）' : '') + '。');
+        if (!ja.length) tips.push('日本語の声が、この端末に入っていないようです。iPhone：設定→アクセシビリティ→読み上げコンテンツ→声→日本語。Android：設定→システム→言語→テキスト読み上げ→日本語のデータをインストール。');
+        tips.push('マナーモードをやめて、音量を上げ、ページを開き直して、もう一度「声のテスト」を押してください。');
+      }
+      out.textContent = lines.join('\n') + '\n' + tips.join('\n');
+    }, 2500);
+  });
   /* 毎日のお声掛け：決めた時間のあとにひらくと、あいさつ。カレンダー用ファイルも作る */
   function callTime() { var t = load('kesera-call', '07:00'); return /^\d\d:\d\d$/.test(t) ? t : ''; }
   function speakPlain(t) {
@@ -2441,6 +2497,8 @@ button[aria-pressed="true"] { font-weight:700; }
     var all = [];
     try { all = window.speechSynthesis.getVoices().filter(function (v) { return /^ja/i.test(v.lang); }); } catch (e) {}
     if (!all.length) return null;
+    var chosen = load('kesera-voice-name', ''); if (chosen) { var cv = all.filter(function (v) { return v.name === chosen; })[0]; if (cv) return cv; }
+    var best = all.filter(function (v) { return /premium|enhanced|拡張|プレミアム/i.test(v.name) && FEMALE_JA.test(v.name); })[0]; if (best) return best;
     var nat = all.filter(function (v) { return /natural|online/i.test(v.name) && FEMALE_JA.test(v.name); })[0];
     return nat || all.filter(function (v) { return FEMALE_JA.test(v.name) && !MALE_JA.test(v.name); })[0] || all.filter(function (v) { return !MALE_JA.test(v.name); })[0] || all[0];
   }
@@ -2560,6 +2618,8 @@ button[aria-pressed="true"] { font-weight:700; }
         if (er && er.code === 'noai') msg = 'AIとのお話は、まだ、この場所ではつながっていません。';
         if (er && er.code === 'not_granted') msg = 'AIの利用が許可されなかったので、お話はできません。';
         if (er && er.code === 'rate_limited') msg = '少し込み合っています。しばらくしてから、お試しください。';
+        if (er && er.code === 'http429') msg = '今日は、たくさんお話ししました。また、あしたお話ししましょうね。';
+        if (er && /^http(5|4)/.test(String(er.code)) && er.code !== 'http429') msg = 'いま、AIにつながりません。しばらくしてから、お試しください。';
         if (bub && er && er.text) { /* keep partial */ } else if (bub) bub.remove();
         chatTurns.pop();
         $('chatmsg').textContent = msg; $('chatmsg').className = 'msg err';
@@ -2615,6 +2675,7 @@ button[aria-pressed="true"] { font-weight:700; }
       if (er && er.code === 'noai') msg = 'AIの説明は、まだ、この場所ではつながっていません。下の「ほかのサイトで調べる」をお使いください。';
       if (er && er.code === 'not_granted') msg = 'AIの利用が許可されなかったので、説明は出せません。';
       if (er && er.code === 'rate_limited') msg = '少し込み合っています。しばらくしてから、お試しください。';
+      if (er && er.code === 'http429') msg = '今日は、たくさんお答えしました。また、あしたお試しください。';
       if (er && er.code === 'cancelled') return;
       $('askmsg').textContent = msg; $('askmsg').className = 'msg err';
       $('askweb').href = 'https://www.google.com/search?q=' + encodeURIComponent(q); $('askans').hidden = true;
