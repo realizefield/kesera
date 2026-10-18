@@ -1,4 +1,4 @@
-<!doctype html><html lang="ja" data-theme="light" data-look="stylish"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ケセラ</title>
+<!doctype html><html lang="ja" data-theme="light" data-look="stylish"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ケセラ｜50代・60代・70代・80代のおともに</title><link rel="icon" type="image/png" sizes="192x192" href="favicon.png?v=20261018"><link rel="apple-touch-icon" href="favicon.png?v=20261018">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&display=swap">
 <style>
@@ -325,11 +325,45 @@ button[aria-pressed="true"] { font-weight:700; }
 .news-card .btnlink { justify-content:center; min-height:56px; gap:8px; }
 @media(max-width:600px) { .news-card .btnlink { width:100%; } }
 
+
+/* はじめに教えていただくこと */
+.prof-dialog .design-content { gap:18px; }
+.prof-dialog input[type="text"], .prof-dialog input[type="number"] { font-size:1.08rem; min-height:50px; }
+.prof-dialog .pf-row { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+.prof-dialog .pf-row label.pf-l { min-width:5.5em; }
+.prof-dialog .pf-unit { color:var(--muted); font-weight:400; }
+.prof-dialog .pf-opts { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+.prof-dialog .pf-opt { display:flex; align-items:center; gap:10px; border:1.5px solid var(--line); border-radius:12px; padding:10px 12px; min-height:50px; font-weight:500; cursor:pointer; background:var(--surface); }
+.prof-dialog .pf-opt input { width:22px; height:22px; accent-color:var(--accent); flex:none; }
+.prof-dialog .pf-opt:has(input:checked) { border-color:var(--accent); background:var(--accent-soft); font-weight:700; }
+.prof-dialog .pf-safe { background:var(--warn-soft); color:var(--warn); border-radius:12px; padding:12px 14px; font-size:.92rem; }
+#profMsg { min-height:1.5em; color:#a4251d; font-weight:700; }
+@media (max-width:480px) { .prof-dialog .pf-opts { grid-template-columns:1fr; } }
+.prof-dialog .pf-warn { border:2px solid #a4251d; background:#fff1ef; color:#5b1511; border-radius:12px; padding:12px 14px; font-size:.95rem; }
+.prof-dialog .pf-warn b { display:block; margin-bottom:6px; color:#a4251d; }
+.prof-dialog .pf-warn ul { margin:0; padding-left:1.2em; display:flex; flex-direction:column; gap:4px; }
+.pers-note { font-size:.9rem; color:#5b1511; background:#fff1ef; border-left:4px solid #a4251d; border-radius:8px; padding:8px 12px; margin:0; }
+
+.wx-row { display:flex; gap:14px; align-items:center; flex-wrap:nowrap; }
+.wx-icon { flex:none; width:88px; height:88px; }
+.wx-icon svg { width:100%; height:100%; display:block; }
+.wx-row #wx { margin:0; flex:1 1 auto; }
+#wxAutoNote { font-size:.88rem; }
+.pf-read { margin:12px 0; padding:12px 14px; border:2px solid var(--line); border-radius:12px; font-size:1.05rem; }
+#pfBody[hidden] { display:none; }
+.site-tagline { margin:10px 0 0; text-align:center; font-size:clamp(.92rem,3.6vw,1.1rem); font-weight:700; color:var(--accent); letter-spacing:.04em; line-height:1.4; }
+.welcome { padding:14px 20px; }
+.welcome .eyebrow { font-size:.78rem; margin-bottom:4px; }
+.welcome h1 { font-size:clamp(1.25rem,4vw,1.6rem); }
+.welcome p:last-child { margin-top:6px; font-size:.92rem; }
+.welcome h1.logo-h1 { margin:0; line-height:1; }
+.logo-h1 img { display:block; width:min(300px,78%); height:auto; }
 </style></head><body>
 
 <canvas id="petals" aria-hidden="true"></canvas>
 
 <div class="wrap">
+  <p class="site-tagline">50代・60代・70代・80代のおともに</p>
   <div class="top">
     <span class="brand-note">暮らしに、ひと息。 <span class="tag">試作版</span></span>
     <div class="header-tools"><button class="btn" id="tripOpen" type="button" aria-haspopup="dialog">歩く・電車・バス・タクシー</button><button class="btn design-button" id="designBtn" type="button" aria-haspopup="dialog">✿ デザインの変更</button><button class="btn" id="sizeBtn" aria-pressed="false">文字を大きくする</button></div>
@@ -340,13 +374,21 @@ button[aria-pressed="true"] { font-weight:700; }
 
   <!-- ホーム -->
   <section class="view" id="v-home" aria-label="ホーム">
-    <div class="welcome"><p class="eyebrow">毎日に、小さな楽しみを。</p><h1>ケセラ</h1><p>あなたのペースで、今日の「したいこと」を。</p></div>
+    <div class="welcome"><h1 class="logo-h1"><img src="logo-kesera.png?v=20261018" alt="ケセラ　毎日に、小さな楽しみを。" onerror="this.outerHTML='ケセラ'"></h1><p>あなたのペースで、今日の「したいこと」を。</p></div>
     <div class="card greet">
       <h2 id="greet"></h2>
-      <p id="wx"></p>
+      <div class="wx-row"><div class="wx-icon" id="wxIcon" aria-hidden="false"></div><p id="wx"></p></div>
+      <p id="wxWords" style="font-weight:700;font-size:1.12rem;margin:8px 0 4px"></p>
+      <p class="muted" id="wxAutoNote" role="status"></p>
       <p class="muted" id="hint"></p>
+      <div id="callBanner" class="notice" hidden role="status" style="display:flex;flex-direction:column;gap:8px"><b id="callBannerTitle"></b><span id="callBannerText"></span><div class="row"><button class="btn primary" id="callSpeak" type="button">声で聞く</button><button class="btn" id="callClose" type="button">とじる</button></div></div>
+      <div class="row"><span class="muted" id="callInfo"></span><button class="btn small" id="callIcs" type="button" hidden>スマホのカレンダーに入れる</button></div>
+      <p class="muted" id="callIcsNote" role="status"></p>
+      <div class="row"><button class="btn small" id="profOpen" type="button">ご登録内容（お名前・体のこと）</button><span class="muted" id="profNote" role="status"></span></div>
       <details>
-        <summary>お名前と今日の天気を入れる</summary>
+        <summary>お名前・お住まい・今日の天気を入れる</summary>
+        <div class="row" style="margin-top:8px"><label for="wxPref">お住まい</label><select id="wxPref" style="min-height:46px;padding:6px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg)"><option value="016000">北海道(札幌)</option><option value="020000">青森県</option><option value="030000">岩手県</option><option value="040000">宮城県</option><option value="050000">秋田県</option><option value="060000">山形県</option><option value="070000">福島県</option><option value="080000">茨城県</option><option value="090000">栃木県</option><option value="100000">群馬県</option><option value="110000">埼玉県</option><option value="120000">千葉県</option><option value="130000">東京都</option><option value="140000">神奈川県</option><option value="150000">新潟県</option><option value="160000">富山県</option><option value="170000">石川県</option><option value="180000">福井県</option><option value="190000">山梨県</option><option value="200000">長野県</option><option value="210000">岐阜県</option><option value="220000">静岡県</option><option value="230000">愛知県</option><option value="240000">三重県</option><option value="250000">滋賀県</option><option value="260000">京都府</option><option value="270000">大阪府</option><option value="280000">兵庫県</option><option value="290000">奈良県</option><option value="300000">和歌山県</option><option value="310000">鳥取県</option><option value="320000">島根県</option><option value="330000">岡山県</option><option value="340000">広島県</option><option value="350000">山口県</option><option value="360000">徳島県</option><option value="370000">香川県</option><option value="380000">愛媛県</option><option value="390000">高知県</option><option value="400000">福岡県</option><option value="410000">佐賀県</option><option value="420000">長崎県</option><option value="430000">熊本県</option><option value="440000">大分県</option><option value="450000">宮崎県</option><option value="460100">鹿児島県</option><option value="471000">沖縄県(本島)</option></select></div>
+        <p class="muted" style="margin:6px 0 0">天気は、お住まいの地域の予報を、自動で取り込みます。うまく出ないときだけ、下の欄に手で入れてください。</p>
         <div class="row" style="margin-top:8px">
           <label for="name">お名前</label>
           <input type="text" id="name" placeholder="例：野田" maxlength="12" autocomplete="off">
@@ -561,6 +603,16 @@ button[aria-pressed="true"] { font-weight:700; }
       <p class="muted" id="cmsg">できたら、下のボタンを押してください。</p>
       <button class="btn primary bigbtn" id="cplus">1回できました</button>
       <button class="btn" id="creset">0にもどす</button>
+    </div>
+    <div class="card" id="stepsCard">
+      <h3>今日の歩数</h3>
+      <p class="muted">スマホの「ヘルスケア」(iPhone)や「Googleフィット」「Samsung Health」などに出ている歩数を見て、数字を入れてください。ケセラが、スマホの歩数を自動で読み取ることは、いまはできません。</p>
+      <div class="row"><label for="stepsIn">歩数</label><input type="number" id="stepsIn" min="0" max="100000" inputmode="numeric" style="width:7.5em"><span class="muted">歩</span><button class="btn primary" id="stepsSave" type="button">記録する</button></div>
+      <div class="row"><label for="stepsGoal">今日の目標</label><input type="number" id="stepsGoal" min="500" max="50000" step="500" inputmode="numeric" style="width:7.5em"><span class="muted">歩</span><button class="btn" id="stepsGoalSave" type="button">目標を決める</button></div>
+      <p class="muted">目標は、ご自分で決めてください。目安です。ご自分のペースで、大丈夫です。</p>
+      <p class="msg" id="stepsMsg" role="status" aria-live="polite"></p>
+      <div id="stepsWeek" aria-label="この7日間の歩数"></div>
+      <div class="notice"><b>ご注意</b>　痛み、めまい、息苦しさがあるときは、無理に歩かず、休んでください。歩数の目標は、かかりつけのお医者さんの指示を優先してください。</div>
     </div>
     <div class="card">
       <h3>ひとこと</h3>
@@ -806,6 +858,7 @@ button[aria-pressed="true"] { font-weight:700; }
     <div class="card">
       <h3>わからないことを聞く</h3>
       <p class="muted">声か文字で聞いてください。例：「クリエイティブとは何ですか」「還付金とは何ですか」</p>
+      <p class="pers-note">住所・電話番号・マイナンバー・口座やカードの番号・暗証番号は、書かないでください。</p>
       <input id="askin" type="text" maxlength="200" placeholder="ここに書くか、「声で聞く」を押します" autocomplete="off" aria-label="聞きたいこと">
       <div class="row">
         <button class="btn primary" id="asksend" type="button">調べる</button>
@@ -869,6 +922,7 @@ button[aria-pressed="true"] { font-weight:700; }
       <button class="btn" id="tspeak" style="align-self:flex-start">声を聞く（口パクの試し）</button>
       <p class="msg" id="tmsg" aria-live="polite"></p>
       <div class="notice"><b>相手は、AIが演じています</b>　実在の人ではありません。お孫さんなどの役も、AIが演じる役です。医療・法律・お金のことは、答えられません。</div>
+      <p class="pers-note">住所・電話番号・マイナンバー・口座やカードの番号・暗証番号は、書かないでください。</p>
       <button class="btn primary bigbtn" id="chatstart" type="button">お話をはじめる</button>
       <div id="chatbox" hidden>
         <div id="chatlog" aria-live="polite" style="display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto"></div>
@@ -934,6 +988,74 @@ button[aria-pressed="true"] { font-weight:700; }
 
 
 
+
+<dialog class="design-dialog prof-dialog" id="profDialog" aria-labelledby="profTitle" aria-describedby="profIntro">
+  <form id="profForm" class="design-content" novalidate>
+    <div class="design-head"><div><h2 id="profTitle">はじめに、少しだけ教えてください</h2><p class="muted" id="profIntro">ぜんぶ答えなくても、だいじょうぶです。わかるところだけで、かまいません。</p></div><button class="btn design-close" id="profClose" type="button" aria-label="あとで答える">×</button></div>
+    <div class="pf-warn" role="note"><b>個人情報について、ご注意ください</b>
+      <ul>
+        <li>住所・電話番号・マイナンバー・口座やカードの番号・暗証番号は、ここにも、AIとのお話にも、書かないでください。ケセラやAIが、これらをお聞きすることはありません。</li>
+        <li>「お金を振り込んで」「暗証番号を教えて」と言われたら、詐欺です。消費者ホットライン188、警察相談 #9110 へ。</li>
+        <li>ご家族と共有のスマホでは、登録した内容が見えることがあります。</li>
+        <li>お誕生日は、月と日だけで大丈夫です。</li>
+      </ul></div>
+    <p class="pf-safe">答えていただいた内容は、お使いの端末の中にだけ保存します。ケセラは、診断や治療の判断はしません。体のことで気になることは、かならず、かかりつけのお医者さんに相談してください。</p>
+    <label class="pf-opt pf-read" style="align-items:flex-start"><input type="checkbox" id="pfRead"><span><b>上の注意を読みました。</b>(チェックすると、入力の画面が出ます)</span></label>
+    <div id="pfBody" hidden>
+    <fieldset><legend>① お名前とお住まい</legend>
+      <div class="pf-row"><label class="pf-l" for="pfName">お名前</label><input type="text" id="pfName" maxlength="12" placeholder="例：野田" autocomplete="off"><span class="pf-unit">さん、とお呼びします</span></div>
+      <div class="pf-row" style="margin-top:10px"><label class="pf-l" for="pfPref">お住まい</label><select id="pfPref" style="min-height:50px;font-size:1.08rem;padding:6px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg)"><option value="016000">北海道(札幌)</option><option value="020000">青森県</option><option value="030000">岩手県</option><option value="040000">宮城県</option><option value="050000">秋田県</option><option value="060000">山形県</option><option value="070000">福島県</option><option value="080000">茨城県</option><option value="090000">栃木県</option><option value="100000">群馬県</option><option value="110000">埼玉県</option><option value="120000">千葉県</option><option value="130000">東京都</option><option value="140000">神奈川県</option><option value="150000">新潟県</option><option value="160000">富山県</option><option value="170000">石川県</option><option value="180000">福井県</option><option value="190000">山梨県</option><option value="200000">長野県</option><option value="210000">岐阜県</option><option value="220000">静岡県</option><option value="230000">愛知県</option><option value="240000">三重県</option><option value="250000">滋賀県</option><option value="260000">京都府</option><option value="270000">大阪府</option><option value="280000">兵庫県</option><option value="290000">奈良県</option><option value="300000">和歌山県</option><option value="310000">鳥取県</option><option value="320000">島根県</option><option value="330000">岡山県</option><option value="340000">広島県</option><option value="350000">山口県</option><option value="360000">徳島県</option><option value="370000">香川県</option><option value="380000">愛媛県</option><option value="390000">高知県</option><option value="400000">福岡県</option><option value="410000">佐賀県</option><option value="420000">長崎県</option><option value="430000">熊本県</option><option value="440000">大分県</option><option value="450000">宮崎県</option><option value="460100">鹿児島県</option><option value="471000">沖縄県(本島)</option></select><span class="pf-unit">天気の予報に使います</span></div>
+    </fieldset>
+    <fieldset><legend>② 年齢・お誕生日・性別</legend>
+      <div class="pf-row"><label class="pf-l" for="pfAge">年齢</label><input type="number" id="pfAge" min="18" max="110" inputmode="numeric"><span class="pf-unit">歳</span></div>
+      <div class="pf-row" style="margin-top:10px"><label class="pf-l" for="pfBM">お誕生日</label><input type="number" id="pfBM" min="1" max="12" inputmode="numeric" aria-label="お誕生日の月"><span class="pf-unit">月</span><input type="number" id="pfBD" min="1" max="31" inputmode="numeric" aria-label="お誕生日の日"><span class="pf-unit">日</span></div>
+      <div class="pf-opts" style="margin-top:10px">
+        <label class="pf-opt"><input type="radio" name="pfGender" value="女性">女性</label>
+        <label class="pf-opt"><input type="radio" name="pfGender" value="男性">男性</label>
+        <label class="pf-opt"><input type="radio" name="pfGender" value="答えない">答えない</label>
+      </div>
+    </fieldset>
+    <fieldset><legend>③ 身長と体重</legend>
+      <div class="pf-row"><label class="pf-l" for="pfH">身長</label><input type="number" id="pfH" min="100" max="220" inputmode="decimal" step="0.1"><span class="pf-unit">cm</span></div>
+      <div class="pf-row" style="margin-top:10px"><label class="pf-l" for="pfW">体重</label><input type="number" id="pfW" min="20" max="200" inputmode="decimal" step="0.1"><span class="pf-unit">kg</span></div>
+    </fieldset>
+    <fieldset><legend>④ 血圧(わかるときだけ)</legend>
+      <p class="muted" style="margin:0 0 8px">健康診断や、血圧計の数字をお書きください。</p>
+      <div class="pf-row"><label class="pf-l" for="pfSys">最高(上)</label><input type="number" id="pfSys" min="70" max="260" inputmode="numeric"><span class="pf-unit">mmHg</span></div>
+      <div class="pf-row" style="margin-top:10px"><label class="pf-l" for="pfDia">最低(下)</label><input type="number" id="pfDia" min="40" max="160" inputmode="numeric"><span class="pf-unit">mmHg</span></div>
+    </fieldset>
+    <fieldset><legend>⑤ これまでの病気(あてはまるものだけ)</legend>
+      <div class="pf-opts">
+        <label class="pf-opt"><input type="checkbox" name="pfHist" value="高血圧">高血圧</label>
+        <label class="pf-opt"><input type="checkbox" name="pfHist" value="糖尿病">糖尿病</label>
+        <label class="pf-opt"><input type="checkbox" name="pfHist" value="心臓の病気">心臓の病気</label>
+        <label class="pf-opt"><input type="checkbox" name="pfHist" value="脳卒中">脳卒中</label>
+        <label class="pf-opt"><input type="checkbox" name="pfHist" value="ひざ・腰・骨の痛み">ひざ・腰・骨の痛み</label>
+        <label class="pf-opt"><input type="checkbox" name="pfHist" value="息の病気">息の病気</label>
+      </div>
+      <div class="pf-row" style="margin-top:10px"><label class="pf-l" for="pfOther">そのほか</label><input type="text" id="pfOther" maxlength="40" placeholder="書きたいときだけ" autocomplete="off" style="flex:1 1 12em"></div>
+    </fieldset>
+    <fieldset><legend>⑥ 歩くようす</legend>
+      <div class="pf-opts">
+        <label class="pf-opt"><input type="radio" name="pfWalk" value="ok">問題なく歩ける</label>
+        <label class="pf-opt"><input type="radio" name="pfWalk" value="slow">少しゆっくり歩く</label>
+        <label class="pf-opt"><input type="radio" name="pfWalk" value="aid">杖や手すりがあると安心</label>
+        <label class="pf-opt"><input type="radio" name="pfWalk" value="hard">歩くのが難しい</label>
+      </div>
+    </fieldset>
+    <fieldset><legend>⑦ 毎日何時ごろ、お声掛けしましょうか</legend>
+      <div class="pf-row"><label class="pf-l" for="pfCall">お声掛け</label><select id="pfCall" style="min-height:50px;font-size:1.08rem;padding:6px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg)"><option value="">お声掛けは、いりません</option><option value="05:00">朝5時</option><option value="05:30">朝5時30分</option><option value="06:00">朝6時</option><option value="06:30">朝6時30分</option><option value="07:00">朝7時</option><option value="07:30">朝7時30分</option><option value="08:00">朝8時</option><option value="08:30">朝8時30分</option><option value="09:00">朝9時</option><option value="09:30">朝9時30分</option><option value="10:00">朝10時</option><option value="10:30">朝10時30分</option><option value="11:00">朝11時</option><option value="11:30">朝11時30分</option><option value="12:00">昼12時</option><option value="12:30">昼12時30分</option><option value="13:00">昼13時</option><option value="13:30">昼13時30分</option><option value="14:00">昼14時</option><option value="14:30">昼14時30分</option><option value="15:00">昼15時</option><option value="15:30">昼15時30分</option><option value="16:00">昼16時</option><option value="16:30">昼16時30分</option><option value="17:00">夕方17時</option><option value="17:30">夕方17時30分</option><option value="18:00">夕方18時</option><option value="18:30">夕方18時30分</option><option value="19:00">夜19時</option><option value="19:30">夜19時30分</option><option value="20:00">夜20時</option><option value="20:30">夜20時30分</option><option value="21:00">夜21時</option></select></div>
+      <p class="design-hint">その時間のあとに、ケセラを開くと、あいさつと「今日の人物」をお聞かせします。ケセラを閉じているときは、自動では鳴りません。スマホのカレンダーに入れると、毎日お知らせが届きます(登録後、ホームのボタンから)。</p>
+    </fieldset>
+    <fieldset><legend>⑧ お話の相手(AI)への伝え方</legend>
+      <label class="pf-opt" style="align-items:flex-start"><input type="checkbox" id="pfAI"><span>年齢・性別・歩くようす・これまでの病気を、お話の相手(AI)に、参考として伝えてもよい。<br><span class="pf-unit">身長・体重・血圧は、伝えません。チェックしなければ、伝えません。</span></span></label>
+    </fieldset>
+    <p id="profMsg" role="alert" aria-live="assertive"></p>
+    </div>
+    <div class="design-footer" style="position:static;padding:0;border:0;background:none"><button class="btn primary" id="profSave" type="submit">これで登録する</button><button class="btn" id="profLater" type="button">あとで答える</button></div>
+    <p class="design-hint">あとから、ホームの「ご登録内容」でいつでも直せます。</p>
+  </form>
+</dialog>
 
 <dialog class="design-dialog trip-dialog" id="tripDialog" aria-labelledby="tripTitle" aria-describedby="tripIntro">
   <form id="tripForm" class="design-content" novalidate>
@@ -1282,7 +1404,10 @@ button[aria-pressed="true"] { font-weight:700; }
   function renderHome() {
     var nm = ($('name').value || '').trim();
     $('greet').textContent = hello() + '、' + (nm || '〇〇') + 'さん。';
+    var pr = loadProf();
+    if (pr && pr.bm && pr.bd && pr.bm === now.getMonth() + 1 && pr.bd === now.getDate()) $('greet').textContent += '　今日は、お誕生日ですね。おめでとうございます。';
     var mn = Number($('tmin').value), mx = Number($('tmax').value), wx = $('wxsel').value;
+    if (typeof renderWxIcon === 'function' && $('wxIcon')) renderWxIcon();
     $('wx').textContent = (now.getMonth() + 1) + '月' + now.getDate() + '日（' + WD[now.getDay()] + '）。今日は最低' + mn + '度、最高' + mx + '度、' + wx + 'の予想です。';
     var t = [];
     if (mx >= 28) t.push('暑くなります。帽子と、こまめな水分をお忘れなく。');
@@ -1299,6 +1424,119 @@ button[aria-pressed="true"] { font-weight:700; }
     $('days').textContent = '今日で' + n + '日目です。' + (n === 1 ? 'はじめまして。今日から、ゆっくり始めましょう。' : n < 7 ? 'また来てくださって、うれしいです。よくがんばりましたね。' : '続けていらっしゃいます。すばらしいです。よくがんばりましたね。');
   }
   $('name').addEventListener('input', function () { save('kesera-name', this.value); renderHome(); });
+  /* はじめに教えていただくこと(身長・体重・年齢・血圧・既往症・歩くようす・呼びかけるお名前) */
+  var profDlg = $('profDialog'), profScroll = '';
+  var WALK_TXT = { ok: '問題なく歩ける', slow: '少しゆっくり歩く', aid: '杖や手すりがあると安心', hard: '歩くのが難しい' };
+  function loadProf() { var p = load('kesera-profile', null); return p && typeof p === 'object' ? p : null; }
+  function profileForAI() {
+    var p = loadProf(); if (!p || !p.ai) return '';
+    var a = [];
+    if (p.age) a.push('年齢' + p.age + '歳');
+    if (p.gender && p.gender !== '答えない') a.push('性別' + p.gender);
+    if (p.walk && WALK_TXT[p.walk]) a.push('歩くようす：' + WALK_TXT[p.walk]);
+    var h = (p.hist || []).concat(p.other ? [p.other] : []);
+    if (h.length) a.push('これまでの病気：' + h.join('、'));
+    if (!a.length) return '';
+    return '話し相手がご自分で伝えてよいとした情報（参考だけ）：' + a.join('、') + '。診断や治療の助言はしない。体の話になったら「かかりつけのお医者さんに相談してください」とだけ伝える。この情報を、こちらから持ち出して繰り返さない。\n';
+  }
+  function fillProf() {
+    var p = loadProf() || {};
+    $('pfName').value = load('kesera-name', '');
+    $('pfAge').value = p.age || ''; $('pfBM').value = p.bm || ''; $('pfBD').value = p.bd || ''; $('pfH').value = p.h || ''; $('pfW').value = p.w || '';
+    $('pfSys').value = p.sys || ''; $('pfDia').value = p.dia || ''; $('pfOther').value = p.other || '';
+    document.querySelectorAll('[name="pfGender"]').forEach(function (el) { el.checked = el.value === p.gender; });
+    document.querySelectorAll('[name="pfWalk"]').forEach(function (el) { el.checked = el.value === p.walk; });
+    document.querySelectorAll('[name="pfHist"]').forEach(function (el) { el.checked = (p.hist || []).indexOf(el.value) >= 0; });
+    $('pfAI').checked = !!p.ai; $('profMsg').textContent = ''; $('pfPref').value = load('kesera-pref', PREFS_DEFAULT); $('pfCall').value = load('kesera-call', '07:00');
+  }
+  function showProfBody() { var on = $('pfRead').checked; $('pfBody').hidden = !on; $('profSave').hidden = !on; }
+  $('pfRead').addEventListener('change', function () { showProfBody(); if (this.checked) setTimeout(function () { try { $('pfName').focus(); } catch (e) {} }, 50); });
+  function openProf() {
+    fillProf(); $('pfRead').checked = !!load('kesera-profile', null); showProfBody(); profScroll = document.body.style.overflow; document.body.style.overflow = 'hidden';
+    if (!profDlg.open) profDlg.showModal();
+  }
+  function closeProf() { if (profDlg.open) profDlg.close(); document.body.style.overflow = profScroll; }
+  function pnum(id, lo, hi, label, unit) {
+    var raw = $(id).value.trim();
+    if (raw === '') return { v: '' };
+    var n = Number(raw);
+    if (!isFinite(n) || n < lo || n > hi) return { err: label + 'は、' + lo + '〜' + hi + unit + 'の数字で入れてください。わからないときは、空のままで大丈夫です。' };
+    return { v: n };
+  }
+  function saveProf() {
+    var chk = [pnum('pfAge', 18, 110, '年齢', '歳'), pnum('pfH', 100, 220, '身長', 'cm'), pnum('pfW', 20, 200, '体重', 'kg'), pnum('pfSys', 70, 260, '最高血圧', ''), pnum('pfDia', 40, 160, '最低血圧', '')];
+    for (var i = 0; i < chk.length; i++) { if (chk[i].err) { $('profMsg').textContent = chk[i].err; return; } }
+    if (chk[3].v !== '' && chk[4].v !== '' && chk[3].v <= chk[4].v) { $('profMsg').textContent = '最高血圧は、最低血圧より大きい数字です。入れ違いがないか、見てください。'; return; }
+    var bm = pnum('pfBM', 1, 12, 'お誕生日の月', '月'), bd = pnum('pfBD', 1, 31, 'お誕生日の日', '日');
+    if (bm.err || bd.err) { $('profMsg').textContent = bm.err || bd.err; return; }
+    if ((bm.v === '') !== (bd.v === '')) { $('profMsg').textContent = 'お誕生日は、月と日を、両方入れてください。'; return; }
+    if (bm.v !== '') { var td = new Date(2000, bm.v - 1, bd.v); if (td.getMonth() !== bm.v - 1 || td.getDate() !== bd.v) { $('profMsg').textContent = 'その日付は、ありません。月と日を、もう一度見てください。'; return; } }
+    var g = document.querySelector('[name="pfGender"]:checked'), w = document.querySelector('[name="pfWalk"]:checked');
+    var hist = []; document.querySelectorAll('[name="pfHist"]:checked').forEach(function (el) { hist.push(el.value); });
+    var nm = $('pfName').value.replace(/[\r\n]/g, ' ').trim().slice(0, 12);
+    save('kesera-profile', {
+      age: chk[0].v, bm: bm.v, bd: bd.v, h: chk[1].v, w: chk[2].v, sys: chk[3].v, dia: chk[4].v,
+      gender: g ? g.value : '', walk: w ? w.value : '', hist: hist,
+      other: $('pfOther').value.replace(/[\r\n]/g, ' ').trim().slice(0, 40), ai: $('pfAI').checked, at: new Date().toISOString().slice(0, 10)
+    });
+    save('kesera-call', $('pfCall').value); renderCall();
+    save('kesera-pref', $('pfPref').value); $('wxPref').value = $('pfPref').value; loadWeather();
+    if (nm) { name = nm; save('kesera-name', nm); $('name').value = nm; }
+    renderHome();
+    $('profNote').textContent = 'ご登録ありがとうございます。いつでも、ここから直せます。'; burst(60);
+    closeProf();
+  }
+  $('profForm').addEventListener('submit', function (e) { e.preventDefault(); saveProf(); });
+  $('profLater').addEventListener('click', function () { save('kesera-profile-skip', true); closeProf(); });
+  $('profClose').addEventListener('click', function () { save('kesera-profile-skip', true); closeProf(); });
+  profDlg.addEventListener('cancel', function (e) { e.preventDefault(); save('kesera-profile-skip', true); closeProf(); });
+  $('profOpen').addEventListener('click', openProf);
+  /* 毎日のお声掛け：決めた時間のあとにひらくと、あいさつ。カレンダー用ファイルも作る */
+  function callTime() { var t = load('kesera-call', '07:00'); return /^\d\d:\d\d$/.test(t) ? t : ''; }
+  function speakPlain(t) {
+    try {
+      if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') return false;
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(t); u.lang = 'ja-JP'; u.rate = 0.9; u.pitch = 1.2;
+      var jv = jaVoice(); if (jv) u.voice = jv;
+      window.speechSynthesis.speak(u); return true;
+    } catch (e) { return false; }
+  }
+  function callGreetText() {
+    var nm = ($('name').value || '').trim();
+    return hello() + '、' + (nm ? nm + 'さん。' : '') + $('wx').textContent + $('pname').textContent + $('ptext').textContent;
+  }
+  function renderCall() {
+    var t = callTime();
+    $('callInfo').textContent = t ? '毎日 ' + Number(t.slice(0, 2)) + '時' + (t.slice(3) === '30' ? '30分' : '') + 'ごろに、お声掛けします。' : '';
+    $('callIcs').hidden = !t;
+    var due = false;
+    if (t) { var nw = new Date(); due = (nw.getHours() * 60 + nw.getMinutes()) >= (Number(t.slice(0, 2)) * 60 + Number(t.slice(3))) && load('kesera-call-last', '') !== today; }
+    var bn = $('callBanner'); bn.hidden = !due;
+    if (due) { $('callBannerTitle').textContent = 'お声掛けの時間です'; $('callBannerText').textContent = callGreetText(); }
+  }
+  $('callSpeak').addEventListener('click', function () {
+    if (!speakPlain($('callBannerText').textContent)) $('callBannerTitle').textContent = 'この端末では、声が出せません。文字をお読みください。';
+    save('kesera-call-last', today);
+  });
+  $('callClose').addEventListener('click', function () { save('kesera-call-last', today); $('callBanner').hidden = true; });
+  $('callIcs').addEventListener('click', function () {
+    var t = callTime(); if (!t) return;
+    var d = new Date(), pad = function (n) { return (n < 10 ? '0' : '') + n; };
+    var ds = d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + 'T' + t.slice(0, 2) + t.slice(3) + '00';
+    var url = ''; try { url = location.href.split('#')[0]; } catch (e) {}
+    var L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Kesera//JA', 'CALSCALE:GREGORIAN', 'BEGIN:VEVENT', 'UID:kesera-daily-call@kesera', 'DTSTAMP:' + d.getUTCFullYear() + pad(d.getUTCMonth() + 1) + pad(d.getUTCDate()) + 'T000000Z', 'DTSTART:' + ds, 'DURATION:PT10M', 'RRULE:FREQ=DAILY', 'SUMMARY:ケセラのお声掛け', 'DESCRIPTION:今日のケセラを開きましょう。' + url, url && /^https?:/.test(url) ? 'URL:' + url : 'X-KESERA:1', 'BEGIN:VALARM', 'TRIGGER:PT0M', 'ACTION:DISPLAY', 'DESCRIPTION:ケセラのお声掛け', 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR'];
+    try {
+      var blob = new Blob([L.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+      var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'kesera-okoe.ics';
+      document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+      $('callIcsNote').textContent = 'ファイルを開いて、カレンダーに追加してください。毎日、決めた時間にお知らせが出ます。';
+    } catch (e) { $('callIcsNote').textContent = 'この画面では、ファイルを作れませんでした。公開したページから、もう一度お試しください。'; }
+  });
+  renderCall();
+
+  if (!loadProf() && !load('kesera-profile-skip', false)) { setTimeout(openProf, 700); }
+
   ['tmin', 'tmax', 'wxsel'].forEach(function (id) {
     $(id).addEventListener('input', function () {
       save('kesera-wx', { min: Number($('tmin').value), max: Number($('tmax').value), wx: $('wxsel').value });
@@ -1427,6 +1665,39 @@ button[aria-pressed="true"] { font-weight:700; }
     var v = $('memo').value.trim(); if (!v) return;
     mine.push(today.slice(5).replace('-', '/') + '　' + v); save('kesera-memo', mine); $('memo').value = ''; renderMine();
   });
+
+  /* 歩数(手入力) */
+  var steps = load('kesera-steps', {}), stepsGoal = Number(load('kesera-steps-goal', 6000)) || 6000;
+  function renderSteps() {
+    $('stepsGoal').value = stepsGoal;
+    $('stepsIn').value = steps[today] != null ? steps[today] : '';
+    var h = '';
+    for (var i = 6; i >= 0; i--) {
+      var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i), k = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+      var n = steps[k], pc = n ? Math.min(100, Math.round(n / stepsGoal * 100)) : 0, ok = n >= stepsGoal;
+      h += '<div style="display:flex;align-items:center;gap:8px;margin:5px 0"><span style="min-width:5.2em;font-size:.9rem">' + (d.getMonth() + 1) + '/' + d.getDate() + '(' + WD[d.getDay()] + ')</span>'
+        + '<span style="flex:1;height:16px;background:var(--accent-soft);border-radius:8px;overflow:hidden"><span style="display:block;height:100%;width:' + pc + '%;background:' + (ok ? 'var(--leaf)' : 'var(--accent)') + '"></span></span>'
+        + '<span style="min-width:5.5em;text-align:right;font-size:.9rem">' + (n != null ? Number(n).toLocaleString('ja-JP') + '歩' : '―') + '</span></div>';
+    }
+    $('stepsWeek').innerHTML = h;
+  }
+  $('stepsGoalSave').addEventListener('click', function () {
+    var g = Number($('stepsGoal').value);
+    if (!isFinite(g) || g < 500 || g > 50000 || Math.floor(g) !== g) { $('stepsMsg').textContent = '目標は、500〜50000歩の整数で入れてください。'; $('stepsMsg').className = 'msg err'; return; }
+    stepsGoal = g; save('kesera-steps-goal', stepsGoal); renderSteps();
+    $('stepsMsg').textContent = '今日の目標を、' + g.toLocaleString('ja-JP') + '歩に決めました。歩いたら、上の欄に歩数を入れてください。'; $('stepsMsg').className = 'msg';
+  });
+  $('stepsSave').addEventListener('click', function () {
+    var raw = $('stepsIn').value.trim(), n = Number(raw);
+    if (raw === '' || !isFinite(n) || n < 0 || n > 100000 || Math.floor(n) !== n) { $('stepsMsg').textContent = '歩数は、0〜100000の整数で入れてください。'; $('stepsMsg').className = 'msg err'; return; }
+    var before = steps[today] || 0; steps[today] = n;
+    var keys = Object.keys(steps).sort(); while (keys.length > 400) delete steps[keys.shift()];
+    save('kesera-steps', steps); renderSteps();
+    if (n >= stepsGoal) { $('stepsMsg').textContent = 'やりましたね。よかった！　目標の ' + stepsGoal.toLocaleString('ja-JP') + '歩に、とどきました。'; if (before < stepsGoal) burst(150); }
+    else { $('stepsMsg').textContent = '記録しました。あと ' + (stepsGoal - n).toLocaleString('ja-JP') + '歩で、目標です。ゆっくりで大丈夫です。'; }
+    $('stepsMsg').className = 'msg';
+  });
+  renderSteps();
 
 
   /* ---------- 聴く・観る（YouTube） ---------- */
@@ -1881,8 +2152,7 @@ button[aria-pressed="true"] { font-weight:700; }
       window.speechSynthesis.cancel();
       var u = new SpeechSynthesisUtterance((favName(curKey()) ? favName(curKey()) + 'です。' : '') + (texp ? EXPS.filter(function (x) { return x[0] === texp; })[0][2] : p.line));
       u.lang = 'ja-JP'; u.rate = 0.9; u.pitch = PITCH[p.id] || 1;
-      var vs = window.speechSynthesis.getVoices().filter(function (v) { return /^ja/i.test(v.lang); });
-      if (vs.length) u.voice = vs[0];
+      var jv = jaVoice(); if (jv) u.voice = jv;
       u.onstart = startFlap; u.onend = stopFlap; u.onerror = stopFlap;
       window.speechSynthesis.speak(u);
       msg.textContent = '声が出ないときは、端末の音量とマナーモードをご確認ください。'; msg.className = 'msg';
@@ -1986,7 +2256,7 @@ button[aria-pressed="true"] { font-weight:700; }
     save('kesera-meal', meals);
     $('mtext').value = ''; mtags = {};
     Array.prototype.forEach.call($('mtags').querySelectorAll('[data-mt]'), function (b) { b.setAttribute('aria-pressed', 'false'); });
-    $('mmsg').textContent = '記録しました。'; $('mmsg').className = 'msg'; renderMeal();
+    $('mmsg').textContent = '記録しました。'; $('mmsg').className = 'msg'; renderMeal(); burst(30);
   });
   $('mwater').addEventListener('click', function () { water[today] = (water[today] || 0) + 1; save('kesera-water', water); renderMeal(); });
   renderMeal();
@@ -2142,7 +2412,7 @@ button[aria-pressed="true"] { font-weight:700; }
     try { localStorage.setItem('kesera-farm', JSON.stringify(farm)); }
     catch (e) { farm.pop(); $('fmsg').textContent = 'これ以上は、この端末に保存できません。古い記録を消してから、もう一度お試しください。'; $('fmsg').className = 'msg err'; return; }
     $('fmemo').value = ''; $('fphoto').value = ''; fphoto = ''; $('fprev').hidden = true;
-    $('fmsg').textContent = '記録しました。ありがとう。'; $('fmsg').className = 'msg'; renderFarm();
+    $('fmsg').textContent = '記録しました。ありがとう。'; $('fmsg').className = 'msg'; renderFarm(); burst(45);
   });
   renderFarm();
 
@@ -2162,6 +2432,16 @@ button[aria-pressed="true"] { font-weight:700; }
   var CRISIS = /死にたい|消えたい|自殺|生きていたくない|殺して|もう終わりにしたい/;
   var CRISIS_MSG = 'つらいお気持ちを話してくださって、ありがとうございます。ひとりで抱えないでください。すぐに助けが必要なときは119へ。話を聞いてくれる窓口もあります。よりそいホットライン 0120-279-338（無料・24時間）。身近なご家族や、かかりつけのお医者さんにも、話してみてください。';
   var EMO = { 'ふつう': '', '考え中': 'think', 'ありがとう': 'thanks', 'うれしい': 'happy', '心配': 'worry', 'びっくり': 'surprise', 'おじぎ': 'bow' };
+  /* 声：端末にある日本語の声のうち、女性の声を優先して選ぶ */
+  var FEMALE_JA = /nanami|haruka|ayumi|sayaka|kyoko|o-?ren|mizuki|female|woman|女|google.*日本語|japanese.*(female|online)/i;
+  var MALE_JA = /ichiro|otoya|keita|hattori|takumi|male\b|男/i;
+  function jaVoice() {
+    var all = [];
+    try { all = window.speechSynthesis.getVoices().filter(function (v) { return /^ja/i.test(v.lang); }); } catch (e) {}
+    if (!all.length) return null;
+    var nat = all.filter(function (v) { return /natural|online/i.test(v.name) && FEMALE_JA.test(v.name); })[0];
+    return nat || all.filter(function (v) { return FEMALE_JA.test(v.name) && !MALE_JA.test(v.name); })[0] || all.filter(function (v) { return !MALE_JA.test(v.name); })[0] || all[0];
+  }
   function personaText() {
     var p = PARTNERS[tp], vn = p.variants ? p.variants[tv][0] : '', fn = favName(curKey()), me = load('kesera-name', '');
     var style = {
@@ -2175,7 +2455,7 @@ button[aria-pressed="true"] { font-weight:700; }
       usagi: 'ウサギ。やさしく、ときどき「ぴょん」と入れる。'
     }[p.id];
     return 'あなたは、高齢の方と楽しくお話しする、AIが演じる「' + p.name + (vn ? '（' + vn + '）' : '') + '」です。' + (fn ? '名前は「' + fn + '」。' : '') + '話し相手の呼び名は' + (me ? '「' + me + 'さん」' : '「あなた」') + 'です。\n' +
-      '話し方：' + style + '\n' +
+      '話し方：' + style + '\n' + profileForAI() +
       '決まり：\n- 返事は、日本語で1〜3文、短くやさしく。毎回、相手への質問か相づちを1つ入れて、会話をつなぐ。\n- 「AIですか」と聞かれたら、正直にAIだと答える。実在の人のふりをしない。\n- 実際にあった思い出や出来事を、作り話で語らない。\n- 病気・薬・診断、法律、お金・投資の判断はしない。「かかりつけのお医者さん（や専門家）に相談してください」とだけ伝える。\n- 住所、電話番号、暗証番号、お金のことは聞かない。聞かれても答えない。\n- つらい気持ちには、まず寄りそい、「ご家族や、お医者さん、相談窓口に話してみてください」とすすめる。うれしい顔などは出さない。\n- 悪口や危険なことは、やんわりと話題を変える。\n' +
       '出力の最後に、改行して、いまの気持ちを次の中から1つだけ、このとおりの形で書く：[気持ち:ふつう] [気持ち:考え中] [気持ち:ありがとう] [気持ち:うれしい] [気持ち:心配] [気持ち:びっくり] [気持ち:おじぎ]（おじぎは、おわかれのあいさつのときだけ）';
   }
@@ -2217,8 +2497,7 @@ button[aria-pressed="true"] { font-weight:700; }
     try {
       window.speechSynthesis.cancel();
       var u = new SpeechSynthesisUtterance(t); u.lang = 'ja-JP'; u.rate = 0.9; u.pitch = PITCH[PARTNERS[tp].id] || 1;
-      var vs = window.speechSynthesis.getVoices().filter(function (v) { return /^ja/i.test(v.lang); });
-      if (vs.length) u.voice = vs[0];
+      var jv = jaVoice(); if (jv) u.voice = jv;
       u.onstart = startFlap; u.onend = fin; u.onerror = fin;
       window.speechSynthesis.speak(u);
     } catch (e) { fin(); }
@@ -2344,7 +2623,7 @@ button[aria-pressed="true"] { font-weight:700; }
   $('asksend').addEventListener('click', function () { askQ(); });
   $('askin').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); askQ(); } });
   $('askspeak').addEventListener('click', function () {
-    try { window.speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance($('asktext').textContent); u.lang = 'ja-JP'; u.rate = 0.9; var vs = window.speechSynthesis.getVoices().filter(function (v) { return /^ja/i.test(v.lang); }); if (vs.length) u.voice = vs[0]; window.speechSynthesis.speak(u); }
+    try { window.speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance($('asktext').textContent); u.lang = 'ja-JP'; u.rate = 0.9; var jv = jaVoice(); if (jv) u.voice = jv; window.speechSynthesis.speak(u); }
     catch (e) { $('askmsg').textContent = 'この端末では、読み上げができません。'; $('askmsg').className = 'msg err'; }
   });
   if (!SR) { $('askmic').hidden = true; }
@@ -2386,7 +2665,7 @@ button[aria-pressed="true"] { font-weight:700; }
       d.appendChild(mk('p', a.body));
       var r = document.createElement('div'); r.className = 'row';
       var sp = mk('button', '声で聞く', 'btn'); sp.type = 'button';
-      sp.addEventListener('click', function () { try { window.speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance(a.title + '。' + a.body); u.lang = 'ja-JP'; u.rate = 0.9; var vs = window.speechSynthesis.getVoices().filter(function (v) { return /^ja/i.test(v.lang); }); if (vs.length) u.voice = vs[0]; window.speechSynthesis.speak(u); } catch (e) {} });
+      sp.addEventListener('click', function () { try { window.speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance(a.title + '。' + a.body); u.lang = 'ja-JP'; u.rate = 0.9; var jv = jaVoice(); if (jv) u.voice = jv; window.speechSynthesis.speak(u); } catch (e) {} });
       var cl = mk('button', '読みました（消す）', 'btn'); cl.type = 'button';
       cl.addEventListener('click', function () { try { window.speechSynthesis.cancel(); } catch (e) {} alertDismiss[a.id] = today; save('kesera-alert-dismiss', alertDismiss); renderAlerts(); });
       r.appendChild(sp); r.appendChild(cl); d.appendChild(r);
@@ -2469,10 +2748,8 @@ button[aria-pressed="true"] { font-weight:700; }
     try {
       window.speechSynthesis.cancel(); gStop();
       var u = new SpeechSynthesisUtterance($('gtext').textContent);
-      u.lang = 'ja-JP'; u.rate = 0.88; u.pitch = 1.15;
-      var vs = window.speechSynthesis.getVoices().filter(function (x) { return /^ja/i.test(x.lang); });
-      var f = vs.filter(function (x) { return /kyoko|nanami|haruka|ayumi|sayaka|female|女/i.test(x.name); })[0];
-      if (f || vs.length) u.voice = f || vs[0];
+      u.lang = 'ja-JP'; u.rate = 0.92; u.pitch = 1.2;
+      var jv = jaVoice(); if (jv) u.voice = jv;
       u.onstart = gStart; u.onend = gStop; u.onerror = gStop;
       window.speechSynthesis.speak(u);
     } catch (er) { gStop(); }
@@ -2502,6 +2779,119 @@ button[aria-pressed="true"] { font-weight:700; }
   })();
 
   renderHome(); renderCount(); renderMine(); setGuide('home');
+
+  /* お誕生日と、利用日数の節目に、花吹雪 */
+  function celebrateToday() {
+    var pr = loadProf(), done = false;
+    if (pr && pr.bm && pr.bd && pr.bm === now.getMonth() + 1 && pr.bd === now.getDate() && load('kesera-bd-last', '') !== today) {
+      save('kesera-bd-last', today); done = true; burst(140);
+    }
+    var n = days.length;
+    if ([3, 7, 14, 30, 50, 100, 150, 200, 300, 365, 500, 1000].indexOf(n) >= 0 && load('kesera-ms', 0) !== n) {
+      save('kesera-ms', n); $('days').textContent += '　' + n + '日目は、すばらしい節目です。おめでとうございます。'; if (!done) burst(110);
+    }
+  }
+  setTimeout(celebrateToday, 900);
+  /* 天気：気象庁の予報を、はじめから自動で取り込む。とれないときは、手で入れる */
+  var PREFS_DEFAULT = '430000';
+  function svgWx(kind) {
+    var nm = { sunny: '晴れ', suncloud: '晴れとくもり', rain: '雨', snow: '雪', thunder: '雷', cloudy: 'くもり' }[kind] || 'くもり';
+    return '<img src="wx-' + (kind || 'cloudy') + '.png?v=20261018" alt="' + nm + '" style="width:100%;height:100%;object-fit:contain" onerror="this.outerHTML=svgWxInline(\'' + kind + '\')">';
+  }
+  function svgWxInline(kind) {
+    var sun = '<circle cx="48" cy="48" r="18" fill="#f6b73c"/><g stroke="#f6b73c" stroke-width="5" stroke-linecap="round"><path d="M48 14v8M48 74v8M14 48h8M74 48h8M24 24l6 6M66 66l6 6M72 24l-6 6M30 66l-6 6"/></g>';
+    var cloud = function (x, y, c) { return '<g transform="translate(' + x + ',' + y + ')"><path d="M22 52a14 14 0 0 1 3-27 20 20 0 0 1 38 5 13 13 0 0 1-2 22z" fill="' + (c || '#e4edf5') + '" stroke="#9db4c8" stroke-width="2.5" stroke-linejoin="round"/></g>'; };
+    var out;
+    if (kind === 'sunny') out = sun;
+    else if (kind === 'suncloud') out = '<g transform="translate(-10,-8) scale(.85)">' + sun + '</g>' + cloud(8, 14);
+    else if (kind === 'rain') out = cloud(2, 2) + '<g stroke="#4f93d2" stroke-width="5" stroke-linecap="round"><path d="M30 70l-4 10M46 70l-4 10M62 70l-4 10"/></g>';
+    else if (kind === 'snow') out = cloud(2, 2) + '<g fill="#7db7e8"><circle cx="30" cy="75" r="4"/><circle cx="48" cy="80" r="4"/><circle cx="66" cy="75" r="4"/></g>';
+    else if (kind === 'thunder') out = cloud(2, 0, '#c9d4de') + '<path d="M50 56l-10 16h9l-4 14 14-20h-9l5-10z" fill="#f6b73c" stroke="#d99a1f" stroke-width="1.5" stroke-linejoin="round"/>';
+    else out = cloud(2, 8);
+    return '<svg viewBox="0 0 96 96" role="img" aria-label="' + ({ sunny: '晴れ', suncloud: '晴れとくもり', rain: '雨', snow: '雪', thunder: '雷', cloudy: 'くもり' }[kind] || 'くもり') + '">' + out + '</svg>';
+  }
+  function wxKindFrom(code, text) {
+    code = String(code || ''); text = String(text || '');
+    if (/雷/.test(text)) return 'thunder';
+    var d = code.charAt(0);
+    if (d === '1') return code === '100' ? 'sunny' : 'suncloud';
+    if (d === '2') return (code === '200') ? 'cloudy' : (/^(201|202|210|211|212|213|214)$/.test(code) ? 'suncloud' : 'cloudy');
+    if (d === '3') return 'rain';
+    if (d === '4') return 'snow';
+    return 'cloudy';
+  }
+  function wxKindFromSelect(v) { return { '晴れ': 'sunny', 'くもり': 'cloudy', '雨': 'rain', '雪': 'snow' }[v] || 'cloudy'; }
+  function renderWxIcon() {
+    var a = load('kesera-wxauto', null), kind = wxKindFromSelect($('wxsel').value);
+    if (a && a.date === today && a.kind && wxKindFromSelect($('wxsel').value) === ({ sunny: '晴れ', suncloud: '晴れ', cloudy: 'くもり', thunder: '雨', rain: '雨', snow: '雪' }[a.kind] && wxKindFromSelect({ sunny: '晴れ', suncloud: '晴れ', cloudy: 'くもり', thunder: '雨', rain: '雨', snow: '雪' }[a.kind]))) kind = a.kind;
+    $('wxIcon').innerHTML = svgWx(kind);
+  }
+
+  function wxPart(s) {
+    s = String(s || '').replace(/[　\s]+/g, ' ').trim().replace(/くもり/g, '曇り');
+    var m = s.match(/^(晴れ|曇り) 時々 (晴れ|曇り)$/); if (m && m[1] !== m[2]) { var f = function (w) { return w === '晴れ' ? '晴れたり' : '曇ったり'; }; return f(m[1]) + f(m[2]); }
+    return s.replace(/ 時々 /g, '、ときどき').replace(/ 一時 /g, '、一時').replace(/ /g, '');
+  }
+  function wxWords(text, popAm, popPm) {
+    var t = String(text || '').replace(/[　\s]+/g, ' ').trim(), out = '', m;
+    if ((m = t.match(/^(.+?) 後 (.+)$/))) out = '午前中は' + wxPart(m[1]) + '、午後は' + wxPart(m[2]) + 'の予想です。';
+    else if ((m = t.match(/^(.+?) (昼前|昼過ぎ|夕方|朝のうち|夜のはじめ頃|夜) から (.+)$/))) out = (/昼前|朝のうち/.test(m[2]) ? '午前中は' : '') + wxPart(m[1]) + '、' + m[2] + 'から' + wxPart(m[3]) + 'の予想です。';
+    else out = '今日は、' + wxPart(t) + 'の予想です。';
+    var pr = []; if (popAm != null) pr.push('午前 ' + popAm + '%'); if (popPm != null) pr.push('午後 ' + popPm + '%');
+    if (pr.length) out += '　雨の確率は、' + pr.join('、') + '。';
+    return out;
+  }
+  function parseJma(data) {
+    var ts = data[0].timeSeries, a0 = ts[0].areas[0];
+    var res = { text: String(a0.weathers[0] || '').replace(/[　\s]+/g, ' ').trim(), code: a0.weatherCodes[0], min: null, max: null, pop: null, rep: data[0].reportDatetime, area: a0.area && a0.area.name };
+    var tt = null; for (var i = 0; i < ts.length; i++) { if (ts[i].areas[0] && ts[i].areas[0].temps) { tt = ts[i]; break; } }
+    if (tt) {
+      var tdef = tt.timeDefines, temps = tt.areas[0].temps;
+      for (var k = 0; k < tdef.length; k++) {
+        if (tdef[k].slice(0, 10) !== today || temps[k] === '' || temps[k] == null) continue;
+        var hh = tdef[k].slice(11, 13);
+        if (hh === '00') res.min = Number(temps[k]); else if (hh === '09') res.max = Number(temps[k]);
+      }
+      if (res.min !== null && res.max !== null && res.min >= res.max) res.min = null;
+    }
+    var pp = null; for (var j = 0; j < ts.length; j++) { if (ts[j].areas[0] && ts[j].areas[0].pops) { pp = ts[j]; break; } }
+    if (pp) { var mx = -1; for (var m = 0; m < pp.timeDefines.length; m++) { if (pp.timeDefines[m].slice(0, 10) === today && pp.areas[0].pops[m] !== '') mx = Math.max(mx, Number(pp.areas[0].pops[m])); } if (mx >= 0) res.pop = mx; for (var q = 0; q < pp.timeDefines.length; q++) { if (pp.timeDefines[q].slice(0, 10) !== today || pp.areas[0].pops[q] === '') continue; var h2 = pp.timeDefines[q].slice(11, 13); if (h2 === '06') res.popAm = Number(pp.areas[0].pops[q]); if (h2 === '12') res.popPm = Number(pp.areas[0].pops[q]); } }
+    return res;
+  }
+  function applyWeather(r, fromCache) {
+    var sel = { '1': '晴れ', '2': 'くもり', '3': '雨', '4': '雪' }[String(r.code).charAt(0)] || 'くもり';
+    $('wxsel').value = sel;
+    if (r.max !== null) $('tmax').value = r.max;
+    if (r.min !== null) $('tmin').value = r.min; else if (r.max !== null) $('tmin').value = Math.max(-20, r.max - 7);
+    save('kesera-wx', { min: Number($('tmin').value), max: Number($('tmax').value), wx: $('wxsel').value });
+    save('kesera-wxauto', { date: today, kind: wxKindFrom(r.code, r.text), text: r.text, pop: r.pop, popAm: r.popAm, popPm: r.popPm, rep: r.rep, area: r.area, min: r.min, max: r.max, code: r.code });
+    $('wxWords').textContent = wxWords(r.text, r.popAm, r.popPm);
+    ['tmin', 'tmax', 'wxsel'].forEach(function (id) { $(id).dispatchEvent(new Event('input')); });
+    renderHome(); renderWxIcon();
+    var hm = ''; try { var d = new Date(r.rep); hm = (d.getMonth() + 1) + '月' + d.getDate() + '日 ' + d.getHours() + '時' + (d.getMinutes() < 10 ? '0' : '') + d.getMinutes() + '分発表'; } catch (e) {}
+    $('wxAutoNote').textContent = '天気は、気象庁の予報から自動で出しています。' + (r.area ? '(' + r.area + ')　' : '') + r.text + '' + (hm ? '　' + hm : '') + (fromCache ? '　※通信できなかったため、前に取った内容です' : '') + '　出典：気象庁ホームページ';
+  }
+  function loadWeather() {
+    var pref = load('kesera-pref', PREFS_DEFAULT);
+    var cached = load('kesera-wxauto', null);
+    if (!window.fetch) { $('wxAutoNote').textContent = 'この端末では、天気の自動取得ができません。「お名前・お住まい・今日の天気を入れる」から、手で入れてください。'; return; }
+    var ctl = ('AbortController' in window) ? new AbortController() : null, to = setTimeout(function () { if (ctl) ctl.abort(); }, 9000);
+    fetch('https://www.jma.go.jp/bosai/forecast/data/forecast/' + pref + '.json', ctl ? { signal: ctl.signal, cache: 'no-store' } : { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error('http'); return r.json(); })
+      .then(function (data) { clearTimeout(to); applyWeather(parseJma(data), false); })
+      .catch(function () {
+        clearTimeout(to);
+        if (cached && cached.date === today && cached.text) { applyWeather({ text: cached.text, code: cached.code, min: cached.min, max: cached.max, pop: cached.pop, popAm: cached.popAm, popPm: cached.popPm, rep: cached.rep, area: cached.area }, true); }
+        else { $('wxAutoNote').textContent = '天気を、自動で取れませんでした。「お名前・お住まい・今日の天気を入れる」から、手で入れてください。'; }
+      });
+  }
+  ['pfPref', 'wxPref'].forEach(function (id) {
+    $(id).value = load('kesera-pref', PREFS_DEFAULT);
+    $(id).addEventListener('change', function () { save('kesera-pref', this.value); $('pfPref').value = this.value; $('wxPref').value = this.value; loadWeather(); });
+  });
+  renderWxIcon();
+  loadWeather();
+
 })();
 </script>
 </body></html>
