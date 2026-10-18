@@ -1821,7 +1821,7 @@ button[aria-pressed="true"] { font-weight:700; }
     var av = $('tavatar'); stopFlap();
     var token = ++tokenN;
     av.innerHTML = PLACE; imgs = null;
-    var base = 'images/' + p.id + (p.variants ? '-' + p.variants[tv][1] : '');
+    var base = '' + p.id + (p.variants ? '-' + p.variants[tv][1] : '');
     var cl = new Image(), op = new Image();
     cl.alt = $('tname').textContent + 'のイラスト';
     $('texp').innerHTML = EXPS.map(function (x) { return '<button class="chip" data-te="' + x[0] + '" aria-pressed="' + (x[0] === texp) + '">' + x[1] + '</button>'; }).join('');
@@ -2496,9 +2496,9 @@ button[aria-pressed="true"] { font-weight:700; }
       gimgs = { closed: cl, open: null };
       $('gavatar').innerHTML = ''; $('gavatar').appendChild(cl);
       op.onload = function () { if (gimgs) gimgs.open = op; };
-      op.alt = cl.alt; op.src = 'images/guide-open.png?v=20261018b';
+      op.alt = cl.alt; op.src = 'guide-open.png?v=20261018b';
     };
-    cl.src = 'images/guide-closed.png?v=20261018b';
+    cl.src = 'guide-closed.png?v=20261018b';
   })();
 
   renderHome(); renderCount(); renderMine(); setGuide('home');
