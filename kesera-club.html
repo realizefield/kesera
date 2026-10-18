@@ -358,9 +358,12 @@ button[aria-pressed="true"] { font-weight:700; }
 .welcome p:last-child { margin-top:6px; font-size:.92rem; }
 .welcome h1.logo-h1 { margin:0; line-height:1; }
 .logo-h1 img { display:block; width:min(300px,78%); height:auto; }
+.float-home { position:fixed; top:10px; right:10px; z-index:60; min-height:46px; padding:8px 16px; border-radius:999px; border:2px solid var(--accent); background:var(--surface); color:var(--accent); font-weight:700; font-size:1rem; box-shadow:0 3px 12px #0003; }
+.float-home[hidden] { display:none; }
 </style></head><body>
 
 <canvas id="petals" aria-hidden="true"></canvas>
+<button id="floatHome" class="float-home" type="button" data-go="home" hidden>🏠 ホームへ</button>
 
 <div class="wrap">
   <p class="site-tagline">50代・60代・70代・80代のおともに</p>
@@ -419,7 +422,7 @@ button[aria-pressed="true"] { font-weight:700; }
     </div>
 
     <div class="card news-card" aria-label="最新ニュース">
-      <div class="news-copy"><h2>世の中のできごと</h2><p class="muted" id="newsDescription">Yahoo!ニュースで、いまの見出しを読めます。別のタブで開きます。</p></div>
+      <div class="news-copy"><h2>世の中のできごと</h2><p class="muted" id="newsDescription">Yahoo!ニュースで、いまの見出しを読めます。別のタブで開きます。ケセラにもどるときは、ブラウザの「タブ」(重なった四角のボタン)から、ケセラを選びます。</p></div>
       <a class="btnlink primary" id="latestNews" href="https://news.yahoo.co.jp/" target="_blank" rel="noopener noreferrer" aria-describedby="newsDescription"><span aria-hidden="true">📰</span>最新ニュースを見る</a>
     </div>
 
@@ -1604,12 +1607,23 @@ button[aria-pressed="true"] { font-weight:700; }
 
   /* 画面の切り替え */
   var views = ['home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask'];
-  function show(v) {
+  var navView = 'home', navDepth = 0;
+  function show(v, fromPop) {
     if (v !== 'talk' && typeof chatOn !== 'undefined' && chatOn) chatStop();
     views.forEach(function (x) { $('v-' + x).hidden = x !== v; });
     window.scrollTo(0, 0);
     setGuide(v);
+    $('floatHome').hidden = (v === 'home');
+    /* スマホの「戻る」で、ケセラの中のホームに戻れるようにする */
+    try {
+      if (!fromPop && v !== navView) {
+        if (v !== 'home') { navDepth++; history.pushState({ kv: v, d: navDepth }, ''); }
+        else if (navDepth > 0) { var back = navDepth; navDepth = 0; history.go(-back); }
+      }
+    } catch (e) {}
+    navView = v;
   }
+  window.addEventListener('popstate', function (e) { var v = (e.state && e.state.kv) || 'home'; if (views.indexOf(v) < 0) v = 'home'; navDepth = (e.state && e.state.d) || 0; show(v, true); });
   document.addEventListener('click', function (e) {
     var t = e.target.closest('[data-go]');
     if (!t || t.id === 'goSoon') return;
