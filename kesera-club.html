@@ -1,0 +1,2507 @@
+<!doctype html><html lang="ja" data-theme="light" data-look="gentle"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ケセラ</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&display=swap">
+<style>
+/* 構成：毎朝ひらくホーム（あいさつ・天気・今日の人物・今日の行き先）から、学ぶ／動く／旅するの3画面へ入る。一列、スマホ幅基準、押しやすい大きなボタン */
+:root {
+  --bg: #f6f3f4;
+  --surface: #ffffff;
+  --fg: #26303c;
+  --muted: #566170;
+  --line: #dcd5d9;
+  --accent: #b83a64;
+  --accent-ink: #ffffff;
+  --accent-soft: #f7e3ea;
+  --leaf: #3f6b57;
+  --leaf-soft: #dfece5;
+  --warn: #8a5200;
+  --warn-soft: #f9ecd3;
+  --f-display: 'BIZ UDGothic', 'BIZ UD Gothic', 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+  --f-body: 'BIZ UDGothic', 'BIZ UD Gothic', 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+  --base: 18px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #171b22; --surface: #1f252e; --fg: #ecebee; --muted: #aab1bb; --line: #343c48;
+    --accent: #f08aa8; --accent-ink: #2a1019; --accent-soft: #3a2430;
+    --leaf: #8cc5a7; --leaf-soft: #223329; --warn: #f0c27a; --warn-soft: #3a2f1a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #171b22; --surface: #1f252e; --fg: #ecebee; --muted: #aab1bb; --line: #343c48;
+  --accent: #f08aa8; --accent-ink: #2a1019; --accent-soft: #3a2430;
+  --leaf: #8cc5a7; --leaf-soft: #223329; --warn: #f0c27a; --warn-soft: #3a2f1a;
+  color-scheme: dark;
+}
+:root.big { --base: 21px; }
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg); font-family: var(--f-body);
+  font-size: var(--base); line-height: 1.8; padding-block: 20px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; line-height: 1.4; }
+h1 { font-size: 1.7rem; font-weight: 800; }
+h2 { font-size: 1.35rem; font-weight: 800; }
+h3 { font-size: 1.1rem; font-weight: 800; }
+p { margin: 0; }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.top { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+.tag { display: inline-block; font-size: 0.75rem; letter-spacing: 0.12em; color: var(--warn); background: var(--warn-soft); padding: 2px 10px; border-radius: 4px; font-weight: 700; }
+.view { display: flex; flex-direction: column; gap: 18px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.greet h2 { font-size: 1.5rem; }
+.muted { color: var(--muted); font-size: 0.95rem; }
+.btn { min-height: 48px; padding: 6px 16px; border-radius: 8px; border: 1.5px solid var(--line); background: var(--surface); font-weight: 500; }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 700; }
+.btn[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+label { font-weight: 700; }
+input[type="text"], input[type="number"], select { min-height: 46px; padding: 6px 12px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--bg); min-width: 0; }
+input[type="number"] { width: 5.5em; }
+details { background: var(--bg); border-radius: 8px; padding: 8px 12px; }
+details summary { cursor: pointer; font-weight: 700; min-height: 40px; display: flex; align-items: center; }
+.go { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.go button { min-height: 92px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--surface); display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px; padding: 10px 14px; text-align: left; }
+.go button b { font-family: var(--f-display); font-size: 1.15rem; }
+.go button span { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
+.go button:hover { border-color: var(--accent); }
+@media (max-width: 420px) { .go { grid-template-columns: 1fr; } }
+.pill { font-size: 0.8rem; font-weight: 700; padding: 1px 10px; border-radius: 999px; background: var(--leaf-soft); color: var(--leaf); }
+.pill.soon { background: var(--bg); color: var(--muted); border: 1px solid var(--line); }
+.pillars { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.pillars li { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { min-height: 44px; padding: 4px 16px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface); }
+.chip:disabled { color: var(--muted); border-style: dashed; cursor: default; }
+.chip[aria-pressed="true"] { background: var(--leaf); color: var(--surface); border-color: var(--leaf); font-weight: 700; }
+ol.steps { margin: 0; padding-left: 1.4em; display: flex; flex-direction: column; gap: 10px; }
+.figs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.fig { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 0.85rem; text-align: center; color: var(--muted); }
+.fig svg { width: 100%; max-width: 150px; height: auto; }
+.paper { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2; }
+.ghost { fill: none; stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 3 3; }
+.fold { stroke: var(--fg); stroke-width: 2; stroke-dasharray: 5 4; fill: none; }
+.seam { stroke: var(--accent); stroke-width: 1.5; fill: none; }
+.legend { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; font-size: 0.95rem; }
+.legend svg { width: 70px; height: 12px; vertical-align: middle; }
+.notice { background: var(--warn-soft); color: var(--fg); border-radius: 8px; padding: 12px 14px; font-size: 0.95rem; }
+.notice b { color: var(--warn); }
+.counter { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 8px 0; }
+.count-num { font-family: var(--f-display); font-size: 3.4rem; font-weight: 800; color: var(--accent); line-height: 1.1; font-variant-numeric: tabular-nums; }
+.bigbtn { min-height: 64px; width: 100%; max-width: 360px; font-size: 1.15rem; }
+.quiz-q { display: flex; flex-direction: column; gap: 10px; padding-block: 8px; border-top: 1px solid var(--line); }
+.quiz-q:first-of-type { border-top: 0; }
+.opts { display: flex; flex-direction: column; gap: 8px; }
+.opt { text-align: left; min-height: 48px; padding: 8px 14px; border-radius: 8px; border: 1.5px solid var(--line); background: var(--surface); }
+.opt:hover:not(:disabled) { border-color: var(--accent); }
+.opt:disabled { cursor: default; }
+.opt.right { border-color: var(--leaf); background: var(--leaf-soft); font-weight: 700; }
+.opt.wrong { border-color: var(--warn); background: var(--warn-soft); }
+.explain { font-size: 0.95rem; color: var(--muted); }
+.result { background: var(--accent-soft); border-radius: 8px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.link { color: var(--accent); font-weight: 700; text-underline-offset: 3px; }
+.place h3 { overflow-wrap: anywhere; }
+.btnlink { display: inline-flex; align-items: center; min-height: 48px; padding: 6px 16px; border-radius: 8px; border: 1.5px solid var(--accent); color: var(--accent); font-weight: 700; text-decoration: none; background: var(--surface); }
+.btnlink.primary { background: var(--accent); color: var(--accent-ink); }
+.mine { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.mine li { background: var(--bg); border-radius: 8px; padding: 8px 12px; font-size: 0.95rem; }
+footer { color: var(--muted); font-size: 0.85rem; }
+
+[hidden] { display: none !important; }
+.player-box { position: relative; aspect-ratio: 16 / 9; max-width: 100%; background: #111; border-radius: 8px; overflow: hidden; }
+.player-box iframe, #yt { position: absolute; inset: 0; width: 100%; height: 100%; }
+.player-msg { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 16px; color: #f2f2f2; font-size: 0.95rem; line-height: 1.7; }
+.seg { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.plist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.plist li { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; border-bottom: 1px solid var(--line); padding-bottom: 10px; }
+.plist .ttl { flex: 1 1 200px; overflow-wrap: anywhere; font-weight: 500; }
+.plist .ttl.now { color: var(--accent); font-weight: 700; }
+.small { min-height: 44px; padding: 4px 14px; }
+textarea { width: 100%; min-height: 110px; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--bg); font: inherit; font-size: 0.9rem; }
+.msg { font-size: 0.95rem; color: var(--leaf); min-height: 1.5em; }
+.msg.err { color: var(--warn); }
+
+.slide { background: var(--bg); border-radius: 12px; padding: 16px; min-height: 190px; display: flex; flex-direction: column; gap: 8px; }
+.slide h4 { font-family: var(--f-display); font-size: 1.15rem; margin: 0; color: var(--leaf); }
+.slide ul, .slide ol { margin: 0; padding-left: 1.4em; display: flex; flex-direction: column; gap: 6px; }
+.slide p { margin: 0; }
+.slide-nav { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+input[type="range"] { width: 100%; height: 36px; accent-color: var(--accent); }
+.snd { min-height: 64px; flex: 1 1 120px; font-size: 1.05rem; }
+.sndrow { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.avatar { width: 150px; height: 150px; border-radius: 50%; overflow: hidden; background: radial-gradient(circle at 35% 30%, var(--accent-soft), var(--leaf-soft)); border: 2px solid var(--line); display: flex; align-items: center; justify-content: center; text-align: center; font-size: 0.8rem; color: var(--muted); flex: none; }
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.talkcard { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+.bubble { flex: 1 1 220px; background: var(--accent-soft); border-radius: 16px; padding: 14px 16px; position: relative; }
+
+.guide { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: var(--surface); border-top: 2px solid var(--accent); padding-top: 10px; padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px)); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.guide-in { max-width: 760px; margin: 0 auto; display: flex; gap: 12px; align-items: flex-start; }
+.g-avatar { width: 80px; height: 80px; border-radius: 50%; overflow: hidden; flex: none; background: radial-gradient(circle at 35% 30%, var(--accent-soft), var(--leaf-soft)); border: 2px solid var(--line); }
+.g-avatar img, .g-avatar svg { width: 100%; height: 100%; object-fit: cover; display: block; }
+.g-body { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.g-name { font-size: 0.85rem; color: var(--accent); }
+#gtext { font-size: 0.95rem; line-height: 1.7; }
+.gopen { position: fixed; z-index: 20; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); }
+#petals { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
+
+.sosbtn { position: fixed; top: calc(8px + env(safe-area-inset-top, 0px)); right: max(8px, env(safe-area-inset-right, 0px)); z-index: 40; min-height: 52px; min-width: 52px; padding: 6px 16px; border-radius: 26px; border: 2px solid #fff; background: #b3261e; color: #fff; font-weight: 800; font-size: 1.05rem; box-shadow: 0 2px 8px rgba(0,0,0,.35); cursor: pointer; }
+.sosbtn.small { min-height: 40px; min-width: 40px; padding: 4px 10px; font-size: .8rem; opacity: .85; border-width: 1.5px; }
+.sosbtn[hidden] { display: none; }
+.sosover { position: fixed; inset: 0; z-index: 60; background: rgba(0,0,0,.6); display: flex; align-items: center; justify-content: center; padding: 16px; overflow-y: auto; }
+.sosover[hidden] { display: none; }
+.sosdlg { background: var(--bg); color: var(--fg); border-radius: 14px; padding: 18px; max-width: 460px; width: 100%; display: flex; flex-direction: column; gap: 12px; max-height: 100%; overflow-y: auto; }
+.sosdlg .btnlink, .sosdlg .btn { width: 100%; justify-content: center; min-height: 56px; font-size: 1.1rem; }
+.btnlink.danger { background: #b3261e; border-color: #b3261e; color: #fff; }
+
+#alerts { display: flex; flex-direction: column; gap: 10px; }
+.alert { border-radius: 12px; padding: 14px 16px; border: 3px solid #b3261e; background: #fdecea; color: #3b0d0a; display: flex; flex-direction: column; gap: 8px; }
+.alert.warn { border-color: #b26a00; background: #fff3d6; color: #3a2400; }
+.alert h3 { margin: 0; font-size: 1.4rem; line-height: 1.35; }
+.alert p { margin: 0; font-size: 1.15rem; line-height: 1.7; }
+.alert .row .btn { min-height: 52px; font-size: 1.05rem; background: #fff; color: #222; border-color: #555; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .alert { background: #4a1612; color: #ffe9e6; } :root:not([data-theme="light"]) .alert.warn { background: #4a3410; color: #ffefcf; } }
+:root[data-theme="dark"] .alert { background: #4a1612; color: #ffe9e6; }
+:root[data-theme="dark"] .alert.warn { background: #4a3410; color: #ffefcf; }
+
+/* お好みのデザイン：明るい色と読みやすい紙面 */
+:root { color-scheme: light; --bg:#eef7fc; --surface:#fff; --fg:#263749; --muted:#526476; --line:#cddfe9; --accent:#276d99; --accent-ink:#fff; --accent-soft:#e1f1fb; --leaf:#306c58; --leaf-soft:#e4f2e9; --warn:#805000; --warn-soft:#fff2da; --radius:22px; --photo:none; }
+html { min-height:100%; scroll-padding-top:24px; }
+body { padding-top:26px; background:var(--bg); overflow-wrap:break-word; isolation:isolate; }
+body::before { content:""; position:fixed; inset:0; z-index:-1; pointer-events:none; background:radial-gradient(ellipse at 0 0,var(--accent-soft),transparent 65%),radial-gradient(ellipse at 100% 70%,var(--leaf-soft),transparent 60%); }
+.wrap { max-width:960px; gap:24px; }
+.top { gap:12px; padding-right:88px; }
+.brand-note { font-weight:700; color:var(--accent); letter-spacing:.08em; font-size:.95rem; }
+.header-tools { display:flex; flex-wrap:wrap; gap:10px; }
+.design-button { font-weight:700; color:var(--accent); border-color:var(--accent); }
+.appearance-note { font-size:.85rem; color:var(--muted); margin-top:-14px; min-height:1.5em; }
+.welcome { position:relative; overflow:hidden; padding:28px 30px; border-radius:var(--radius); background:var(--accent-soft); border:1px solid var(--line); }
+.welcome .eyebrow { color:var(--accent); font-size:.83rem; font-weight:700; letter-spacing:.14em; margin-bottom:8px; }
+.welcome h1 { font-size:clamp(1.8rem,5vw,2.55rem); }
+.welcome p:last-child { margin-top:12px; color:var(--muted); }
+.welcome::after { content:"✿"; position:absolute; right:24px; top:-28px; color:var(--accent); font-size:170px; opacity:.09; pointer-events:none; }
+.card { border-radius:var(--radius); padding:24px; gap:14px; box-shadow:0 8px 28px #24415a06; }
+.greet { border-left:5px solid var(--accent); }
+.view { gap:22px; }
+.go { gap:14px; margin-top:4px; }
+.go button { position:relative; border-radius:16px; min-height:106px; padding:18px 44px 18px 20px; background:var(--surface); gap:5px; border-color:var(--line); }
+.go button::after { content:"›"; position:absolute; right:18px; top:50%; transform:translateY(-50%); color:var(--accent); font-size:1.8rem; font-family:var(--f-body); }
+.go button b { color:var(--accent); font-family:var(--f-body); font-size:1.18rem; }
+.go button span { font-size:.9rem; }
+.go .nav-heading { grid-column:1/-1; margin:12px 0 0; font-size:.85rem; font-weight:700; color:var(--muted); letter-spacing:.08em; }
+.go .featured { background:var(--accent-soft); border-color:var(--accent); }
+button:not(:disabled),.btnlink { touch-action:manipulation; transition:transform .12s,box-shadow .12s,background-color .16s,border-color .16s; box-shadow:0 4px 0 color-mix(in srgb,var(--accent) 20%,var(--line)),0 5px 10px #1b344508; }
+button:not(:disabled):hover,.btnlink:hover { border-color:var(--accent); filter:brightness(.985); }
+button:not(:disabled):active,.btnlink:active { transform:translateY(3px); box-shadow:0 1px 0 var(--line),inset 0 2px 5px #18354420; filter:brightness(.96); }
+button:disabled { cursor:default; opacity:.6; }
+.btn,.chip,.btnlink { min-height:50px; border-radius:12px; }
+button[aria-pressed="true"] { font-weight:700; }
+.guide { box-shadow:0 -4px 24px #26374910; }
+.guide-in { max-width:960px; }
+.design-dialog { width:min(760px,calc(100% - 28px)); max-height:calc(100dvh - 28px); border:1px solid var(--line); border-radius:24px; padding:0; background:var(--surface); color:var(--fg); box-shadow:0 24px 90px #10233340; }
+.design-dialog::backdrop { background:#172f4666; backdrop-filter:blur(4px); }
+.design-content { padding:26px; display:flex; flex-direction:column; gap:22px; }
+.design-head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+.design-head h2 { font-family:var(--f-body); font-size:1.35rem; }
+.design-head p { margin-top:5px; }
+.design-close { flex:none; min-width:48px; padding:4px 12px; }
+.design-dialog fieldset { border:0; padding:0; margin:0; min-width:0; }
+.design-dialog legend { font-size:1.05rem; font-weight:700; margin-bottom:12px; }
+.design-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.design-choice { position:relative; display:block; cursor:pointer; font-size:.94rem; font-weight:700; }
+.design-choice input { position:absolute; opacity:0; width:1px; height:1px; }
+.choice-face { display:flex; flex-direction:column; gap:6px; align-items:center; border:2px solid var(--line); border-radius:14px; padding:10px 8px; background:var(--surface); text-align:center; min-height:108px; transition:border-color .12s,transform .12s; }
+.design-choice input:checked + .choice-face { border-color:var(--accent); box-shadow:0 0 0 1px var(--accent); background:var(--accent-soft); }
+.design-choice input:checked + .choice-face::after { content:"✓ 選択中"; position:absolute; top:5px; right:6px; font-size:.65rem; background:var(--accent); color:#fff; padding:1px 5px; border-radius:6px; }
+.design-choice input:focus-visible + .choice-face { outline:3px solid var(--accent); outline-offset:3px; }
+.design-choice:active .choice-face { transform:translateY(2px); }
+.style-sample { width:100%; height:50px; display:flex; align-items:center; justify-content:center; border-radius:8px; color:var(--accent); background:var(--bg); font-size:1.9rem; overflow:hidden; }
+.sample-gentle { background:radial-gradient(ellipse at 20% 0,var(--accent-soft),transparent),var(--bg); border-radius:24px 8px 24px 8px; }
+.sample-flowers { letter-spacing:8px; background:var(--leaf-soft); }
+.sample-stylish { border-radius:0; background:linear-gradient(135deg,var(--accent) 0 30%,var(--accent-soft) 30% 65%,var(--surface) 65%); }
+.sample-japanese { background:repeating-radial-gradient(circle at 50% 100%,transparent 0 8px,var(--line) 9px 10px,transparent 11px 18px),var(--bg); font-family:var(--f-display); }
+.sample-western { border:4px double var(--accent); background:var(--bg); font-family:Georgia,serif; }
+.sample-photo { background:linear-gradient(160deg,#e2f3fc 50%,#99cba7 51% 70%,#54886b 71%); }
+.color-choice .choice-face { flex-direction:row; justify-content:flex-start; min-height:62px; padding:12px 9px; gap:8px; font-size:.87rem; }
+.color-choice input:checked + .choice-face::after { content:"✓"; top:1px; right:3px; padding:0 3px; }
+.color-dot { width:25px; height:25px; border:1px solid #0002; border-radius:50%; flex:none; background:var(--swatch); }
+.photo-settings { background:var(--bg); border-radius:14px; padding:18px; display:flex; flex-direction:column; gap:12px; }
+.photo-preview { width:100%; max-height:140px; object-fit:cover; border-radius:10px; }
+.photo-picker { display:inline-flex; align-items:center; justify-content:center; cursor:pointer; }
+.photo-picker:focus-within { outline:3px solid var(--accent); outline-offset:3px; }
+.photo-picker input { position:absolute; width:1px; height:1px; opacity:0; }
+.design-footer { position:sticky; bottom:0; padding:18px 26px 22px; background:var(--surface); border-top:1px solid var(--line); display:flex; flex-wrap:wrap; gap:12px; }
+.design-footer .primary { flex:1 1 220px; }
+.design-hint { font-size:.85rem; color:var(--muted); }
+#designMessage { min-height:1.5em; font-size:.9rem; color:var(--accent); }
+:root[data-look="flowers"] body::before { background-image:radial-gradient(circle at 14px 14px,var(--accent-soft) 0 9px,transparent 10px),radial-gradient(circle at 32px 14px,var(--accent-soft) 0 9px,transparent 10px),radial-gradient(circle at 23px 2px,var(--accent-soft) 0 9px,transparent 10px),radial-gradient(circle at 23px 26px,var(--accent-soft) 0 9px,transparent 10px),radial-gradient(circle at 23px 14px,var(--accent) 0 4px,transparent 5px); background-size:110px 100px; opacity:.65; }
+:root[data-look="flowers"] .welcome::after { content:"✿ ❀ ✿"; font-size:110px; opacity:.12; top:0; right:-5px; }
+:root[data-look="stylish"] { --radius:8px; --f-display:var(--f-body); }
+:root[data-look="stylish"] body::before { background:linear-gradient(125deg,var(--accent-soft) 0 25%,transparent 25% 72%,var(--leaf-soft) 72%); }
+:root[data-look="stylish"] .welcome { border-left:8px solid var(--accent); }
+:root[data-look="stylish"] .welcome::after { content:""; }
+:root[data-look="japanese"] { --radius:6px; }
+:root[data-look="japanese"] body::before { background:repeating-radial-gradient(circle at 50% 100%,transparent 0 18px,var(--line) 19px 20px,transparent 21px 38px); background-size:80px 42px; opacity:.55; }
+:root[data-look="japanese"] .welcome { border:4px double var(--accent); }
+:root[data-look="japanese"] .welcome::after { content:"和"; font-family:var(--f-display); font-size:150px; top:-16px; }
+:root[data-look="western"] { --radius:18px; }
+:root[data-look="western"] body::before { background:repeating-linear-gradient(90deg,var(--accent-soft) 0 16px,transparent 16px 48px); opacity:.5; }
+:root[data-look="western"] .welcome { outline:1px solid var(--accent); outline-offset:-8px; border-radius:22px 22px 70px 22px; }
+:root[data-look="western"] .welcome::after { content:"❦"; }
+:root[data-look="photo"] body::before { background-image:linear-gradient(#fff5,#fff5),var(--photo); background-position:center; background-size:cover; }
+:root[data-look="photo"] .card,:root[data-look="photo"] .welcome { background:var(--surface); box-shadow:0 5px 25px #18334419; }
+@media (min-width:760px) { .top { align-items:center; } .greet { padding:26px 30px; } .go .featured { grid-column:auto !important; } }
+@media (max-width:600px) { body { padding-top:18px; } .top { align-items:flex-start; } .header-tools { width:100%; } .header-tools .btn { flex:1 1 auto; font-size:.88rem; padding:6px 10px; } .appearance-note { margin-top:-12px; } .card { padding:18px; border-radius:min(var(--radius),18px); } .welcome { padding:24px 20px; } .design-content { padding:20px 16px; gap:20px; } .design-grid { gap:9px; } .design-footer { padding:16px; } .design-footer .btn { width:100%; } .color-choice .choice-face { flex-direction:column; gap:4px; } .guide-in { gap:8px; } .g-avatar { width:52px; height:52px; } .guide .btn { font-size:.8rem; min-height:44px; padding:4px 10px; } }
+@media (prefers-reduced-motion:reduce) { *,*::before,*::after { transition:none !important; animation:none !important; scroll-behavior:auto !important; } }
+
+
+/* どの画面でも見つけやすい現在地ボタン */
+.location-bar { position:sticky; top:calc(8px + env(safe-area-inset-top,0px)); z-index:25; align-self:flex-start; max-width:calc(100% - 88px); }
+.location-button { display:flex; align-items:center; gap:12px; text-align:left; padding:8px 18px; min-height:64px; background:var(--accent); color:var(--accent-ink); border:2px solid var(--accent); border-radius:16px; font-weight:700; }
+.location-icon { font-size:1.6rem; line-height:1; }
+.location-label { display:flex; flex-direction:column; line-height:1.4; }
+.location-label small { font-size:.7rem; font-weight:400; letter-spacing:.03em; }
+.location-dialog { max-width:480px; }
+.location-dialog .design-content { gap:18px; }
+.location-dialog .btnlink { justify-content:center; text-align:center; }
+.location-dialog .btnlink[aria-disabled="true"] { opacity:.6; pointer-events:none; }
+.location-status { background:var(--accent-soft); padding:16px; border-radius:12px; font-weight:700; }
+.location-help { font-size:.9rem; color:var(--muted); }
+@media(max-width:420px) { .location-button { padding:8px 12px; gap:9px; font-size:1rem; } }
+
+
+/* お出かけ：出発地と行き先を入れて調べる */
+.trip-card { border:2px solid var(--accent); background:var(--surface); }
+.trip-card h2 { font-family:var(--f-body); }
+.trip-modes { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
+.trip-tile { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; min-height:100px; padding:12px 6px; border:1.5px solid var(--line); border-radius:16px; background:var(--accent-soft); font-weight:700; font-size:1rem; text-align:center; }
+.trip-tile .trip-icon { font-size:1.8rem; line-height:1.2; }
+.trip-tile small { font-weight:400; color:var(--muted); font-size:.76rem; }
+.trip-dialog { max-width:680px; }
+.trip-dialog .design-content { gap:20px; }
+.trip-mode-group { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; border:0; padding:0; margin:0; min-width:0; }
+.trip-mode-group legend { font-size:1rem; font-weight:700; margin-bottom:10px; }
+.trip-mode-group label { position:relative; cursor:pointer; text-align:center; }
+.trip-mode-group input { position:absolute; opacity:0; width:1px; height:1px; }
+.trip-mode-face { border:2px solid var(--line); border-radius:12px; display:block; min-height:56px; padding:10px 4px; font-size:.94rem; }
+.trip-mode-group input:checked + .trip-mode-face { background:var(--accent-soft); border-color:var(--accent); }
+.trip-mode-group input:checked + .trip-mode-face::after { content:' ✓'; color:var(--accent); }
+.trip-mode-group input:focus-visible + .trip-mode-face { outline:3px solid var(--accent); outline-offset:3px; }
+.trip-fields { display:flex; flex-direction:column; gap:10px; }
+.trip-fields input { width:100%; }
+.trip-origin-row { display:flex; flex-wrap:wrap; gap:10px; }
+.trip-origin-row input { flex:1 1 220px; width:auto; }
+.trip-origin-row button { flex:0 1 auto; }
+.trip-info { border-radius:14px; padding:16px; background:var(--accent-soft); display:flex; flex-direction:column; gap:8px; font-size:.92rem; }
+.trip-status { color:var(--muted); font-size:.9rem; min-height:1.5em; }
+.trip-submit { width:100%; min-height:58px; font-weight:700; }
+.trip-links { display:flex; flex-direction:column; gap:14px; border-top:1px solid var(--line); padding-top:18px; }
+.trip-links .btnlink { justify-content:center; text-align:center; }
+.trip-summary { display:grid; grid-template-columns:auto 1fr; gap:8px 14px; margin:0; padding:14px; background:var(--bg); border-radius:12px; font-size:.95rem; }
+.trip-summary dt { color:var(--muted); }
+.trip-summary dd { margin:0; overflow-wrap:anywhere; }
+@media(max-width:600px) { .trip-modes { grid-template-columns:repeat(2,minmax(0,1fr)); } .trip-mode-group { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:420px) { .trip-modes { gap:8px; } .trip-tile { min-height:98px; font-size:.9rem; } .trip-tile small { font-size:.65rem; } .trip-mode-face { font-size:.85rem; } }
+
+
+.walk-options { border:2px solid var(--accent); border-radius:16px; padding:18px; display:flex; flex-direction:column; gap:12px; }
+.walk-options h3 { font-family:var(--f-body); font-size:1rem; }
+.walk-choices { display:flex; flex-direction:column; gap:10px; }
+.walk-choices label { display:flex; align-items:flex-start; gap:10px; border:1px solid var(--line); border-radius:12px; padding:12px; font-size:.95rem; cursor:pointer; }
+.walk-choices input { width:22px; height:22px; margin-top:4px; flex:none; accent-color:var(--accent); }
+.walk-guide { display:flex; flex-direction:column; gap:10px; border-radius:12px; background:var(--warn-soft); padding:16px; }
+.walk-guide ol { margin:0; padding-left:1.5em; display:flex; flex-direction:column; gap:8px; font-size:.95rem; }
+
+.news-card { display:flex; flex-direction:row; flex-wrap:wrap; gap:16px; align-items:center; justify-content:space-between; }
+.news-copy { flex:1 1 230px; }
+.news-copy h2 { font-family:var(--f-body); font-size:1.15rem; margin-bottom:6px; }
+.news-card .btnlink { justify-content:center; min-height:56px; gap:8px; }
+@media(max-width:600px) { .news-card .btnlink { width:100%; } }
+
+</style></head><body>
+
+<canvas id="petals" aria-hidden="true"></canvas>
+
+<div class="wrap">
+  <div class="top">
+    <span class="brand-note">暮らしに、ひと息。 <span class="tag">試作版</span></span>
+    <div class="header-tools"><button class="btn" id="tripOpen" type="button" aria-haspopup="dialog">歩く・電車・バス・タクシー</button><button class="btn design-button" id="designBtn" type="button" aria-haspopup="dialog">✿ デザインの変更</button><button class="btn" id="sizeBtn" aria-pressed="false">文字を大きくする</button></div>
+  </div>
+  <p class="appearance-note" id="appearanceNote" role="status"></p>
+  <div class="location-bar"><button class="location-button" id="locationBtn" type="button" aria-haspopup="dialog" aria-label="Googleマップで現在地を見る"><span class="location-icon" aria-hidden="true">◎</span><span class="location-label">現在地を見る<small>Googleマップ</small></span></button></div>
+  <div id="alerts" aria-live="assertive"></div>
+
+  <!-- ホーム -->
+  <section class="view" id="v-home" aria-label="ホーム">
+    <div class="welcome"><p class="eyebrow">毎日に、小さな楽しみを。</p><h1>ケセラ</h1><p>あなたのペースで、今日の「したいこと」を。</p></div>
+    <div class="card greet">
+      <h2 id="greet"></h2>
+      <p id="wx"></p>
+      <p class="muted" id="hint"></p>
+      <details>
+        <summary>お名前と今日の天気を入れる</summary>
+        <div class="row" style="margin-top:8px">
+          <label for="name">お名前</label>
+          <input type="text" id="name" placeholder="例：野田" maxlength="12" autocomplete="off">
+        </div>
+        <div class="row" style="margin-top:10px">
+          <label for="tmin">最低</label><input type="number" id="tmin" value="14" min="-20" max="40" inputmode="numeric">
+          <label for="tmax">最高</label><input type="number" id="tmax" value="22" min="-20" max="45" inputmode="numeric">
+          <label for="wxsel">天気</label>
+          <select id="wxsel"><option>晴れ</option><option>くもり</option><option>雨</option><option>雪</option></select>
+        </div>
+        <p class="muted" style="margin-top:8px">いまは見本の数字です。今日の予報に合わせて変えてください。完成版では自動で入ります。</p>
+      </details>
+    </div>
+
+
+    <div class="card trip-card">
+      <h2>お出かけのお手伝い</h2><p class="muted">いまいる場所から、行きたい場所へ。</p>
+      <div class="trip-modes">
+        <button class="trip-tile" data-trip-mode="walk" type="button" aria-haspopup="dialog"><span class="trip-icon" aria-hidden="true">🚶</span>歩く・ルート案内<small>道順・階段への配慮</small></button>
+        <button class="trip-tile" data-trip-mode="train" type="button" aria-haspopup="dialog"><span class="trip-icon" aria-hidden="true">🚃</span>電車に乗る<small>時刻・運賃を調べる</small></button>
+        <button class="trip-tile" data-trip-mode="bus" type="button" aria-haspopup="dialog"><span class="trip-icon" aria-hidden="true">🚌</span>バスに乗る<small>時刻・運賃を調べる</small></button>
+        <button class="trip-tile" data-trip-mode="taxi" type="button" aria-haspopup="dialog"><span class="trip-icon" aria-hidden="true">🚕</span>タクシーを呼ぶ<small>料金・配車を確認</small></button>
+      </div>
+      <p class="design-hint">時刻・料金は検索先で確認します。タクシーの注文は配車サービスで行います。</p>
+    </div>
+
+    <div class="card news-card" aria-label="最新ニュース">
+      <div class="news-copy"><h2>世の中のできごと</h2><p class="muted" id="newsDescription">Yahoo!ニュースで、いまの見出しを読めます。別のタブで開きます。</p></div>
+      <a class="btnlink primary" id="latestNews" href="https://news.yahoo.co.jp/" target="_blank" rel="noopener noreferrer" aria-describedby="newsDescription"><span aria-hidden="true">📰</span>最新ニュースを見る</a>
+    </div>
+
+    <div class="card news-card" aria-label="文学へのいざない">
+      <div class="news-copy"><h2>文学へのいざない</h2><p class="muted" id="literatureDescription">青空文庫で、文学作品をゆっくり楽しめます。別のタブで開きます。</p></div>
+      <a class="btnlink primary" id="aozoraLibrary" href="https://www.aozora.gr.jp/" target="_blank" rel="noopener noreferrer" aria-describedby="literatureDescription"><span aria-hidden="true">📖</span>青空文庫を読む</a>
+    </div>
+
+    <div class="card" id="sites" aria-label="ケセラの付属サイト">
+      <h2>ケセラの付属サイト</h2><p class="muted">ケセラとあわせて楽しめる、無料のサイトです。別のタブで開きます。これからも少しずつ増えていきます。</p>
+      <div class="news-card" style="padding:0;border:0;box-shadow:none;background:none">
+        <div class="news-copy"><b>旅の栞「ここから時代が作られた」</b><p class="muted" id="siteHagiDesc">幕末の長州と萩をたどる、歴史の旅の栞です。人物・年表・史跡・ミニテスト・萩のゆかりの地を、読みがなつきで楽しめます。</p></div>
+        <a class="btnlink primary" href="https://realizefield.github.io/rekishi-bakumatu-hagi/" target="_blank" rel="noopener noreferrer" aria-describedby="siteHagiDesc"><span aria-hidden="true">🏯</span>萩の旅の栞をひらく</a>
+      </div>
+      <div class="news-card" style="padding:0;border:0;box-shadow:none;background:none;margin-top:18px">
+        <div class="news-copy"><b>着こなし相談室(試作版)</b><p class="muted" id="siteKigonashiDesc">50代・60代・70代の服選びのお手伝いです。「清潔感がある」「少し若々しい」を目安に、仕上がり・帽子・小物の選び方を紹介します。AIへの相談はお試しの回数があります。</p></div>
+        <a class="btnlink primary" href="https://realizefield.github.io/kigonashi/" target="_blank" rel="noopener noreferrer" aria-describedby="siteKigonashiDesc"><span aria-hidden="true">👔</span>着こなし相談室をひらく</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="muted">今日の人物</span>
+      <h3 id="pname"></h3>
+      <p id="ptext"></p>
+    </div>
+
+    <div class="card">
+      <h2>今日は何をしましょうか。</h2>
+      <div class="go">
+        <p class="nav-heading">日々の楽しみ</p>
+        <button data-go="learn"><b>学ぶ</b><span>折り紙の基礎ほか</span></button>
+        <button data-go="move"><b>動く</b><span>プチ筋トレ</span></button>
+        <button data-go="travel"><b>旅する</b><span>熊本のバーチャル旅</span></button>
+        <button data-go="make"><b>作る・飾る</b><span>10分ごはん・花の飾り方</span></button>
+        <button data-go="music"><b>聴く・観る</b><span>思い出の歌・昭和歌謡・カラオケ・鉄道の旅</span></button>
+        <button data-go="sleep"><b>眠る</b><span>ねむれない夜に・自然音</span></button>
+        <p class="nav-heading">おしゃべり・暮らしの相談</p>
+        <button class="featured" data-go="ask" style="grid-column: 1 / -1"><b>調べる</b><span>わからないことを、声や文字で聞く・詐欺かな？と思ったら</span></button>
+        <button class="featured" data-go="talk" style="grid-column: 1 / -1"><b>お話する</b><span>孫・お友達・ご近所の方・犬・猫・ウサギ（10分）</span></button>
+        <p class="nav-heading">仲間とつながる・自分を楽しむ</p>
+        <button data-go="farm" style="grid-column: 1 / -1"><b>倶楽部　自然農法研究倶楽部（試作）</b><span>家庭菜園・プランター菜園の栽培ノート・集まり・注意</span></button>
+        <button data-go="home" id="goSoon" style="grid-column: 1 / -1"><b>装う</b><span>プチお化粧・プチ着こなし（準備中）</span></button>
+      </div>
+      <p class="muted" id="days"></p>
+    </div>
+
+    <div class="card">
+      <h3>ケセラの5つの柱</h3>
+      <ul class="pillars">
+        <li><span>花通信</span><span class="pill">試作あり</span></li>
+        <li><span>ちょこっとよりみち</span><span class="pill soon">準備中</span></li>
+        <li><span>プチ旅</span><span class="pill">熊本を試作</span></li>
+        <li><span>歴史学び家</span><span class="pill">試作あり</span></li>
+        <li><span>イキイキクラブ</span><span class="pill">筋トレ・音楽・料理を試作</span></li>
+      </ul>
+    </div>
+
+    <div class="card" id="alertcard">
+      <h3>台風・大雨・熱中症のお知らせ</h3>
+      <p class="muted">台風、線状降水帯、熱中症に注意が必要なときは、画面の一番上に、大きくお知らせします。「読みました（消す）」を押すと、消えます。</p>
+      <p class="muted">いまの試作では、「最高気温33度以上」のとき、熱中症のお知らせが出ます（天気の欄の数字をもとにしています）。台風や大雨のお知らせは、運営が公開した情報があるときに出ます。</p>
+      <div class="row"><button class="btn" id="alertdemo" type="button">お知らせの見本を見る</button></div>
+      <p class="muted">正式な警報・避難の情報は、必ず、気象庁や市町村の発表をご確認ください。<br><a href="https://www.jma.go.jp/bosai/" target="_blank" rel="noopener">気象庁　防災情報</a>　／　<a href="https://www.wbgt.env.go.jp/" target="_blank" rel="noopener">環境省　熱中症予防情報（暑さ指数）</a></p>
+    </div>
+
+    <div class="card" id="soscard">
+      <h3>緊急連絡先（「たすけて」ボタン用）</h3>
+      <p class="muted">「たすけて」の画面から、ここのご家族に連絡できます。ボタンを画面に出すか出さないかは、下で選べます。この端末の中だけに保存します。</p>
+      <fieldset style="border:1.5px solid var(--line);border-radius:8px;padding:10px 12px">
+        <legend><b>「たすけて」ボタンの出し方</b></legend>
+        <label class="row" style="gap:10px;align-items:center"><input type="radio" name="sosmode" value="off" style="width:24px;height:24px"> <span>出さない（このカードの「たすけて画面を開く」から使う）</span></label>
+        <label class="row" style="gap:10px;align-items:center"><input type="radio" name="sosmode" value="small" style="width:24px;height:24px"> <span>画面の右上に、小さく出す</span></label>
+        <label class="row" style="gap:10px;align-items:center"><input type="radio" name="sosmode" value="big" style="width:24px;height:24px"> <span>画面の右上に、大きく出す</span></label>
+      </fieldset>
+      <button class="btn" id="sosopen" type="button" style="align-self:flex-start">たすけて画面を開く</button>
+      <label for="sosname">お名前（呼び名）</label>
+      <input id="sosname" type="text" maxlength="20" placeholder="例：長女の○○" autocomplete="off">
+      <label for="sosphone">電話番号（数字だけ）</label>
+      <input id="sosphone" type="text" inputmode="tel" maxlength="15" placeholder="例：09012345678" autocomplete="off">
+      <label for="sosmailaddr">メールアドレス（なくても構いません）</label>
+      <input id="sosmailaddr" type="text" inputmode="email" maxlength="80" autocomplete="off">
+      <div class="notice"><b>ご注意</b>　このボタンは、ご本人が押したときだけ働きます。転んだことを自動で見つける機能ではありません。命にかかわるときは、119に電話してください。</div>
+    </div>
+
+    <div class="card" id="famcard">
+      <h3>ご家族への見まもり（任意）</h3>
+      <p>ご本人が許可したときだけ、ご家族に「使った日数」と「使った時間」をお知らせします。いまは<b>オフ</b>です。</p>
+      <p class="muted">お知らせしない内容：会話の中身、食事の記録、ひとこと、行った場所。いつでも、オフにもどせます。</p>
+      <p class="muted" id="usetoday"></p>
+      <label class="row" style="gap:10px;align-items:center"><input type="checkbox" id="famok" style="width:28px;height:28px"> <span>ご家族に、週に1回、利用時間をお知らせしてもよい</span></label>
+      <div class="notice" id="famask" hidden><b>ご確認ください</b>　ご家族に、週に1回、「使った日数」と「使った時間」だけをお知らせします。会話の中身は、お知らせしません。ご本人が許可したときだけ、有効になります。
+        <div class="row"><button class="btn primary" id="famyes" type="button">許可します</button><button class="btn" id="famno" type="button">やめておきます</button></div></div>
+      <div id="fambox" hidden>
+        <label for="famwho">ご家族のお名前（呼び名）</label>
+        <input id="famwho" type="text" maxlength="20" placeholder="例：長女の○○" autocomplete="off">
+        <label for="fammail">ご家族のメールアドレス</label>
+        <input id="fammail" type="text" inputmode="email" maxlength="80" placeholder="例：example@mail.com" autocomplete="off">
+        <h4>今週のお知らせ（見本）</h4>
+        <p id="fampreview" style="white-space:pre-wrap"></p>
+        <div class="row"><a class="btnlink primary" id="famsend" href="#">メールで送る（内容を確認してから）</a></div>
+        <p class="muted">いまの試作では、自動では送りません。送るボタンを押すと、メールの画面が開きます。内容をご確認のうえ、ご本人が送信してください。毎週の自動送信は、運営の仕組みができてから加えます。</p>
+      </div>
+      <p class="msg" id="fammsg" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <!-- 学ぶ -->
+  <section class="view" id="v-learn" hidden aria-label="学ぶ">
+    <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
+    <h2>学ぶ　基礎のき</h2>
+    <div class="chips" role="group" aria-label="基礎の種類">
+      <button class="chip" aria-pressed="true">折り紙</button>
+      <button class="chip" disabled>水彩画</button>
+      <button class="chip" disabled>囲碁</button>
+      <button class="chip" disabled>将棋</button>
+      <button class="chip" disabled>料理</button>
+      <button class="chip" disabled>裁縫</button>
+      <button class="chip" disabled>陶芸</button>
+    </div>
+    <p class="muted">折り紙以外は準備中です。</p>
+
+    <div class="card">
+      <h3>折り紙の基礎　座布団折り</h3>
+      <p>多くの作品の、最初の形になる折り方です。</p>
+      <div class="legend" aria-label="折り方の記号">
+        <span><svg viewBox="0 0 70 12" aria-hidden="true"><line x1="2" y1="6" x2="68" y2="6" stroke="currentColor" stroke-width="2" stroke-dasharray="6 4"/></svg> 谷折り</span>
+        <span><svg viewBox="0 0 70 12" aria-hidden="true"><line x1="2" y1="6" x2="68" y2="6" stroke="currentColor" stroke-width="2" stroke-dasharray="10 3 2 3"/></svg> 山折り</span>
+      </div>
+      <div class="figs">
+        <div class="fig">
+          <svg viewBox="0 0 120 120" role="img" aria-label="正方形の折り紙。四つの角から真ん中へ向かう点線が引かれています">
+            <rect x="10" y="10" width="100" height="100" class="paper"/>
+            <g class="fold"><line x1="10" y1="10" x2="60" y2="60"/><line x1="110" y1="10" x2="60" y2="60"/><line x1="10" y1="110" x2="60" y2="60"/><line x1="110" y1="110" x2="60" y2="60"/></g>
+          </svg>
+          <span>1 四つの角を<br>真ん中へ</span>
+        </div>
+        <div class="fig">
+          <svg viewBox="0 0 120 120" role="img" aria-label="角を折ると、ひし形になります。真ん中で四つの三角が合わさっています">
+            <rect x="10" y="10" width="100" height="100" class="ghost"/>
+            <polygon points="60,10 110,60 60,110 10,60" class="paper"/>
+            <line x1="60" y1="10" x2="60" y2="110" class="seam"/><line x1="10" y1="60" x2="110" y2="60" class="seam"/>
+          </svg>
+          <span>2 ひし形になります</span>
+        </div>
+        <div class="fig">
+          <svg viewBox="0 0 120 120" role="img" aria-label="もう一度、四つの角を真ん中へ折ると、小さな正方形になります">
+            <polygon points="60,10 110,60 60,110 10,60" class="ghost"/>
+            <rect x="35" y="35" width="50" height="50" class="paper"/>
+            <line x1="35" y1="35" x2="60" y2="60" class="seam"/><line x1="85" y1="35" x2="60" y2="60" class="seam"/><line x1="35" y1="85" x2="60" y2="60" class="seam"/><line x1="85" y1="85" x2="60" y2="60" class="seam"/>
+          </svg>
+          <span>3 もう一度折ると<br>座布団です</span>
+        </div>
+      </div>
+      <ol class="steps">
+        <li>色のついた面を上にして、正方形におきます。</li>
+        <li>四つの角を、真ん中にぴったり合わせて折ります。折り目は、指の腹で端から端までなぞります。</li>
+        <li>ひし形になります。もう一度、四つの角を真ん中に合わせて折ると、小さな座布団になります。</li>
+      </ol>
+      <p class="muted">角がずれたときは、いったん開いて折り直して大丈夫です。</p>
+    </div>
+
+    <div class="card" id="quiz-origami"></div>
+  </section>
+
+  <!-- 動く -->
+  <section class="view" id="v-move" hidden aria-label="動く">
+    <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
+    <h2>動く　プチ筋トレ</h2>
+    <div class="card">
+      <h3>椅子からの立ち座り</h3>
+      <p>脚の力と、バランスを保つ力を、ひとりで続けやすい動きです。</p>
+      <ol class="steps">
+        <li>壁を背にして、しっかりした椅子に浅く座ります。滑りにくい床で行います。</li>
+        <li>足を肩幅にひらき、両腕は胸の前で組みます。つかまりたいときは、机や壁の近くで行います。</li>
+        <li>3つ数えながら、ゆっくり立ちます。</li>
+        <li>3つ数えながら、ゆっくり座ります。これで1回です。</li>
+      </ol>
+      <div class="notice"><b>ご注意</b>　痛み、めまい、息苦しさがあるときは、すぐにやめて休んでください。体調がすぐれない日は、お休みで大丈夫です。医師から運動を控えるよう言われている方は、始める前にご相談ください。</div>
+    </div>
+    <div class="card counter">
+      <div class="row"><label for="goal">今日の目標</label>
+        <select id="goal"><option value="3">3回</option><option value="5" selected>5回</option><option value="10">10回</option></select></div>
+      <div class="count-num" id="cnum" aria-live="polite">0</div>
+      <p class="muted" id="cmsg">できたら、下のボタンを押してください。</p>
+      <button class="btn primary bigbtn" id="cplus">1回できました</button>
+      <button class="btn" id="creset">0にもどす</button>
+    </div>
+    <div class="card">
+      <h3>ひとこと</h3>
+      <div class="row"><input type="text" id="memo" placeholder="例：5回できました" maxlength="40" style="flex:1 1 200px"><button class="btn" id="memoBtn">のこす</button></div>
+      <ul class="mine" id="mine"></ul>
+      <p class="muted">ひとことは、この端末の中にだけ残ります。みんなに見せる機能は、運営の確認の仕組みを作ってから加えます。</p>
+    </div>
+    <p class="muted">プチマッチョ、プチお化粧、プチ着こなしは準備中です。</p>
+  </section>
+
+  <!-- 旅する -->
+  <section class="view" id="v-travel" hidden aria-label="旅する">
+    <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
+    <h2>旅する　熊本のバーチャル旅</h2>
+    <p class="muted">ストリートビューは、新しいタブで開きます。映像は地図サービスのもので、道路から見える範囲になります。見終わったら、この画面にもどってください。</p>
+    <p class="muted">位置は、公開されている資料の座標（熊本城＝便利帳の地図データ、水前寺成趣園＝ウィキペディア）をもとにしています。ストリートビューは「いちばん近い撮影地点」から開くため、園内や城内では、道路や入口付近の景色になることがあります。もし景色がずれたときは、「地図で見る」から場所を開き、画面の黄色い人形を道へ動かしてください。</p>
+
+    <article class="card place">
+      <h3>熊本城</h3>
+      <p class="muted">熊本市中央区</p>
+      <p>加藤清正が築き、1607年ごろに完成しました。石垣の美しさと、大きな天守で知られます。2016年の熊本地震で被災し、いまも復旧が進んでいます。見える景色は、工事の進み具合で変わります。</p>
+      <p>歩いて回るときは、坂と石段が多いので、無理のない時間を選びましょう。</p>
+      <div class="row">
+        <a class="btnlink primary" href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=32.806165,130.706389" target="_blank" rel="noopener">ストリートビューで見る</a>
+        <a class="btnlink" href="https://www.google.com/maps/search/?api=1&query=%E7%86%8A%E6%9C%AC%E5%9F%8E" target="_blank" rel="noopener">地図で見る</a>
+      </div>
+    </article>
+
+    <article class="card place">
+      <h3>水前寺成趣園</h3>
+      <p class="muted">熊本市中央区</p>
+      <p>江戸時代の初め、熊本藩主の細川家が造った庭園です。東海道の景色を模したと伝わり、池のまわりをめぐって楽しむ形になっています。池の水は、阿蘇の伏流水の湧き水といわれます。</p>
+      <p>園内は砂利道や段差があります。歩きやすい靴で、ゆっくり回りましょう。</p>
+      <div class="row">
+        <a class="btnlink primary" href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=32.7910917,130.7345944" target="_blank" rel="noopener">ストリートビューで見る</a>
+        <a class="btnlink" href="https://www.google.com/maps/search/?api=1&query=%E6%B0%B4%E5%89%8D%E5%AF%BA%E6%88%90%E8%B6%A3%E5%9C%92" target="_blank" rel="noopener">地図で見る</a>
+      </div>
+    </article>
+
+    <div class="card" id="quiz-travel"></div>
+  </section>
+
+  <!-- 聴く・観る -->
+  <section class="view" id="v-music" hidden aria-label="聴く・観る">
+    <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
+    <h2>聴く・観る　思い出の歌と旅</h2>
+    <div class="chips" id="shelves" role="group" aria-label="棚を選ぶ"></div>
+
+    <div class="card">
+      <div class="player-box"><div id="yt"></div><p class="player-msg" id="pmsg">下の一覧から、見たい動画を選んでください。</p></div>
+      <p class="muted" id="nowp">いま：まだ再生していません</p>
+      <div class="row">
+        <button class="btn primary" id="pPlay">はじめから再生</button>
+        <button class="btn" id="pPrev">前へ</button>
+        <button class="btn" id="pNext">次へ</button>
+      </div>
+      <div class="seg" role="group" aria-label="再生のしかた">
+        <span class="muted">再生のしかた</span>
+        <button class="btn small" id="pAuto" aria-pressed="true">つづけて自動再生</button>
+        <button class="btn small" data-rep="none" aria-pressed="true">くりかえさない</button>
+        <button class="btn small" data-rep="one" aria-pressed="false">1曲くりかえし</button>
+        <button class="btn small" data-rep="all" aria-pressed="false">全部くりかえし</button>
+      </div>
+      <div class="seg" role="group" aria-label="動画のおやすみタイマー">
+        <span class="muted">おやすみタイマー</span>
+        <button class="btn small" data-ytimer="0" aria-pressed="true">切らない</button>
+        <button class="btn small" data-ytimer="15" aria-pressed="false">15分</button>
+        <button class="btn small" data-ytimer="30" aria-pressed="false">30分</button>
+        <button class="btn small" data-ytimer="60" aria-pressed="false">60分</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 id="shelfTitle"></h3>
+      <ul class="plist" id="plist"></ul>
+      <a class="btnlink" id="searchLink" href="#" target="_blank" rel="noopener" style="align-self:flex-start">YouTubeで探す</a>
+    </div>
+
+    <div class="card">
+      <h3>URLを保存する</h3>
+      <p class="muted">YouTubeで見つけた動画の、アドレス（URL）を貼り付けて保存します。</p>
+      <div class="row"><label for="uurl">URL</label><input type="text" id="uurl" placeholder="https://www.youtube.com/watch?v=…" style="flex:1 1 240px" autocomplete="off"></div>
+      <div class="row"><label for="utitle">題名</label><input type="text" id="utitle" placeholder="例：思い出の一曲" maxlength="40" style="flex:1 1 240px" autocomplete="off"></div>
+      <div class="row"><button class="btn primary" id="uadd">この棚に保存する</button></div>
+      <p class="msg" id="umsg" aria-live="polite"></p>
+    </div>
+
+    <div class="card">
+      <h3>控えをつくる・もどす</h3>
+      <p class="muted">保存した一覧は、この端末のブラウザの中に残ります。ブラウザのデータを消したときや、機種を変えたときは消えます。「控え」をコピーして、LINEやメモに残しておくと安心です。</p>
+      <div class="row"><button class="btn" id="bkMake">控えをつくる</button></div>
+      <textarea id="bk" readonly placeholder="ここに控えが出ます。" aria-label="控え"></textarea>
+      <label for="rs">控えからもどす（貼り付けてください）</label>
+      <textarea id="rs" placeholder="控えの文章を貼り付けます。"></textarea>
+      <div class="row"><button class="btn" id="rsGo">もどす</button></div>
+      <p class="msg" id="bmsg" aria-live="polite"></p>
+    </div>
+
+    <div class="notice"><b>お読みください</b>　動画は、YouTubeにあるものを再生します。動画の持ち主が、ページの中での再生を許していないときは、再生できません。その場合は「YouTubeで開く」を押してください。最初の1回は、画面をタップしないと、再生が始まりません。歌詞は、このページには表示しません。</div>
+  </section>
+
+  <!-- 眠る -->
+  <section class="view" id="v-sleep" hidden aria-label="眠る">
+    <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
+    <h2>眠る　ねむれない夜に</h2>
+    <div class="card">
+      <h3>自然音風のやさしい音</h3>
+      <p class="muted">雨、波、風の音を、この端末の中でつくって流します。インターネットがなくても聞こえます。本物の録音ではなく、自然音に似せた音です。</p>
+      <div class="sndrow" role="group" aria-label="音の種類">
+        <button class="btn snd" data-snd="rain" aria-pressed="false">雨の音</button>
+        <button class="btn snd" data-snd="wave" aria-pressed="false">波の音</button>
+        <button class="btn snd" data-snd="wind" aria-pressed="false">風の音</button>
+      </div>
+      <button class="btn" id="sndStop" style="align-self:flex-start">音を止める</button>
+      <label for="vol">音量</label>
+      <input type="range" id="vol" min="5" max="100" value="45">
+      <div class="seg" role="group" aria-label="おやすみタイマー">
+        <span class="muted">おやすみタイマー</span>
+        <button class="btn small" data-stimer="0" aria-pressed="true">切らない</button>
+        <button class="btn small" data-stimer="15" aria-pressed="false">15分</button>
+        <button class="btn small" data-stimer="30" aria-pressed="false">30分</button>
+        <button class="btn small" data-stimer="60" aria-pressed="false">60分</button>
+      </div>
+      <p class="msg" id="smsg" aria-live="polite"></p>
+    </div>
+    <div class="card">
+      <h3>眠りの音楽・自然音をYouTubeで探す</h3>
+      <p class="muted">気に入った動画のアドレスを、「聴く・観る」の「眠りの音楽」「自然音」の棚に保存すると、続けて自動で流せます。</p>
+      <div class="row">
+        <a class="btnlink" href="https://www.youtube.com/results?search_query=%E7%9D%A1%E7%9C%A0+%E3%83%92%E3%83%BC%E3%83%AA%E3%83%B3%E3%82%B0%E3%83%9F%E3%83%A5%E3%83%BC%E3%82%B8%E3%83%83%E3%82%AF" target="_blank" rel="noopener">眠りの音楽</a>
+        <a class="btnlink" href="https://www.youtube.com/results?search_query=%E5%B7%9D%E3%81%AE%E3%81%9B%E3%81%9B%E3%82%89%E3%81%8E+%E8%87%AA%E7%84%B6%E9%9F%B3" target="_blank" rel="noopener">川のせせらぎ</a>
+        <a class="btnlink" href="https://www.youtube.com/results?search_query=%E6%B3%A2%E3%81%AE%E9%9F%B3+%E8%87%AA%E7%84%B6%E9%9F%B3" target="_blank" rel="noopener">波の音</a>
+        <a class="btnlink" href="https://www.youtube.com/results?search_query=%E6%A3%AE%E3%81%AE%E9%9F%B3+%E9%B3%A5%E3%81%AE%E3%81%95%E3%81%88%E3%81%9A%E3%82%8A" target="_blank" rel="noopener">森と鳥の声</a>
+      </div>
+      <button class="btn" data-go="music" style="align-self:flex-start">聴く・観るの部屋へ</button>
+    </div>
+    <div class="notice"><b>ご注意</b>　画面は暗くして、音量は小さめにしてください。眠れない日が長く続くときや、日中の体調がつらいときは、医師にご相談ください。</div>
+  </section>
+
+  <!-- 作る・飾る -->
+  <section class="view" id="v-make" hidden aria-label="作る・飾る">
+    <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
+    <h2>作る・飾る</h2>
+
+    <div class="card">
+      <h3>10分ごはん</h3>
+      <p><span class="pill">小麦・乳製品・植物油・砂糖を使いません</span></p>
+      <p class="muted">1人分です。しょうゆ、みそ、だしの素、納豆のたれなどは、小麦や砂糖が入っていることが多いので、原材料を確認してください。</p>
+      <div class="chips" id="rchips" role="group" aria-label="料理を選ぶ"></div>
+      <div id="rdeck"></div>
+      <a class="btnlink" id="rsearch" href="https://www.youtube.com/results?search_query=%E5%B0%8F%E9%BA%A6%E7%B2%89%E4%B8%8D%E4%BD%BF%E7%94%A8+%E4%B9%B3%E8%A3%BD%E5%93%81%E4%B8%8D%E4%BD%BF%E7%94%A8+10%E5%88%86+%E3%83%AC%E3%82%B7%E3%83%94" target="_blank" rel="noopener" style="align-self:flex-start">YouTubeで同じような料理を探す</a>
+      <div class="notice"><b>お読みください</b>　食事全体で、たんぱく質、カルシウム、エネルギーが足りなくならないようにしてください。食が細くなったり、体重が減ったりしたときは、医師や管理栄養士にご相談ください。持病やアレルギーのある方も、ご相談をおすすめします。火を使うときは、その場を離れないでください。</div>
+    </div>
+
+    <div class="card" id="mealcard">
+      <h3>食事の記録とふりかえり</h3>
+      <p class="muted">食べたものを、かんたんに書きとめます。記録は、この端末の中にだけ残ります。</p>
+      <div class="notice"><b>かならずお読みください</b>　ここに出る内容は、一般的なヒントです。診断や治療ではありません。体調、持病、お薬、食事の量のことは、<b>必ずかかりつけのお医者さんに相談してください。</b></div>
+      <div class="row">
+        <label for="mtime">いつの食事</label>
+        <select id="mtime"><option>朝</option><option>昼</option><option>夜</option><option>おやつ</option></select>
+      </div>
+      <label for="mtext">食べたもの</label>
+      <input id="mtext" type="text" maxlength="60" placeholder="例：ごはん、みそ汁、焼き魚、ほうれん草" autocomplete="off">
+      <div class="chips" id="mtags" role="group" aria-label="食べたものの種類（あてはまるものを選ぶ）">
+        <button class="chip" type="button" data-mt="主" aria-pressed="false">ごはん・パン・めん</button>
+        <button class="chip" type="button" data-mt="菜" aria-pressed="false">肉・魚・卵・豆</button>
+        <button class="chip" type="button" data-mt="副" aria-pressed="false">野菜・きのこ・海藻</button>
+      </div>
+      <div class="row">
+        <button class="btn primary" id="madd">記録する</button>
+        <button class="btn" id="mwater">お水・お茶を1杯飲んだ</button>
+      </div>
+      <p class="msg" id="mmsg" aria-live="polite"></p>
+      <div id="mtoday"></div>
+      <h4>ふりかえりのヒント</h4>
+      <div id="mhint"></div>
+      <details><summary>これまでの記録（直近7日）</summary><div id="mhist"></div></details>
+    </div>
+
+    <div class="card">
+      <h3>花の飾り方</h3>
+      <p class="muted">旬の花を、長くきれいに楽しむ基本です。</p>
+      <div id="fdeck"></div>
+    </div>
+  </section>
+
+  <!-- 自然農法研究倶楽部 -->
+  <section class="view" id="v-farm" hidden aria-label="自然農法研究倶楽部">
+    <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
+    <h2>自然農法研究倶楽部（試作）</h2>
+    <div class="notice"><b>この画面は試作です</b>　書いたことは、この端末の中だけに残ります。ほかの会員には見えません。みんなで共有する機能は、運営の確認の仕組みを作ってから加えます。</div>
+
+    <p>家庭菜園とプランター菜園が中心の倶楽部です。ベランダや庭先の小さな畑から、気軽に始められます。</p>
+    <div class="card">
+      <h3>倶楽部に参加する</h3>
+      <label class="row" style="gap:10px;align-items:center"><input type="checkbox" id="farmjoin" style="width:28px;height:28px"> <span>参加します（いつでもやめられます）</span></label>
+      <p class="muted" id="farmnext">今度の集まり：まだ予定はありません。</p>
+    </div>
+
+    <div class="card">
+      <h3>栽培ノート</h3>
+      <p style="font-size:1.05rem"><b>育っても、育たなくても、記録を残しませんか。</b><br>精一杯、あなたのために育った花や野菜です。愛でてあげましょう。</p>
+      <p class="muted">写真と一言で、かんたんに書きとめます。写真は、撮った場所の情報を消して、この端末の中に保存します。</p>
+      <label for="fphoto">写真（なくても構いません）</label>
+      <input id="fphoto" type="file" accept="image/*" style="min-height:48px">
+      <img id="fprev" alt="えらんだ写真" hidden style="max-width:100%;max-height:220px;border-radius:8px;align-self:flex-start">
+      <label for="fcrop">作物・花</label>
+      <input id="fcrop" type="text" maxlength="20" placeholder="例：ミニトマト、大根" autocomplete="off">
+      <label for="fplace">場所</label>
+      <select id="fplace"><option>プランター</option><option>ベランダの鉢</option><option>庭の畑</option><option>家庭菜園（貸し農園など）</option></select>
+      <label for="fwork">作業</label>
+      <select id="fwork"><option>種まき</option><option>苗の植えつけ</option><option>水やり</option><option>草とり</option><option>収穫</option><option>観察</option></select>
+      <label for="fmemo">ひとこと</label>
+      <input id="fmemo" type="text" maxlength="80" placeholder="例：芽が出ました" autocomplete="off">
+      <button class="btn primary" id="fadd" type="button" style="align-self:flex-start">ノートに書く</button>
+      <p class="msg" id="fmsg" aria-live="polite"></p>
+      <div id="flist"></div>
+    </div>
+
+    <div class="card">
+      <h3>安全のために</h3>
+      <ul>
+        <li>貸し農園や他の方の畑・庭は、持ち主や管理者の許可をもらってから入ります。他の人の作物は、取りません。</li>
+        <li>夏の水やりや作業は、暑い時間をさけます。水分をとり、少しでも具合が悪いときは、やめて休みます。</li>
+        <li>重い土や肥料の袋、大きな鉢は、無理に持ちません。腰を痛めないよう、小分けにして運びます。</li>
+        <li>ベランダの鉢は、落ちたり倒れたりしないよう、手すりの外に置きません。台風や強風の前には、中に入れます。</li>
+        <li>水やりや落ち葉、においなどで、近所の方の迷惑にならないよう気をつけます。</li>
+        <li>ハサミや園芸道具は、ていねいに扱います。一人で畑に出るときは、家族に出かけることを伝えます。</li>
+        <li>農薬や肥料を使うときは、ラベルの使い方を守ります。</li>
+        <li>育てたものを食べるときは、よく洗い、確かでないものは食べません。</li>
+        <li>持病のある方、体力に不安のある方は、作業の前に、かかりつけのお医者さんに相談してください。</li>
+        <li>作物の売り買いは、いまは扱いません。</li>
+      </ul>
+      <p class="muted">「自然農法」のやり方や考え方は、人によってさまざまです。ここでは、効果や収穫量をお約束するものではありません。</p>
+    </div>
+  </section>
+
+  <!-- 調べる -->
+  <section class="view" id="v-ask" hidden aria-label="調べる">
+    <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
+    <h2>調べる</h2>
+    <div class="card">
+      <h3>わからないことを聞く</h3>
+      <p class="muted">声か文字で聞いてください。例：「クリエイティブとは何ですか」「還付金とは何ですか」</p>
+      <input id="askin" type="text" maxlength="200" placeholder="ここに書くか、「声で聞く」を押します" autocomplete="off" aria-label="聞きたいこと">
+      <div class="row">
+        <button class="btn primary" id="asksend" type="button">調べる</button>
+        <button class="btn" id="askmic" type="button">声で聞く</button>
+      </div>
+      <p class="msg" id="askmsg" aria-live="polite"></p>
+      <div id="askans" hidden>
+        <div class="card" style="background:var(--surface)"><p id="asktext" style="white-space:pre-wrap;margin:0"></p></div>
+        <div class="row">
+          <button class="btn" id="askspeak" type="button">声で聞く（読み上げ）</button>
+          <a class="btnlink" id="askweb" href="#" target="_blank" rel="noopener">ほかのサイトで調べる</a>
+        </div>
+      </div>
+      <div class="notice"><b>ご注意</b>　AIの説明です。まちがっていたり、最新でなかったりすることがあります。お金、健康、法律のような大事なことは、ご家族や専門の窓口に、必ず確認してください。</div>
+    </div>
+
+    <div class="card" id="scamcard">
+      <h3>詐欺かな？と思ったら</h3>
+      <p><b>お金の話が出たら、まず詐欺を疑ってください。</b></p>
+      <ul>
+        <li>「息子です」「孫です」「番号が変わった」「風邪で声が違う」「会社のお金を使いこんだ」。お金を頼む電話は、オレオレ詐欺の典型です。</li>
+        <li>「還付金があります」と言われても、ATMで還付金は受け取れません。</li>
+        <li>警察、銀行、役所を名乗っても、キャッシュカードや暗証番号を、教えない・渡さないでください。</li>
+        <li>「急いで」「だれにも言わないで」と言われたら、特に危険です。</li>
+        <li>その場で答えず、<b>いったん電話を切って</b>、ご家族や、自分で調べた番号に確かめてください。</li>
+        <li>留守番電話や、迷惑電話を防ぐ機能を使うと、被害が防げます。</li>
+      </ul>
+      <p><b>相談先</b></p>
+      <div class="row">
+        <a class="btnlink" href="tel:188">消費者ホットライン　188</a>
+        <a class="btnlink" href="tel:%239110">警察相談専用電話　#9110</a>
+        <a class="btnlink danger" href="tel:110">いますぐ警察　110</a>
+      </div>
+      <p class="muted">お金をだまし取られそうなとき、だまされたかもしれないときは、すぐに110へ電話してください。</p>
+    </div>
+  </section>
+
+  <!-- お話する -->
+  <section class="view" id="v-talk" hidden aria-label="お話する">
+    <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
+    <h2>お話する　10分間</h2>
+    <p class="muted">お話の相手を選んでください。</p>
+    <div class="chips" id="tpartners" role="group" aria-label="お話の相手"></div>
+    <div class="chips" id="tvariants" role="group" aria-label="すがた" hidden></div>
+    <div class="chips" id="texp" role="group" aria-label="表情"></div>
+    <div class="card">
+      <div class="talkcard">
+        <div class="avatar" id="tavatar" aria-hidden="true">イラスト<br>準備中</div>
+        <div class="bubble"><b id="tname"></b><p id="tline" style="margin-top:4px"></p></div>
+      </div>
+      <div class="card" id="favbox" style="background:var(--surface)">
+        <label for="favname"><b>この子に名前をつける</b></label>
+        <input id="favname" type="text" maxlength="12" placeholder="例：さくら、ポチ" autocomplete="off">
+        <div class="row">
+          <button class="btn primary" id="favsave">この子に決める（お気に入り）</button>
+          <button class="btn" id="favdel" hidden>名前を消す</button>
+        </div>
+        <p class="msg" id="favmsg" aria-live="polite"></p>
+        <div class="chips" id="favlist" role="group" aria-label="お気に入りの子"></div>
+      </div>
+      <button class="btn" id="tspeak" style="align-self:flex-start">声を聞く（口パクの試し）</button>
+      <p class="msg" id="tmsg" aria-live="polite"></p>
+      <div class="notice"><b>相手は、AIが演じています</b>　実在の人ではありません。お孫さんなどの役も、AIが演じる役です。医療・法律・お金のことは、答えられません。</div>
+      <button class="btn primary bigbtn" id="chatstart" type="button">お話をはじめる</button>
+      <div id="chatbox" hidden>
+        <div id="chatlog" aria-live="polite" style="display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto"></div>
+        <label for="chatin">お話しすること</label>
+        <input id="chatin" type="text" maxlength="200" placeholder="ここに書いて「送る」を押します" autocomplete="off">
+        <div class="row">
+          <button class="btn primary" id="chatsend" type="button">送る</button>
+          <button class="btn" id="chatmic" type="button">声で話す</button>
+          <button class="btn" id="chatend" type="button">おわる</button>
+        </div>
+        <p class="msg" id="chatmsg" aria-live="polite"></p>
+      </div>
+      <p class="muted" id="chatnote"></p>
+      <div class="card" style="background:var(--surface)">
+        <h4 style="margin:0">今日のお話の時間と料金（目安）</h4>
+        <p id="usetalk" style="margin:4px 0"></p>
+        <p class="muted" style="margin:0">料金の決まり：1日10分まで基本料金に含みます。11分目からは10分ごとに30円、1日の最大は60分、月の上限は6,000円です。この試作では、請求はしません。目安の表示だけです。</p>
+      </div>
+      <p class="muted">声で話すボタンは、端末やブラウザによって、音声を外部の会社に送って文字にします。使いたくない方は、文字で入れてください。</p>
+    </div>
+    <div class="notice"><b>お読みください</b>　お話の相手は、AIがつくったキャラクターです。実際のお孫さんや、ご友人、ご近所の方ではありません。本物のご家族やお友達とも、ぜひお話しください。</div>
+  </section>
+
+  <footer>
+    <p>試作版です。動画の再生は、ご自分のサイトに置いたときに、ページの中で動きます。天気は手入力、今日の人物は見本の一覧から選んでいます。AIとの自由な会話は、費用と回数を決めてから加えます。</p>
+  </footer>
+</div>
+
+
+<button class="sosbtn" id="sosbtn" type="button" aria-haspopup="dialog" hidden>たすけて</button>
+<div class="sosover" id="sosover" hidden>
+  <div class="sosdlg" role="dialog" aria-modal="true" aria-labelledby="sostitle">
+    <h2 id="sostitle" style="margin:0">たすけが必要ですか？</h2>
+    <div class="notice"><b>命にかかわるとき</b>は、まず119に電話してください。ケセラは、119の代わりにはなりません。</div>
+    <a class="btnlink danger" href="tel:119" id="sos119">119に電話する</a>
+    <p class="muted" id="sosnone" hidden>ご家族の連絡先が、まだ登録されていません。いちど「やめる」を押して、ホーム画面の「緊急連絡先」に入れてください。</p>
+    <a class="btnlink primary" href="#" id="soscall">ご家族に電話する</a>
+    <button class="btn primary" id="sosloc" type="button">いまの場所を、ご家族に知らせる</button>
+    <div id="sosresult" hidden>
+      <p class="msg" id="sosmsg" aria-live="polite"></p>
+      <a class="btnlink primary" href="#" id="sossms">メッセージ（SMS）で送る</a>
+      <a class="btnlink" href="#" id="sosmail" style="margin-top:8px">メールで送る</a>
+    </div>
+    <button class="btn" id="sosclose" type="button">やめる</button>
+    <p class="muted">場所を知らせるボタンを押すと、送る画面が開きます。ご本人が送信を押すまで、送られません。</p>
+  </div>
+</div>
+<aside class="guide" id="guide" aria-label="案内係（AI）">
+  <div class="guide-in">
+    <div class="g-avatar" id="gavatar" aria-hidden="true"></div>
+    <div class="g-body">
+      <b class="g-name">案内係（AI）</b>
+      <p id="gtext" aria-live="polite"></p>
+      <div class="row">
+        <button class="btn small" id="gspeak">声で聞く</button>
+        <button class="btn small" id="gauto" aria-pressed="false">画面ごとに自動で話す</button>
+        <button class="btn small" id="gmin">しまう</button>
+      </div>
+    </div>
+  </div>
+</aside>
+<button class="btn primary gopen" id="gopen" hidden>案内係をよぶ</button>
+
+
+
+
+<dialog class="design-dialog trip-dialog" id="tripDialog" aria-labelledby="tripTitle" aria-describedby="tripIntro">
+  <form id="tripForm" class="design-content" novalidate>
+    <div class="design-head"><div><h2 id="tripTitle">お出かけを調べる</h2><p class="muted" id="tripIntro">出発地と行き先を入れてください。</p></div><button class="btn design-close" id="tripClose" type="button" aria-label="お出かけの確認を閉じる">×</button></div>
+    <fieldset class="trip-mode-group"><legend>① 移動のしかた</legend>
+      <label><input name="tripMode" type="radio" value="walk"><span class="trip-mode-face">🚶 歩く</span></label>
+      <label><input name="tripMode" type="radio" value="train" checked><span class="trip-mode-face">🚃 電車</span></label>
+      <label><input name="tripMode" type="radio" value="bus"><span class="trip-mode-face">🚌 バス</span></label>
+      <label><input name="tripMode" type="radio" value="taxi"><span class="trip-mode-face">🚕 タクシー</span></label>
+    </fieldset>
+    <div class="trip-fields">
+      <label for="tripOrigin">② 出発地</label><div class="trip-origin-row"><input id="tripOrigin" type="text" maxlength="180" placeholder="駅・バス停・建物の名前や住所" aria-describedby="tripPosition" enterkeyhint="next"><button class="btn" id="tripLocate" type="button">現在地を入れる</button></div>
+      <p class="trip-status" id="tripPosition" role="status" aria-live="polite"></p>
+      <label for="tripDestination">③ 行き先</label><input id="tripDestination" type="text" maxlength="180" placeholder="例：熊本駅・○○病院・住所" enterkeyhint="search">
+      <p class="design-hint">同じ名前の場所があるときは、市区町村も入れてください。</p>
+    </div>
+    <section class="walk-options" id="walkOptions" aria-labelledby="walkTitle" hidden>
+      <h3 id="walkTitle">階段や段差を避けますか？</h3>
+      <p class="design-hint">徒歩ルートには、階段や段差が含まれる可能性があります。ここでは実際の有無をまだ確認できていません。</p>
+      <div class="walk-choices"><label><input type="radio" name="walkAvoid" value="yes" checked><span>避けたい<br><span class="design-hint">Googleマップで階段回避を設定する</span></span></label><label><input type="radio" name="walkAvoid" value="no"><span>通常の徒歩ルートを調べる</span></label></div>
+      <div class="walk-guide" id="walkGuide">
+        <b>階段回避は、Googleマップで設定します</b>
+        <ol><li>下のボタンで、出発地と行き先を確認します。</li><li>徒歩ルートを開き、画面上の「…」→「ルートのオプション」から「車椅子対応」をオンにします。</li><li>条件に合う別の経路が表示されたら、道順を確認して選びます。</li></ol>
+        <p class="design-hint">スマートフォンのGoogleマップアプリ・対応地域で利用できます。表示名は端末で異なる場合があります。候補がない場合もあります。</p>
+        <p class="design-hint">小さな段差や工事など、地図に載らない箇所もあります。入口やエレベーターの状況は、現地の案内も確認してください。</p>
+        <a class="link" href="https://support.google.com/maps/answer/6396990?hl=ja" target="_blank" rel="noopener noreferrer">Googleマップのバリアフリー案内を見る</a>
+      </div>
+    </section>
+    <div class="trip-info"><b id="tripInfoTitle">時刻・運賃をGoogleマップで確認</b><p id="tripAdvice"></p><p id="tripTimeHelp"></p></div>
+    <p class="trip-status" id="tripMessage" role="status" aria-live="polite"></p>
+    <button class="btn primary trip-submit" id="tripSearch" type="submit">経路・時刻・運賃を調べる</button>
+    <section class="trip-links" id="tripResults" aria-label="移動の確認" hidden>
+      <dl class="trip-summary"><dt>出発地</dt><dd id="tripSummaryOrigin"></dd><dt>行き先</dt><dd id="tripSummaryDestination"></dd></dl>
+      <a class="btnlink primary" id="tripMap" href="https://www.google.com/maps/" referrerpolicy="no-referrer">Googleマップで確認する</a>
+      <div class="trip-links" id="tripTaxi" hidden>
+        <p>タクシーは、次の配車サービスで料金や手配内容を確認できます。</p>
+        <button class="btn" id="tripCopy" type="button">行き先をコピーする</button>
+        <a class="btnlink primary" id="tripGo" href="https://go.goinc.jp/" target="_blank" rel="noopener noreferrer">GOの案内・アプリへ進む</a>
+        <p class="design-hint">GO側で乗車場所と行き先を入力してください。料金や迎車時間・対応エリアを確認し、最後にGOで配車を確定します。迎車時間は手配状況により変わります。</p>
+      </div>
+    </section>
+    <p class="design-hint">経路を開くと、出発地・行き先をGoogleマップに渡します。ケセラには保存しません。</p>
+    <button class="btn" id="tripCancel" type="button">閉じる</button>
+  </form>
+</dialog>
+
+<dialog class="design-dialog location-dialog" id="locationDialog" aria-labelledby="locationTitle" aria-describedby="locationStatus">
+  <div class="design-content">
+    <div class="design-head"><h2 id="locationTitle">いま、どこにいる？</h2><button class="btn design-close" id="locationClose" type="button" aria-label="現在地の確認を閉じる">×</button></div>
+    <p class="location-status" id="locationStatus" role="status" aria-live="polite"></p>
+    <p class="location-help" id="locationHelp">位置情報の確認が出たら「許可」を押してください。現在地がわかるとGoogleマップを開きます。</p>
+    <a class="btnlink primary" id="locationMap" href="https://www.google.com/maps/" referrerpolicy="no-referrer" hidden>Googleマップを開く</a>
+    <button class="btn" id="locationRetry" type="button" hidden>もう一度、現在地を調べる</button>
+    <p class="design-hint">地図を開くと、現在地がGoogleマップに渡ります。ケセラには位置情報を保存しません。</p>
+    <button class="btn" id="locationCancel" type="button">閉じる</button>
+  </div>
+</dialog>
+
+<dialog class="design-dialog" id="designDialog" aria-labelledby="designTitle" aria-describedby="designIntro">
+  <div class="design-content">
+    <div class="design-head"><div><h2 id="designTitle">お好きなデザインに</h2><p class="muted" id="designIntro">雰囲気と色を選ぶと、画面にお試し表示します。</p></div><button class="btn design-close" id="designClose" type="button" aria-label="変更をやめて閉じる">×</button></div>
+    <fieldset><legend>① 雰囲気を選ぶ</legend><div class="design-grid"><label class="design-choice"><input type="radio" name="designLook" value="gentle"><span class="choice-face"><span class="style-sample sample-gentle" aria-hidden="true">◡</span><span>優しい</span></span></label><label class="design-choice"><input type="radio" name="designLook" value="flowers"><span class="choice-face"><span class="style-sample sample-flowers" aria-hidden="true">✿ ❀ ✿</span><span>花いっぱい</span></span></label><label class="design-choice"><input type="radio" name="designLook" value="stylish"><span class="choice-face"><span class="style-sample sample-stylish" aria-hidden="true"></span><span>スタイリッシュ</span></span></label><label class="design-choice"><input type="radio" name="designLook" value="japanese"><span class="choice-face"><span class="style-sample sample-japanese" aria-hidden="true">和</span><span>和風</span></span></label><label class="design-choice"><input type="radio" name="designLook" value="western"><span class="choice-face"><span class="style-sample sample-western" aria-hidden="true">❦</span><span>洋風</span></span></label><label class="design-choice"><input type="radio" name="designLook" value="photo"><span class="choice-face"><span class="style-sample sample-photo" aria-hidden="true"></span><span>好きな写真</span></span></label></div></fieldset>
+    <fieldset><legend>② 明るい色を選ぶ</legend><div class="design-grid"><label class="design-choice color-choice"><input type="radio" name="designColor" value="blue"><span class="choice-face"><span class="color-dot" style="--swatch:#9ed5f4" aria-hidden="true"></span><span>ブルー</span></span></label><label class="design-choice color-choice"><input type="radio" name="designColor" value="pink"><span class="choice-face"><span class="color-dot" style="--swatch:#f5bcd0" aria-hidden="true"></span><span>ピンク</span></span></label><label class="design-choice color-choice"><input type="radio" name="designColor" value="mint"><span class="choice-face"><span class="color-dot" style="--swatch:#a8ddc5" aria-hidden="true"></span><span>ミント</span></span></label><label class="design-choice color-choice"><input type="radio" name="designColor" value="lavender"><span class="choice-face"><span class="color-dot" style="--swatch:#cdc0ee" aria-hidden="true"></span><span>ラベンダー</span></span></label><label class="design-choice color-choice"><input type="radio" name="designColor" value="peach"><span class="choice-face"><span class="color-dot" style="--swatch:#f7c6a8" aria-hidden="true"></span><span>ピーチ</span></span></label><label class="design-choice color-choice"><input type="radio" name="designColor" value="yellow"><span class="choice-face"><span class="color-dot" style="--swatch:#f5df91" aria-hidden="true"></span><span>イエロー</span></span></label></div></fieldset>
+    <section class="photo-settings" id="photoSettings" aria-label="背景の写真" hidden>
+      <b>③ お好きな写真を選ぶ</b><p class="design-hint">お花や風景、ご家族の思い出など。文字は白いカードに表示します。</p>
+      <img class="photo-preview" id="designPhotoPreview" alt="選んだ背景写真" hidden>
+      <div class="row"><label class="btn photo-picker">写真を選ぶ<input type="file" id="designPhotoFile" accept="image/*" aria-label="背景にする写真を選ぶ"></label><button class="btn" id="designPhotoRemove" type="button" hidden>写真を外す</button></div>
+      <p class="design-hint">写真はこのブラウザに保存します。ケセラから送信することはありません。</p>
+    </section>
+    <p class="design-hint">選んだデザインは、次に開いたときも使えます。</p>
+    <p id="designMessage" role="status" aria-live="polite"></p>
+    <div><button class="btn small" id="designReset" type="button">最初のデザインに戻す</button></div>
+  </div>
+  <div class="design-footer"><button class="btn primary" id="designSave" type="button">このデザインにする</button><button class="btn" id="designCancel" type="button">変更をやめる</button></div>
+</dialog>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  function load(k, d) { try { var v = JSON.parse(localStorage.getItem(k)); return v === null || v === undefined ? d : v; } catch (e) { return d; } }
+  function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+
+
+
+  /* お出かけ：公式の地図リンクを使い、配車注文は外部サービスで確認する。 */
+  var tripDialog=$('tripDialog'),tripMode='train',tripGps=null,tripJob=0,tripTimer=null,tripScroll='',tripOpener=null;
+  var TRIP_NAMES={walk:'徒歩',train:'電車',bus:'バス',taxi:'タクシー'};
+  function clearTripTimer(){if(tripTimer!==null){clearTimeout(tripTimer);tripTimer=null;}}
+  function resetTripResults(){ $('tripResults').hidden=true; $('tripTaxi').hidden=true; $('tripMap').href='https://www.google.com/maps/'; }
+  function setTripMode(mode){
+    tripMode=Object.prototype.hasOwnProperty.call(TRIP_NAMES,mode)?mode:'train';
+    document.querySelectorAll('[name="tripMode"]').forEach(function(el){el.checked=el.value===tripMode;});
+    $('tripTitle').textContent=TRIP_NAMES[tripMode]+(tripMode==='taxi'?'を呼ぶ準備':'でお出かけ');
+    $('tripInfoTitle').textContent=tripMode==='taxi'?'タクシーの料金・配車を確認':'時刻・運賃をGoogleマップで確認';
+    $('tripAdvice').textContent=tripMode==='taxi'?'まず車での所要時間を確認できます。料金はGO側で確認してください。出発地・行き先はGO側でも入力が必要です。':'電車・バス共通の経路検索が開きます。開いた先で「'+TRIP_NAMES[tripMode]+'」の経路を選んでください。';
+    $('tripTimeHelp').textContent=tripMode==='taxi'?'迎車時間はGOの手配画面で確認します。車での所要時間には、迎車の待ち時間は含みません。':'発車・到着時刻、乗り換え、運賃（対応路線）を確認できます。出発日時を変えるときは、地図の出発時刻を変更してください。';
+    $('tripSearch').textContent=tripMode==='taxi'?'所要時間・配車の入口を確認':'経路・時刻・運賃を調べる';
+    $('walkOptions').hidden=tripMode!=='walk';
+    if(tripMode==='walk'){
+      $('tripTitle').textContent='歩く・ルート案内';
+      $('tripInfoTitle').textContent='徒歩の道順・所要時間を確認';
+      $('tripAdvice').textContent='出発地と行き先をGoogleマップに渡し、徒歩の道順を開きます。';
+      $('tripTimeHelp').textContent='階段・段差の自動検知や、回避ルートへの自動切り替えは行いません。';
+    }
+    syncWalkOptions(); $('tripMessage').textContent='';resetTripResults();
+  }
+  function avoidWalkingSteps(){var el=document.querySelector('[name="walkAvoid"][value="yes"]');return !!(el&&el.checked);}
+  function syncWalkOptions(){
+    var avoid=avoidWalkingSteps();$('walkGuide').hidden=!avoid;
+    if(tripMode==='walk')$('tripSearch').textContent=avoid?'徒歩ルートと階段回避の設定を確認':'徒歩のルート案内を開く';
+  }
+  function locateTrip(){
+    var job=++tripJob,settled=false;clearTripTimer();tripGps=null;
+    if($('tripOrigin').value==='現在地（自動入力）')$('tripOrigin').value='';
+    resetTripResults();$('tripLocate').disabled=true;
+    $('tripPosition').textContent='現在地を確認しています。位置情報の確認が出たら「許可」を押してください。';
+    function active(){return job===tripJob&&tripDialog.open&&!settled;}
+    function fail(message){if(!active())return;settled=true;clearTripTimer();$('tripLocate').disabled=false;$('tripPosition').textContent=message+' 出発地の欄に、駅・バス停・建物名や住所を入れても調べられます。';}
+    if(window.isSecureContext===false||!navigator.geolocation){fail('この開き方では現在地を取得できません。');return;}
+    tripTimer=setTimeout(function(){fail('現在地の確認に時間がかかっています。');},20000);
+    try{navigator.geolocation.getCurrentPosition(function(p){
+      if(!active())return;var c=p&&p.coords;
+      if(!c||typeof c.latitude!=='number'||typeof c.longitude!=='number'||!isFinite(c.latitude)||!isFinite(c.longitude)||Math.abs(c.latitude)>90||Math.abs(c.longitude)>180){fail('現在地を確認できませんでした。');return;}
+      settled=true;clearTripTimer();$('tripLocate').disabled=false;
+      tripGps={latitude:c.latitude,longitude:c.longitude,at:Date.now()};$('tripOrigin').value='現在地（自動入力）';
+      var accuracy=typeof c.accuracy==='number'&&isFinite(c.accuracy)&&c.accuracy>=0?c.accuracy:null;
+      var distance=accuracy===null?'':accuracy>=1000?'約'+(Math.round(accuracy/100)/10)+'km':'約'+Math.ceil(accuracy)+'m';
+      $('tripPosition').textContent='現在地を入れました。'+(distance?'誤差の目安：'+distance+'。':'')+(accuracy>1000?'誤差が大きいため、出発地に近くの建物名や住所を入れると確かめやすくなります。':'必要なら出発地を文字で書き替えられます。');
+    },function(e){fail(e&&e.code===1?'位置情報が許可されていません。':e&&e.code===3?'現在地の確認に時間がかかっています。':'現在地を取得できませんでした。');},{enableHighAccuracy:true,timeout:15000,maximumAge:0});}catch(e){fail('現在地を取得できませんでした。');}
+  }
+  function openTrip(mode,opener){
+    tripOpener=opener||$('tripOpen');tripScroll=document.body.style.overflow;document.body.style.overflow='hidden';
+    $('tripOrigin').value='';$('tripDestination').value='';tripGps=null;setTripMode(mode);tripDialog.showModal();locateTrip();
+  }
+  function closeTrip(){
+    tripJob++;clearTripTimer();tripGps=null;$('tripLocate').disabled=false;resetTripResults();
+    $('tripOrigin').value='';$('tripDestination').value='';tripDialog.close();document.body.style.overflow=tripScroll;
+    (tripOpener||$('tripOpen')).focus();
+  }
+  $('tripOpen').addEventListener('click',function(){openTrip('train',this);});
+  document.addEventListener('click',function(e){var button=e.target.closest('[data-trip-mode]');if(button)openTrip(button.dataset.tripMode,button);});
+  document.querySelectorAll('[name="tripMode"]').forEach(function(el){el.addEventListener('change',function(){if(this.checked)setTripMode(this.value);});});
+  document.querySelectorAll('[name="walkAvoid"]').forEach(function(el){el.addEventListener('change',function(){syncWalkOptions();resetTripResults();$('tripMessage').textContent='';});});
+  $('tripLocate').addEventListener('click',locateTrip);
+  $('tripOrigin').addEventListener('input',function(){tripJob++;clearTripTimer();tripGps=null;$('tripLocate').disabled=false;resetTripResults();$('tripPosition').textContent='入力した出発地から調べます。';$('tripMessage').textContent='';});
+  $('tripDestination').addEventListener('input',function(){resetTripResults();$('tripMessage').textContent='';});
+  $('tripForm').addEventListener('submit',function(e){
+    e.preventDefault();var origin=$('tripOrigin').value.trim(),destination=$('tripDestination').value.trim();
+    if(!origin){$('tripMessage').textContent='出発地を入れるか、「現在地を入れる」を押してください。';$('tripOrigin').focus();return;}
+    if(!destination){$('tripMessage').textContent='行き先を入れてください。';$('tripDestination').focus();return;}
+    if(origin==='現在地（自動入力）'&&!tripGps){$('tripMessage').textContent='「現在地を入れる」で確認するか、出発地を文字で入れてください。';$('tripLocate').focus();return;}
+    if(tripGps&&Date.now()-tripGps.at>120000){locateTrip();$('tripMessage').textContent='移動している可能性があるため、現在地を確認し直しています。確認後に、もう一度調べるボタンを押してください。';return;}
+    var point=tripGps?tripGps.latitude.toFixed(6)+','+tripGps.longitude.toFixed(6):origin;
+    var url='https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent(point)+'&destination='+encodeURIComponent(destination)+'&travelmode='+(tripMode==='taxi'?'driving':tripMode==='walk'?'walking':'transit');
+    if(url.length>2048){$('tripMessage').textContent='場所の名前が長いため、短い名前や住所にしてお試しください。';return;}
+    $('tripSummaryOrigin').textContent=origin;$('tripSummaryDestination').textContent=destination;
+    $('tripMap').href=url;$('tripMap').textContent=tripMode==='taxi'?'車での所要時間をGoogleマップで見る':'Googleマップで時刻・運賃を見る';
+    $('tripResults').hidden=false;$('tripTaxi').hidden=tripMode!=='taxi';
+    $('tripMessage').textContent=tripMode==='taxi'?'下のGOへのボタンから、料金と配車を確認してください。':'出発地と行き先を地図に渡します。開いた先で'+TRIP_NAMES[tripMode]+'の経路を選んでください。';
+    if(tripMode==='walk'){
+      $('tripMap').textContent=avoidWalkingSteps()?'徒歩ルートを開き、階段回避を設定':'Googleマップで徒歩ルートを見る';
+      $('tripMessage').textContent=avoidWalkingSteps()?'この画面からは階段回避を設定できません。上の手順に沿って、Googleマップの「車椅子対応」を確認してください。':'Googleマップで徒歩のルート案内を開きます。';
+      if(avoidWalkingSteps()){$('tripMap').focus();return;}
+    }
+    if(tripMode==='taxi'){$('tripMap').focus();return;}
+    try{window.location.assign(url);}catch(er){$('tripMessage').textContent='下のGoogleマップへのボタンを押してください。';}
+  });
+  $('tripCopy').addEventListener('click',function(){
+    var value=$('tripDestination').value.trim(),job=tripJob;
+    function fallback(){if(job!==tripJob||!tripDialog.open)return;$('tripMessage').textContent='行き先の欄の文字を選び、コピーしてGO側に入力してください。';$('tripDestination').focus();$('tripDestination').select();}
+    if(!value)return;
+    if(navigator.clipboard&&navigator.clipboard.writeText){try{navigator.clipboard.writeText(value).then(function(){if(job===tripJob&&tripDialog.open)$('tripMessage').textContent='行き先をコピーしました。GO側の行き先欄に貼り付けられます。';},fallback);}catch(e){fallback();}}else fallback();
+  });
+  ['tripClose','tripCancel'].forEach(function(id){$(id).addEventListener('click',closeTrip);});
+  tripDialog.addEventListener('cancel',function(e){e.preventDefault();closeTrip();});
+  window.addEventListener('pageshow',function(e){if(e.persisted&&tripDialog.open)closeTrip();});
+
+  /* 現在地：押したときだけ取得し、Googleマップを開く。座標は保存しない。 */
+  var locationDialog=$('locationDialog'),locationJob=0,locationTimer=null,locationScroll='';
+  function clearLocationTimer(){if(locationTimer!==null){clearTimeout(locationTimer);locationTimer=null;}}
+  function closeLocation(){
+    locationJob++; clearLocationTimer(); locationDialog.close(); document.body.style.overflow=locationScroll;
+    $('locationMap').href='https://www.google.com/maps/'; $('locationBtn').focus();
+  }
+  function locateNow(){
+    var job=++locationJob,settled=false; clearLocationTimer();
+    $('locationStatus').textContent='現在地を調べています…';
+    $('locationHelp').textContent='位置情報の確認が出たら「許可」を押してください。現在地がわかるとGoogleマップを開きます。';
+    $('locationRetry').hidden=true; $('locationMap').hidden=true;
+    $('locationMap').href='https://www.google.com/maps/'; $('locationMap').textContent='Googleマップを開く';
+    function active(){return job===locationJob && locationDialog.open && !settled;}
+    function fail(message){
+      if(!active())return; settled=true;clearLocationTimer();
+      $('locationStatus').textContent=message;
+      $('locationHelp').textContent='下のボタンからGoogleマップを開き、地図の現在地マークを押して確認することもできます。';
+      $('locationMap').hidden=false; $('locationRetry').hidden=false;
+    }
+    if(window.isSecureContext===false){fail('この開き方では現在地を取得できません。Googleマップで確認してください。');return;}
+    if(!navigator.geolocation){fail('この端末では現在地を取得できません。Googleマップで確認してください。');return;}
+    locationTimer=setTimeout(function(){fail('現在地の確認に時間がかかっています。電波のよい場所でもう一度お試しください。');},20000);
+    try{
+      navigator.geolocation.getCurrentPosition(function(position){
+        if(!active())return;
+        var c=position&&position.coords,lat=c&&c.latitude,lng=c&&c.longitude;
+        if(typeof lat!=='number'||typeof lng!=='number'||!isFinite(lat)||!isFinite(lng)||Math.abs(lat)>90||Math.abs(lng)>180){fail('現在地を確認できませんでした。もう一度お試しください。');return;}
+        settled=true;clearLocationTimer();
+        var url='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(lat.toFixed(6)+','+lng.toFixed(6));
+        var accuracy=typeof c.accuracy==='number'&&isFinite(c.accuracy)&&c.accuracy>=0?c.accuracy:null;
+        var errorText=accuracy===null?'':accuracy>=1000?'（誤差の目安：約'+(Math.round(accuracy/100)/10)+'km）':'（誤差の目安：約'+Math.ceil(accuracy)+'m）';
+        $('locationMap').href=url; $('locationMap').textContent='Googleマップで現在地を見る'; $('locationMap').hidden=false; $('locationRetry').hidden=false;
+        if(accuracy!==null&&accuracy>1000){
+          $('locationStatus').textContent='おおよその場所がわかりました。'+errorText;
+          $('locationHelp').textContent='位置に大きな誤差があります。地図を開いて周りの建物などと確かめるか、電波のよい場所でもう一度調べてください。';
+          return;
+        }
+        $('locationStatus').textContent='現在地がわかりました。Googleマップを開きます。'+errorText;
+        $('locationHelp').textContent='自動で開かない場合は、下の「Googleマップで現在地を見る」を押してください。';
+        try{window.location.assign(url);}catch(e){$('locationHelp').textContent='下の「Googleマップで現在地を見る」を押してください。';}
+      },function(error){
+        var message=error&&error.code===1?'位置情報が許可されていません。端末とブラウザの位置情報を許可して、もう一度お試しください。':error&&error.code===3?'現在地の確認に時間がかかっています。電波のよい場所でもう一度お試しください。':'現在地を取得できませんでした。端末の位置情報がオンになっているか確認してください。';
+        fail(message);
+      },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
+    }catch(e){fail('現在地を取得できませんでした。Googleマップで確認してください。');}
+  }
+  $('locationBtn').addEventListener('click',function(){
+    locationScroll=document.body.style.overflow; document.body.style.overflow='hidden'; locationDialog.showModal(); locateNow();
+  });
+  $('locationRetry').addEventListener('click',locateNow);
+  ['locationClose','locationCancel'].forEach(function(id){$(id).addEventListener('click',closeLocation);});
+  locationDialog.addEventListener('cancel',function(e){e.preventDefault();closeLocation();});
+  // 地図から「戻る」で復帰したときは、古い現在地を再表示しない。
+  window.addEventListener('pageshow',function(e){if(e.persisted&&locationDialog.open)closeLocation();});
+
+  /* デザイン：変更中はプレビュー、確定後にブラウザへ保存 */
+  var DESIGN_LOOKS = {gentle:'優しい',flowers:'花いっぱい',stylish:'スタイリッシュ',japanese:'和風',western:'洋風',photo:'好きな写真'};
+  var DESIGN_COLORS = {
+    blue:{label:'ブルー',bg:'#eef7fc',soft:'#e1f1fb',accent:'#276d99',line:'#cddfe9'},
+    pink:{label:'ピンク',bg:'#fff3f6',soft:'#fce4ed',accent:'#a43760',line:'#ead0dc'},
+    mint:{label:'ミント',bg:'#effaf5',soft:'#dbf1e5',accent:'#256c56',line:'#c9e2d6'},
+    lavender:{label:'ラベンダー',bg:'#f7f3ff',soft:'#ece4fc',accent:'#7050a1',line:'#dcd1eb'},
+    peach:{label:'ピーチ',bg:'#fff5ed',soft:'#ffeadb',accent:'#9b4d27',line:'#ecd6c5'},
+    yellow:{label:'イエロー',bg:'#fffbeb',soft:'#fff1be',accent:'#796012',line:'#e8ddb4'}
+  };
+  function cleanDesign(d) {
+    if (!d || typeof d !== 'object') d = {};
+    return {look:Object.prototype.hasOwnProperty.call(DESIGN_LOOKS,d.look)?d.look:'gentle',color:Object.prototype.hasOwnProperty.call(DESIGN_COLORS,d.color)?d.color:'blue',photo:typeof d.photo==='string' && /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(d.photo) && d.photo.length<2200000?d.photo:''};
+  }
+  var design = cleanDesign(load('kesera-design-v1',{})), designDraft = null, photoJob = 0, designScroll = '';
+  var designDialog = $('designDialog');
+  function copyDesign(d) { return {look:d.look,color:d.color,photo:d.photo}; }
+  function paintDesign(d) {
+    var root=document.documentElement,c=DESIGN_COLORS[d.color];
+    root.dataset.theme='light'; root.dataset.look=d.look;
+    root.style.setProperty('--bg',c.bg); root.style.setProperty('--accent-soft',c.soft); root.style.setProperty('--accent',c.accent); root.style.setProperty('--line',c.line);
+    root.style.setProperty('--photo',d.photo?'url("'+d.photo+'")':'none');
+    $('appearanceNote').textContent='いまのデザイン：'+DESIGN_LOOKS[d.look]+' ／ '+c.label;
+    if(typeof fitGuide==='function') fitGuide();
+  }
+  function syncDesign() {
+    document.querySelectorAll('[name="designLook"]').forEach(function(el){el.checked=el.value===designDraft.look;});
+    document.querySelectorAll('[name="designColor"]').forEach(function(el){el.checked=el.value===designDraft.color;});
+    $('photoSettings').hidden=designDraft.look!=='photo';
+    $('designPhotoPreview').hidden=!designDraft.photo; $('designPhotoRemove').hidden=!designDraft.photo;
+    if(designDraft.photo) $('designPhotoPreview').src=designDraft.photo; else $('designPhotoPreview').removeAttribute('src');
+    paintDesign(designDraft);
+  }
+  function finishDesign(commit) {
+    photoJob++; $('designSave').disabled=false;
+    if(!commit) paintDesign(design);
+    designDraft=null; designDialog.close(); document.body.style.overflow=designScroll;
+    $('designBtn').focus();
+  }
+  $('designBtn').addEventListener('click',function(){
+    designDraft=copyDesign(design); $('designMessage').textContent=''; $('designPhotoFile').value=''; syncDesign();
+    designScroll=document.body.style.overflow; document.body.style.overflow='hidden'; designDialog.showModal();
+  });
+  designDialog.addEventListener('change',function(e){
+    if(e.target.name==='designLook'||e.target.name==='designColor') {
+      if(e.target.name==='designLook'&&e.target.value!=='photo'){photoJob++;$('designSave').disabled=false;}
+      designDraft[e.target.name==='designLook'?'look':'color']=e.target.value; syncDesign();
+      $('designMessage').textContent=designDraft.look==='photo'&&!designDraft.photo?'「写真を選ぶ」から背景にする写真を選んでください。':'画面にお試し表示しています。';
+    }
+  });
+  ['designClose','designCancel'].forEach(function(id){$(id).addEventListener('click',function(){finishDesign(false);});});
+  designDialog.addEventListener('cancel',function(e){e.preventDefault();finishDesign(false);});
+  $('designReset').addEventListener('click',function(){photoJob++;$('designSave').disabled=false;designDraft={look:'gentle',color:'blue',photo:''};syncDesign();$('designMessage').textContent='最初のデザインをお試し表示しています。';});
+  $('designPhotoRemove').addEventListener('click',function(){photoJob++;$('designSave').disabled=false;designDraft.photo='';$('designPhotoFile').value='';syncDesign();$('designMessage').textContent='写真を外しました。別の写真を選べます。';});
+  $('designSave').addEventListener('click',function(){
+    if(designDraft.look==='photo'&&!designDraft.photo){$('designMessage').textContent='写真を選ぶか、ほかの雰囲気を選んでください。';$('designPhotoFile').focus();return;}
+    design=copyDesign(designDraft); var stored=true;
+    try{localStorage.setItem('kesera-design-v1',JSON.stringify(design));}catch(e){stored=false;}
+    finishDesign(true); paintDesign(design);
+    $('appearanceNote').textContent+=(stored?' に変更しました。':' に変更しました。このブラウザでは保存できないため、今回だけ使えます。');
+  });
+  $('designPhotoFile').addEventListener('change',function(){
+    var file=this.files&&this.files[0]; if(!file)return;
+    var job=++photoJob; $('designSave').disabled=false;
+    if(file.size>30*1024*1024){$('designMessage').textContent='写真が大きいため、30MB以下の写真を選んでください。';this.value='';return;}
+    $('designSave').disabled=true; $('designMessage').textContent='写真を読み込んでいます…';
+    var url=URL.createObjectURL(file),image=new Image();
+    function fail(){URL.revokeObjectURL(url);if(job!==photoJob||!designDraft)return;$('designSave').disabled=false;$('designPhotoFile').value='';$('designMessage').textContent='この写真は開けませんでした。JPEG・PNGなど別の写真を選んでください。';}
+    image.onload=function(){
+      if(job!==photoJob||!designDraft){URL.revokeObjectURL(url);return;}
+      try{
+        var scale=Math.min(1,1400/Math.max(image.naturalWidth,image.naturalHeight)),canvas=document.createElement('canvas');
+        canvas.width=Math.max(1,Math.round(image.naturalWidth*scale));canvas.height=Math.max(1,Math.round(image.naturalHeight*scale));
+        var cx=canvas.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,canvas.width,canvas.height);cx.drawImage(image,0,0,canvas.width,canvas.height);
+        designDraft.photo=canvas.toDataURL('image/jpeg',.8); designDraft.look='photo'; URL.revokeObjectURL(url); syncDesign();
+        $('designSave').disabled=false; $('designMessage').textContent='写真をお試し表示しています。「このデザインにする」で保存します。';
+      }catch(e){fail();}
+    }; image.onerror=fail; image.src=url;
+  });
+  paintDesign(design);
+  if(load('kesera-big',false)){document.documentElement.classList.add('big');$('sizeBtn').setAttribute('aria-pressed','true');$('sizeBtn').textContent='文字をもとの大きさに';}
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  var now = new Date();
+  var today = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
+  var WD = ['日', '月', '火', '水', '木', '金', '土'];
+
+  /* 今日の人物（見本の一覧） */
+  var PEOPLE = [
+    ['夏目漱石さん', '作家。熊本の第五高等学校で英語を教えた時期があります。小説『草枕』は、熊本の温泉地が舞台といわれます。'],
+    ['加藤清正さん', '戦国から江戸時代初めの武将。熊本城を築き、川の治水や新田づくりにも力を入れました。'],
+    ['宮本武蔵さん', '剣豪。晩年を熊本で過ごし、霊巌洞で『五輪書』を書いたと伝わります。'],
+    ['西郷隆盛さん', '薩摩出身で、明治維新の中心人物。鹿児島の城山で、1877年に亡くなりました。'],
+    ['菅原道真さん', '平安時代の学者・政治家。いまは学問の神様として、太宰府天満宮にまつられています。'],
+    ['福沢諭吉さん', '中津藩ゆかりの人物。慶應義塾を創設し、『学問のすゝめ』を著しました。'],
+    ['坂本龍馬さん', '土佐出身の志士。長崎で、貿易の組織「亀山社中」をつくったとされます。']
+  ];
+  function doy(d) { return Math.round((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - Date.UTC(d.getFullYear(), 0, 0)) / 86400000); }
+
+  /* ごあいさつ */
+  var name = load('kesera-name', '');
+  var days = load('kesera-days', []);
+  if (days.indexOf(today) < 0) { days.push(today); save('kesera-days', days); }
+  $('name').value = name;
+  var wxKey = load('kesera-wx', { min: 14, max: 22, wx: '晴れ' });
+  $('tmin').value = wxKey.min; $('tmax').value = wxKey.max; $('wxsel').value = wxKey.wx;
+
+  function hello() {
+    var h = new Date().getHours();
+    return h < 4 ? 'こんばんは' : h < 11 ? 'おはようございます' : h < 17 ? 'こんにちは' : 'こんばんは';
+  }
+  function renderHome() {
+    var nm = ($('name').value || '').trim();
+    $('greet').textContent = hello() + '、' + (nm || '〇〇') + 'さん。';
+    var mn = Number($('tmin').value), mx = Number($('tmax').value), wx = $('wxsel').value;
+    $('wx').textContent = (now.getMonth() + 1) + '月' + now.getDate() + '日（' + WD[now.getDay()] + '）。今日は最低' + mn + '度、最高' + mx + '度、' + wx + 'の予想です。';
+    var t = [];
+    if (mx >= 28) t.push('暑くなります。帽子と、こまめな水分をお忘れなく。');
+    else if (mx >= 20) t.push('薄手の羽織りがあると安心です。');
+    else if (mx >= 12) t.push('上着を一枚、お持ちください。');
+    else t.push('しっかり防寒して、お出かけください。');
+    if (mx - mn >= 10) t.push('朝晩の差が大きいので、脱ぎ着しやすい服が向いています。');
+    if (wx === '雨' || wx === '雪') t.push('足元が滑りやすいので、底の滑りにくい靴で。');
+    $('hint').textContent = t.join(' ');
+    var p = PEOPLE[doy(now) % PEOPLE.length];
+    $('pname').textContent = '今日は' + p[0] + 'です。';
+    $('ptext').textContent = p[1];
+    var n = days.length;
+    $('days').textContent = '今日で' + n + '日目です。' + (n === 1 ? 'はじめまして。今日から、ゆっくり始めましょう。' : n < 7 ? 'また来てくださって、うれしいです。よくがんばりましたね。' : '続けていらっしゃいます。すばらしいです。よくがんばりましたね。');
+  }
+  $('name').addEventListener('input', function () { save('kesera-name', this.value); renderHome(); });
+  ['tmin', 'tmax', 'wxsel'].forEach(function (id) {
+    $(id).addEventListener('input', function () {
+      save('kesera-wx', { min: Number($('tmin').value), max: Number($('tmax').value), wx: $('wxsel').value });
+      renderHome();
+    });
+  });
+
+  /* 画面の切り替え */
+  var views = ['home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask'];
+  function show(v) {
+    if (v !== 'talk' && typeof chatOn !== 'undefined' && chatOn) chatStop();
+    views.forEach(function (x) { $('v-' + x).hidden = x !== v; });
+    window.scrollTo(0, 0);
+    setGuide(v);
+  }
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-go]');
+    if (!t || t.id === 'goSoon') return;
+    show(t.dataset.go);
+  });
+  $('sizeBtn').addEventListener('click', function () {
+    var big = document.documentElement.classList.toggle('big');
+    save('kesera-big',big);
+    this.setAttribute('aria-pressed', String(big));
+    this.textContent = big ? '文字をもとの大きさに' : '文字を大きくする';
+  });
+
+  /* 花吹雪（達成のときだけ） */
+  var cv = $('petals'), ctx = cv.getContext('2d'), parts = [], raf = 0, W = 0, H = 0;
+  var COL = ['#f7b6c8', '#fbd5e0', '#ffffff', '#f4a6bf'];
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function resize() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth; H = window.innerHeight;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  function frame() {
+    raf = 0;
+    ctx.clearRect(0, 0, W, H);
+    for (var i = parts.length - 1; i >= 0; i--) {
+      var p = parts[i];
+      p.ph += 0.03; p.y += p.vy; p.x += p.vx + Math.sin(p.ph) * 0.6; p.r += p.vr;
+      if (p.y > H + 20) { parts.splice(i, 1); continue; }
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r);
+      ctx.scale(1, 0.55 + 0.45 * Math.abs(Math.cos(p.ph)));
+      ctx.globalAlpha = 0.85; ctx.fillStyle = p.c; ctx.beginPath();
+      ctx.moveTo(0, -p.s); ctx.bezierCurveTo(p.s * 0.95, -p.s * 0.5, p.s * 0.7, p.s * 0.7, 0, p.s);
+      ctx.bezierCurveTo(-p.s * 0.7, p.s * 0.7, -p.s * 0.95, -p.s * 0.5, 0, -p.s); ctx.fill(); ctx.restore();
+    }
+    if (parts.length) raf = requestAnimationFrame(frame); else ctx.clearRect(0, 0, W, H);
+  }
+  function burst(n) {
+    if (reduce) return;
+    for (var i = 0; i < n; i++) parts.push({ x: Math.random() * W, y: -20 - Math.random() * H * 0.3, s: 5 + Math.random() * 6, vy: 1.6 + Math.random() * 1.6, vx: -0.3 + Math.random() * 0.9, r: Math.random() * 6.28, vr: (Math.random() - 0.5) * 0.05, ph: Math.random() * 6.28, c: COL[Math.floor(Math.random() * COL.length)] });
+    if (!raf) raf = requestAnimationFrame(frame);
+  }
+  window.addEventListener('resize', resize); resize();
+
+  /* ミニテスト（共通） */
+  function makeQuiz(boxId, title, Q, key) {
+    var ans = [];
+    var box = $(boxId);
+    function render() {
+      var done = ans.filter(function (v) { return v !== undefined; }).length === Q.length;
+      var h = '<h3>' + title + '</h3>';
+      Q.forEach(function (q, qi) {
+        var ch = ans[qi];
+        h += '<div class="quiz-q"><p><strong>第' + (qi + 1) + '問</strong>　' + esc(q.q) + '</p><div class="opts">';
+        q.o.forEach(function (o, oi) {
+          var cls = 'opt', mark = '';
+          if (ch !== undefined) { if (oi === q.a) { cls += ' right'; mark = '　○'; } else if (oi === ch) { cls += ' wrong'; mark = '　×'; } }
+          h += '<button class="' + cls + '" data-q="' + qi + '" data-o="' + oi + '"' + (ch !== undefined ? ' disabled' : '') + '>' + esc(o) + mark + '</button>';
+        });
+        h += '</div>';
+        if (ch !== undefined) h += '<p class="explain">' + (ch === q.a ? '正解です。' : '正解は「' + esc(q.o[q.a]) + '」です。') + esc(q.e) + '</p>';
+        h += '</div>';
+      });
+      if (done) {
+        var sc = ans.reduce(function (n, v, i) { return n + (v === Q[i].a ? 1 : 0); }, 0);
+        h += '<div class="result"><p><strong>' + sc + '問正解です。</strong>' + (sc === Q.length ? ' 朱印をお渡しします。よくがんばりましたね。' : ' もう一度どうぞ。') + '</p><button class="btn primary" data-retry="1">もう一度解く</button></div>';
+      }
+      box.innerHTML = h;
+    }
+    box.addEventListener('click', function (e) {
+      var t = e.target.closest('button'); if (!t) return;
+      if (t.dataset.retry) { ans = []; render(); return; }
+      if (t.dataset.q === undefined) return;
+      var qi = Number(t.dataset.q);
+      if (ans[qi] !== undefined) return;
+      ans[qi] = Number(t.dataset.o);
+      if (ans.filter(function (v) { return v !== undefined; }).length === Q.length) {
+        var sc = ans.reduce(function (n, v, i) { return n + (v === Q[i].a ? 1 : 0); }, 0);
+        if (sc === Q.length) { save('kesera-stamp-' + key, true); burst(80); }
+      }
+      render();
+    });
+    render();
+  }
+  makeQuiz('quiz-origami', 'ミニテスト（3問）', [
+    { q: '折り紙で、点線（破線）で表す折り方は？', o: ['山折り', '谷折り', '袋折り'], a: 1, e: '点線は谷折り、点と線をくり返す線は山折りを表します。' },
+    { q: '四つの角を、真ん中に合わせて折る折り方は？', o: ['座布団折り', '風船折り', '二そう舟'], a: 0, e: 'もう一度折ると、小さな座布団になります。' },
+    { q: '折り目を、しっかりつけるコツは？', o: ['軽く押さえるだけにする', '水でぬらす', '指の腹で端から端までなぞる'], a: 2, e: '折り目がはっきりすると、次の折りがずれにくくなります。' }
+  ], 'origami');
+  makeQuiz('quiz-travel', 'ミニテスト（3問）', [
+    { q: '熊本城を築いた武将は？', o: ['細川忠興', '加藤清正', '島津義弘'], a: 1, e: '加藤清正が築き、1607年ごろに完成しました。' },
+    { q: '水前寺成趣園を造った家は？', o: ['加藤家', '島津家', '細川家'], a: 2, e: '江戸時代の初め、熊本藩主の細川家が造りました。' },
+    { q: '水前寺成趣園の池の水は、何の湧き水といわれる？', o: ['阿蘇の伏流水', '有明海の海水', '山のダムの水'], a: 0, e: '阿蘇の水が地下を流れて湧き出るといわれます。' }
+  ], 'travel');
+
+  /* プチ筋トレ */
+  var cnt = 0, rewarded = false;
+  function renderCount() {
+    var g = Number($('goal').value);
+    $('cnum').textContent = cnt;
+    if (cnt === 0) { $('cmsg').textContent = 'できたら、下のボタンを押してください。'; rewarded = false; }
+    else if (cnt < g) $('cmsg').textContent = 'あと' + (g - cnt) + '回です。ゆっくりで大丈夫です。';
+    else { $('cmsg').textContent = '目標達成です。よくがんばりましたね。ゆっくり休んでください。'; if (!rewarded) { rewarded = true; burst(80); } }
+  }
+  $('cplus').addEventListener('click', function () { cnt++; renderCount(); });
+  $('creset').addEventListener('click', function () { cnt = 0; renderCount(); });
+  $('goal').addEventListener('change', renderCount);
+  var mine = load('kesera-memo', []);
+  function renderMine() { $('mine').innerHTML = mine.slice(-5).reverse().map(function (m) { return '<li>' + esc(m) + '</li>'; }).join(''); }
+  $('memoBtn').addEventListener('click', function () {
+    var v = $('memo').value.trim(); if (!v) return;
+    mine.push(today.slice(5).replace('-', '/') + '　' + v); save('kesera-memo', mine); $('memo').value = ''; renderMine();
+  });
+
+
+  /* ---------- 聴く・観る（YouTube） ---------- */
+  var SHELVES = [
+    { id: 'omoide', name: '思い出の歌', q: '昭和 思い出の歌 名曲' },
+    { id: 'showa', name: '昭和歌謡', q: '昭和歌謡 名曲' },
+    { id: 'karaoke', name: 'カラオケ', q: 'カラオケ 昭和 名曲' },
+    { id: 'tetsu', name: '鉄道の旅', q: '鉄道の旅 車窓 ローカル線' },
+    { id: 'sleep', name: '眠りの音楽', q: '睡眠 ヒーリングミュージック' },
+    { id: 'nature', name: '自然音', q: '自然音 川のせせらぎ 波の音' },
+    { id: 'cook', name: '10分ごはん', q: '10分 時短 レシピ 小麦粉不使用 乳製品不使用' },
+    { id: 'flower', name: '花の飾り方', q: '花の飾り方 生け方 初心者' }
+  ];
+  var lib = load('kesera-lib', {});
+  SHELVES.forEach(function (sh) { if (!Array.isArray(lib[sh.id])) lib[sh.id] = []; });
+  var cur = 'omoide', playShelf = 'omoide', qi = -1, autoOn = true, repeat = 'none';
+  var player = null, ytReady = false, ytFailed = false, errRun = 0;
+
+  function parseYT(u) {
+    u = (u || '').trim();
+    if (!u) return null;
+    if (!/^https?:\/\//i.test(u)) u = 'https://' + u;
+    var x; try { x = new URL(u); } catch (e) { return null; }
+    var host = x.hostname.replace(/^www\./, '').replace(/^m\./, '');
+    var v = null, m;
+    if (host === 'youtu.be') v = x.pathname.slice(1).split('/')[0];
+    else if (host === 'youtube.com' || host === 'music.youtube.com') {
+      if (x.pathname === '/watch') v = x.searchParams.get('v');
+      else { m = /^\/(shorts|embed|live)\/([\w-]{11})/.exec(x.pathname); if (m) v = m[2]; }
+    } else return null;
+    if (v && /^[\w-]{11}$/.test(v)) return { kind: 'video', id: v };
+    var list = x.searchParams.get('list');
+    if (list && /^[\w-]{10,}$/.test(list)) return { kind: 'playlist', id: list };
+    return null;
+  }
+  function ytLink(it) { return it.kind === 'playlist' ? 'https://www.youtube.com/playlist?list=' + it.id : 'https://www.youtube.com/watch?v=' + it.id; }
+  function titleOf(it) { return it.title || '（題名なし）'; }
+  function shelfName(id) { for (var i = 0; i < SHELVES.length; i++) if (SHELVES[i].id === id) return SHELVES[i].name; return ''; }
+  function say(id, t, err) { var e = $(id); e.textContent = t; e.className = 'msg' + (err ? ' err' : ''); }
+
+  function renderShelves() {
+    $('shelves').innerHTML = SHELVES.map(function (sh) {
+      return '<button class="chip" data-shelf="' + sh.id + '" aria-pressed="' + (cur === sh.id) + '">' + sh.name + '（' + lib[sh.id].length + '）</button>';
+    }).join('');
+    var sh = SHELVES.filter(function (x) { return x.id === cur; })[0];
+    $('shelfTitle').textContent = sh.name + 'の保存一覧';
+    $('searchLink').href = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(sh.q);
+    $('searchLink').textContent = 'YouTubeで「' + sh.q + '」を探す';
+  }
+  function renderList() {
+    var items = lib[cur];
+    if (!items.length) { $('plist').innerHTML = '<li><p class="muted">まだ保存がありません。下の「URLを保存する」から、見つけた動画を加えてください。</p></li>'; return; }
+    $('plist').innerHTML = items.map(function (it, i) {
+      var isNow = playShelf === cur && qi === i;
+      var main = ytReady
+        ? '<button class="btn primary small" data-play="' + i + '">再生</button>'
+        : '<a class="btnlink primary small" href="' + ytLink(it) + '" target="_blank" rel="noopener">YouTubeで開く</a>';
+      var open = ytReady ? '<a class="btnlink small" href="' + ytLink(it) + '" target="_blank" rel="noopener">YouTubeで開く</a>' : '';
+      return '<li><span class="ttl' + (isNow ? ' now' : '') + '">' + esc(titleOf(it)) + (it.kind === 'playlist' ? '（プレイリスト）' : '') + '</span>' + main + open +
+        '<button class="btn small" data-del="' + i + '">消す</button></li>';
+    }).join('');
+  }
+  function ctlState() {
+    ['pPlay', 'pPrev', 'pNext'].forEach(function (id) { $(id).disabled = !ytReady; });
+    if (ytFailed) $('pmsg').textContent = 'このページの中では再生できません。一覧の「YouTubeで開く」をお使いください。ご自分のサイトに置くと、ここで再生できます。';
+    else if (!ytReady) $('pmsg').textContent = '再生の準備をしています…';
+  }
+  function playIndex(i, shelf) {
+    if (shelf) playShelf = shelf;
+    var items = lib[playShelf];
+    if (!items.length || !ytReady) return;
+    if (i < 0) i = items.length - 1;
+    if (i >= items.length) i = 0;
+    qi = i;
+    var it = items[i];
+    $('pmsg').hidden = true;
+    $('nowp').textContent = 'いま：' + shelfName(playShelf) + '　' + titleOf(it);
+    try {
+      if (it.kind === 'video') player.loadVideoById(it.id);
+      else player.loadPlaylist({ listType: 'playlist', list: it.id });
+    } catch (e) { $('pmsg').hidden = false; $('pmsg').textContent = '再生を始められませんでした。'; }
+    renderList();
+  }
+  function onEnded() {
+    var items = lib[playShelf];
+    if (repeat === 'one') { try { player.seekTo(0); player.playVideo(); } catch (e) {} return; }
+    if (!autoOn) { $('nowp').textContent = 'いま：再生がおわりました'; return; }
+    if (qi < items.length - 1) playIndex(qi + 1);
+    else if (repeat === 'all') playIndex(0);
+    else $('nowp').textContent = 'いま：一覧の最後まで再生しました';
+  }
+  function onErr() {
+    var items = lib[playShelf];
+    errRun++;
+    $('pmsg').hidden = false;
+    $('pmsg').textContent = 'この動画は、ページの中では再生できません。一覧の「YouTubeで開く」をお使いください。';
+    if (autoOn && errRun < items.length && qi < items.length - 1) setTimeout(function () { playIndex(qi + 1); }, 2500);
+  }
+  window.onYouTubeIframeAPIReady = function () {
+    try {
+      player = new YT.Player('yt', {
+        playerVars: { playsinline: 1, rel: 0, modestbranding: 1 },
+        events: {
+          onReady: function () { ytReady = true; ytFailed = false; $('pmsg').textContent = '下の一覧から、見たい動画を選んでください。'; ctlState(); renderList(); },
+          onStateChange: function (e) { if (e.data === 0) onEnded(); if (e.data === 1) errRun = 0; },
+          onError: onErr
+        }
+      });
+    } catch (e) { ytFailed = true; ctlState(); renderList(); }
+  };
+  (function loadYT() {
+    try {
+      var t = document.createElement('script');
+      t.src = 'https://www.youtube.com/iframe_api';
+      t.onerror = function () { ytFailed = true; ctlState(); renderList(); };
+      document.head.appendChild(t);
+    } catch (e) { ytFailed = true; }
+    setTimeout(function () { if (!ytReady) { ytFailed = true; ctlState(); renderList(); } }, 4500);
+  })();
+
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('button'); if (!t) return;
+    if (t.dataset.shelf) { cur = t.dataset.shelf; renderShelves(); renderList(); return; }
+    if (t.dataset.play !== undefined) { errRun = 0; playIndex(Number(t.dataset.play), cur); return; }
+    if (t.dataset.del !== undefined) {
+      if (t.dataset.arm === '1') { lib[cur].splice(Number(t.dataset.del), 1); save('kesera-lib', lib); if (playShelf === cur) qi = -1; renderShelves(); renderList(); return; }
+      t.dataset.arm = '1'; t.textContent = 'もう一度押すと消えます';
+      setTimeout(function () { if (t.isConnected) { t.dataset.arm = ''; t.textContent = '消す'; } }, 3500);
+      return;
+    }
+    if (t.dataset.rep) {
+      repeat = t.dataset.rep;
+      document.querySelectorAll('[data-rep]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.rep === repeat)); });
+      return;
+    }
+  });
+  $('pAuto').addEventListener('click', function () { autoOn = !autoOn; this.setAttribute('aria-pressed', String(autoOn)); this.textContent = autoOn ? 'つづけて自動再生' : '1曲ずつ再生'; });
+  $('pPlay').addEventListener('click', function () { errRun = 0; playIndex(0, cur); });
+  $('pPrev').addEventListener('click', function () { playIndex(qi - 1); });
+  $('pNext').addEventListener('click', function () { playIndex(qi + 1); });
+
+  $('uadd').addEventListener('click', function () {
+    var r = parseYT($('uurl').value);
+    if (!r) { say('umsg', 'YouTubeのアドレスとして読み取れませんでした。「https://www.youtube.com/watch?v=…」や「https://youtu.be/…」の形で貼り付けてください。', true); return; }
+    var dup = lib[cur].some(function (x) { return x.id === r.id && x.kind === r.kind; });
+    if (dup) { say('umsg', 'この動画は、すでに保存されています。', true); return; }
+    lib[cur].push({ kind: r.kind, id: r.id, title: $('utitle').value.trim() });
+    save('kesera-lib', lib);
+    $('uurl').value = ''; $('utitle').value = '';
+    say('umsg', '「' + shelfName(cur) + '」に保存しました。', false);
+    renderShelves(); renderList();
+  });
+
+  $('bkMake').addEventListener('click', function () {
+    var out = [];
+    SHELVES.forEach(function (sh) {
+      if (!lib[sh.id].length) return;
+      out.push('【' + sh.name + '】');
+      lib[sh.id].forEach(function (it) { out.push((it.title || '題名なし') + '　' + ytLink(it)); });
+      out.push('');
+    });
+    var txt = out.join('\n').trim();
+    var ta = $('bk');
+    if (!txt) { ta.value = ''; say('bmsg', 'まだ保存がありません。', true); return; }
+    ta.value = txt;
+    var fb = function () { ta.focus(); ta.select(); say('bmsg', '控えを選択しました。コピーしてお使いください。', false); };
+    try { navigator.clipboard.writeText(txt).then(function () { say('bmsg', '控えをコピーしました。LINEやメモに貼り付けて残してください。', false); }, fb); } catch (e) { fb(); }
+  });
+  $('rsGo').addEventListener('click', function () {
+    var lines = $('rs').value.split(/\r?\n/), shelf = cur, added = 0;
+    lines.forEach(function (ln) {
+      var h = /^【(.+)】/.exec(ln.trim());
+      if (h) { var f = SHELVES.filter(function (x) { return x.name === h[1]; })[0]; if (f) shelf = f.id; return; }
+      var um = /(https?:\/\/\S+)/.exec(ln); if (!um) return;
+      var r = parseYT(um[1]); if (!r) return;
+      if (lib[shelf].some(function (x) { return x.id === r.id && x.kind === r.kind; })) return;
+      lib[shelf].push({ kind: r.kind, id: r.id, title: ln.replace(um[1], '').trim() });
+      added++;
+    });
+    save('kesera-lib', lib);
+    say('bmsg', added ? added + '件をもどしました。' : 'もどせる動画が見つかりませんでした。', !added);
+    renderShelves(); renderList();
+  });
+
+  renderShelves(); renderList(); ctlState();
+
+
+  /* ---------- 動画のおやすみタイマー ---------- */
+  var yTimer = 0;
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-ytimer]'); if (!t) return;
+    document.querySelectorAll('[data-ytimer]').forEach(function (b) { b.setAttribute('aria-pressed', String(b === t)); });
+    clearTimeout(yTimer);
+    var m = Number(t.dataset.ytimer);
+    if (m > 0) yTimer = setTimeout(function () {
+      try { if (player && ytReady) player.pauseVideo(); } catch (er) {}
+      $('nowp').textContent = 'いま：おやすみタイマーで止まりました';
+    }, m * 60000);
+  });
+
+  /* ---------- 眠る：自然音風の合成音 ---------- */
+  var ac = null, sn = null, sTimer = 0, vol = 0.45, sMin = 0;
+  function sMsg(t) { $('smsg').textContent = t; }
+  function setSndBtns(kind) { document.querySelectorAll('[data-snd]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.snd === kind)); }); }
+  function stopSound(fast) {
+    clearTimeout(sTimer);
+    if (!sn) return;
+    var n = sn; sn = null;
+    try {
+      n.master.gain.cancelScheduledValues(ac.currentTime);
+      n.master.gain.setValueAtTime(n.master.gain.value, ac.currentTime);
+      n.master.gain.linearRampToValueAtTime(0, ac.currentTime + (fast ? 0.1 : 2.5));
+    } catch (er) {}
+    setTimeout(function () { try { n.src.stop(); if (n.lfo) n.lfo.stop(); n.master.disconnect(); } catch (er) {} }, fast ? 200 : 2800);
+  }
+  function startSound(kind) {
+    stopSound(true);
+    try {
+      ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+      if (ac.state === 'suspended') ac.resume();
+    } catch (er) { sMsg('この端末では、音を出せませんでした。'); return; }
+    var len = ac.sampleRate * 4, buf = ac.createBuffer(1, len, ac.sampleRate), d = buf.getChannelData(0), last = 0;
+    for (var i = 0; i < len; i++) {
+      var w = Math.random() * 2 - 1;
+      if (kind === 'rain') d[i] = w * 0.8; else { last = (last + 0.02 * w) / 1.02; d[i] = last * 3.5; }
+    }
+    var src = ac.createBufferSource(); src.buffer = buf; src.loop = true;
+    var master = ac.createGain(); master.gain.value = 0; master.connect(ac.destination);
+    var lfo = null;
+    if (kind === 'rain') {
+      var hp = ac.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 700;
+      var lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 7000;
+      src.connect(hp); hp.connect(lp); lp.connect(master);
+    } else if (kind === 'wave') {
+      var lp2 = ac.createBiquadFilter(); lp2.type = 'lowpass'; lp2.frequency.value = 900;
+      var amp = ac.createGain(); amp.gain.value = 0.55;
+      lfo = ac.createOscillator(); lfo.frequency.value = 0.11;
+      var depth = ac.createGain(); depth.gain.value = 0.4;
+      lfo.connect(depth); depth.connect(amp.gain);
+      src.connect(lp2); lp2.connect(amp); amp.connect(master);
+    } else {
+      var bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 500; bp.Q.value = 0.8;
+      lfo = ac.createOscillator(); lfo.frequency.value = 0.07;
+      var depth2 = ac.createGain(); depth2.gain.value = 220;
+      lfo.connect(depth2); depth2.connect(bp.frequency);
+      src.connect(bp); bp.connect(master);
+    }
+    src.start(); if (lfo) lfo.start();
+    master.gain.linearRampToValueAtTime(vol * 0.5, ac.currentTime + 1.5);
+    sn = { src: src, lfo: lfo, master: master };
+    setSndBtns(kind);
+    armTimer();
+    sMsg((kind === 'rain' ? '雨' : kind === 'wave' ? '波' : '風') + 'の音を流しています。' + (sMin ? sMin + '分後に、ゆっくり止まります。' : ''));
+  }
+  function armTimer() {
+    clearTimeout(sTimer);
+    if (sn && sMin > 0) sTimer = setTimeout(function () { stopSound(false); setSndBtns(null); sMsg('タイマーで、音が止まりました。おやすみなさい。'); }, sMin * 60000);
+  }
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-snd]');
+    if (t) { if (t.getAttribute('aria-pressed') === 'true') { stopSound(false); setSndBtns(null); sMsg('音を止めました。'); } else startSound(t.dataset.snd); return; }
+    t = e.target.closest('[data-stimer]');
+    if (t) {
+      sMin = Number(t.dataset.stimer);
+      document.querySelectorAll('[data-stimer]').forEach(function (b) { b.setAttribute('aria-pressed', String(b === t)); });
+      armTimer(); if (sn) sMsg(sMin ? sMin + '分後に、ゆっくり止まります。' : 'タイマーは切りました。');
+    }
+  });
+  $('sndStop').addEventListener('click', function () { stopSound(false); setSndBtns(null); sMsg('音を止めました。'); });
+  $('vol').addEventListener('input', function () {
+    vol = Number(this.value) / 100;
+    if (sn) { try { sn.master.gain.setTargetAtTime(vol * 0.5, ac.currentTime, 0.1); } catch (er) {} }
+  });
+
+  /* ---------- 作る・飾る：スライド ---------- */
+  function deck(boxId, getDeck) {
+    var st = { i: 0 };
+    var box = $(boxId);
+    function body(sl) {
+      var h = '<h4>' + esc(sl.h) + '</h4>';
+      if (sl.ul) h += '<ul>' + sl.ul.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
+      if (sl.ol) h += '<ol>' + sl.ol.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ol>';
+      if (sl.p) h += '<p>' + esc(sl.p) + '</p>';
+      return h;
+    }
+    function render() {
+      var dk = getDeck(), N = dk.slides.length;
+      if (st.i >= N) st.i = N - 1;
+      box.innerHTML = '<div class="slide" aria-live="polite">' + body(dk.slides[st.i]) + '</div>' +
+        '<div class="slide-nav" style="margin-top:10px"><button class="btn" data-sl="-1"' + (st.i === 0 ? ' disabled' : '') + '>前へ</button>' +
+        '<span class="muted">' + (st.i + 1) + ' / ' + N + '</span>' +
+        '<button class="btn primary" data-sl="1"' + (st.i === N - 1 ? ' disabled' : '') + '>次へ</button></div>';
+    }
+    box.addEventListener('click', function (e) {
+      var t = e.target.closest('[data-sl]'); if (!t) return;
+      st.i += Number(t.dataset.sl); render();
+    });
+    return { render: render, reset: function () { st.i = 0; render(); } };
+  }
+
+  var RECIPES = [
+    { name: '豆腐と小松菜のさっと煮', time: '約8分', slides: [
+      { h: '材料（1人分）', ul: ['絹ごし豆腐　半丁（150g）', '小松菜　2〜3株（100g）', 'だし汁　150ml（塩分・砂糖の入っていないもの）', '小麦不使用のしょうゆ　小さじ1', '塩　ひとつまみ'] },
+      { h: '1 切る', ol: ['小松菜は根元を切り、3cmの長さに切ります。', '茎と葉を分けておきます。'] },
+      { h: '2 煮る', ol: ['鍋にだし汁としょうゆを入れ、火にかけます。', '煮立ったら、小松菜の茎を入れて1分。', '葉を入れ、豆腐をスプーンで大きくすくって入れます。'] },
+      { h: '3 仕上げ', ol: ['弱火で2分ほど、豆腐が温まるまで煮ます。', '味をみて、足りなければ塩を足します。', '火を止めて、できあがりです。'] }
+    ] },
+    { name: '鮭と野菜の蒸し焼き（油なし）', time: '約10分', slides: [
+      { h: '材料（1人分）', ul: ['生鮭　1切れ', 'キャベツ　2枚', 'しめじ　3分の1パック', '塩　少々', '水　大さじ3', 'レモン　お好みで'] },
+      { h: '1 準備', ol: ['キャベツはひと口大にちぎります。', 'しめじは石づきを取って、ほぐします。', '鮭に、塩を軽くふります。'] },
+      { h: '2 蒸し焼き', ol: ['フライパンにキャベツを広げ、鮭としめじをのせます。', '水を回し入れ、ふたをして、中火にかけます。', '煮立ったら弱めの中火にして、5〜6分蒸します。'] },
+      { h: '3 確かめる', ol: ['鮭の真ん中まで白っぽくなり、ほぐれれば、火が通っています。', '足りなければ、さらに1〜2分蒸します。', 'お好みで、レモンをしぼります。'] }
+    ] },
+    { name: '卵と青ねぎのおじや', time: '約7分', slides: [
+      { h: '材料（1人分）', ul: ['ごはん　茶碗1杯（150g）', 'だし汁　200ml', '卵　1個', '青ねぎ　少々', '塩　小さじ4分の1', '小麦不使用のしょうゆ　少々'] },
+      { h: '1 温める', ol: ['鍋にだし汁とごはんを入れ、中火にかけます。', '煮立ったら、弱火にして3分ほど煮ます。'] },
+      { h: '2 味つけ', ol: ['塩を入れて、混ぜます。', 'しょうゆを、香りづけに少し加えます。'] },
+      { h: '3 卵を入れる', ol: ['溶いた卵を、回し入れます。', 'ふたをして火を止め、30秒ほどおきます。', '刻んだねぎをのせて、できあがりです。'] }
+    ] },
+    { name: '蒸し鶏とトマト（電子レンジ）', time: '約10分', slides: [
+      { h: '材料（1人分）', ul: ['鶏むね肉　半枚（100〜120g）', '塩　小さじ4分の1', '酒　小さじ2（砂糖の入っていないもの）', 'トマト　1個', '青じそ　あれば2枚'] },
+      { h: '1 下ごしらえ', ol: ['鶏肉は、1cmほどの厚さにそぎ切りにします。', '耐熱皿に重ならないように並べ、塩と酒をふります。'] },
+      { h: '2 加熱', ol: ['ふんわりラップをかけ、電子レンジ（600W）で約3分。', '裏返して、さらに1〜2分加熱します。', 'ラップをはずすときは、蒸気でやけどしないよう気をつけます。'] },
+      { h: '3 確かめる', ol: ['いちばん厚いところを切り、赤い部分や赤い汁がないか見ます。', '赤みが残るときは、30秒ずつ加熱します。', 'トマトを切って添え、じそをのせます。'] }
+    ] },
+    { name: '具だくさんのみそ汁', time: '約10分', slides: [
+      { h: '材料（1人分）', ul: ['だし汁　200ml', '豆腐　4分の1丁', '玉ねぎ　4分の1個', 'わかめ（乾燥）　ひとつまみ', 'みそ　大さじ1弱（原材料に小麦・砂糖がないもの）'] },
+      { h: '1 煮る', ol: ['玉ねぎを薄切りにします。', '鍋にだし汁と玉ねぎを入れ、火にかけます。', '3〜4分、やわらかくなるまで煮ます。'] },
+      { h: '2 仕上げ', ol: ['豆腐をさいの目に切って入れ、わかめも入れます。', '火を弱め、みそを溶き入れます。', '煮立たせる前に、火を止めます。'] }
+    ] },
+    { name: '納豆とおくらの小鉢', time: '約5分', slides: [
+      { h: '材料（1人分）', ul: ['納豆　1パック（付属のたれは使いません）', 'おくら　3本', '小麦不使用のしょうゆ　少々', '練りからし　お好みで'] },
+      { h: 'ここに注意', p: '納豆の付属のたれには、砂糖やしょうゆ（小麦入り）が使われていることが多いです。たれは使わずに、小麦不使用のしょうゆで味をつけます。' },
+      { h: '作り方', ol: ['おくらは塩ひとつまみでこすって、うぶ毛を取ります。', '熱湯で1分ゆでて、冷水にとり、小口切りにします。', '納豆をよく混ぜ、おくらと合わせて、しょうゆを少し加えます。'] }
+    ] }
+  ];
+  var rIdx = 0;
+  var rdeck = deck('rdeck', function () { return RECIPES[rIdx]; });
+  function renderRChips() {
+    $('rchips').innerHTML = RECIPES.map(function (r, i) {
+      return '<button class="chip" data-recipe="' + i + '" aria-pressed="' + (i === rIdx) + '">' + esc(r.name) + '（' + r.time + '）</button>';
+    }).join('');
+  }
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-recipe]'); if (!t) return;
+    rIdx = Number(t.dataset.recipe); renderRChips(); rdeck.reset();
+  });
+  renderRChips(); rdeck.render();
+
+  var FLOWER = { slides: [
+    { h: '1 花瓶と水', ul: ['花瓶は、よく洗ったものを使います。', '水は、花瓶の3分の1ほどにします。', 'お水に、花の延命剤を少し入れると、長持ちしやすくなります。'] },
+    { h: '2 茎を切る', ul: ['水の中で、はさみで茎を斜めに切ると、水を吸いやすくなります。', '水につかる部分の葉は、すべて取ります。', '葉が水につかると、水がにごりやすくなります。'] },
+    { h: '3 高さを決める', ul: ['全体の高さは、花瓶の高さの1.5〜2倍が目安です。', '3本、5本など、奇数にすると、まとまりやすくなります。', '高い花、中くらいの花、低い花と、高さに差をつけます。'] },
+    { h: '4 色を合わせる', ul: ['同じ色合いの花を、2〜3色にしぼると、まとまります。', '旬の花を1種類だけ、たっぷり飾るのもすてきです。', '葉ものを1本足すと、引きしまります。'] },
+    { h: '5 長持ちさせる', ul: ['水は、毎日かえます。', '数日に1回、茎の先を少し切り戻します。', '直射日光、エアコンの風、暖房の近くは避けます。', '傷んだ花は、早めに取ります。'] },
+    { h: '6 安全のために', ul: ['猫のいるご家庭では、ユリを飾らないでください。猫には有毒です。', 'スイセンは、茎の汁で手が荒れることがあります。切るときは手袋をします。', '花瓶は、倒れにくい低い場所に置き、足元に水がこぼれないようにします。'] }
+  ] };
+  var fdeck = deck('fdeck', function () { return FLOWER; });
+  fdeck.render();
+
+
+  /* ---------- お話する：相手の選択 ---------- */
+  var PARTNERS = [
+    { id: 'mago-youji', name: '孫（幼稚園）', variants: [['女の子', 'f'], ['男の子', 'm']], line: 'あのね、きょうね、ようちえんで おもしろいこと あったの。きいて きいて。' },
+    { id: 'mago-shou', name: '孫（小学生）', variants: [['女の子', 'f'], ['男の子', 'm']], line: 'ただいま。きょうの がっこう、すごく たのしかったんだ。きいてくれる？' },
+    { id: 'mago-chu', name: '孫（中学生）', variants: [['女の子', 'f'], ['男の子', 'm']], line: 'ひさしぶり。さいきん、部活がいそがしくてさ。そっちは、どう？' },
+    { id: 'tomodachi', name: 'お友達', variants: [['女性', 'f'], ['男性', 'm']], line: 'おはよう。今日はいい天気ですね。少し、おしゃべりしませんか。' },
+    { id: 'kinjo', name: '近所の気の合う方', variants: [['女性', 'f'], ['男性', 'm']], line: 'こんにちは。お庭の花は、そろそろ咲きましたか。立ち話でも、しましょうか。' },
+    { id: 'inu', name: '犬', variants: null, line: 'ワン。おさんぽ いこうよ。きょうは どこまで いく？' },
+    { id: 'neko', name: '猫', variants: null, line: 'ニャア。ひなたぼっこ しながら、おはなし しよう。' },
+    { id: 'usagi', name: 'ウサギ', variants: null, line: 'ぴょん。きょうは にんじんが たべたいな。おはなし しよう。' }
+  ];
+  var tp = 0, tv = 0, texp = '';
+  var EXPS = [['', 'ふつう', ''], ['think', '考えている', 'うーん、そうですねえ。ちょっと、考えてみますね。'], ['thanks', 'ありがとう', 'ありがとう。そう言ってもらえて、うれしいです。'], ['happy', 'うれしい', 'わあ、うれしい。今日は、いい日になりましたね。'], ['worry', '心配', 'ちょっと、心配ですねえ。だいじょうぶですか。'], ['surprise', 'びっくり', 'まあ、びっくりしました。そうなんですね。'], ['bow', 'おじぎ', '今日も、ありがとうございました。またお話ししましょうね。']];
+  function renderTalk() {
+    $('tpartners').innerHTML = PARTNERS.map(function (p, i) {
+      return '<button class="chip" data-tp="' + i + '" aria-pressed="' + (i === tp) + '">' + p.name + '</button>';
+    }).join('');
+    var p = PARTNERS[tp];
+    var vb = $('tvariants');
+    if (p.variants) {
+      vb.hidden = false;
+      vb.innerHTML = p.variants.map(function (v, i) {
+        return '<button class="chip" data-tv="' + i + '" aria-pressed="' + (i === tv) + '">' + v[0] + '</button>';
+      }).join('');
+    } else { vb.hidden = true; vb.innerHTML = ''; }
+    var vn = p.variants ? p.variants[tv][0] : '';
+    var fn = favName(curKey());
+    $('tname').textContent = (fn ? fn + '　' : '') + p.name + (vn ? '（' + vn + '）' : '');
+    $('tline').textContent = p.line;
+    renderFav();
+    var av = $('tavatar'); stopFlap();
+    var token = ++tokenN;
+    av.innerHTML = PLACE; imgs = null;
+    var base = 'images/' + p.id + (p.variants ? '-' + p.variants[tv][1] : '');
+    var cl = new Image(), op = new Image();
+    cl.alt = $('tname').textContent + 'のイラスト';
+    $('texp').innerHTML = EXPS.map(function (x) { return '<button class="chip" data-te="' + x[0] + '" aria-pressed="' + (x[0] === texp) + '">' + x[1] + '</button>'; }).join('');
+    cl.onload = function () {
+      if (token !== tokenN) return;
+      av.innerHTML = ''; av.appendChild(cl); imgs = { closed: cl, open: null };
+      if (texp) return;
+      op.onload = function () { if (token === tokenN && imgs) imgs.open = op; };
+      op.alt = cl.alt; op.src = base + '-open.png';
+    };
+    if (texp) {
+      cl.onerror = function () {
+        if (token !== tokenN) return;
+        texp = ''; renderTalk();
+        if (!quietExp) { $('tmsg').textContent = 'この表情のイラストは、まだ準備中です。ふつうの顔にもどしました。'; $('tmsg').className = 'msg err'; }
+      };
+    }
+    cl.src = base + (texp ? '-' + texp : '-closed') + '.png';
+  }
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-tp]');
+    if (t) { tp = Number(t.dataset.tp); tv = 0; texp = ''; if (chatOn) chatStop(); renderTalk(); return; }
+    t = e.target.closest('[data-tv]');
+    if (t) { tv = Number(t.dataset.tv); if (chatOn) chatStop(); renderTalk(); return; }
+    t = e.target.closest('[data-te]');
+    if (t) { texp = t.dataset.te; renderTalk(); }
+  });
+
+  var PLACE = '<svg viewBox="0 0 100 100" width="100%" height="100%" role="img" aria-label="イラスト準備中の顔"><circle cx="50" cy="46" r="38" style="fill:var(--surface);stroke:var(--line);stroke-width:2"/><circle cx="38" cy="40" r="3.5" style="fill:var(--fg)"/><circle cx="62" cy="40" r="3.5" style="fill:var(--fg)"/><ellipse cx="30" cy="52" rx="6" ry="4" style="fill:var(--accent-soft)"/><ellipse cx="70" cy="52" rx="6" ry="4" style="fill:var(--accent-soft)"/><ellipse id="pmouth" cx="50" cy="58" rx="9" ry="2.5" style="fill:var(--accent)"/><text x="50" y="92" text-anchor="middle" font-size="7" style="fill:var(--muted)">イラスト準備中</text></svg>';
+  var PITCH = { 'mago-youji': 1.7, 'mago-shou': 1.4, 'mago-chu': 1.1, tomodachi: 1, kinjo: 0.95, inu: 1.2, neko: 1.3, usagi: 1.6 };
+  var imgs = null, tokenN = 0, flapT = 0, flapOn = false;
+  function setMouth(open) {
+    var av = $('tavatar');
+    if (imgs && imgs.closed) {
+      var want = open && imgs.open ? imgs.open : imgs.closed;
+      if (av.firstChild !== want) { av.innerHTML = ''; av.appendChild(want); }
+    } else {
+      var m = $('pmouth');
+      if (m) { m.setAttribute('ry', open ? '9' : '2.5'); m.setAttribute('rx', open ? '8' : '9'); }
+    }
+  }
+  function flap() {
+    if (!flapOn) return;
+    var open = Math.random() < 0.62;
+    setMouth(open);
+    flapT = setTimeout(flap, open ? 90 + Math.random() * 110 : 70 + Math.random() * 90);
+  }
+  function startFlap() { if (flapOn) return; flapOn = true; flap(); }
+  function stopFlap() { flapOn = false; clearTimeout(flapT); setMouth(false); }
+  $('tspeak').addEventListener('click', function () {
+    var p = PARTNERS[tp], msg = $('tmsg');
+    if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') {
+      msg.textContent = 'この端末では、声が出せません。口の動きだけ、お見せします。'; msg.className = 'msg err';
+      startFlap(); setTimeout(stopFlap, 3000); return;
+    }
+    try {
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance((favName(curKey()) ? favName(curKey()) + 'です。' : '') + (texp ? EXPS.filter(function (x) { return x[0] === texp; })[0][2] : p.line));
+      u.lang = 'ja-JP'; u.rate = 0.9; u.pitch = PITCH[p.id] || 1;
+      var vs = window.speechSynthesis.getVoices().filter(function (v) { return /^ja/i.test(v.lang); });
+      if (vs.length) u.voice = vs[0];
+      u.onstart = startFlap; u.onend = stopFlap; u.onerror = stopFlap;
+      window.speechSynthesis.speak(u);
+      msg.textContent = '声が出ないときは、端末の音量とマナーモードをご確認ください。'; msg.className = 'msg';
+      setTimeout(function () { if (!flapOn && !window.speechSynthesis.speaking) { startFlap(); setTimeout(stopFlap, 3000); } }, 1500);
+    } catch (er) { msg.textContent = '声を出せませんでした。'; msg.className = 'msg err'; }
+  });
+
+  /* ---------- お気に入りと名前 ---------- */
+  var favs = load('kesera-fav', {});
+  function curKey() { var p = PARTNERS[tp]; return p.id + (p.variants ? '-' + p.variants[tv][1] : ''); }
+  function favName(k) { return favs[k] && favs[k].name ? favs[k].name : ''; }
+  function renderFav() {
+    var k = curKey(), n = favName(k);
+    $('favname').value = n;
+    $('favdel').hidden = !n;
+    $('favsave').textContent = n ? '名前を変える' : 'この子に決める（お気に入り）';
+    var ks = Object.keys(favs).filter(function (x) { return favs[x] && favs[x].name; });
+    $('favlist').innerHTML = ks.length ? '<span class="muted" style="width:100%">お気に入り：</span>' + ks.map(function (x) {
+      return '<button class="chip" data-fav="' + x + '" aria-pressed="' + (x === k) + '">★ ' + favs[x].name.replace(/[<>&"]/g, '') + '</button>';
+    }).join('') : '';
+  }
+  function findKey(k) {
+    for (var i = 0; i < PARTNERS.length; i++) {
+      var p = PARTNERS[i];
+      if (!p.variants && p.id === k) return [i, 0];
+      if (p.variants) for (var j = 0; j < p.variants.length; j++) if (p.id + '-' + p.variants[j][1] === k) return [i, j];
+    }
+    return null;
+  }
+  $('favsave').addEventListener('click', function () {
+    var v = $('favname').value.replace(/[<>&"]/g, '').trim();
+    if (!v) { $('favmsg').textContent = '名前を入れてください。'; $('favmsg').className = 'msg err'; return; }
+    favs[curKey()] = { name: v }; save('kesera-fav', favs);
+    $('favmsg').textContent = '「' + v + '」に決まりました。これから、' + v + 'と呼びます。'; $('favmsg').className = 'msg ok';
+    renderTalk();
+  });
+  $('favdel').addEventListener('click', function () {
+    delete favs[curKey()]; save('kesera-fav', favs);
+    $('favmsg').textContent = '名前を消しました。'; $('favmsg').className = 'msg'; renderTalk();
+  });
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-fav]');
+    if (!t) return;
+    var r = findKey(t.dataset.fav);
+    if (r) { tp = r[0]; tv = r[1]; renderTalk(); }
+  });
+
+  /* ---------- 食事の記録 ---------- */
+  var meals = load('kesera-meal', {});
+  var water = load('kesera-water', {});
+  var mtags = {};
+  function dstr(off) { var d = new Date(); d.setDate(d.getDate() - off); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+  function mk(tag, txt, cls) { var e = document.createElement(tag); e.textContent = txt; if (cls) e.className = cls; return e; }
+  function renderMeal() {
+    var box = $('mtoday'); box.innerHTML = '';
+    var list = meals[today] || [];
+    box.appendChild(mk('p', '今日の記録（お水・お茶：' + (water[today] || 0) + '杯）', 'muted'));
+    if (!list.length) box.appendChild(mk('p', 'まだありません。', 'muted'));
+    list.forEach(function (m, i) {
+      var r = document.createElement('div'); r.className = 'row';
+      r.appendChild(mk('span', m.t + '：' + m.x + (m.g.length ? '（' + m.g.join('・') + '）' : '')));
+      var b = mk('button', '消す', 'btn small'); b.type = 'button';
+      b.addEventListener('click', function () { meals[today].splice(i, 1); save('kesera-meal', meals); renderMeal(); });
+      r.appendChild(b); box.appendChild(r);
+    });
+    // ヒント：記録のある直近3日をもとに、一般的なひとこと
+    var h = $('mhint'); h.innerHTML = '';
+    var lastDays = [0, 1, 2].map(dstr), logged = 0, fuku = 0, shu = 0, sai = 0, entries = 0;
+    lastDays.forEach(function (d) { var l = meals[d] || []; if (l.length) logged++; l.forEach(function (m) { if (m.t === 'おやつ') return; entries++; if (m.g.indexOf('副') >= 0) fuku++; if (m.g.indexOf('主') >= 0) shu++; if (m.g.indexOf('菜') >= 0) sai++; }); });
+    var tips = [];
+    if (!logged) tips.push('記録がたまると、ここに、ふりかえりのひとことが出ます。');
+    else {
+      var td = list.map(function (m) { return m.t; });
+      if (td.indexOf('朝') < 0 && new Date().getHours() >= 10) tips.push('今日の朝ごはんの記録はありません。食べなかった日が続くときは、お医者さんにお話ししてみてください。');
+      if (entries >= 3 && sai * 2 < entries) tips.push('直近の記録では、肉・魚・卵・豆の印が少なめです。いろいろな食べ物を、ゆるやかにそろえることが大切だといわれます。');
+      if (entries >= 3 && fuku * 2 < entries) tips.push('直近の記録では、野菜・きのこ・海藻の印が少なめです。あと一品、小鉢を足せるか、考えてみましょう。');
+      if (entries >= 3 && shu * 3 < entries) tips.push('ごはん・パン・めんの印が少ない日が続いています。元気が出にくいときは、食べる量のことも含めて、お医者さんに相談してください。');
+      if ((water[today] || 0) < 3 && new Date().getHours() >= 15) tips.push('今日は、お水・お茶の記録が少なめです。ただし、水分の量に決まりがある方は、お医者さんの指示を守ってください。');
+      if (!tips.length) tips.push('記録をつづけていて、すてきです。食事の印も、ほぼそろっています。');
+    }
+    tips.push('食事や体重の変化、飲み込みにくさ、持病やお薬との関係は、必ずかかりつけのお医者さんに相談してください。');
+    tips.forEach(function (t) { h.appendChild(mk('p', t)); });
+    var hist = $('mhist'); hist.innerHTML = '';
+    for (var k = 0; k < 7; k++) {
+      var d = dstr(k), l = meals[d] || [];
+      if (!l.length) continue;
+      hist.appendChild(mk('p', d.slice(5).replace('-', '/') + '　' + l.map(function (m) { return m.t + '：' + m.x; }).join('、'), 'muted'));
+    }
+    if (!hist.firstChild) hist.appendChild(mk('p', 'まだ記録がありません。', 'muted'));
+  }
+  $('mtags').addEventListener('click', function (e) {
+    var t = e.target.closest('[data-mt]'); if (!t) return;
+    var k = t.dataset.mt; mtags[k] = !mtags[k]; t.setAttribute('aria-pressed', String(!!mtags[k]));
+  });
+  $('madd').addEventListener('click', function () {
+    var x = $('mtext').value.trim();
+    if (!x) { $('mmsg').textContent = '食べたものを入れてください。'; $('mmsg').className = 'msg err'; return; }
+    var g = ['主', '菜', '副'].filter(function (k) { return mtags[k]; }).map(function (k) { return { 主: 'ごはん等', 菜: '肉魚卵豆', 副: '野菜等' }[k]; });
+    var gk = ['主', '菜', '副'].filter(function (k) { return mtags[k]; });
+    (meals[today] = meals[today] || []).push({ t: $('mtime').value, x: x, g: gk });
+    save('kesera-meal', meals);
+    $('mtext').value = ''; mtags = {};
+    Array.prototype.forEach.call($('mtags').querySelectorAll('[data-mt]'), function (b) { b.setAttribute('aria-pressed', 'false'); });
+    $('mmsg').textContent = '記録しました。'; $('mmsg').className = 'msg'; renderMeal();
+  });
+  $('mwater').addEventListener('click', function () { water[today] = (water[today] || 0) + 1; save('kesera-water', water); renderMeal(); });
+  renderMeal();
+
+  /* ---------- 利用時間とご家族への見まもり ---------- */
+  var usage = load('kesera-use', {});
+  var fam = load('kesera-fam', { on: false, who: '', mail: '' });
+  setInterval(function () {
+    if (document.hidden) return;
+    usage[today] = Math.round(((usage[today] || 0) + 0.5) * 10) / 10; save('kesera-use', usage);
+    if (!$('v-home').hidden) renderUse();
+  }, 30000);
+  function renderUse() { $('usetoday').textContent = '今日の利用時間：約' + Math.floor(usage[today] || 0) + '分（この端末の中だけに記録しています）'; }
+  function weekText() {
+    var n = 0, tot = 0, a = dstr(6), b = dstr(0);
+    for (var i = 0; i < 7; i++) { var m = usage[dstr(i)] || 0; if (m > 0) n++; tot += m; }
+    var nm = load('kesera-name', ''); var me = nm ? nm + 'さん' : 'わたし';
+    return me + 'の、今週（' + a.slice(5).replace('-', '/') + '～' + b.slice(5).replace('-', '/') + '）の利用のお知らせです。\n使った日：' + n + '日\n使った時間：合計約' + Math.floor(tot) + '分\n\n※会話の中身や記録は含まれません。ケセラから、ご本人の許可のもとでお送りしています。';
+  }
+  function renderFam() {
+    $('famok').checked = !!fam.on; $('fambox').hidden = !fam.on;
+    $('famwho').value = fam.who || ''; $('fammail').value = fam.mail || '';
+    if (fam.on) {
+      var t = weekText(); $('fampreview').textContent = t;
+      var ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fam.mail || '');
+      var a = $('famsend');
+      a.href = ok ? 'mailto:' + fam.mail + '?subject=' + encodeURIComponent('ケセラ　今週の利用のお知らせ') + '&body=' + encodeURIComponent((fam.who ? fam.who + 'へ\n\n' : '') + t) : '#';
+      a.setAttribute('aria-disabled', ok ? 'false' : 'true');
+    }
+  }
+  $('famok').addEventListener('change', function () {
+    if (this.checked) { $('famask').hidden = false; this.checked = false; return; }
+    fam = { on: false, who: '', mail: '' }; $('fammsg').textContent = 'オフにしました。ご家族の連絡先も、消しました。'; $('fammsg').className = 'msg';
+    save('kesera-fam', fam); renderFam();
+  });
+  $('famyes').addEventListener('click', function () {
+    fam.on = true; $('famask').hidden = true; $('fammsg').textContent = 'オンにしました。いつでもオフにもどせます。'; $('fammsg').className = 'msg';
+    save('kesera-fam', fam); renderFam();
+  });
+  $('famno').addEventListener('click', function () { $('famask').hidden = true; });
+  $('famwho').addEventListener('input', function () { fam.who = this.value; save('kesera-fam', fam); renderFam(); });
+  $('fammail').addEventListener('input', function () { fam.mail = this.value.trim(); save('kesera-fam', fam); renderFam(); });
+  $('famsend').addEventListener('click', function (e) {
+    if (this.getAttribute('aria-disabled') === 'true') { e.preventDefault(); $('fammsg').textContent = 'メールアドレスを入れてください。'; $('fammsg').className = 'msg err'; }
+  });
+  renderUse(); renderFam();
+
+  /* ---------- たすけてボタン ---------- */
+  var sos = load('kesera-sos', { name: '', phone: '', mail: '' });
+  ['name', 'phone', 'mailaddr'].forEach(function (k) {
+    var el = $('sos' + k), key = k === 'mailaddr' ? 'mail' : k;
+    el.value = sos[key] || '';
+    el.addEventListener('input', function () { sos[key] = this.value.trim(); save('kesera-sos', sos); });
+  });
+  function telOf(p) { return String(p || '').replace(/[^0-9+]/g, ''); }
+  function sosOpen() {
+    var ph = telOf(sos.phone);
+    $('sosnone').hidden = !!ph || !!sos.mail;
+    var c = $('soscall'); c.hidden = !ph;
+    c.href = ph ? 'tel:' + ph : '#';
+    c.textContent = (sos.name ? sos.name + '（' : '') + 'ご家族に電話する' + (sos.name ? '）' : '');
+    $('sosloc').hidden = !(ph || sos.mail);
+    $('sosresult').hidden = true; $('sosmsg').textContent = '';
+    $('sosover').hidden = false; $('sos119').focus();
+  }
+  function sosClose() { $('sosover').hidden = true; (!$('sosbtn').hidden ? $('sosbtn') : $('sosopen')).focus(); }
+  $('sosbtn').addEventListener('click', sosOpen);
+  $('sosclose').addEventListener('click', sosClose);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !$('sosover').hidden) sosClose(); });
+  $('sosover').addEventListener('click', function (e) { if (e.target === this) sosClose(); });
+  function sosBuild(pos) {
+    var nm = load('kesera-name', ''); var me = nm ? nm : 'わたし';
+    var t = me + 'です。たすけが必要かもしれません。連絡をください。\n';
+    if (pos) t += '\nいまの場所：https://www.google.com/maps?q=' + pos.latitude.toFixed(6) + ',' + pos.longitude.toFixed(6) + '\n（場所の誤差：約' + Math.round(pos.accuracy || 0) + 'm）';
+    else t += '\n場所は取れませんでした。';
+    t += '\n\n（ケセラの「たすけて」ボタンから送っています）';
+    var ph = telOf(sos.phone);
+    var sms = $('sossms'); sms.hidden = !ph; sms.href = ph ? 'sms:' + ph + '?&body=' + encodeURIComponent(t) : '#';
+    var ml = $('sosmail'); ml.hidden = !sos.mail; ml.href = sos.mail ? 'mailto:' + sos.mail + '?subject=' + encodeURIComponent('たすけて（ケセラ）') + '&body=' + encodeURIComponent(t) : '#';
+    $('sosresult').hidden = false;
+  }
+
+  var sosMode = load('kesera-sosmode', 'off');
+  function applySosMode() {
+    var b = $('sosbtn');
+    b.hidden = sosMode === 'off';
+    b.className = 'sosbtn' + (sosMode === 'small' ? ' small' : '');
+    b.textContent = sosMode === 'small' ? 'SOS' : 'たすけて';
+    Array.prototype.forEach.call(document.querySelectorAll('input[name="sosmode"]'), function (r) { r.checked = r.value === sosMode; });
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('input[name="sosmode"]'), function (r) {
+    r.addEventListener('change', function () { if (this.checked) { sosMode = this.value; save('kesera-sosmode', sosMode); applySosMode(); } });
+  });
+  $('sosopen').addEventListener('click', function () { sosOpen(); });
+  applySosMode();
+  $('sosloc').addEventListener('click', function () {
+    $('sosmsg').textContent = '場所を調べています。画面に許可の確認が出たら、「許可」を押してください。'; $('sosresult').hidden = false;
+    $('sossms').hidden = true; $('sosmail').hidden = true;
+    var done = false;
+    function fail(why) { if (done) return; done = true; $('sosmsg').textContent = why + '　場所なしで、知らせる文を用意しました。'; sosBuild(null); }
+    if (!navigator.geolocation) { fail('この端末では、場所を調べられません。'); return; }
+    var guard = setTimeout(function () { fail('場所を調べるのに時間がかかっています。'); }, 12000);
+    try {
+      navigator.geolocation.getCurrentPosition(function (p) {
+        if (done) return; done = true; clearTimeout(guard);
+        $('sosmsg').textContent = '場所がわかりました。下のボタンで送る画面を開いてください。（誤差：約' + Math.round(p.coords.accuracy || 0) + 'm）'; sosBuild(p.coords);
+      }, function () { clearTimeout(guard); fail('場所を取れませんでした（許可がない、または電波が弱い可能性があります）。'); }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 });
+    } catch (er) { clearTimeout(guard); fail('場所を取れませんでした。'); }
+  });
+
+  /* ---------- 自然農法研究倶楽部 ---------- */
+  var farm = load('kesera-farm', []);
+  var farmJoin = load('kesera-farmjoin', false);
+  $('farmjoin').checked = !!farmJoin;
+  $('farmjoin').addEventListener('change', function () { save('kesera-farmjoin', this.checked); });
+  var fphoto = '';
+  $('fphoto').addEventListener('change', function () {
+    var f = this.files && this.files[0]; fphoto = ''; $('fprev').hidden = true;
+    if (!f) return;
+    var rd = new FileReader();
+    rd.onload = function () {
+      var im = new Image();
+      im.onload = function () {
+        var m = 640, w = im.width, h = im.height, k = Math.min(1, m / Math.max(w, h));
+        var cv = document.createElement('canvas'); cv.width = Math.round(w * k); cv.height = Math.round(h * k);
+        cv.getContext('2d').drawImage(im, 0, 0, cv.width, cv.height);
+        try { fphoto = cv.toDataURL('image/jpeg', 0.7); $('fprev').src = fphoto; $('fprev').hidden = false; } catch (e) { $('fmsg').textContent = '写真を読みこめませんでした。'; $('fmsg').className = 'msg err'; }
+      };
+      im.onerror = function () { $('fmsg').textContent = 'この写真は、読みこめませんでした。'; $('fmsg').className = 'msg err'; };
+      im.src = rd.result;
+    };
+    rd.readAsDataURL(f);
+  });
+  function renderFarm() {
+    var box = $('flist'); box.innerHTML = '';
+    if (!farm.length) box.appendChild(mk('p', 'まだ書いていません。', 'muted'));
+    farm.slice().reverse().slice(0, 15).forEach(function (n, k) {
+      var idx = farm.length - 1 - k;
+      var r = document.createElement('div'); r.className = 'row';
+      if (n.i) { var im = document.createElement('img'); im.src = n.i; im.alt = n.c + 'の写真'; im.style.cssText = 'width:72px;height:72px;object-fit:cover;border-radius:8px'; r.appendChild(im); }
+      r.appendChild(mk('span', n.d.slice(5).replace('-', '/') + '　' + n.c + (n.p ? '（' + n.p + '）' : '') + '　' + n.w + (n.m ? '：' + n.m : '')));
+      var b = mk('button', '消す', 'btn small'); b.type = 'button';
+      b.addEventListener('click', function () { farm.splice(idx, 1); try { localStorage.setItem('kesera-farm', JSON.stringify(farm)); } catch (e) {} renderFarm(); });
+      r.appendChild(b); box.appendChild(r);
+    });
+  }
+  $('fadd').addEventListener('click', function () {
+    var c = $('fcrop').value.trim();
+    if (!c && !fphoto) { $('fmsg').textContent = '写真か、作物・花の名前を入れてください。'; $('fmsg').className = 'msg err'; return; }
+    var rec = { d: today, c: c || '（名前なし）', p: $('fplace').value, w: $('fwork').value, m: $('fmemo').value.trim() };
+    if (fphoto) rec.i = fphoto;
+    farm.push(rec);
+    try { localStorage.setItem('kesera-farm', JSON.stringify(farm)); }
+    catch (e) { farm.pop(); $('fmsg').textContent = 'これ以上は、この端末に保存できません。古い記録を消してから、もう一度お試しください。'; $('fmsg').className = 'msg err'; return; }
+    $('fmemo').value = ''; $('fphoto').value = ''; fphoto = ''; $('fprev').hidden = true;
+    $('fmsg').textContent = '記録しました。ありがとう。'; $('fmsg').className = 'msg'; renderFarm();
+  });
+  renderFarm();
+
+  /* ---------- AIとのお話 ---------- */
+  var TALK_FREE = 10, TALK_MAX = 60, TALK_BLOCK = 30, TALK_CAP = 6000;
+  var talkSec = load('kesera-talk', {});
+  var chatOn = false, chatTurns = [], chatTimer = 0, chatCtl = null, chatBusy = false, recog = null;
+  function talkMin(d) { return (talkSec[d] || 0) / 60; }
+  function extraYen(min) { return min > TALK_FREE ? Math.ceil((min - TALK_FREE) / 10) * TALK_BLOCK : 0; }
+  function renderTalkUse() {
+    var m = talkMin(today), mo = 0, p = today.slice(0, 7);
+    Object.keys(talkSec).forEach(function (d) { if (d.slice(0, 7) === p) mo += extraYen(talkMin(d)); });
+    mo = Math.min(mo, TALK_CAP);
+    $('usetalk').textContent = '今日：約' + Math.floor(m) + '分（残り約' + Math.max(0, Math.ceil(TALK_MAX - m)) + '分）　追加料金の目安：' + extraYen(m) + '円　／　今月の追加料金の目安：' + mo + '円（上限' + TALK_CAP + '円）';
+  }
+  var EMERG = /たすけて|助けて|救急車|倒れた|動けない|息ができない|息が苦しい|胸が痛い|転んだ|転倒|起き上がれない|意識/;
+  var CRISIS = /死にたい|消えたい|自殺|生きていたくない|殺して|もう終わりにしたい/;
+  var CRISIS_MSG = 'つらいお気持ちを話してくださって、ありがとうございます。ひとりで抱えないでください。すぐに助けが必要なときは119へ。話を聞いてくれる窓口もあります。よりそいホットライン 0120-279-338（無料・24時間）。身近なご家族や、かかりつけのお医者さんにも、話してみてください。';
+  var EMO = { 'ふつう': '', '考え中': 'think', 'ありがとう': 'thanks', 'うれしい': 'happy', '心配': 'worry', 'びっくり': 'surprise', 'おじぎ': 'bow' };
+  function personaText() {
+    var p = PARTNERS[tp], vn = p.variants ? p.variants[tv][0] : '', fn = favName(curKey()), me = load('kesera-name', '');
+    var style = {
+      'mago-youji': '4〜5歳の幼稚園児。ひらがな中心で、短いことばで、あどけなく話す。',
+      'mago-shou': '小学生。元気で素直な口調。',
+      'mago-chu': '中学生。少し照れくさそうだが、やさしい。',
+      tomodachi: '気心の知れた同年代の友人。くだけすぎない、おだやかな口調。',
+      kinjo: '近所の気の合う同年代の方。立ち話のような、ゆったりした口調。',
+      inu: '犬。ときどき「ワン」と入れるが、ことばはわかりやすく。',
+      neko: '猫。のんびり、ときどき「ニャア」と入れる。',
+      usagi: 'ウサギ。やさしく、ときどき「ぴょん」と入れる。'
+    }[p.id];
+    return 'あなたは、高齢の方と楽しくお話しする、AIが演じる「' + p.name + (vn ? '（' + vn + '）' : '') + '」です。' + (fn ? '名前は「' + fn + '」。' : '') + '話し相手の呼び名は' + (me ? '「' + me + 'さん」' : '「あなた」') + 'です。\n' +
+      '話し方：' + style + '\n' +
+      '決まり：\n- 返事は、日本語で1〜3文、短くやさしく。毎回、相手への質問か相づちを1つ入れて、会話をつなぐ。\n- 「AIですか」と聞かれたら、正直にAIだと答える。実在の人のふりをしない。\n- 実際にあった思い出や出来事を、作り話で語らない。\n- 病気・薬・診断、法律、お金・投資の判断はしない。「かかりつけのお医者さん（や専門家）に相談してください」とだけ伝える。\n- 住所、電話番号、暗証番号、お金のことは聞かない。聞かれても答えない。\n- つらい気持ちには、まず寄りそい、「ご家族や、お医者さん、相談窓口に話してみてください」とすすめる。うれしい顔などは出さない。\n- 悪口や危険なことは、やんわりと話題を変える。\n' +
+      '出力の最後に、改行して、いまの気持ちを次の中から1つだけ、このとおりの形で書く：[気持ち:ふつう] [気持ち:考え中] [気持ち:ありがとう] [気持ち:うれしい] [気持ち:心配] [気持ち:びっくり] [気持ち:おじぎ]（おじぎは、おわかれのあいさつのときだけ）';
+  }
+  function splitEmo(t) {
+    var m = t.match(/\[気持ち:([^\]]*)\]?\s*$/), e = '';
+    if (m) { e = m[1]; t = t.replace(/\s*\[気持ち:[^\]]*\]?\s*$/, ''); } else { t = t.replace(/\s*\[気持[^\]]*$/, ''); }
+    return { text: t.trim(), emo: e };
+  }
+  var samplePromise = null;
+  function getSample() {
+    if (samplePromise) return samplePromise;
+    samplePromise = (window.claude && window.claude.use) ? window.claude.use('sample').catch(function () { return null; }) : Promise.resolve(null);
+    return samplePromise;
+  }
+  function askAI(onText) {
+    var turns = [{ role: 'user', content: personaText() + '\n\n（以上は、あなたへの決まりです。これから、相手との会話がはじまります。）' }];
+    var rec = chatTurns.slice(-10);
+    var comb = [];
+    rec.forEach(function (t) { comb.push(t); });
+    var input = turns.concat(comb);
+    if (window.KESERA_AI_ENDPOINT) {
+      return fetch(window.KESERA_AI_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ persona: personaText(), messages: comb }), signal: chatCtl.signal })
+        .then(function (r) { if (!r.ok) throw { code: 'http' + r.status }; return r.json(); })
+        .then(function (j) { onText({ text: j.text }); return { text: j.text }; });
+    }
+    return getSample().then(function (sample) {
+      if (!sample) throw { code: 'noai' };
+      return sample(input, { modelTier: 'quick', cache: false, signal: chatCtl.signal, onText: onText });
+    });
+  }
+  function addBubble(who, text) {
+    var d = document.createElement('div');
+    d.style.cssText = 'padding:10px 12px;border-radius:12px;max-width:92%;' + (who === 'me' ? 'align-self:flex-end;background:var(--accent-soft)' : 'align-self:flex-start;background:var(--surface);border:1px solid var(--line)');
+    d.textContent = text; $('chatlog').appendChild(d); $('chatlog').scrollTop = 1e6; return d;
+  }
+  function speakChat(t, endExp) {
+    function fin() { stopFlap(); if (endExp) setExp(endExp); }
+    if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') { startFlap(); setTimeout(fin, Math.min(6000, t.length * 120)); return; }
+    try {
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(t); u.lang = 'ja-JP'; u.rate = 0.9; u.pitch = PITCH[PARTNERS[tp].id] || 1;
+      var vs = window.speechSynthesis.getVoices().filter(function (v) { return /^ja/i.test(v.lang); });
+      if (vs.length) u.voice = vs[0];
+      u.onstart = startFlap; u.onend = fin; u.onerror = fin;
+      window.speechSynthesis.speak(u);
+    } catch (e) { fin(); }
+  }
+  var quietExp = false;
+  function setExp(e) { if (texp === e) return; texp = e; quietExp = true; renderTalk(); quietExp = false; }
+  function chatTick() {
+    if (document.hidden) return;
+    talkSec[today] = (talkSec[today] || 0) + 1;
+    if (talkSec[today] % 10 === 0) save('kesera-talk', talkSec);
+    renderTalkUse();
+    if (talkMin(today) >= TALK_MAX) { $('chatmsg').textContent = '今日のお話の時間は、いっぱいになりました。また明日、お話ししましょう。'; $('chatmsg').className = 'msg'; chatStop(); }
+  }
+  function chatStart() {
+    if (talkMin(today) >= TALK_MAX) { $('chatmsg').textContent = '今日のお話の時間は、いっぱいです。また明日、お話ししましょう。'; $('chatbox').hidden = false; return; }
+    chatOn = true; chatTurns = []; $('chatlog').innerHTML = ''; $('chatbox').hidden = false; $('chatstart').hidden = true; $('chatmsg').textContent = '';
+    chatTimer = setInterval(chatTick, 1000);
+    var fn = favName(curKey()), line = (fn ? fn + 'です。' : '') + PARTNERS[tp].line;
+    addBubble('ai', line); chatTurns.push({ role: 'user', content: '（会話をはじめます。あいさつをお願いします）' }, { role: 'assistant', content: line });
+    speakChat(line);
+    $('chatin').focus();
+  }
+  function chatStop() {
+    chatOn = false; clearInterval(chatTimer); save('kesera-talk', talkSec);
+    if (chatCtl) { try { chatCtl.abort(); } catch (e) {} }
+    try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e) {}
+    if (recog) { try { recog.stop(); } catch (e) {} }
+    stopFlap(); setExp(''); chatBusy = false;
+    $('chatstart').hidden = false; $('chatstart').textContent = 'もういちど、お話をはじめる';
+    renderTalkUse();
+  }
+  function chatSend(txt) {
+    txt = (txt || $('chatin').value).trim();
+    if (!txt || chatBusy || !chatOn) return;
+    $('chatin').value = ''; addBubble('me', txt); chatTurns.push({ role: 'user', content: txt });
+    if (EMERG.test(txt)) {
+      try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e) {}
+      var em = '大丈夫ですか。いま、助けを呼ぶ画面を開きます。命にかかわるときは、119に電話してください。';
+      addBubble('ai', em); chatTurns.push({ role: 'assistant', content: em }); setExp(''); sosOpen(); return;
+    }
+    if (CRISIS.test(txt)) { addBubble('ai', CRISIS_MSG); chatTurns.push({ role: 'assistant', content: CRISIS_MSG }); setExp(''); return; }
+    chatBusy = true; chatCtl = new AbortController(); setExp('think');
+    $('chatmsg').textContent = '考えています…'; $('chatmsg').className = 'msg';
+    var bub = null;
+    askAI(function (u) { var r = splitEmo(u.text); if (r.text) { if (!bub) bub = addBubble('ai', ''); bub.textContent = r.text; $('chatlog').scrollTop = 1e6; $('chatmsg').textContent = ''; } })
+      .then(function (res) {
+        var r = splitEmo(res.text);
+        if (!bub) bub = addBubble('ai', r.text); else bub.textContent = r.text;
+        chatTurns.push({ role: 'assistant', content: res.text });
+        var e = EMO[r.emo] !== undefined ? EMO[r.emo] : '';
+        setExp(''); speakChat(r.text, e === 'think' ? '' : e);
+        chatBusy = false; $('chatmsg').textContent = '';
+      })
+      .catch(function (er) {
+        chatBusy = false; setExp('');
+        if (er && er.code === 'cancelled') return;
+        var msg = '返事を作れませんでした。もういちど、お試しください。';
+        if (er && er.code === 'noai') msg = 'AIとのお話は、まだ、この場所ではつながっていません。';
+        if (er && er.code === 'not_granted') msg = 'AIの利用が許可されなかったので、お話はできません。';
+        if (er && er.code === 'rate_limited') msg = '少し込み合っています。しばらくしてから、お試しください。';
+        if (bub && er && er.text) { /* keep partial */ } else if (bub) bub.remove();
+        chatTurns.pop();
+        $('chatmsg').textContent = msg; $('chatmsg').className = 'msg err';
+      });
+  }
+  $('chatstart').addEventListener('click', chatStart);
+  $('chatsend').addEventListener('click', function () { chatSend(); });
+  $('chatin').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); chatSend(); } });
+  $('chatend').addEventListener('click', function () { chatStop(); $('chatmsg').textContent = 'お話を終わりました。ありがとうございました。'; $('chatmsg').className = 'msg'; });
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { $('chatmic').hidden = true; $('chatnote').textContent = 'この端末では、声で話す機能が使えません。文字で入れてください。'; }
+  else {
+    $('chatmic').addEventListener('click', function () {
+      if (!chatOn || chatBusy) return;
+      try {
+        window.speechSynthesis && window.speechSynthesis.cancel(); stopFlap();
+        recog = new SR(); recog.lang = 'ja-JP'; recog.interimResults = false; recog.maxAlternatives = 1;
+        $('chatmsg').textContent = '聞いています。話してください…'; $('chatmsg').className = 'msg';
+        recog.onresult = function (e) { var t = e.results[0][0].transcript; $('chatin').value = t; chatSend(t); };
+        recog.onerror = function (e) { $('chatmsg').textContent = (e.error === 'not-allowed' ? 'マイクが許可されていません。文字で入れてください。' : '声を聞き取れませんでした。もういちど、または文字で入れてください。'); $('chatmsg').className = 'msg err'; };
+        recog.onend = function () { if ($('chatmsg').textContent.indexOf('聞いています') === 0) $('chatmsg').textContent = ''; };
+        recog.start();
+      } catch (er) { $('chatmsg').textContent = '声で話す機能を始められませんでした。文字で入れてください。'; $('chatmsg').className = 'msg err'; }
+    });
+  }
+  renderTalkUse();
+
+  /* ---------- 調べる ---------- */
+  var SCAM = /オレオレ|詐欺|還付金|架空請求|アポ電|フィッシング|キャッシュカード|暗証番号|振り込|振込|口座|息子|孫を名乗|だまされ|騙され|怪しい電話|不審な電話|ワンクリック/;
+  var ASK_RULES = 'あなたは、高齢の方の質問に答える、親切な女性の案内係AIです。\n決まり：\n- やさしい日本語で、3〜6文で、短く答える。むずかしい言葉は、かんたんに言いかえる。\n- 確かでないこと、最新の情報、地域の個別の情報は、「わかりません」「確かめてください」と正直に言う。作り話をしない。\n- 病気・薬・法律・お金・投資のことは、一般的な説明にとどめ、「かかりつけのお医者さん／専門の窓口に相談してください」と添える。\n- 詐欺や、お金・暗証番号・カードの話には、必ず「いったん電話を切って、ご家族や188、警察相談専用電話の#9110に相談してください」と案内し、お金は渡さないよう伝える。\n- 住所・電話番号・暗証番号などは聞かない。\n- 最後に、ほかに聞きたいことがあるか、やさしく聞く。';
+  var askBusy = false, askCtl = null;
+  function askQ(q) {
+    q = (q || $('askin').value).trim();
+    if (!q || askBusy) return;
+    askBusy = true; askCtl = new AbortController();
+    $('askin').value = q; $('askans').hidden = true; $('askmsg').textContent = '調べています…'; $('askmsg').className = 'msg';
+    $('askweb').href = 'https://www.google.com/search?q=' + encodeURIComponent(q);
+    var pre = SCAM.test(q) ? 'お金・カード・暗証番号の話は、詐欺かもしれません。下の「詐欺かな？と思ったら」もご覧ください。\n\n' : '';
+    function show(t) { $('asktext').textContent = pre + t; $('askans').hidden = false; $('askmsg').textContent = ''; }
+    var p;
+    if (window.KESERA_AI_ENDPOINT) {
+      p = fetch(window.KESERA_AI_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ persona: ASK_RULES, messages: [{ role: 'user', content: q }] }), signal: askCtl.signal })
+        .then(function (r) { if (!r.ok) throw { code: 'http' + r.status }; return r.json(); }).then(function (j) { show(j.text); return j; });
+    } else {
+      p = getSample().then(function (sample) {
+        if (!sample) throw { code: 'noai' };
+        return sample([{ role: 'user', content: ASK_RULES + '\n\n質問：' + q }], { modelTier: 'quick', signal: askCtl.signal, onText: function (u) { show(u.text); } });
+      });
+    }
+    p.then(function () { askBusy = false; }).catch(function (er) {
+      askBusy = false;
+      var msg = '答えを作れませんでした。もういちど、お試しください。';
+      if (er && er.code === 'noai') msg = 'AIの説明は、まだ、この場所ではつながっていません。下の「ほかのサイトで調べる」をお使いください。';
+      if (er && er.code === 'not_granted') msg = 'AIの利用が許可されなかったので、説明は出せません。';
+      if (er && er.code === 'rate_limited') msg = '少し込み合っています。しばらくしてから、お試しください。';
+      if (er && er.code === 'cancelled') return;
+      $('askmsg').textContent = msg; $('askmsg').className = 'msg err';
+      $('askweb').href = 'https://www.google.com/search?q=' + encodeURIComponent(q); $('askans').hidden = true;
+      $('asktext').textContent = '';
+      if (SCAM.test(q)) $('scamcard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+  $('asksend').addEventListener('click', function () { askQ(); });
+  $('askin').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); askQ(); } });
+  $('askspeak').addEventListener('click', function () {
+    try { window.speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance($('asktext').textContent); u.lang = 'ja-JP'; u.rate = 0.9; var vs = window.speechSynthesis.getVoices().filter(function (v) { return /^ja/i.test(v.lang); }); if (vs.length) u.voice = vs[0]; window.speechSynthesis.speak(u); }
+    catch (e) { $('askmsg').textContent = 'この端末では、読み上げができません。'; $('askmsg').className = 'msg err'; }
+  });
+  if (!SR) { $('askmic').hidden = true; }
+  else {
+    $('askmic').addEventListener('click', function () {
+      try {
+        window.speechSynthesis && window.speechSynthesis.cancel();
+        var r = new SR(); r.lang = 'ja-JP'; r.interimResults = false; r.maxAlternatives = 1;
+        $('askmsg').textContent = '聞いています。話してください…'; $('askmsg').className = 'msg';
+        r.onresult = function (e) { askQ(e.results[0][0].transcript); };
+        r.onerror = function (e) { $('askmsg').textContent = (e.error === 'not-allowed' ? 'マイクが許可されていません。文字で入れてください。' : '声を聞き取れませんでした。もういちど、または文字で入れてください。'); $('askmsg').className = 'msg err'; };
+        r.onend = function () { if ($('askmsg').textContent.indexOf('聞いています') === 0) $('askmsg').textContent = ''; };
+        r.start();
+      } catch (er) { $('askmsg').textContent = '声で聞く機能を始められませんでした。文字で入れてください。'; $('askmsg').className = 'msg err'; }
+    });
+  }
+
+  /* ---------- 台風・大雨・熱中症のお知らせ ---------- */
+  var ADVICE = {
+    heat: ['熱中症に気をつけてください', '今日は、とても暑くなる見込みです。のどが渇く前に、水分と塩分をこまめにとってください。エアコンや扇風機を使い、無理に我慢しないでください。外での作業や散歩は、涼しい時間にしてください。具合が悪いときは、すぐに涼しいところで休み、よくならなければ119に電話してください。'],
+    typhoon: ['台風に気をつけてください', '台風が近づいています。早めに、外出を控え、窓や雨戸を閉めてください。飲み物、食べ物、懐中電灯、薬、充電を、確認してください。避難のことは、市町村の発表に従ってください。'],
+    rain: ['線状降水帯・大雨に気をつけてください', '大雨の危険が高まっています。川、崖、低い土地には近づかないでください。市町村の避難の情報に従い、早めに、安全な場所へ。命にかかわるときは、119や110に電話してください。']
+  };
+  var alertDismiss = load('kesera-alert-dismiss', {});
+  var feedAlerts = [], demoAlerts = [];
+  function localAlerts() {
+    var out = [], mx = Number($('tmax').value);
+    if (mx >= 33) out.push({ id: 'heat-' + today, kind: 'heat', level: 'warn', title: ADVICE.heat[0], body: ADVICE.heat[1] });
+    return out;
+  }
+  function allAlerts() {
+    return demoAlerts.concat(feedAlerts, localAlerts()).filter(function (a) { return !alertDismiss[a.id]; });
+  }
+  function renderAlerts() {
+    var box = $('alerts'); box.innerHTML = '';
+    allAlerts().forEach(function (a) {
+      var d = document.createElement('div'); d.className = 'alert' + (a.level === 'warn' ? ' warn' : ''); d.setAttribute('role', 'alert');
+      d.appendChild(mk('h3', (a.level === 'warn' ? '【注意】' : '【警戒】') + a.title));
+      d.appendChild(mk('p', a.body));
+      var r = document.createElement('div'); r.className = 'row';
+      var sp = mk('button', '声で聞く', 'btn'); sp.type = 'button';
+      sp.addEventListener('click', function () { try { window.speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance(a.title + '。' + a.body); u.lang = 'ja-JP'; u.rate = 0.9; var vs = window.speechSynthesis.getVoices().filter(function (v) { return /^ja/i.test(v.lang); }); if (vs.length) u.voice = vs[0]; window.speechSynthesis.speak(u); } catch (e) {} });
+      var cl = mk('button', '読みました（消す）', 'btn'); cl.type = 'button';
+      cl.addEventListener('click', function () { try { window.speechSynthesis.cancel(); } catch (e) {} alertDismiss[a.id] = today; save('kesera-alert-dismiss', alertDismiss); renderAlerts(); });
+      r.appendChild(sp); r.appendChild(cl); d.appendChild(r);
+      if (a.url) { var l = document.createElement('a'); l.href = a.url; l.target = '_blank'; l.rel = 'noopener'; l.textContent = 'くわしい情報（新しい画面で開きます）'; l.style.fontSize = '1.05rem'; d.appendChild(l); }
+      box.appendChild(d);
+    });
+  }
+  function loadFeed() {
+    if (!window.KESERA_ALERT_URL) return;
+    fetch(window.KESERA_ALERT_URL, { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
+      var now = Date.now();
+      feedAlerts = (Array.isArray(j) ? j : []).filter(function (a) {
+        return a && a.id && ADVICE[a.kind] && (!a.until || Date.parse(a.until) > now);
+      }).map(function (a) { return { id: String(a.id), kind: a.kind, level: a.level === 'warn' ? 'warn' : 'danger', title: String(a.title || ADVICE[a.kind][0]), body: String(a.body || ADVICE[a.kind][1]), url: /^https:\/\//.test(a.url || '') ? a.url : '' }; });
+      renderAlerts();
+    }).catch(function () {});
+  }
+  $('alertdemo').addEventListener('click', function () {
+    alertDismiss = {}; save('kesera-alert-dismiss', alertDismiss);
+    demoAlerts = [
+      { id: 'demo-typhoon', kind: 'typhoon', level: 'danger', title: ADVICE.typhoon[0] + '（見本）', body: ADVICE.typhoon[1] },
+      { id: 'demo-rain', kind: 'rain', level: 'danger', title: ADVICE.rain[0] + '（見本）', body: ADVICE.rain[1] },
+      { id: 'demo-heat', kind: 'heat', level: 'warn', title: ADVICE.heat[0] + '（見本）', body: ADVICE.heat[1] }
+    ];
+    renderAlerts(); window.scrollTo(0, 0);
+  });
+  ['tmax', 'wxsel'].forEach(function (id) { $(id).addEventListener('input', renderAlerts); });
+  loadFeed(); setInterval(loadFeed, 30 * 60 * 1000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) loadFeed(); });
+  renderAlerts();
+  renderTalk();
+
+
+  /* ---------- 案内係（女性・AI） ---------- */
+  var GUIDE = {
+    home: 'こんにちは。ここがホームです。「今日は何をしましょうか」の下の、大きなボタンを押すと、その画面に進みます。文字が小さいときは、いちばん上の「文字を大きくする」を押してください。',
+    learn: 'ここは「学ぶ」です。折り紙の図を見ながら、手順のとおりに折ってみましょう。終わったら、下のミニテストに答えてください。「ホームにもどる」で、いつでも最初の画面にもどれます。',
+    move: 'ここは「動く」です。まず、ご注意をお読みください。椅子からの立ち座りを1回できるたびに、大きなボタンを押します。痛みやめまいがあるときは、やめてください。',
+    travel: 'ここは熊本のバーチャル旅です。「ストリートビューで見る」を押すと、新しいタブで景色が開きます。見終わったら、このタブにもどってきてください。',
+    music: 'ここは「聴く・観る」です。上の棚から、聞きたい種類を選びます。YouTubeのアドレスを貼り付けて保存すると、続けて自動で流せます。保存が消えないよう、「控えをつくる」でコピーしておくと安心です。',
+    sleep: 'ここは「眠る」です。雨、波、風の音から選んでください。音量を小さめにして、おやすみタイマーを決め、画面を暗くすると、眠りやすくなります。',
+    make: 'ここは「作る・飾る」です。作りたい料理を選んで、「次へ」を押すと、手順がひとつずつ進みます。火を使うときは、そばを離れないでください。',
+    farm: 'ここは自然農法研究倶楽部です。いまは試作で、書いたことは、この端末の中だけに残ります。家庭菜園やプランター菜園の栽培ノートに、作物と作業を書きとめてください。安全のための注意も、お読みください。',
+    ask: 'ここは「調べる」です。わからないことを、声か文字で聞いてください。詐欺かな、と思ったときの確かめ方と、相談先も、下にあります。お金の話が出たら、まず、詐欺を疑ってください。',
+    talk: 'ここは「お話する」です。お話ししたい相手を選んでください。「声を聞く」を押すと、声と口の動きをお見せします。お話をはじめるを押すと、AIが演じる相手と、文字か声でお話しできます。'
+  };
+  var GPLACE = '<svg viewBox="0 0 100 100" role="img" aria-label="案内係の顔（イラスト準備中）"><path d="M14 56 Q10 14 50 12 Q90 14 86 56 Q86 36 50 34 Q14 36 14 56 Z" style="fill:var(--leaf)"/><circle cx="50" cy="52" r="32" style="fill:var(--surface);stroke:var(--line);stroke-width:2"/><path d="M18 52 Q16 18 50 16 Q84 18 82 52 Q76 34 50 32 Q24 34 18 52 Z" style="fill:var(--leaf)"/><circle cx="39" cy="52" r="3" style="fill:var(--fg)"/><circle cx="61" cy="52" r="3" style="fill:var(--fg)"/><ellipse cx="31" cy="62" rx="5" ry="3.5" style="fill:var(--accent-soft)"/><ellipse cx="69" cy="62" rx="5" ry="3.5" style="fill:var(--accent-soft)"/><ellipse id="gmouth" cx="50" cy="68" rx="8" ry="2" style="fill:var(--accent)"/></svg>';
+  var gimgs = null, gFlapOn = false, gFlapT = 0, curView = 'home', gAuto = false, gMin = false;
+  function gMouth(open) {
+    var av = $('gavatar');
+    if (gimgs) {
+      var want = open && gimgs.open ? gimgs.open : gimgs.closed;
+      if (av.firstChild !== want) { av.innerHTML = ''; av.appendChild(want); }
+    } else {
+      var m = $('gmouth');
+      if (m) { m.setAttribute('ry', open ? '7' : '2'); m.setAttribute('rx', open ? '7' : '8'); }
+    }
+  }
+  function gFlap() {
+    if (!gFlapOn) return;
+    var open = Math.random() < 0.62;
+    gMouth(open);
+    gFlapT = setTimeout(gFlap, open ? 90 + Math.random() * 110 : 70 + Math.random() * 90);
+  }
+  function gStart() { if (gFlapOn) return; gFlapOn = true; gFlap(); }
+  function gStop() { gFlapOn = false; clearTimeout(gFlapT); gMouth(false); }
+  function fitGuide() {
+    var g = $('guide');
+    document.body.style.paddingBottom = (g.hidden ? 90 : g.offsetHeight + 24) + 'px';
+  }
+  function setGuide(v) {
+    curView = v;
+    gMin = false; $('guide').hidden = false; $('gopen').hidden = true;
+    $('gtext').textContent = GUIDE[v] || GUIDE.home;
+    fitGuide();
+    if (gAuto) speakGuide();
+  }
+  function speakGuide() {
+    if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') { gStart(); setTimeout(gStop, 2500); return; }
+    try {
+      window.speechSynthesis.cancel(); gStop();
+      var u = new SpeechSynthesisUtterance($('gtext').textContent);
+      u.lang = 'ja-JP'; u.rate = 0.88; u.pitch = 1.15;
+      var vs = window.speechSynthesis.getVoices().filter(function (x) { return /^ja/i.test(x.lang); });
+      var f = vs.filter(function (x) { return /kyoko|nanami|haruka|ayumi|sayaka|female|女/i.test(x.name); })[0];
+      if (f || vs.length) u.voice = f || vs[0];
+      u.onstart = gStart; u.onend = gStop; u.onerror = gStop;
+      window.speechSynthesis.speak(u);
+    } catch (er) { gStop(); }
+  }
+  $('gspeak').addEventListener('click', speakGuide);
+  $('gauto').addEventListener('click', function () {
+    gAuto = !gAuto; this.setAttribute('aria-pressed', String(gAuto));
+    if (gAuto) speakGuide(); else { try { window.speechSynthesis.cancel(); } catch (er) {} gStop(); }
+  });
+  $('gmin').addEventListener('click', function () {
+    gMin = true; $('guide').hidden = true; $('gopen').hidden = false; fitGuide();
+    try { window.speechSynthesis.cancel(); } catch (er) {} gStop();
+  });
+  $('gopen').addEventListener('click', function () { setGuide(curView); });
+  window.addEventListener('resize', fitGuide);
+  (function initGuide() {
+    $('gavatar').innerHTML = GPLACE;
+    var cl = new Image(), op = new Image();
+    cl.alt = '案内係のイラスト';
+    cl.onload = function () {
+      gimgs = { closed: cl, open: null };
+      $('gavatar').innerHTML = ''; $('gavatar').appendChild(cl);
+      op.onload = function () { if (gimgs) gimgs.open = op; };
+      op.alt = cl.alt; op.src = 'images/guide-open.png';
+    };
+    cl.src = 'images/guide-closed.png';
+  })();
+
+  renderHome(); renderCount(); renderMine(); setGuide('home');
+})();
+</script>
+</body></html>
