@@ -367,11 +367,30 @@ button[aria-pressed="true"] { font-weight:700; }
 .welcome p:last-child { margin-top:6px; font-size:.92rem; }
 .welcome h1.logo-h1 { margin:0; line-height:1; }
 .logo-h1 img { display:block; width:min(300px,78%); height:auto; }
+
+.memo-bar { position:fixed; top:10px; left:10px; z-index:61; min-height:46px; max-width:calc(100vw - 150px); padding:8px 14px; border-radius:999px; border:2px solid var(--accent); background:var(--accent); color:var(--accent-ink); font-weight:700; font-size:1rem; box-shadow:0 3px 12px #0003; cursor:pointer; }
+.memo-bar[hidden] { display:none; }
+.memo-bar.today { animation: memoPulse 1.6s ease-in-out infinite; }
+@keyframes memoPulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.05); } }
+@media (prefers-reduced-motion: reduce) { .memo-bar.today { animation:none; } }
+.memo-due { border:3px solid var(--accent); background:var(--accent-soft); }
+.memo-due h2 { margin:0; font-size:1.25rem; }
+.memo-item { border:1.5px solid var(--line); border-radius:10px; padding:10px 12px; background:var(--surface); display:flex; flex-direction:column; gap:8px; }
+.memo-item.due { border-color:var(--accent); border-width:3px; }
+.memo-item .mt { font-size:1.2rem; font-weight:700; white-space:pre-wrap; overflow-wrap:anywhere; }
+.memo-item .md { font-size:.95rem; color:var(--accent); font-weight:700; }
+.memo-item .mb { display:flex; flex-wrap:wrap; gap:8px; }
+#memoText { width:100%; min-height:110px; font-size:1.15rem; padding:10px; border-radius:8px; border:1.5px solid var(--line); background:var(--surface); color:inherit; box-sizing:border-box; font-family:inherit; }
+#memoText[readonly] { background:var(--accent-soft); }
+.memo-row { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.memo-row input[type=date], .memo-row input[type=time] { font-size:1.1rem; min-height:46px; padding:4px 8px; border-radius:8px; border:1.5px solid var(--line); background:var(--surface); color:inherit; }
 .float-home { position:fixed; top:10px; right:10px; z-index:60; min-height:46px; padding:8px 16px; border-radius:999px; border:2px solid var(--accent); background:var(--surface); color:var(--accent); font-weight:700; font-size:1rem; box-shadow:0 3px 12px #0003; }
 .float-home[hidden] { display:none; }
 </style></head><body>
 
 <canvas id="petals" aria-hidden="true"></canvas>
+<dialog class="design-dialog location-dialog" id="memoDlg" aria-labelledby="memoDlgT"><div style="display:flex;flex-direction:column;gap:12px;padding:6px"><h2 id="memoDlgT" style="margin:0">📅 予約した予定の一覧</h2><div id="memoDlgList" style="display:flex;flex-direction:column;gap:8px;max-height:55vh;overflow-y:auto"></div><button class="btn primary" id="memoDlgClose" type="button" style="min-height:56px;font-size:1.1rem">閉じる</button></div></dialog>
+<button id="memoBar" class="memo-bar" type="button" hidden aria-live="polite"></button>
 <button id="floatHome" class="float-home" type="button" data-go="home" hidden>🏠 ホームへ</button>
 
 <div class="wrap">
@@ -387,6 +406,7 @@ button[aria-pressed="true"] { font-weight:700; }
   <!-- ホーム -->
   <section class="view" id="v-home" aria-label="ホーム">
     <div class="welcome"><h1 class="logo-h1"><img src="logo-kesera.png?v=20261018" alt="ケセラ　毎日に、小さな楽しみを。" onerror="this.outerHTML='ケセラ'"></h1><p>あなたのペースで、今日の「したいこと」を。</p></div>
+    <div class="card memo-due" id="memoDue" hidden role="alert"><h2>📌 きょうの うっかりメモ・予定</h2><div id="memoDueList"></div></div>
     <div class="card greet">
       <h2 id="greet"></h2>
       <div class="wx-row"><div class="wx-icon" id="wxIcon" aria-hidden="false"></div><p id="wx"></p></div>
@@ -495,6 +515,21 @@ button[aria-pressed="true"] { font-weight:700; }
         <li><span>歴史学び家</span><span class="pill">試作あり</span></li>
         <li><span>イキイキクラブ</span><span class="pill">筋トレ・音楽・料理を試作</span></li>
       </ul>
+    </div>
+
+    <div class="card" id="memoCard">
+      <h3>📝 うっかりメモ</h3>
+      <p class="muted">「声で入れる」を押して話すと、文字になります。まちがいは「修正」で直せます。「保存」でメモに残し、「予定予約」で日にちを決めると、その日に大きくお知らせします。</p>
+      <div class="row"><button class="btn primary" id="memoMic" type="button">🎤 声で入れる</button><button class="btn" id="memoFix" type="button">✏️ 修正</button></div>
+      <p class="muted" id="memoMsg" role="status"></p>
+      <textarea id="memoText" readonly aria-label="メモの文字" placeholder="ここに、話した言葉が文字で出ます"></textarea>
+      <div class="memo-row"><b>予定の日</b>
+        <button class="btn" type="button" data-memoday="0">きょう</button><button class="btn" type="button" data-memoday="1">あした</button><button class="btn" type="button" data-memoday="2">あさって</button></div>
+      <div class="memo-row"><input type="date" id="memoDate" aria-label="予定の日"><input type="time" id="memoTime" aria-label="時刻（なくても大丈夫です）"></div>
+      <div class="row"><button class="btn primary" id="memoSave" type="button">💾 保存</button><button class="btn primary" id="memoPlan" type="button">📅 予定予約</button></div>
+      <div id="memoList"></div>
+      <details id="memoArc"><summary id="memoArcSum">収納したメモ</summary><div id="memoArcList"></div></details>
+      <p class="muted">メモは、この端末の中だけに残ります。</p>
     </div>
 
     <div class="card" id="alertcard">
@@ -3272,6 +3307,109 @@ button[aria-pressed="true"] { font-weight:700; }
     $(id).value = load('kesera-pref', PREFS_DEFAULT);
     $(id).addEventListener('change', function () { save('kesera-pref', this.value); $('pfPref').value = this.value; $('wxPref').value = this.value; renderSun(); updateNews(); loadWeather(); });
   });
+
+  /* ---------- うっかりメモ ---------- */
+  var memos = load('kesera-memo', []); if (!Array.isArray(memos)) memos = [];
+  var WD = ['日', '月', '火', '水', '木', '金', '土'];
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+  function ymd(d) { return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); }
+  function todayStr() { return ymd(new Date()); }
+  function dayLabel(s, t) {
+    var p = s.split('-'), d = new Date(+p[0], +p[1] - 1, +p[2]); var td = todayStr();
+    var tm = new Date(); tm.setDate(tm.getDate() + 1);
+    var pre = s === td ? 'きょう' : (s === ymd(tm) ? 'あした' : '');
+    return pre + (pre ? '（' : '') + (+p[1]) + '月' + (+p[2]) + '日（' + WD[d.getDay()] + '）' + (pre ? '）' : '') + (t ? '　' + t + ' ごろ' : '');
+  }
+  function memoSaveAll() { save('kesera-memo', memos); }
+  function mkBtn(label, cls, fn) { var b = document.createElement('button'); b.type = 'button'; b.className = 'btn ' + (cls || ''); b.textContent = label; b.addEventListener('click', fn); return b; }
+  function memoItem(m, mode) {
+    var li = document.createElement('div'); li.className = 'memo-item' + (mode === 'due' ? ' due' : '');
+    var t = document.createElement('div'); t.className = 'mt'; t.textContent = m.text; li.appendChild(t);
+    var d = document.createElement('div'); d.className = 'md';
+    if (m.date) { d.textContent = '📅 ' + dayLabel(m.date, m.time) + (m.date < todayStr() && !m.done ? '　（前の日の予定です）' : ''); } else { d.textContent = '📝 メモ'; }
+    li.appendChild(d);
+    var b = document.createElement('div'); b.className = 'mb';
+    if (!m.done) {
+      b.appendChild(mkBtn('✅ 確認しました', 'primary', function () { m.done = true; m.doneAt = Date.now(); memoSaveAll(); memoRender(); }));
+    } else {
+      b.appendChild(mkBtn('もどす', '', function () { m.done = false; delete m.doneAt; memoSaveAll(); memoRender(); }));
+    }
+    var del = mkBtn('消す', '', function () {
+      if (del.getAttribute('data-ask') !== '1') { del.setAttribute('data-ask', '1'); del.textContent = '本当に消す'; setTimeout(function () { del.setAttribute('data-ask', '0'); del.textContent = '消す'; }, 4000); return; }
+      memos = memos.filter(function (x) { return x.id !== m.id; }); memoSaveAll(); memoRender();
+    });
+    b.appendChild(del); li.appendChild(b); return li;
+  }
+  function memoRender() {
+    var td = todayStr(), due = [], rest = [], arc = [];
+    memos.forEach(function (m) { if (m.done) arc.push(m); else if (m.date && m.date <= td) due.push(m); else rest.push(m); });
+    function byDate(a, b) { return ((a.date || '9999') + (a.time || '')).localeCompare((b.date || '9999') + (b.time || '')); }
+    due.sort(byDate); rest.sort(function (a, b) { return a.date && b.date ? byDate(a, b) : (a.date ? -1 : (b.date ? 1 : b.id - a.id)); });
+    arc.sort(function (a, b) { return (b.doneAt || 0) - (a.doneAt || 0); });
+    var dl = $('memoDueList'); dl.innerHTML = '';
+    due.forEach(function (m) { dl.appendChild(memoItem(m, 'due')); });
+    $('memoDue').hidden = !due.length;
+    var ml = $('memoList'); ml.innerHTML = '';
+    if (rest.length) { var h = document.createElement('h4'); h.textContent = 'これからの予定とメモ'; h.style.margin = '8px 0 0'; ml.appendChild(h); }
+    rest.forEach(function (m) { ml.appendChild(memoItem(m, 'rest')); });
+    var al = $('memoArcList'); al.innerHTML = '';
+    arc.forEach(function (m) { al.appendChild(memoItem(m, 'arc')); });
+    $('memoArc').hidden = !arc.length; $('memoArcSum').textContent = '収納したメモ（' + arc.length + '件）';
+    var plans = memos.filter(function (m) { return !m.done && m.date; }).length, bar = $('memoBar');
+    bar.hidden = !plans;
+    if (plans) { bar.className = 'memo-bar' + (due.length ? ' today' : ''); bar.textContent = due.length ? '📌 きょうの予定があります（' + due.length + '件）' : '📅 予定があります（' + plans + '件）'; }
+  }
+  $('memoBar').addEventListener('click', function () {
+    show('home');
+    setTimeout(function () { var e = $('memoDue').hidden ? $('memoCard') : $('memoDue'); try { e.scrollIntoView({ block: 'start' }); } catch (x) { window.scrollTo(0, e.offsetTop); } }, 60);
+  });
+
+  function memoPop(newId) {
+    var l = $('memoDlgList'); l.innerHTML = '';
+    var pl = memos.filter(function (m) { return !m.done && m.date; }).sort(function (a, b) { return (a.date + (a.time || '')).localeCompare(b.date + (b.time || '')); });
+    if (!pl.length) { var e = document.createElement('p'); e.textContent = '予約した予定は、まだありません。'; l.appendChild(e); }
+    pl.forEach(function (m) {
+      var li = document.createElement('div'); li.className = 'memo-item' + (m.id === newId ? ' due' : '');
+      var d = document.createElement('div'); d.className = 'md'; d.textContent = '📅 ' + dayLabel(m.date, m.time) + (m.id === newId ? '　← いま予約しました' : ''); li.appendChild(d);
+      var t = document.createElement('div'); t.className = 'mt'; t.textContent = m.text; li.appendChild(t); l.appendChild(li);
+    });
+    var dg = $('memoDlg'); if (dg.showModal) { if (!dg.open) dg.showModal(); } else dg.setAttribute('open', '');
+  }
+  $('memoDlgClose').addEventListener('click', function () { var dg = $('memoDlg'); if (dg.close) dg.close(); else dg.removeAttribute('open'); });
+  function memoAdd(planned) {
+    var t = $('memoText').value.trim(), d = $('memoDate').value, tm = $('memoTime').value;
+    if (!t) { $('memoMsg').textContent = '先に、声で入れるか、文字を入れてください。'; return; }
+    if (planned && !d) { $('memoMsg').textContent = '予定の日を選んでください。「きょう」「あした」のボタンも使えます。'; return; }
+    var nid = Date.now();
+    memos.push({ id: nid, text: t, date: planned ? d : '', time: planned ? tm : '', done: false });
+    memoSaveAll(); $('memoText').value = ''; $('memoText').readOnly = true; $('memoDate').value = ''; $('memoTime').value = '';
+    $('memoMsg').textContent = planned ? '予定を予約しました。' + dayLabel(d, tm) + 'に、大きくお知らせします。' : '保存しました。'; memoRender();
+    if (planned) memoPop(nid);
+  }
+  $('memoSave').addEventListener('click', function () { memoAdd(false); });
+  $('memoPlan').addEventListener('click', function () { memoAdd(true); });
+  $('memoFix').addEventListener('click', function () { var x = $('memoText'); x.readOnly = false; x.focus(); $('memoMsg').textContent = '文字を直せます。直したら「保存」か「予定予約」を押してください。'; });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-memoday]'), function (b) {
+    b.addEventListener('click', function () { var d = new Date(); d.setDate(d.getDate() + (+b.getAttribute('data-memoday'))); $('memoDate').value = ymd(d); });
+  });
+  var memoRec = null;
+  if (!SR) { $('memoMic').hidden = true; $('memoText').readOnly = false; $('memoMsg').textContent = 'この端末では、声で入れる機能が使えません。文字で入れてください。'; }
+  else {
+    $('memoMic').addEventListener('click', function () {
+      try {
+        if (memoRec) { try { memoRec.stop(); } catch (e) {} }
+        memoRec = new SR(); memoRec.lang = 'ja-JP'; memoRec.interimResults = false; memoRec.maxAlternatives = 1;
+        $('memoMsg').textContent = '聞いています。話してください…';
+        memoRec.onresult = function (e) { var t = e.results[0][0].transcript; var x = $('memoText'); x.value = (x.value ? x.value + '　' : '') + t; $('memoMsg').textContent = '文字になりました。まちがいがあれば「修正」を押してください。'; };
+        memoRec.onerror = function (e) { $('memoMsg').textContent = e.error === 'not-allowed' ? 'マイクが許可されていません。ブラウザの設定でマイクを許可してください。' : (e.error === 'no-speech' ? '声が聞こえませんでした。もう一度、押してください。' : '声を文字にできませんでした。もう一度お試しください。'); };
+        memoRec.onend = function () { if ($('memoMsg').textContent.indexOf('聞いています') === 0) $('memoMsg').textContent = ''; };
+        memoRec.start(); var rc = memoRec; setTimeout(function () { try { rc.stop(); } catch (e) {} }, 30000);
+      } catch (er) { $('memoMsg').textContent = '声で入れる機能を始められませんでした。「修正」を押して、文字で入れてください。'; }
+    });
+  }
+  memoRender();
+  setInterval(memoRender, 60000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) memoRender(); });
   renderWxIcon();
   renderSun(); updateNews();
   loadWeather();
