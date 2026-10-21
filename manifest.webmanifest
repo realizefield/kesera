@@ -1,0 +1,16 @@
+{
+  "name": "ケセラ",
+  "short_name": "ケセラ",
+  "description": "50代・60代・70代・80代のおともに",
+  "start_url": "kesera-club.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#a4335a",
+  "lang": "ja",
+  "icons": [
+    { "src": "favicon.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "favicon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

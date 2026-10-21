@@ -1,4 +1,4 @@
-<!doctype html><html lang="ja" data-theme="light" data-look="stylish"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ケセラ｜50代・60代・70代・80代のおともに</title><script>/* AI中継所のアドレス。中継所を作ったら、下の '' の中に貼ります。例：'https://kesera-ai.あなたの名前.workers.dev' */ window.KESERA_AI_ENDPOINT = 'https://kesera-ai.kogentext.workers.dev';</script><link rel="icon" type="image/png" sizes="192x192" href="favicon.png?v=20261018"><link rel="apple-touch-icon" href="favicon.png?v=20261018">
+<!doctype html><html lang="ja" data-theme="light" data-look="stylish"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ケセラ｜50代・60代・70代・80代のおともに</title><script>/* AI中継所のアドレス。中継所を作ったら、下の '' の中に貼ります。例：'https://kesera-ai.あなたの名前.workers.dev' */ window.KESERA_AI_ENDPOINT = 'https://kesera-ai.kogentext.workers.dev';</script><link rel="icon" type="image/png" sizes="192x192" href="favicon.png?v=20261018"><link rel="apple-touch-icon" href="favicon.png?v=20261018"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#a4335a"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="ケセラ">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&display=swap">
 <style>
@@ -391,6 +391,7 @@ button[aria-pressed="true"] { font-weight:700; }
       <h2 id="greet"></h2>
       <div class="wx-row"><div class="wx-icon" id="wxIcon" aria-hidden="false"></div><p id="wx"></p></div>
       <p id="wxWords" style="font-weight:700;font-size:1.12rem;margin:8px 0 4px"></p>
+      <p id="wxSun" style="margin:4px 0 8px;font-weight:700"></p>
       <div class="wx-next" id="wxNext" hidden>
         <div class="wx-next-row" id="wxNightRow"><div class="wx-mini" id="wxNightIcon" aria-hidden="true"></div><p id="wxNight"></p></div>
         <div class="wx-next-row" id="wxTmrRow"><div class="wx-mini" id="wxTmrIcon" aria-hidden="true"></div><p id="wxTmr"></p></div>
@@ -436,8 +437,10 @@ button[aria-pressed="true"] { font-weight:700; }
     </div>
 
     <div class="card news-card" aria-label="最新ニュース">
-      <div class="news-copy"><h2>世の中のできごと</h2><p class="muted" id="newsDescription">Yahoo!ニュースで、いまの見出しを読めます。別のタブで開きます。ケセラにもどるときは、ブラウザの「タブ」(重なった四角のボタン)から、ケセラを選びます。</p></div>
-      <a class="btnlink primary" id="latestNews" href="https://news.yahoo.co.jp/" target="_blank" rel="noopener noreferrer" aria-describedby="newsDescription"><span aria-hidden="true">📰</span>最新ニュースを見る</a>
+      <div class="news-copy"><h2>世の中のできごと</h2><p class="muted" id="newsDescription">全国のニュースと、お住まいの県のニュースを、Yahoo!ニュースで読めます。別のタブで開きます。ケセラにもどるときは、ブラウザの「タブ」(重なった四角のボタン)から、ケセラを選びます。</p></div>
+      <a class="btnlink primary" id="latestNews" href="https://news.yahoo.co.jp/" target="_blank" rel="noopener noreferrer" aria-describedby="newsDescription"><span aria-hidden="true">📰</span>全国のニュースを見る</a>
+      <a class="btnlink primary" id="localNews" href="https://news.yahoo.co.jp/" target="_blank" rel="noopener noreferrer" aria-describedby="newsDescription"><span aria-hidden="true">📍</span><span id="localNewsName">地域のニュースを見る</span></a>
+      <p class="muted" style="margin:6px 0 0">お住まいの県は、「お名前・お住まい・今日の天気を入れる」で変えられます。</p>
     </div>
 
     <div class="card news-card" aria-label="文学へのいざない">
@@ -3161,6 +3164,62 @@ button[aria-pressed="true"] { font-weight:700; }
     $('wxAlert').hidden = !al.length;
     $('wxAlertList').innerHTML = al.map(function (a) { return '<li>' + a.t + '</li>'; }).join('');
   }
+
+  /* 日の出・日の入り：お住まいの県庁所在地の位置から、計算で出す（通信は使いません） */
+  var PREF_LL = {'016000':[43.064,141.347],'020000':[40.824,140.74],'030000':[39.704,141.153],'040000':[38.269,140.872],'050000':[39.719,140.103],'060000':[38.24,140.364],'070000':[37.75,140.468],'080000':[36.342,140.447],'090000':[36.566,139.884],'100000':[36.391,139.061],'110000':[35.857,139.649],'120000':[35.605,140.123],'130000':[35.69,139.692],'140000':[35.448,139.643],'150000':[37.902,139.023],'160000':[36.695,137.211],'170000':[36.594,136.626],'180000':[36.065,136.222],'190000':[35.664,138.568],'200000':[36.651,138.181],'210000':[35.391,136.722],'220000':[34.977,138.383],'230000':[35.18,136.907],'240000':[34.73,136.509],'250000':[35.004,135.869],'260000':[35.021,135.756],'270000':[34.686,135.52],'280000':[34.691,135.183],'290000':[34.685,135.833],'300000':[34.226,135.168],'310000':[35.504,134.238],'320000':[35.472,133.051],'330000':[34.662,133.935],'340000':[34.397,132.46],'350000':[34.186,131.471],'360000':[34.066,134.559],'370000':[34.34,134.043],'380000':[33.842,132.766],'390000':[33.56,133.531],'400000':[33.606,130.418],'410000':[33.249,130.299],'420000':[32.745,129.874],'430000':[32.79,130.742],'440000':[33.238,131.613],'450000':[31.911,131.424],'460100':[31.56,130.558],'471000':[26.212,127.681]};
+  function sunTimes(y, m, d, lat, lon) {
+    var R = Math.PI / 180;
+    var a = Math.floor((14 - m) / 12), yy = y + 4800 - a, mm = m + 12 * a - 3;
+    var jd0 = d + Math.floor((153 * mm + 2) / 5) + 365 * yy + Math.floor(yy / 4) - Math.floor(yy / 100) + Math.floor(yy / 400) - 32045 - 0.5;
+    function par(jd) {
+      var T = (jd - 2451545.0) / 36525;
+      var L0 = (280.46646 + T * (36000.76983 + 0.0003032 * T)) % 360, M = 357.52911 + T * (35999.05029 - 0.0001537 * T);
+      var e = 0.016708634 - T * (0.000042037 + 0.0000001267 * T);
+      var C = Math.sin(M * R) * (1.914602 - T * (0.004817 + 0.000014 * T)) + Math.sin(2 * M * R) * (0.019993 - 0.000101 * T) + Math.sin(3 * M * R) * 0.000289;
+      var om = 125.04 - 1934.136 * T, lam = L0 + C - 0.00569 - 0.00478 * Math.sin(om * R);
+      var eps = 23 + (26 + (21.448 - T * (46.815 + T * (0.00059 - T * 0.001813))) / 60) / 60 + 0.00256 * Math.cos(om * R);
+      var dec = Math.asin(Math.sin(eps * R) * Math.sin(lam * R)), yv = Math.tan(eps * R / 2); yv = yv * yv;
+      var eot = 4 * (yv * Math.sin(2 * L0 * R) - 2 * e * Math.sin(M * R) + 4 * e * yv * Math.sin(M * R) * Math.cos(2 * L0 * R) - 0.5 * yv * yv * Math.sin(4 * L0 * R) - 1.25 * e * e * Math.sin(2 * M * R)) / R;
+      return { dec: dec, eot: eot };
+    }
+    function ev(rise) {
+      var t = 720 - 4 * lon; // 最初のおおよその時刻（分、UT）
+      for (var i = 0; i < 3; i++) {
+        var p = par(jd0 + t / 1440);
+        var cw = Math.cos(90.833 * R) / (Math.cos(lat * R) * Math.cos(p.dec)) - Math.tan(lat * R) * Math.tan(p.dec);
+        if (cw > 1) return 'night'; if (cw < -1) return 'day';
+        var ha = Math.acos(cw) / R * (rise ? 1 : -1);
+        t = 720 - 4 * (lon + ha) - p.eot;
+      }
+      return t;
+    }
+    var r = ev(true), s = ev(false);
+    if (typeof r === 'string') return { none: r };
+    function loc(t) { return ((t + 540) % 1440 + 1440) % 1440; }
+    return { rise: loc(r), set: loc(s) };
+  }
+  function hm(min) { min = Math.round(min); return Math.floor(min / 60) + ':' + pad(min % 60); }
+  function prefName() {
+    var code = load('kesera-pref', PREFS_DEFAULT), o = document.querySelector('#wxPref option[value="' + code + '"]');
+    return o ? o.textContent.replace(/[（(].*$/, '') : '';
+  }
+  function renderSun() {
+    var el = $('wxSun'); if (!el) return;
+    var code = load('kesera-pref', PREFS_DEFAULT), ll = PREF_LL[code] || PREF_LL[PREFS_DEFAULT], t = new Date();
+    var s = sunTimes(t.getFullYear(), t.getMonth() + 1, t.getDate(), ll[0], ll[1]);
+    if (s.none) { el.textContent = s.none === 'day' ? '今日は、太陽がしずみません（白夜）。' : '今日は、太陽がのぼりません。'; return; }
+    var w = new Date(t.getTime() - 7 * 864e5), s7 = sunTimes(w.getFullYear(), w.getMonth() + 1, w.getDate(), ll[0], ll[1]);
+    var len = Math.round(s.set - s.rise), line = '日の出　' + hm(s.rise) + '　／　日の入り　' + hm(s.set) + '（' + prefName() + '）　昼の長さ　' + Math.floor(len / 60) + '時間' + (len % 60) + '分';
+    if (!s7.none) { var dd = Math.round(s.set - s7.set); if (dd <= -3) line += '。日の入りは、1週間前より' + (-dd) + '分早くなりました。夕方は、早めに明かりを'; else if (dd >= 3) line += '。日の入りは、1週間前より' + dd + '分遅くなりました'; }
+    el.textContent = line + '。';
+  }
+  /* ニュース：全国と、お住まいの県 */
+  function updateNews() {
+    var a = $('localNews'); if (!a) return;
+    var n = prefName() || '地域';
+    a.href = 'https://news.yahoo.co.jp/search?p=' + encodeURIComponent(n) + '&ei=UTF-8';
+    $('localNewsName').textContent = n + 'のニュースを見る';
+  }
   function parseJma(data) {
     var ts = data[0].timeSeries, a0 = ts[0].areas[0];
     var res = { text: String(a0.weathers[0] || '').replace(/[　\s]+/g, ' ').trim(), code: a0.weatherCodes[0], min: null, max: null, pop: null, rep: data[0].reportDatetime, area: a0.area && a0.area.name };
@@ -3211,9 +3270,10 @@ button[aria-pressed="true"] { font-weight:700; }
   }
   ['pfPref', 'wxPref'].forEach(function (id) {
     $(id).value = load('kesera-pref', PREFS_DEFAULT);
-    $(id).addEventListener('change', function () { save('kesera-pref', this.value); $('pfPref').value = this.value; $('wxPref').value = this.value; loadWeather(); });
+    $(id).addEventListener('change', function () { save('kesera-pref', this.value); $('pfPref').value = this.value; $('wxPref').value = this.value; renderSun(); updateNews(); loadWeather(); });
   });
   renderWxIcon();
+  renderSun(); updateNews();
   loadWeather();
 
 })();
