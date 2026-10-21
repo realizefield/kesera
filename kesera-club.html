@@ -349,6 +349,15 @@ button[aria-pressed="true"] { font-weight:700; }
 .wx-icon svg { width:100%; height:100%; display:block; }
 .wx-row #wx { margin:0; flex:1 1 auto; }
 #wxAutoNote { font-size:.88rem; }
+.wx-next { margin:8px 0; display:flex; flex-direction:column; gap:8px; }
+.wx-next-row { display:flex; align-items:center; gap:10px; }
+.wx-mini { flex:none; width:48px; height:48px; }
+.wx-mini svg, .wx-mini img { width:100%; height:100%; display:block; }
+.wx-next p { margin:0; font-size:1.02rem; line-height:1.6; }
+.wx-alert { border:1.5px solid #d9a441; background:#fff7e0; color:#4a3500; border-radius:12px; padding:10px 14px; }
+.wx-alert b { display:block; margin-bottom:4px; }
+.wx-alert ul { margin:0; padding-left:1.2em; }
+.wx-alert li { line-height:1.7; font-weight:700; }
 .pf-read { margin:12px 0; padding:12px 14px; border:2px solid var(--line); border-radius:12px; font-size:1.05rem; }
 #pfBody[hidden] { display:none; }
 .site-tagline { margin:10px 0 0; text-align:center; font-size:clamp(.92rem,3.6vw,1.1rem); font-weight:700; color:var(--accent); letter-spacing:.04em; line-height:1.4; }
@@ -382,6 +391,11 @@ button[aria-pressed="true"] { font-weight:700; }
       <h2 id="greet"></h2>
       <div class="wx-row"><div class="wx-icon" id="wxIcon" aria-hidden="false"></div><p id="wx"></p></div>
       <p id="wxWords" style="font-weight:700;font-size:1.12rem;margin:8px 0 4px"></p>
+      <div class="wx-next" id="wxNext" hidden>
+        <div class="wx-next-row" id="wxNightRow"><div class="wx-mini" id="wxNightIcon" aria-hidden="true"></div><p id="wxNight"></p></div>
+        <div class="wx-next-row" id="wxTmrRow"><div class="wx-mini" id="wxTmrIcon" aria-hidden="true"></div><p id="wxTmr"></p></div>
+        <div class="wx-alert" id="wxAlert" hidden role="status"><b>⚠ 気をつけたいこと</b><ul id="wxAlertList"></ul></div>
+      </div>
       <p class="muted" id="wxAutoNote" role="status"></p>
       <p class="muted" id="hint"></p>
       <div id="callBanner" class="notice" hidden role="status" style="display:flex;flex-direction:column;gap:8px"><b id="callBannerTitle"></b><span id="callBannerText"></span><div class="row"><button class="btn primary" id="callSpeak" type="button">声で聞く</button><button class="btn" id="callClose" type="button">とじる</button></div></div>
@@ -3038,7 +3052,7 @@ button[aria-pressed="true"] { font-weight:700; }
   }
 
   function wxPart(s) {
-    s = String(s || '').replace(/[　\s]+/g, ' ').trim().replace(/くもり/g, '曇り');
+    s = String(s || '').replace(/[　\s]+/g, ' ').trim().replace(/くもり/g, '曇り').replace(/ (夜のはじめ頃|夜遅く|夜|明け方) (?!から)/g, '、$1は');
     var m = s.match(/^(晴れ|曇り) 時々 (晴れ|曇り)$/); if (m && m[1] !== m[2]) { var f = function (w) { return w === '晴れ' ? '晴れたり' : '曇ったり'; }; return f(m[1]) + f(m[2]); }
     return s.replace(/ 時々 /g, '、ときどき').replace(/ 一時 /g, '、一時').replace(/ /g, '');
   }
@@ -3050,6 +3064,102 @@ button[aria-pressed="true"] { font-weight:700; }
     var pr = []; if (popAm != null) pr.push('午前 ' + popAm + '%'); if (popPm != null) pr.push('午後 ' + popPm + '%');
     if (pr.length) out += '　雨の確率は、' + pr.join('、') + '。';
     return out;
+  }
+
+  /* 今夜と明日の予報、気温の変化への注意 */
+  function ymd(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function kindOfText(t) {
+    t = String(t || '');
+    if (/雷/.test(t)) return 'thunder'; if (/雪/.test(t)) return 'snow'; if (/雨/.test(t)) return 'rain';
+    if (/晴/.test(t)) return /曇|くもり/.test(t) ? 'suncloud' : 'sunny';
+    return 'cloudy';
+  }
+  function nightOf(t) {
+    t = String(t || '').replace(/[　\s]+/g, ' ').trim(); var m;
+    var r = t;
+    if ((m = t.match(/^(.+) 後 (.+)$/))) r = m[2];
+    else if ((m = t.match(/^(.+?) ([^ ]+) から (.+)$/))) r = m[3];
+    if ((m = r.match(/(?:^|.* )(?:夜のはじめ頃|夜遅く|夜) (.+)$/))) r = m[1];
+    return r;
+  }
+  function tmrWords(t) {
+    t = String(t || '').replace(/[　\s]+/g, ' ').trim(); var m;
+    if ((m = t.match(/^(.+?) 後 (.+)$/))) return wxPart(m[1]) + 'のち' + wxPart(m[2]);
+    if ((m = t.match(/^(.+?) ([^ ]+) から (.+)$/))) return wxPart(m[1]) + '、' + m[2] + 'から' + wxPart(m[3]);
+    return wxPart(t);
+  }
+  function numOrNull(v) { return (v === '' || v == null || isNaN(Number(v))) ? null : Number(v); }
+  function extendJma(data, res) {
+    var ts = data[0].timeSeries, a0 = ts[0].areas[0], tm = ymd(new Date(Date.now() + 864e5)), i, k;
+    var pp = null, tt = null;
+    for (i = 0; i < ts.length; i++) { if (!pp && ts[i].areas[0] && ts[i].areas[0].pops) pp = ts[i]; if (!tt && ts[i].areas[0] && ts[i].areas[0].temps) tt = ts[i]; }
+    var nightPop = null, tmrPop = null;
+    if (pp) {
+      for (k = 0; k < pp.timeDefines.length; k++) {
+        var d = pp.timeDefines[k].slice(0, 10), h = pp.timeDefines[k].slice(11, 13), v = numOrNull(pp.areas[0].pops[k]);
+        if (v === null) continue;
+        if (d === today && h === '18') nightPop = v;
+        if (d === tm) tmrPop = tmrPop === null ? v : Math.max(tmrPop, v);
+      }
+    }
+    var nt = nightOf(res.text);
+    res.night = { text: nt, kind: kindOfText(nt), pop: nightPop };
+    if (a0.weathers && a0.weathers[1]) {
+      var tmin = null, tmax = null;
+      if (tt) { for (k = 0; k < tt.timeDefines.length; k++) { if (tt.timeDefines[k].slice(0, 10) !== tm) continue; var hh = tt.timeDefines[k].slice(11, 13), tv = numOrNull(tt.areas[0].temps[k]); if (tv === null) continue; if (hh === '00') tmin = tv; else if (hh === '09') tmax = tv; } }
+      if ((tmin === null || tmax === null) && data[1] && data[1].timeSeries && data[1].timeSeries[1]) {
+        var w = data[1].timeSeries[1], wa = w.areas && w.areas[0];
+        if (wa) for (k = 0; k < w.timeDefines.length; k++) { if (w.timeDefines[k].slice(0, 10) !== tm) continue; if (tmin === null) tmin = numOrNull(wa.tempsMin && wa.tempsMin[k]); if (tmax === null) tmax = numOrNull(wa.tempsMax && wa.tempsMax[k]); }
+      }
+      if (tmin !== null && tmax !== null && tmin >= tmax) tmin = null;
+      var tx = String(a0.weathers[1]).replace(/[　\s]+/g, ' ').trim();
+      res.tmr = { text: tx, code: a0.weatherCodes && a0.weatherCodes[1], kind: wxKindFrom(a0.weatherCodes && a0.weatherCodes[1], tx), min: tmin, max: tmax, pop: tmrPop };
+    }
+  }
+  function svgMoon(kind) {
+    var moon = '<path d="M60 20a30 30 0 1 0 16 52A24 24 0 0 1 60 20z" fill="#f6d77a" stroke="#d9b24a" stroke-width="2"/>';
+    var cloud = '<g transform="translate(8,18)"><path d="M22 52a14 14 0 0 1 3-27 20 20 0 0 1 38 5 13 13 0 0 1-2 22z" fill="#e4edf5" stroke="#9db4c8" stroke-width="2.5" stroke-linejoin="round"/></g>';
+    return '<svg viewBox="0 0 96 96" role="img" aria-label="夜の天気">' + (kind === 'suncloud' ? '<g transform="translate(-8,-8) scale(.9)">' + moon + '</g>' + cloud : moon) + '</svg>';
+  }
+  function wxAlerts(r) {
+    var out = [], t = r.tmr || {}, n = r.night || {}, tt = t.text || '', nt = n.text || '', all = tt + ' ' + nt;
+    var base = (r.max !== null && r.max !== undefined) ? r.max : null;
+    var diff = (t.max != null && base !== null) ? t.max - base : null;
+    if (/雪/.test(all)) out.push({ lv: 5, t: '雪の予報です。転んだり、車がすべったりしないよう、お出かけは、ゆとりをもってください。' });
+    else if (/雷/.test(all)) out.push({ lv: 5, t: '雷をともなう予報です。外にいるときは、頑丈な建物の中に入ってください。' });
+    if (!/雪|雷/.test(all)) {
+      if (/雨/.test(nt) || (n.pop != null && n.pop >= 50)) out.push({ lv: 3, t: '今夜は、雨の予想です。夜道は足もとが見えにくいので、お出かけは気をつけてください。' });
+      if (/雨/.test(tt) || (t.pop != null && t.pop >= 50)) out.push({ lv: 3, t: '明日は、雨の予想です。傘と、すべりにくい靴で、足もとに気をつけてください。' });
+    }
+    if (diff !== null && diff <= -6) out.push({ lv: 4, t: '明日は、気温が大きく下がります（最高' + t.max + '℃、今日より' + (-diff) + '度低い）。上着やあたたかい服を、用意してください。' });
+    else if (diff !== null && diff <= -3) out.push({ lv: 4, t: '明日は、気温が下がります（最高' + t.max + '℃、今日より' + (-diff) + '度低い）。上着を用意すると、安心です。' });
+    else if (diff !== null && diff >= 4) out.push({ lv: 1, t: '明日は、今日より気温が上がります（最高' + t.max + '℃）。服を脱ぎ着しやすくして、水分もとってください。' });
+    if (t.min != null && t.min <= 0) out.push({ lv: 4, t: '明日の朝は、氷点下まで冷えます（最低' + t.min + '℃）。道路の凍結に、気をつけてください。' });
+    else if (t.min != null && t.min <= 5) out.push({ lv: 3, t: '明日の朝は、冷え込みます（最低' + t.min + '℃）。起きるときは、はおるものを、そばに置いてください。' });
+    else if (t.min != null && r.min != null && t.min - r.min <= -4) out.push({ lv: 2, t: '明日の朝は、今日より冷え込みます（最低' + t.min + '℃）。' });
+    if (t.max != null && t.max >= 30) out.push({ lv: 4, t: '明日は、暑くなります（最高' + t.max + '℃）。こまめに水分をとり、むりをしないでください。' });
+    if (t.max != null && t.min != null && t.max - t.min >= 10) out.push({ lv: 1, t: '明日は、朝と昼の気温の差が大きい日です（' + t.min + '℃〜' + t.max + '℃）。脱ぎ着しやすい服で、お過ごしください。' });
+    out.sort(function (a, b) { return b.lv - a.lv; });
+    return out.slice(0, 4);
+  }
+  function renderNext(r) {
+    var box = $('wxNext'); if (!box) return;
+    if (!r || (!r.night && !r.tmr)) { box.hidden = true; return; }
+    box.hidden = false;
+    if (r.night) {
+      $('wxNightIcon').innerHTML = (r.night.kind === 'sunny' || r.night.kind === 'suncloud') ? svgMoon(r.night.kind) : svgWx(r.night.kind);
+      $('wxNight').textContent = '今夜は、' + wxPart(r.night.text) + 'の予想です。' + (r.night.pop != null ? '　雨の確率は ' + r.night.pop + '%。' : '');
+      $('wxNightRow').hidden = false;
+    } else $('wxNightRow').hidden = true;
+    if (r.tmr) {
+      $('wxTmrIcon').innerHTML = svgWx(r.tmr.kind);
+      var tp = []; if (r.tmr.min != null) tp.push('最低 ' + r.tmr.min + '℃'); if (r.tmr.max != null) tp.push('最高 ' + r.tmr.max + '℃');
+      $('wxTmr').textContent = '明日は、' + tmrWords(r.tmr.text) + 'の予想です。' + (tp.length ? '　' + tp.join('、') + '。' : '') + (r.tmr.pop != null ? '　雨の確率は ' + r.tmr.pop + '%。' : '');
+      $('wxTmrRow').hidden = false;
+    } else $('wxTmrRow').hidden = true;
+    var al = wxAlerts(r);
+    $('wxAlert').hidden = !al.length;
+    $('wxAlertList').innerHTML = al.map(function (a) { return '<li>' + a.t + '</li>'; }).join('');
   }
   function parseJma(data) {
     var ts = data[0].timeSeries, a0 = ts[0].areas[0];
@@ -3066,16 +3176,20 @@ button[aria-pressed="true"] { font-weight:700; }
     }
     var pp = null; for (var j = 0; j < ts.length; j++) { if (ts[j].areas[0] && ts[j].areas[0].pops) { pp = ts[j]; break; } }
     if (pp) { var mx = -1; for (var m = 0; m < pp.timeDefines.length; m++) { if (pp.timeDefines[m].slice(0, 10) === today && pp.areas[0].pops[m] !== '') mx = Math.max(mx, Number(pp.areas[0].pops[m])); } if (mx >= 0) res.pop = mx; for (var q = 0; q < pp.timeDefines.length; q++) { if (pp.timeDefines[q].slice(0, 10) !== today || pp.areas[0].pops[q] === '') continue; var h2 = pp.timeDefines[q].slice(11, 13); if (h2 === '06') res.popAm = Number(pp.areas[0].pops[q]); if (h2 === '12') res.popPm = Number(pp.areas[0].pops[q]); } }
+    try { extendJma(data, res); } catch (e) {}
     return res;
   }
   function applyWeather(r, fromCache) {
+    var c0 = load('kesera-wxauto', null);
+    if (c0 && c0.date === today) { if (r.max == null && c0.max != null) r.max = c0.max; if (r.min == null && c0.min != null) r.min = c0.min; }
     var sel = { '1': '晴れ', '2': 'くもり', '3': '雨', '4': '雪' }[String(r.code).charAt(0)] || 'くもり';
     $('wxsel').value = sel;
     if (r.max !== null) $('tmax').value = r.max;
     if (r.min !== null) $('tmin').value = r.min; else if (r.max !== null) $('tmin').value = Math.max(-20, r.max - 7);
     save('kesera-wx', { min: Number($('tmin').value), max: Number($('tmax').value), wx: $('wxsel').value });
-    save('kesera-wxauto', { date: today, kind: wxKindFrom(r.code, r.text), text: r.text, pop: r.pop, popAm: r.popAm, popPm: r.popPm, rep: r.rep, area: r.area, min: r.min, max: r.max, code: r.code });
+    save('kesera-wxauto', { date: today, kind: wxKindFrom(r.code, r.text), text: r.text, pop: r.pop, popAm: r.popAm, popPm: r.popPm, rep: r.rep, area: r.area, min: r.min, max: r.max, code: r.code, night: r.night, tmr: r.tmr });
     $('wxWords').textContent = wxWords(r.text, r.popAm, r.popPm);
+    renderNext(r);
     ['tmin', 'tmax', 'wxsel'].forEach(function (id) { $(id).dispatchEvent(new Event('input')); });
     renderHome(); renderWxIcon();
     var hm = ''; try { var d = new Date(r.rep); hm = (d.getMonth() + 1) + '月' + d.getDate() + '日 ' + d.getHours() + '時' + (d.getMinutes() < 10 ? '0' : '') + d.getMinutes() + '分発表'; } catch (e) {}
@@ -3091,7 +3205,7 @@ button[aria-pressed="true"] { font-weight:700; }
       .then(function (data) { clearTimeout(to); applyWeather(parseJma(data), false); })
       .catch(function () {
         clearTimeout(to);
-        if (cached && cached.date === today && cached.text) { applyWeather({ text: cached.text, code: cached.code, min: cached.min, max: cached.max, pop: cached.pop, popAm: cached.popAm, popPm: cached.popPm, rep: cached.rep, area: cached.area }, true); }
+        if (cached && cached.date === today && cached.text) { applyWeather({ text: cached.text, code: cached.code, min: cached.min, max: cached.max, pop: cached.pop, popAm: cached.popAm, popPm: cached.popPm, rep: cached.rep, area: cached.area, night: cached.night, tmr: cached.tmr }, true); }
         else { $('wxAutoNote').textContent = '天気を、自動で取れませんでした。「お名前・お住まい・今日の天気を入れる」から、手で入れてください。'; }
       });
   }
