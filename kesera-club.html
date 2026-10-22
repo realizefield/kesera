@@ -397,7 +397,7 @@ button[aria-pressed="true"] { font-weight:700; }
   <p class="site-tagline">50代・60代・70代・80代のおともに</p>
   <div class="top">
     <span class="brand-note">暮らしに、ひと息。 <span class="tag">試作版</span></span>
-    <div class="header-tools"><button class="btn" id="tripOpen" type="button" aria-haspopup="dialog">歩く・電車・バス・タクシー</button><button class="btn design-button" id="designBtn" type="button" aria-haspopup="dialog">✿ デザインの変更</button><button class="btn" id="sizeBtn" aria-pressed="false">文字を大きくする</button></div>
+    <div class="header-tools"><button class="btn" id="tripOpen" type="button" aria-haspopup="dialog">歩く・電車・バス・タクシー</button><button class="btn design-button" id="settingsBtn" type="button">⚙ 設定</button><button class="btn design-button" id="designBtn" type="button" aria-haspopup="dialog">✿ デザインの変更</button><button class="btn" id="sizeBtn" aria-pressed="false">文字を大きくする</button></div>
   </div>
   <p class="appearance-note" id="appearanceNote" role="status"></p>
   <div class="location-bar"><button class="location-button" id="locationBtn" type="button" aria-haspopup="dialog" aria-label="Googleマップで現在地を見る"><span class="location-icon" aria-hidden="true">◎</span><span class="location-label">現在地を見る<small>Googleマップ</small></span></button></div>
@@ -579,6 +579,16 @@ button[aria-pressed="true"] { font-weight:700; }
       </div>
       <p class="msg" id="fammsg" aria-live="polite"></p>
     </div>
+  </section>
+
+  <!-- 設定 -->
+  <section class="view" id="v-settings" hidden aria-label="設定">
+    <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
+    <h2>⚙ 設定</h2>
+    <p class="muted">文字の大きさ、デザイン、声、お名前・お住まい、緊急連絡先、ご家族への見まもりなどは、すべてここで変えられます。</p>
+    <div class="card" id="setBasic"><h3>見た目・声</h3><div class="row" id="setBasicRow"></div><div id="setBasicNote"></div><div id="setVoice"></div></div>
+    <div class="card" id="setProfile"><h3>お名前・お住まい</h3><div id="setProfileBody"></div></div>
+    <div id="setCards"></div>
   </section>
 
   <!-- 学ぶ -->
@@ -1682,7 +1692,7 @@ button[aria-pressed="true"] { font-weight:700; }
   });
 
   /* 画面の切り替え */
-  var views = ['home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask', 'dress'];
+  var views = ['settings', 'home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask', 'dress'];
   var navView = 'home', navDepth = 0;
   function show(v, fromPop) {
     if (v !== 'talk' && typeof chatOn !== 'undefined' && chatOn) chatStop();
@@ -2962,7 +2972,8 @@ button[aria-pressed="true"] { font-weight:700; }
 
   /* ---------- 案内係（女性・AI） ---------- */
   var GUIDE = {
-    home: 'こんにちは。ここがホームです。「今日は何をしましょうか」の下の、大きなボタンを押すと、その画面に進みます。文字が小さいときは、いちばん上の「文字を大きくする」を押してください。',
+    settings: 'ここは「設定」です。文字の大きさ、デザイン、声、お名前とお住まい、緊急連絡先、ご家族への見まもりを、ここで変えられます。終わったら、「ホームにもどる」を押してください。',
+    home: 'こんにちは。ここがホームです。「今日は何をしましょうか」の下の、大きなボタンを押すと、その画面に進みます。文字が小さいときは、いちばん上の「⚙ 設定」の中の「文字を大きくする」を押してください。',
     learn: 'ここは「学ぶ」です。折り紙の図を見ながら、手順のとおりに折ってみましょう。終わったら、下のミニテストに答えてください。「ホームにもどる」で、いつでも最初の画面にもどれます。',
     move: 'ここは「動く」です。まず、ご注意をお読みください。椅子からの立ち座りを1回できるたびに、大きなボタンを押します。痛みやめまいがあるときは、やめてください。',
     travel: 'ここは熊本のバーチャル旅です。「ストリートビューで見る」を押すと、新しいタブで景色が開きます。見終わったら、このタブにもどってきてください。',
@@ -3410,6 +3421,20 @@ button[aria-pressed="true"] { font-weight:700; }
   memoRender();
   setInterval(memoRender, 60000);
   document.addEventListener('visibilitychange', function () { if (!document.hidden) memoRender(); });
+
+  /* ---------- 設定を1か所に ---------- */
+  (function () {
+    function mv(el, to) { if (el && to) to.appendChild(el); }
+    mv($('sizeBtn'), $('setBasicRow')); mv($('designBtn'), $('setBasicRow'));
+    mv($('appearanceNote'), $('setBasicNote'));
+    mv($('voiceRate') && $('voiceRate').closest('details'), $('setVoice'));
+    mv($('profOpen') && $('profOpen').closest('.row'), $('setProfileBody'));
+    mv($('profNote') && $('profNote').closest('p'), $('setProfileBody'));
+    mv($('wxPref') && $('wxPref').closest('details'), $('setProfileBody'));
+    ['alertcard', 'soscard', 'famcard'].forEach(function (id) { mv($(id), $('setCards')); });
+    var sd = $('wxPref') && $('wxPref').closest('details'); if (sd) sd.open = true;
+    $('settingsBtn').addEventListener('click', function () { show('settings'); });
+  })();
   renderWxIcon();
   renderSun(); updateNews();
   loadWeather();
