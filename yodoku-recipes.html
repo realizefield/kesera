@@ -245,6 +245,16 @@ article .check h2 { border-bottom-color: var(--green); }
 .dalt .dnote { margin:0; padding:8px 10px; border-radius:6px; background:var(--warn-bg); color:var(--warn-ink); font-size:15px; }
 .row .dh { color:var(--green); font-weight:700; }
 .fromk { margin:0 0 12px; } .fromk a { display:inline-flex; align-items:center; min-height:44px; padding:0 16px; border-radius:999px; border:2px solid var(--seal); color:var(--seal); font-weight:700; text-decoration:none; }
+.tiles a:nth-child(4) { background:var(--surface); color:var(--green); border:2px solid var(--green); }
+.dnote2 { margin:0 0 14px; padding:10px 14px; border-radius:8px; background:var(--warn-bg); color:var(--warn-ink); font-size:15px; line-height:1.7; }
+.dg { margin:0 0 8px; border:1px solid var(--line); border-radius:10px; background:var(--surface); overflow:hidden; }
+.dg summary { display:flex; justify-content:space-between; align-items:center; gap:10px; min-height:56px; padding:8px 16px; cursor:pointer; }
+.dg .dn { font-family:var(--display); font-weight:700; font-size:20px; }
+.dg .dl { flex:none; padding:1px 10px; border-radius:999px; border:2px solid var(--green); color:var(--green); font-size:13px; font-weight:700; white-space:nowrap; }
+.dg .dl.lvl-6 { background:var(--green); color:var(--green-ink); }
+.dgb { padding:4px 16px 16px; line-height:1.8; } .dgb p { margin:8px 0; }
+.mech { padding:10px 12px; border-radius:8px; background:var(--green-soft); }
+.amz { display:flex; align-items:center; justify-content:center; min-height:52px; border-radius:10px; background:var(--green); color:var(--green-ink); font-weight:700; font-size:18px; text-decoration:none; }
 .vids { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 10px; }
 .vlink {
   display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 12px; align-items: center;
@@ -1359,7 +1369,7 @@ const UMAMI = {
 
 /* ===== 料理への道 ===== */
 const STAGES = [
-  { id: 1, rank: '初級', name: '台所の入口', need: 3, lessons: ['1a', '1b', '1c', '1d', '1e', '1f'], goal: '塩・計量・火加減・だし・包丁の基本を身につけます。' },
+  { id: 1, rank: '初級', name: '台所の入口', need: 3, lessons: ['1a', '1b', '1c', '1d', '1e', '1f', '1g'], goal: '塩・計量・火加減・だし・包丁の基本を身につけます。' },
   { id: 2, rank: '中級', name: '一人前への道', need: 8, lessons: ['2a', '2b', '2c', '2d', '2e', '2f'], goal: '魚をさばき、肉を焼き、煮物の味をしみ込ませます。' },
   { id: 3, rank: '上級', name: '料理人への道', need: 15, lessons: ['3a', '3b', '3c', '3d'], goal: '包丁を研ぎ、刺身を引き、味と献立を組み立てます。' },
   { id: 4, rank: '最終', name: '調理師免許への道', need: 25, lessons: ['4a', '4b', '4c', '4d'], goal: '調理師の資格と、衛生・栄養の基本を学びます。' }
@@ -1390,6 +1400,9 @@ const LESSONS = {
   '2f': { title: '煮物のトラブル対応', intro: '煮物は、失敗しても直せることが多いです。落ち着いて、味見をしながら直します。',
     points: ['味が濃すぎたとき：水かだしを足し、じゃがいも、大根、玉ねぎ、豆腐など、味を吸う材料を足します。砂糖で整えることはできないので、薄めるのが基本です。', '味が薄いとき：煮汁を煮詰めるか、しょうゆを小さじ1ずつ足して、その都度、味見をします。', '煮崩れしたとき：次回は、煮立ったら弱火にし、かき混ぜず、鍋をゆするようにします。面取りと落としぶたも効果があります。', '火が通らないとき：ふたをして、弱火で、もう少し煮ます。煮汁が減っていれば、水を足します。かたい根菜は、先に下茹ですると安心です。', '焦げたとき：すぐ火を止め、焦げた底をかき混ぜずに、上の部分だけを別の鍋に移します。', '煮汁が多すぎるときは、ふたを取って、強めの火で煮詰めます。少ないときは、水かだしを足します。'],
     q: [{ q: '煮物の味が濃すぎたときは？', o: ['水かだしを足し、味を吸う材料を足す', '塩を足す', '強火で煮詰める'], a: 0, e: '薄めるのが基本です。大根や豆腐などを足すと、味が落ち着きます。' }, { q: '煮崩れを防ぐには？', o: ['強火で煮立たせ続ける', '煮立ったら弱火にして、かき混ぜない', '何度もかき混ぜる'], a: 1, e: '弱火で静かに煮ると、形が崩れにくくなります。' }] },
+  '1g': { title: '道具のお手入れと安全', intro: '道具を長く、安全に使うための基本です。',
+    points: ['包丁：使ったらすぐに洗って、水気をふきます。濡れたまま置くと、さびの原因になります。', 'フライパン：焦げつきにくい加工は、傷つくとはがれます。金属のへらを避け、空焼きをしないようにします。傷んだら買い替えます。', 'まな板：肉・魚用と、野菜用を分けます。洗ったあと、立てて乾かします。', '電気圧力鍋などの家電：入れてよい量の上限があります。説明書を必ず読み、フタが閉まっているか、確かめてから使います。', '電子レンジ：殻つきの卵や、殻のないゆで卵は、破裂することがあります。直接加熱しません。'],
+    q: [{ q: '濡れたまま置くと、さびやすいのは？', o: ['包丁', 'ふきん', 'スポンジ'], a: 0, e: '使ったあとは、洗って水気をふきます。' }, { q: '電子レンジで、してはいけないことは？', o: ['ゆで卵を直接加熱する', 'ごはんを温める', '野菜を蒸す'], a: 0, e: '卵は破裂することがあります。' }] },
   '2a': { title: '魚のさばき方（あじの三枚おろし）', intro: '魚をさばけると、料理の幅が一気に広がります。あじは、最初の一尾にぴったりです。',
     points: ['①ぜいご（尾の方の硬いうろこ）を、包丁で削ぎ取ります。②うろこを落とします。', '③胸びれの下から包丁を入れて、頭を落とします。④腹を開き、はらわたを出して、水で洗います。', '洗ったあとは、キッチンペーパーで水気をしっかりふきます。臭みが出にくくなります。', '⑤頭の方から、中骨に沿って包丁を入れ、身を外します。三枚おろしは、身が2枚と中骨1枚です。', 'まな板の下に、ぬれ布巾を敷くと滑りません。包丁は必ず、手前に引きます。'],
     q: [{ q: '三枚おろしの「三枚」とは？', o: ['身2枚と中骨1枚', '頭と身と尾', '身3枚'], a: 0, e: '上の身、下の身、中骨の3つです。' }, { q: '洗ったあとの魚は？', o: ['濡れたまま置く', '水気をしっかりふき取る', '塩水に浸けっぱなしにする'], a: 1, e: '水気が残ると、臭みの原因になります。' }] },
@@ -1531,6 +1544,93 @@ HITOIKI.push(
     story: ['かつお節は、とても固い食品として知られます。昔は、かんなで削って使いました。', '削りたての香りは、格別です。'],
     thanks: '漁をする方、作る方の、長い手間が詰まっています。香りまで、いただきます。' }
 );
+
+/* ===== 道具と家電 ===== */
+const DOUGU_NOTE = 'ボタンを押すと、Amazonの検索画面が、別の画面で開きます。商品は私が選んだものではありません。価格・在庫・口コミは変わりますので、大きさや使い方を、よく確認してからお選びください。';
+const DOUGU = [
+  { g: '基本の道具', lv: 'まず揃えたい', n: '包丁（三徳包丁）', q: '三徳包丁 ステンレス',
+    why: '肉・魚・野菜、何にでも使える万能の包丁です。1本あれば、ほとんどの料理ができます。', pick: '刃渡りは16〜18cmほどが扱いやすいです。手に持って、重すぎないものを選びます。ステンレスは、さびにくく、扱いやすいです。', hint: '使ったら、すぐに洗って、水気をふきます。切れ味が落ちたら、研ぎましょう。', rec: [], les: '1e' },
+  { g: '基本の道具', lv: 'まず揃えたい', n: 'まな板', q: 'まな板 抗菌 大きめ',
+    why: '食材を安定して切るための台です。', pick: '包丁が使いやすい、大きめ（幅30cm前後）がおすすめです。肉・魚用と、野菜用を分けると、食中毒の予防になります。', hint: '使ったら洗って、立てて乾かします。', rec: [] },
+  { g: '基本の道具', lv: 'まず揃えたい', n: '計量スプーン・計量カップ', q: '計量スプーン 計量カップ セット',
+    why: 'しょうゆなどの味つけの量が、このレシピ帳では特に大切です。大さじ15ml、小さじ5ml、1カップ200mlです。', pick: '大さじ・小さじ・小さじ1/2などのセットが便利です。目盛りが見やすいものを選びます。', hint: '粉や塩は、すり切りで量ります。', rec: ['nikujaga', 'shogayaki'] },
+  { g: '基本の道具', lv: 'まず揃えたい', n: 'フライパン', q: 'フライパン 26cm 焦げ付きにくい',
+    why: '四毒抜きは、油を使いません。焦げつきにくい加工のあるフライパンだと、油なしでも焼けます。', pick: '直径26cmほどが、ほとんどの料理に使えます。ふたもあると、蒸し焼きにも使えます。', hint: '加工がはがれたり、傷んだりしたら、買い替えます。金属のへらは使わず、空焼きはしないようにします。', rec: ['shogayaki', 'toriteri', 'torishio'] },
+  { g: '基本の道具', lv: 'まず揃えたい', n: '鍋（両手鍋）', q: '両手鍋 20cm 厚手 ステンレス',
+    why: '煮物、汁物、カレーに使います。', pick: '直径20cmほどで、底が厚いものが焦げにくく、煮物に向きます。', hint: 'ふたが付くものを選びます。', rec: ['nikujaga', 'tonjiru', 'chicken-curry'] },
+  { g: '基本の道具', lv: 'あると便利', n: 'キッチンスケール（はかり）', q: 'キッチンスケール 1g デジタル',
+    why: '肉や魚の重さをはかって、塩の量（約1%）を決めるのに役立ちます。', pick: '1g単位で量れるものが基本です。0.1g単位だと、塩の量もはかれます。', hint: '容器を載せてから、ゼロに戻して使います。', rec: [] },
+  { g: '基本の道具', lv: 'あると便利', n: '落としぶた', q: '落としぶた ステンレス 20cm',
+    why: '煮物で、少ない煮汁でも、味が全体に回ります。', pick: '鍋の大きさに合うものを選びます。クッキングシートでも代わりになります。', hint: '使うたびに、よく洗って乾かします。', rec: ['daikonbuta', 'kabocha', 'hijiki'] },
+  { g: '基本の道具', lv: 'あると便利', n: '水出しポット（冷水筒）', q: '水出しポット 1L 冷水筒',
+    why: '昆布の水だしを作るのに便利です。水と昆布を入れて、冷蔵庫に置くだけです。', pick: '1L前後で、横にしても漏れにくいものが使いやすいです。', hint: 'だしは、早めに使い切ります。', rec: ['misoshiru', 'ohitashi'] },
+  { g: '基本の道具', lv: 'あると便利', n: 'キッチンタイマー', q: 'キッチンタイマー 大きい',
+    why: '茹で時間や煮る時間を、はかります。', pick: '数字が大きく、音が聞こえやすいものを選びます。', hint: '', rec: ['tamago'] },
+  { g: '基本の道具', lv: 'あると便利', n: '料理用温度計', q: '料理用温度計 デジタル 中心温度',
+    why: '肉の中心が、75℃で1分以上になっているかを確かめられます。', pick: '先がとがっていて、中心に刺せるものを選びます。', hint: '使ったあとは、よく洗います。', rec: ['tsukune', 'tori-hamburg'] },
+  { g: '基本の道具', lv: 'あると便利', n: '蒸し器・せいろ', q: 'せいろ 蒸し器 21cm',
+    why: '野菜や肉を蒸すと、うまみが逃げず、油もいりません。', pick: '鍋に載せられる大きさを選びます。', hint: '木のせいろは、使ったあとによく乾かします。', rec: ['kasanemushi'] },
+  { g: '基本の道具', lv: 'こだわり', n: '砥石（包丁研ぎ）', q: '包丁研ぎ 砥石 中砥',
+    why: '切れる包丁は、料理が楽になり、ケガも減ります。', pick: '最初は、中砥（なかど）が基本です。種類で、水に浸す時間が違うので、説明書を確認します。', hint: '研ぐ角度は、約15度が目安です。', rec: [], les: '3a' },
+  { g: '調理家電', lv: 'あると便利', n: '電気圧力鍋', q: '電気圧力鍋 3L',
+    why: '角煮、手羽元、煮物、カレーが、短い時間でやわらかくできます。ほったらかしにできます。', pick: '容量は、家族の人数で選びます（2〜3人なら2〜3L）。無水調理ができるものだと、野菜のうまみが濃くなります。', hint: '入れてよい量の上限があります。説明書を必ず確認します。', rec: ['kakuni', 'tebamoto', 'nikujaga', 'chicken-curry'] },
+  { g: '調理家電', lv: 'あると便利', n: 'ホットプレート', q: 'ホットプレート 深型 平面',
+    why: '食卓で、油なしで焼いたり、水炊きや豚しゃぶができます。', pick: '平面と深鍋が両方あるタイプが便利です。', hint: 'プレートの加工が傷んだら、交換します。', rec: ['butashabu', 'mizutaki'] },
+  { g: '調理家電', lv: 'あると便利', n: '電子レンジ（オーブンレンジ）', q: 'オーブンレンジ 18L',
+    why: '温め直し、かぼちゃなど野菜の下ごしらえに、手軽です。', pick: '温めだけなら、単機能でも十分です。', hint: '殻つきの卵や、殻のないゆで卵は、破裂することがあります。レンジで直接加熱しないでください。', rec: ['kabocha'] },
+  { g: '調理家電', lv: 'あると便利', n: '電気ケトル', q: '電気ケトル 1L',
+    why: 'すぐにお湯が沸きます。霜降りや、かつお節のだし、味噌汁の湯に使えます。', pick: '1L前後が使いやすいです。', hint: '時々、水あかを取ります。', rec: ['misoshiru', 'sabamiso'] },
+  { g: '調理家電', lv: 'あると便利', n: 'フードプロセッサー', q: 'フードプロセッサー みじん切り',
+    why: '玉ねぎのみじん切りが、あっという間です。鶏肉をひき肉にもできます。', pick: '洗いやすい形のものを選びます。', hint: '刃は、洗うときに手を切らないよう、気をつけます。', rec: ['tsukune', 'tori-hamburg', 'tori-keema'] },
+  { g: '調理家電', lv: 'あると便利', n: 'ハンドブレンダー', q: 'ハンドブレンダー',
+    why: '鍋の中でそのまま、なめらかなスープにできます。かぼちゃのスープなどに。', pick: '軽くて、持ちやすいものを選びます。', hint: '', rec: [] },
+  { g: '調理家電', lv: 'あると便利', n: '炊飯器', q: '炊飯器 5.5合',
+    why: 'ごはんを毎日おいしく炊けます。玄米モードがあるものもあります。', pick: '家族の人数に合った大きさを選びます。', hint: '', rec: [] },
+  { g: '調理家電', lv: 'こだわり', n: '食品乾燥機', q: '食品乾燥機 ドライフルーツ 野菜',
+    why: '干ししいたけや切り干し大根を手作りできます。干すと、うまみが増します。だしの材料にもなります。', pick: '温度が調整できるものを選びます。', hint: '', rec: ['kiriboshi'] },
+  { g: '調理家電', lv: 'こだわり', n: '低温調理器', q: '低温調理器',
+    why: '鶏むね肉などが、しっとりやわらかくなります。', pick: '温度と時間を正確に守れるものを選びます。', hint: '温度と時間が足りないと、食中毒の危険があります。説明書の通りに使います。', rec: [] }
+];
+
+DOUGU.splice(DOUGU.findIndex(function (d) { return d.n === '電気圧力鍋'; }) + 1, 0,
+  { g: '調理家電', lv: 'あると便利', n: 'ノンフライヤー（エアフライヤー）', q: 'ノンフライヤー 3.5L',
+    why: '油を使わずに、カリッと香ばしく仕上げられます。焼き魚、塩焼き、つくね、焼き野菜、揚げ物風の料理まで、料理の幅が広がります。',
+    pick: '家族の人数に合った容量（2〜3人なら3〜4L）を選びます。かごが外せて、洗いやすいものが続けやすいです。',
+    hint: '食材を入れすぎると、熱風が回らず、焼きむらが出ます。脂の多い肉は、煙が出たり、庫内が汚れたりすることがあるので、説明書の通りに使い、こまめに洗います。',
+    ex: ['焼き魚、鶏の塩焼き', 'つくね、豚の味噌漬け焼き', 'さつまいも、かぼちゃなどの焼き野菜', '唐揚げ風（小麦粉・パン粉は使わず、片栗粉を薄くまぶします）', '冷めた料理の温め直し（カリッと戻ります）'],
+    rec: ['torishio', 'yakizakana', 'buta-misozuke', 'tsukune'] });
+
+const MECH = {
+  'ノンフライヤー（エアフライヤー）': 'ヒーターで温めた空気を、ファンで庫内にぐるぐると回します（熱風の対流）。熱風が、食材の表面の水分を素早く飛ばし、表面が乾いて高温になります。すると、カリッとした食感と、香ばしい焼き色・香り（メイラード反応）がつきます。肉や魚の脂は、下に落ちます。油で揚げているわけではなく、熱風で「乾かして焼く」ので、油がいりません。',
+  '電気圧力鍋': '鍋の中の圧力が高くなると、水が沸騰する温度が上がり、約110〜120℃で煮られます。高い温度で、短い時間に、食材の中まで火が通ります。肉の筋（コラーゲン）もとろとろになり、角煮などがやわらかくできます。',
+  '電子レンジ（オーブンレンジ）': '電波（マイクロ波）が、食材の中の水分を細かく振動させ、その摩擦で熱が出て温まります。水分の多い食材ほど、早く温まります。',
+  '食品乾燥機': '低めの温度の風を当てて、食材の水分をゆっくり飛ばします。水分が減ると、うまみが濃くなります。干ししいたけは、干すことでうまみのもと（グアニル酸）が増えるといわれます。',
+  '低温調理器': 'お湯の温度を一定に保ち、肉を低い温度で、ゆっくり加熱します。肉のたんぱく質は、高温になると縮んで、かたくなります。60℃台で加熱すると、縮みすぎず、しっとり仕上がります。'
+};
+
+function amazonUrl(q) { return 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(q); }
+function renderDougu() {
+  app.className = 'wrap has-bar';
+  var sections = ['基本の道具', '調理家電'].map(function (gname) {
+    return '<h2 class="hi-h">' + gname + '</h2>' + DOUGU.filter(function (d) { return d.g === gname; }).map(function (d) {
+      return '<details class="dg"><summary><span class="dn">' + d.n + '</span><span class="dl lvl-' + d.lv.length + '">' + d.lv + '</span></summary><div class="dgb">' +
+        '<p><b>どんなときに？</b><br>' + d.why + '</p>' +
+        '<p><b>選ぶポイント</b><br>' + d.pick + '</p>' +
+        (MECH[d.n] ? '<p class="mech"><b>🔍 どうしてそうなる？（しくみ）</b><br>' + MECH[d.n] + '</p>' : '') +
+        (d.ex ? '<p><b>できる料理の例</b></p><ul class="tips">' + d.ex.map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ul>' : '') +
+        (d.hint ? '<p><b>使い方・お手入れ</b><br>' + d.hint + '</p>' : '') +
+        (d.rec && d.rec.length ? '<p><b>このレシピで活躍</b><br>' + d.rec.map(function (id) { var r = recipeById(id); return r ? '<a href="#' + id + '">' + r.title + '</a>' : ''; }).filter(Boolean).join('、') + '</p>' : '') +
+        (d.les ? '<p><a href="#les-' + d.les + '">関連する学び（料理への道）を開く</a></p>' : '') +
+        '<a class="amz" href="' + amazonUrl(d.q) + '" target="_blank" rel="noopener noreferrer">🛒 Amazonで探す</a>' +
+        '</div></details>';
+    }).join('');
+  }).join('');
+  app.innerHTML =
+    '<header><p class="eyebrow">道具を知って、料理を楽に</p><h1 class="title">道具と家電</h1>' +
+    '<p class="intro">料理に便利な道具と、調理家電のご紹介です。どんなときに役立つか、選ぶときのポイント、使い方を学べます。</p></header>' +
+    '<p class="dnote2">' + DOUGU_NOTE + '</p>' + sections +
+    '<div class="bar"><button type="button" class="bar-btn" data-act="goto" data-v="list">← レシピ一覧へ</button></div>';
+}
 
 const YT_QUERY = {
   nikujaga: '肉じゃが 四毒抜き 砂糖なし 油なし',
@@ -1921,6 +2021,7 @@ function homeTiles() {
     '<a href="#michi"><b>🏆 料理への道</b><span>' + rankName() + '　' + points() + 'pt</span></a>' +
     '<a href="#note"><b>📒 料理ノート</b><span>作った ' + madeCount() + '品　' + prog.log.length + '回</span></a>' +
     '<a href="#hitoiki"><b>🌱 ちょっとひといき</b><span>食材への感謝・旬</span></a>' +
+    '<a href="#dougu"><b>🛠 道具と家電</b><span>学ぶ・Amazonで探す</span></a>' +
     '</nav>';
 }
 
@@ -2150,6 +2251,14 @@ function route() {
     lastView = 'detail';
     releaseWake();
     if (hiId) renderHi(hiId); else renderHitoiki();
+    window.scrollTo(0, 0);
+    return;
+  }
+  if (id === 'dougu') {
+    if (lastView === 'list') listScroll = window.pageYOffset || 0;
+    lastView = 'detail';
+    releaseWake();
+    renderDougu();
     window.scrollTo(0, 0);
     return;
   }
