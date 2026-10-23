@@ -279,6 +279,21 @@ article .check h2 { border-bottom-color: var(--green); }
 .kadenadv li b { display:block; font-size:18px; } .kadenadv li span { font-size:16px; }
 .kadenadv .kn { margin:8px 0 0; font-size:15px; color:var(--muted); }
 .advl { margin-top:0; } .adv { margin-bottom:0; }
+.tiles a:nth-child(5) { background:var(--warn-bg); color:var(--warn-ink); border:2px solid var(--warn-ink); }
+.tkbanner { display:flex; flex-direction:column; gap:2px; margin:0 0 14px; padding:14px 18px; border-radius:12px; background:var(--warn-bg); color:var(--warn-ink); text-decoration:none; border:2px solid var(--warn-ink); } .tkbanner b { font-family:var(--display); font-size:20px; } .tkbanner span { font-size:15px; }
+.tkfirst { margin:0 0 14px; padding:14px 16px; border-radius:12px; background:var(--green); color:var(--green-ink); } .tkfirst b { font-size:19px; } .tkfirst p { margin:4px 0 0; line-height:1.7; }
+.tkleg { margin:0 0 6px; font-size:15px; color:var(--muted); }
+.tkwrap { overflow-x:auto; margin:0 0 18px; } .tk { width:100%; border-collapse:collapse; background:var(--surface); font-size:16px; }
+.tk th, .tk td { border:1px solid var(--line); padding:8px 6px; text-align:center; } .tk th[scope="row"] { text-align:left; font-weight:700; }
+.tk thead th { background:var(--green-soft); font-size:14px; }
+.ma { font-weight:700; color:var(--seal); font-size:20px; } .mb { color:var(--green); font-weight:700; font-size:18px; } .mc { color:var(--muted); }
+.tkcard { margin:0 0 16px; padding:16px; border-radius:12px; border:1px solid var(--line); background:var(--surface); }
+.tkh { display:flex; align-items:center; gap:12px; } .tkh h2 { font-size:22px; }
+.tkr { flex:none; min-width:3em; text-align:center; padding:4px 10px; border-radius:999px; background:var(--seal); color:#fff; font-weight:700; }
+.tkone { margin:8px 0; font-weight:700; line-height:1.7; }
+.tkm { display:flex; flex-wrap:wrap; gap:6px; margin:6px 0; } .tkb { padding:2px 10px; border-radius:999px; border:2px solid var(--line); font-size:15px; font-weight:700; }
+.tkb.ma { border-color:var(--seal); } .tkb.mb { border-color:var(--green); }
+.tknote { margin:20px 0 14px; padding:14px 16px; border-radius:12px; background:var(--warn-bg); color:var(--warn-ink); } .tknote h2 { font-size:19px; margin-bottom:6px; }
 .vids { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 10px; }
 .vlink {
   display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 12px; align-items: center;
@@ -1680,6 +1695,7 @@ function renderDougu() {
   app.innerHTML =
     '<header><p class="eyebrow">道具を知って、料理を楽に</p><h1 class="title">道具と家電</h1>' +
     '<p class="intro">料理に便利な道具と、調理家電のご紹介です。どんなときに役立つか、選ぶときのポイント、使い方を学べます。</p></header>' +
+    '<a class="tkbanner" href="#tokushu"><b>⭐ 四毒抜き おすすめ家電特集</b><span>四毒のどれに役立つかで、ランキングにしました →</span></a>' +
     '<p class="dnote2">' + DOUGU_NOTE + '</p>' + sections +
     '<div class="bar"><button type="button" class="bar-btn" data-act="goto" data-v="list">← レシピ一覧へ</button></div>';
 }
@@ -2075,6 +2091,7 @@ function homeTiles() {
     '<a href="#note"><b>📒 料理ノート</b><span>作った ' + madeCount() + '品　' + prog.log.length + '回</span></a>' +
     '<a href="#hitoiki"><b>🌱 ちょっとひといき</b><span>食材への感謝・旬</span></a>' +
     '<a href="#dougu"><b>🛠 道具と家電</b><span>学ぶ・Amazonで探す</span></a>' +
+    '<a href="#tokushu"><b>⭐ 四毒抜き家電特集</b><span>おすすめランキング</span></a>' +
     '</nav>';
 }
 
@@ -2468,6 +2485,61 @@ function kpop() {
     '<button type="button" class="pop-close" data-act="kclose" style="margin-top:10px">あとで見る（とじる）</button></div></div>';
 }
 
+/* ===== 四毒抜きおすすめ家電特集 ===== */
+// m: 油・糖・麦・乳 の順に、◎=大きく役立つ ○=役立つ －=関係なし
+const TOKUSHU = [
+  { n: '電気圧力鍋', m: ['◎', '◎', '－', '－'], one: '炒めずに煮て、素材の甘みで仕上げる。四毒抜きの煮物の味方です。',
+    pts: ['肉じゃが、角煮、手羽元の煮物、カレーが、油も砂糖も使わずに、やわらかく深い味になります。', '無水調理では、野菜から水分とうまみが出ます。自然な甘みが出るので、砂糖がいりません。', 'ほったらかしにできるので、毎日の煮物が続けやすくなります。'], rec: ['nikujaga', 'kakuni', 'tebamoto', 'chicken-curry'] },
+  { n: 'ノンフライヤー（エアフライヤー）', m: ['◎', '－', '○', '－'], one: '油を使わずに、カリッと。揚げ物の代わりに。',
+    pts: ['植物油を使わないので、四毒の「油」を完全に避けられます。', '唐揚げ風は、小麦粉やパン粉を使わず、片栗粉を薄くまぶして作ります。', '焼き魚、塩焼き、つくね、焼き野菜も、手軽にできます。'], rec: ['torishio', 'yakizakana', 'tsukune', 'buta-misozuke'] },
+  { n: '電子レンジ（オーブンレンジ）', q: 'スチームオーブンレンジ', m: ['◎', '－', '－', '－'], one: 'スチーム機能つきなら、蒸す・焼くが、油なしでできます。',
+    pts: ['蒸し野菜、蒸し鶏、蒸し魚が、油なしで簡単にできます。', '温め直しにも使えて、毎日の台所で活躍します。', 'スチーム機能の有無や、使える料理は、機種で違います。お選びのときに、確認してください。'], rec: ['kabocha', 'kasanemushi'] },
+  { n: 'ハンドブレンダー', m: ['○', '－', '◎', '◎'], one: '牛乳・小麦粉のルウの代わりに、野菜でなめらかに。',
+    pts: ['じゃがいもやかぼちゃをなめらかにすると、小麦粉のルウがなくても、とろみのあるスープになります。', '牛乳や生クリームの代わりに、無調整豆乳や、野菜のとろみで、ポタージュが作れます。', '豆乳は、「無調整」を選びます。「調整豆乳」には、砂糖や油が入っているものがあります。'], rec: ['tonjiru'] },
+  { n: '炊飯器', m: ['－', '－', '○', '－'], one: 'ごはん中心の食事が、楽にできます。',
+    pts: ['主食を、パンや麺（小麦）から、ごはんに変えやすくなります。', '玄米や雑穀のモードがあるものなら、ごはんの種類も広がります。', 'ほったらかしで炊けて、予約もできます。'], rec: [] },
+  { n: '食品乾燥機', m: ['○', '◎', '－', '－'], one: '砂糖なしで、甘いおやつと、だしの材料を。',
+    pts: ['干し芋、干し柿、ドライフルーツは、砂糖を使わなくても、甘くなります。', '野菜チップは、油で揚げずに作れます。', '干ししいたけや切り干し大根を手作りして、だしの材料にできます。'], rec: ['kiriboshi'] },
+  { n: 'ホットプレート', m: ['○', '－', '－', '－'], one: '油なしで焼いて、食卓で鍋もできます。',
+    pts: ['焦げつきにくい加工のプレートなら、油なしで焼けます。', '水炊きや豚しゃぶなど、油を使わない鍋料理が、食卓でできます。'], rec: ['butashabu', 'mizutaki'] },
+  { n: 'フードプロセッサー', m: ['－', '－', '○', '－'], one: '小麦粉・パン粉に頼らない、つなぎづくりに。',
+    pts: ['豆腐やおからを混ぜて、つくねやハンバーグを、小麦粉やパン粉なしで作りやすくなります。', 'みじん切りが一瞬で、毎日の調理が楽になります。'], rec: ['tsukune', 'tori-hamburg'] },
+  { n: '電気ケトル', m: ['－', '○', '－', '－'], one: '手作りのだしを、気軽に。',
+    pts: ['昆布の水だしや、かつお節のだしが手軽にできると、砂糖の入っただしの素に頼らずにすみます。', '水出しポットと合わせると、さらに続けやすくなります。'], rec: ['misoshiru', 'ohitashi'] }
+];
+function renderTokushu() {
+  app.className = 'wrap has-bar';
+  var heads = [['油', '植物油'], ['糖', '砂糖'], ['麦', '小麦'], ['乳', '乳製品']];
+  var table = '<div class="tkwrap"><table class="tk"><thead><tr><th scope="col">家電</th>' +
+    heads.map(function (h) { return '<th scope="col" title="' + h[1] + '">' + h[0] + '</th>'; }).join('') + '</tr></thead><tbody>' +
+    TOKUSHU.map(function (t, i) {
+      return '<tr><th scope="row">' + (i + 1) + '. ' + t.n.replace('（エアフライヤー）', '').replace('（オーブンレンジ）', '') + '</th>' + t.m.map(function (x) { return '<td class="m' + (x === '◎' ? 'a' : x === '○' ? 'b' : 'c') + '">' + x + '</td>'; }).join('') + '</tr>';
+    }).join('') + '</tbody></table></div>';
+  var cards = TOKUSHU.map(function (t, i) {
+    var d = DOUGU.filter(function (x) { return x.n === t.n; })[0];
+    var q = t.q || (d && d.q) || t.n;
+    return '<section class="tkcard"><div class="tkh"><span class="tkr">' + (i + 1) + '位</span><h2>' + t.n + '</h2></div>' +
+      '<p class="tkone">' + t.one + '</p>' +
+      '<p class="tkm">' + heads.map(function (h, j) { return '<span class="tkb m' + (t.m[j] === '◎' ? 'a' : t.m[j] === '○' ? 'b' : 'c') + '">' + h[1] + ' ' + t.m[j] + '</span>'; }).join('') + '</p>' +
+      '<ul class="tips">' + t.pts.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>' +
+      (t.rec.length ? '<p><b>このレシピで活躍：</b>' + t.rec.map(function (id) { var r = recipeById(id); return r ? '<a href="#' + id + '">' + r.title + '</a>' : ''; }).filter(Boolean).join('、') + '</p>' : '') +
+      '<a class="amz" href="' + amazonUrl(q) + '" target="_blank" rel="noopener noreferrer">🛒 Amazonで探す</a></section>';
+  }).join('');
+  app.innerHTML =
+    '<header><p class="eyebrow">特集</p><h1 class="title">四毒抜き おすすめ家電</h1>' +
+    '<p class="intro">小麦・乳製品・植物油・砂糖を使わない食事を、楽にする家電です。四毒のどれに役立つかで、私が選んで並べました（目安です）。</p></header>' +
+    '<div class="tkfirst"><b>はじめの1台なら</b><p>煮物やカレーが多い方は「電気圧力鍋」、焼き物や揚げ物風を食べたい方は「ノンフライヤー」がおすすめです。</p></div>' +
+    '<h2 class="hi-h">四毒のどれに役立つか</h2><p class="tkleg">油＝植物油　糖＝砂糖　麦＝小麦　乳＝乳製品<br>◎ 大きく役立つ　○ 役立つ　－ 関係なし</p>' + table +
+    cards +
+    '<section class="tknote"><h2>お選びになる前に</h2><ul class="tips">' +
+    '<li>家電に付いてくるレシピ集は、小麦粉・砂糖・油を使うものが多いです。このレシピ帳のレシピを使うか、材料を読み替えてください。</li>' +
+    '<li>豆乳は「無調整」を選びます。「調整豆乳」や、味つきのものには、砂糖や油が入っていることがあります。</li>' +
+    '<li>家電は、なくても料理はできます。置き場所、電気代、お手入れも考えて、必要なものから選んでください。</li>' +
+    '<li>' + DOUGU_NOTE + '</li></ul></section>' +
+    '<p><a href="#dougu">道具と家電の一覧を見る</a></p>' +
+    '<div class="bar"><button type="button" class="bar-btn" data-act="goto" data-v="list">← レシピ一覧へ</button></div>';
+}
+
 function route() {
   if (MEMBERS_ON && !auth) { renderGate(); window.scrollTo(0, 0); return; }
   var id = (location.hash || '').slice(1);
@@ -2487,6 +2559,15 @@ function route() {
     lastView = 'detail';
     releaseWake();
     renderMember();
+    window.scrollTo(0, 0);
+    return;
+  }
+  if (id === 'tokushu') {
+    sendEv('page', 'tokushu');
+    if (lastView === 'list') listScroll = window.pageYOffset || 0;
+    lastView = 'detail';
+    releaseWake();
+    renderTokushu();
     window.scrollTo(0, 0);
     return;
   }
