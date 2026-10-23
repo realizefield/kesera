@@ -266,6 +266,10 @@ article .check h2 { border-bottom-color: var(--green); }
 .gpriv { margin:0 0 18px; padding:14px 16px; border-radius:12px; border:1px solid var(--line); background:var(--surface); } .gpriv h2 { font-size:19px; margin-bottom:6px; }
 .reccode { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:30px; font-weight:700; text-align:center; letter-spacing:.08em; padding:14px; border-radius:10px; background:var(--warn-bg); color:var(--warn-ink); margin:12px 0; user-select:all; }
 .mbar { margin:0 0 10px; font-size:16px; color:var(--muted); } .mbar a { color:var(--green); font-weight:700; }
+.helpcard { margin:24px 0 0; padding:16px; border-radius:12px; border:2px solid var(--seal); background:var(--surface); }
+.helpcard h2 { font-size:21px; color:var(--seal); margin-bottom:6px; } .helpcard p { margin:0 0 12px; line-height:1.8; }
+.helpbtns { display:grid; gap:10px; } .klink.alt { background:var(--surface); color:var(--green); border:2px solid var(--green); }
+.helpbtns .klink { display:flex; align-items:center; justify-content:center; line-height:1.3; min-height:56px; text-decoration:none; text-align:center; box-sizing:border-box; }
 .vids { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 10px; }
 .vlink {
   display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 12px; align-items: center;
@@ -1759,7 +1763,7 @@ function renderList() {
           '<p class="sub"><span class="lv lv-' + r.lv + '">' + r.lv + '</span>　' + r.cat + '　' + r.time + '　' + r.base + r.unit + '</p>' +
           '<p class="desc">' + r.lead + '</p></a></li>';
       }).join('') +
-    '</ul>';
+    '</ul>' + helpCard();
 }
 
 function isSeason(g) {
@@ -2351,6 +2355,7 @@ function renderGate() {
     '<section class="gate">' + tabs + body +
     '<label class="gshow"><input type="checkbox" data-act="gshow"' + (g.show ? ' checked' : '') + '> 合言葉を表示する</label>' +
     '<p class="made-msg gmsg" id="gmsg" role="alert">' + (g.msg || '') + '</p></section>' +
+    helpCard() +
     '<section class="gpriv"><h2>集める情報について</h2><ul class="tips">' +
     '<li>集めるのは、ニックネーム、合言葉（暗号化して保存します）、料理ノートや学びの記録です。メールアドレスは集めません。</li>' +
     '<li>会員の人数や、よく見られているレシピの集計に使います。個人を特定する使い方はしません。</li>' +
@@ -2368,6 +2373,7 @@ function renderMember() {
     '<section class="gpriv"><h2>退会する</h2><p>退会すると、会員の中の記録が消えます（この端末の中の記録は残ります）。合言葉を入れてください。</p>' +
     field('mDelPass', '合言葉', 'password') +
     '<button type="button" class="hdel" data-act="mdel">退会する</button><p class="made-msg" id="mmsg" role="alert"></p></section>' +
+    helpCard() +
     '<div class="bar"><button type="button" class="bar-btn" data-act="goto" data-v="list">← レシピ一覧へ</button></div>';
 }
 function memberBar() {
@@ -2397,6 +2403,14 @@ function gateSubmit() {
     if (g.mode === 'new') { g.rec = j.recovery; g.mode = 'rec'; pullAndMerge(); renderGate(); return; }
     pullAndMerge().then(function () { route(); });
   }, function () { g.busy = false; say(ERRS.bad); });
+}
+
+function helpCard() {
+  return '<section class="helpcard" aria-label="学習や不登校のご相談"><h2>学習や不登校で困っている方は、こちらへ</h2>' +
+    '<p>江原予備校（熊本市・水前寺）は、不登校を経験した方、高卒認定（高認）、通信制高校、社会人の学び直し、ひとり親家庭の方など、勉強に悩む方を、個別指導でお手伝いしています。オンラインでも受けられます。まずは、お気軽にご相談ください。</p>' +
+    '<div class="helpbtns"><a class="made-btn klink" href="https://kogenyobikou.jp/" target="_blank" rel="noopener noreferrer">江原予備校のホームページ</a>' +
+    '<a class="made-btn klink alt" href="tel:0963826761">📞 電話 096-382-6761</a>' +
+    '<a class="made-btn klink alt" href="mailto:kogen@coast.ocn.ne.jp">✉ メールで相談</a></div></section>';
 }
 
 function route() {
