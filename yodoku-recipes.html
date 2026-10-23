@@ -1,0 +1,2287 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>四毒抜きレシピ帳</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Layout concept: 台所に置く大きな文字のレシピ帳。一覧から1品を開き、人数に合わせて分量が変わる。 */
+:root {
+  --bg: #f3f6f1;
+  --surface: #ffffff;
+  --ink: #1d2823;
+  --muted: #55645c;
+  --line: #d5ddd4;
+  --green: #2e6a4f;
+  --green-ink: #ffffff;
+  --green-soft: #e3eee6;
+  --seal: #b3402e;
+  --warn-bg: #fbf1d9;
+  --warn-ink: #6b4a05;
+  --display: "Shippori Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --body: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131a16; --surface: #1b2420; --ink: #e8efe9; --muted: #a3b2a9; --line: #2f3b35;
+    --green: #7fc29f; --green-ink: #10201a; --green-soft: #21322a; --seal: #e0816f;
+    --warn-bg: #3a2f12; --warn-ink: #f1d48a; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131a16; --surface: #1b2420; --ink: #e8efe9; --muted: #a3b2a9; --line: #2f3b35;
+  --green: #7fc29f; --green-ink: #10201a; --green-soft: #21322a; --seal: #e0816f;
+  --warn-bg: #3a2f12; --warn-ink: #f1d48a; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  font-family: var(--body); font-size: 18px; line-height: 1.8;
+  background: var(--bg); color: var(--ink);
+  padding-block: 28px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 720px; margin: 0 auto; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--green); outline-offset: 3px; }
+
+h1, h2 { font-family: var(--display); font-weight: 700; margin: 0; text-wrap: balance; line-height: 1.4; }
+.eyebrow { margin: 0; font-size: 15px; letter-spacing: .12em; color: var(--muted); }
+.title { font-size: clamp(30px, 7vw, 42px); letter-spacing: .05em; margin-top: 4px; }
+.intro { margin: 10px 0 0; color: var(--muted); }
+
+.seals { display: flex; flex-wrap: wrap; gap: 12px; margin: 22px 0 6px; }
+.seals figure { margin: 0; width: 76px; text-align: center; }
+.seals figcaption { font-size: 14px; line-height: 1.4; margin-top: 4px; color: var(--muted); }
+.seal { color: var(--seal); display: block; margin: 0 auto; }
+.seal text { font-family: var(--display); font-weight: 700; }
+
+.filters { display: flex; flex-wrap: wrap; gap: 10px; margin: 26px 0 14px; }
+.chip {
+  min-height: 48px; padding: 6px 20px; border-radius: 999px;
+  border: 2px solid var(--green); background: transparent; color: var(--green); font-weight: 700;
+}
+.chip[aria-pressed="true"] { background: var(--green); color: var(--green-ink); }
+.count { margin: 0 0 8px; font-size: 15px; color: var(--muted); }
+
+.list { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.list li + li { border-top: 1px solid var(--line); }
+.list a { display: block; padding: 18px 20px; color: inherit; text-decoration: none; }
+.list a:hover { background: var(--green-soft); }
+.list .name { font-family: var(--display); font-weight: 700; font-size: 23px; line-height: 1.4; }
+.list .sub { font-size: 15px; color: var(--muted); margin: 2px 0 0; }
+.list .desc { margin: 6px 0 0; }
+
+.back {
+  min-height: 48px; padding: 6px 18px 6px 12px; border: 2px solid var(--line); background: var(--surface);
+  border-radius: 8px; font-weight: 700; margin-bottom: 22px;
+}
+.rcat { display: inline-block; font-size: 15px; font-weight: 700; color: var(--green); border: 1.5px solid var(--green); border-radius: 999px; padding: 0 12px; line-height: 1.7; margin: 0 0 8px; }
+.rtitle { font-size: clamp(28px, 6.5vw, 38px); }
+.lead { margin: 10px 0 0; }
+.meta { margin: 8px 0 0; color: var(--muted); font-size: 16px; }
+
+article section { margin-top: 38px; }
+article h2 { font-size: 24px; padding-bottom: 8px; border-bottom: 2px solid var(--green); margin-bottom: 14px; }
+
+.stepper { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.stepper button {
+  width: 52px; height: 52px; border-radius: 8px; border: 2px solid var(--green); background: var(--surface);
+  color: var(--green); font-size: 28px; line-height: 1; font-weight: 700;
+}
+.stepper button:disabled { opacity: .35; cursor: default; }
+.stepper output { min-width: 5.5em; text-align: center; font-weight: 700; font-size: 22px; font-variant-numeric: tabular-nums; }
+.stepper-hint { font-size: 15px; color: var(--muted); margin: 0 0 6px; }
+
+.ing { list-style: none; margin: 0; padding: 0; }
+.ing li { border-bottom: 1px solid var(--line); }
+.row { display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; gap: 12px; align-items: start; padding: 12px 0; cursor: pointer; }
+.row input { width: 26px; height: 26px; margin: 4px 0 0; accent-color: var(--green); }
+.row .nm { min-width: 0; }
+.row .x { display: block; font-size: 15px; color: var(--muted); line-height: 1.5; }
+.row .note { display: block; margin-top: 6px; padding: 6px 10px; border-radius: 6px; background: var(--warn-bg); color: var(--warn-ink); font-size: 15px; line-height: 1.55; }
+.row .am { font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.row input:checked ~ .nm .t, .row input:checked ~ .am { color: var(--muted); text-decoration: line-through; }
+.ghost { margin-top: 14px; min-height: 44px; padding: 4px 16px; border: 2px solid var(--line); background: transparent; border-radius: 8px; color: var(--muted); font-size: 16px; }
+
+.steps { counter-reset: s; list-style: none; margin: 0; padding: 0; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.steps li::before {
+  content: counter(s); width: 36px; height: 36px; border-radius: 50%; background: var(--green); color: var(--green-ink);
+  display: grid; place-items: center; font-weight: 700; margin-top: 2px;
+}
+.tips { margin: 0; padding-left: 1.3em; }
+.tips li { margin-bottom: 8px; }
+
+.check { background: var(--green-soft); border-radius: 10px; padding: 20px 18px 22px; }
+article .check { margin-top: 38px; }
+article .check h2 { border-bottom-color: var(--green); }
+.oks { list-style: none; margin: 0 0 14px; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.oks li { background: var(--surface); border: 1.5px solid var(--green); color: var(--green); font-weight: 700; border-radius: 999px; padding: 0 14px; line-height: 2; font-size: 16px; }
+.buy { margin: 16px 0 0; padding: 0; list-style: none; }
+.buy li { margin-top: 10px; font-size: 16px; line-height: 1.65; }
+.buy strong { display: block; }
+.buy-h { margin: 18px 0 0; font-weight: 700; }
+
+.wake { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 0 0 20px; padding: 10px 14px; border-radius: 10px; background: var(--green-soft); }
+.wake button { min-height: 48px; padding: 6px 18px; border-radius: 999px; border: 2px solid var(--green); background: transparent; color: var(--green); font-weight: 700; }
+.wake button[aria-pressed="true"] { background: var(--green); color: var(--green-ink); }
+.wake p { margin: 0; flex: 1 1 14em; min-width: 0; font-size: 15px; line-height: 1.55; color: var(--muted); }
+
+.has-bar { padding-bottom: 150px; }
+.bar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 5;
+  background: var(--bg); border-top: 1px solid var(--line);
+  padding-top: 10px; padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.bar-btn {
+  display: block; width: 100%; max-width: 720px; margin: 0 auto; min-height: 56px;
+  border-radius: 10px; border: 2px solid var(--green); background: var(--green); color: var(--green-ink);
+  font-weight: 700; font-size: 20px;
+}
+
+.umami-btn { display:block; width:100%; max-width:720px; margin:0 auto 8px; min-height:48px; border-radius:10px; border:2px solid var(--green); background:var(--green-soft); color:var(--green); font-weight:700; font-size:18px; }
+.pop { position:fixed; inset:0; z-index:20; background:rgba(0,0,0,.55); display:flex; align-items:flex-end; justify-content:center; }
+.pop[hidden] { display:none; }
+.pop-card { width:100%; max-width:560px; max-height:80vh; overflow:auto; background:var(--surface); color:var(--ink); border-radius:16px 16px 0 0; padding:20px 20px calc(20px + env(safe-area-inset-bottom,0px)); }
+.pop-card h2 { margin:0 0 4px; font-size:22px; }
+.pop-card .pop-sub { margin:0 0 12px; color:var(--muted); font-size:15px; }
+.pop-card ol { margin:0 0 16px; padding-left:1.4em; }
+.pop-card li { margin-bottom:10px; line-height:1.7; }
+.pop-card .pop-close { display:block; width:100%; min-height:52px; border-radius:10px; border:2px solid var(--green); background:var(--green); color:var(--green-ink); font-weight:700; font-size:18px; }
+@media (min-width:700px){ .pop{align-items:center} .pop-card{border-radius:16px} }
+
+.row.season { border-left: 6px solid var(--seal); padding-left: 10px; margin-left: -4px; }
+.row.season .am { font-size: 21px; color: var(--seal); }
+.row .badge { display: inline-block; margin-left: 8px; padding: 1px 8px; border-radius: 999px; background: var(--seal); color: #fff; font-size: 13px; font-weight: 700; vertical-align: 2px; }
+.seasonbox { margin: 0 0 18px; padding: 14px 16px; border-radius: 12px; border: 2px solid var(--seal); background: var(--surface); }
+.seasonbox h3 { margin: 0 0 4px; font-size: 19px; color: var(--seal); }
+.seasonbox p { margin: 0 0 8px; font-size: 15px; color: var(--muted); line-height: 1.6; }
+.seasonbox ul { list-style: none; margin: 0; padding: 0; }
+.seasonbox li { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-top: 1px solid var(--line); font-size: 20px; font-weight: 700; }
+.seasonbox li span:last-child { color: var(--seal); white-space: nowrap; }
+
+.michi-banner { display:flex; flex-direction:column; gap:2px; margin:0 0 18px; padding:14px 18px; border-radius:12px; background:var(--green); color:var(--green-ink); text-decoration:none; }
+.michi-banner .mb-t { font-family:var(--display); font-weight:700; font-size:22px; }
+.michi-banner .mb-s { font-size:16px; }
+.flash { margin:0 0 16px; padding:14px 16px; border-radius:10px; background:var(--warn-bg); color:var(--warn-ink); font-weight:700; line-height:1.7; }
+.rank { margin:0 0 18px; padding:16px; border-radius:12px; border:2px solid var(--green); background:var(--surface); text-align:center; }
+.rank-l { font-size:15px; color:var(--muted); } .rank-n { font-family:var(--display); font-weight:700; font-size:28px; margin:2px 0; } .rank-p { font-size:17px; }
+.stage { margin:0 0 16px; padding:16px; border-radius:12px; border:1px solid var(--line); background:var(--surface); }
+.stage.locked { opacity:.65; } .stage.done { border-color:var(--green); }
+.stage h2 { font-size:22px; } .stage-goal { margin:6px 0; } .mission { margin:0 0 8px; font-weight:700; color:var(--green); }
+.lock-note { margin:0; color:var(--muted); }
+.les-list { list-style:none; margin:0; padding:0; }
+.les-list li { border-top:1px solid var(--line); }
+.les-list a { display:flex; gap:12px; align-items:center; padding:14px 4px; min-height:52px; color:inherit; text-decoration:none; font-size:19px; font-weight:700; }
+.les-list .lk { width:28px; text-align:center; color:var(--green); font-size:22px; }
+.quiz .qa { margin:0 0 18px; } .qq { font-weight:700; margin:0 0 8px; font-size:19px; }
+.opt { display:block; width:100%; min-height:52px; margin:0 0 8px; padding:8px 14px; text-align:left; border-radius:10px; border:2px solid var(--line); background:var(--surface); color:var(--ink); font-size:18px; }
+.opt.ok { border-color:var(--green); background:var(--green-soft); } .opt.ng { border-color:var(--seal); }
+.opt:disabled { opacity:1; }
+.exp { margin:4px 0 0; font-size:16px; } .exp.ngm { color:var(--seal); font-weight:700; }
+.made { margin:24px 0 0; padding:16px; border-radius:12px; border:2px dashed var(--green); text-align:center; }
+.made-btn { display:block; width:100%; min-height:56px; border-radius:10px; border:2px solid var(--green); background:transparent; color:var(--green); font-weight:700; font-size:20px; }
+.made-btn[aria-pressed="true"] { background:var(--green); color:var(--green-ink); }
+.made-msg { margin:10px 0 0; line-height:1.7; }
+
+.rtitle .badge { display:inline-block; margin-left:12px; padding:2px 12px; border-radius:999px; background:var(--seal); color:#fff; font-family:var(--body); font-size:15px; font-weight:700; vertical-align:middle; }
+.hi-banner { background:var(--green-soft); color:var(--green); border:2px solid var(--green); margin-top:-6px; }
+.lv { display:inline-block; padding:0 10px; border-radius:999px; font-weight:700; font-size:14px; border:2px solid var(--green); color:var(--green); }
+.lv-中級 { background:var(--green-soft); } .lv-上級 { background:var(--green); color:var(--green-ink); }
+.hi-h { font-size:21px; margin:20px 0 8px; }
+.hi-list { list-style:none; margin:0; padding:0; background:var(--surface); border:1px solid var(--line); border-radius:10px; overflow:hidden; }
+.hi-list li + li { border-top:1px solid var(--line); }
+.hi-list a { display:block; padding:14px 18px; color:inherit; text-decoration:none; min-height:52px; }
+.hi-list .hn { display:block; font-family:var(--display); font-weight:700; font-size:22px; }
+.hi-list .hs { display:block; font-size:15px; color:var(--muted); }
+.thanks { margin:16px 0; padding:14px 16px; border-radius:10px; background:var(--green-soft); line-height:1.8; font-weight:700; }
+.hito { margin:24px 0 0; padding:16px; border-radius:12px; background:var(--surface); border:1px solid var(--line); }
+.hito p { margin:4px 0; }
+.hito-links { display:flex; flex-wrap:wrap; gap:8px; margin:8px 0; }
+.hito-links a { padding:8px 16px; min-height:44px; display:inline-flex; align-items:center; border-radius:999px; border:2px solid var(--green); color:var(--green); font-weight:700; text-decoration:none; }
+.rec { margin:6px 0; line-height:1.9; font-size:16px; }
+.tiles { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:10px; margin:0 0 18px; }
+.tiles a { display:flex; flex-direction:column; gap:2px; padding:12px 14px; min-height:68px; border-radius:12px; background:var(--green); color:var(--green-ink); text-decoration:none; }
+.tiles a:nth-child(2) { background:var(--green-soft); color:var(--green); border:2px solid var(--green); }
+.tiles a:nth-child(3) { background:var(--surface); color:var(--green); border:2px solid var(--line); }
+.tiles b { font-family:var(--display); font-size:19px; } .tiles span { font-size:14px; }
+.progress { margin:0 0 18px; padding:14px 16px; border-radius:12px; border:1px solid var(--line); background:var(--surface); }
+.progress h2 { font-size:20px; margin-bottom:8px; }
+.prow { margin:0 0 12px; } .pl { display:flex; justify-content:space-between; font-size:18px; font-weight:700; } .pl strong { color:var(--green); font-size:22px; }
+.pbar { height:14px; border-radius:999px; background:var(--green-soft); overflow:hidden; margin:4px 0; } .pbar div { height:100%; background:var(--green); border-radius:999px; }
+.prow.base .pbar div { background:var(--seal); } .prow.base .pl strong { color:var(--seal); }
+.pn { font-size:14px; color:var(--muted); }
+.flabel { margin:16px 0 6px; font-weight:700; font-size:18px; text-align:left; }
+.made { text-align:left; }
+.rates, .saves { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; }
+.rate, .save { min-height:60px; padding:6px 4px; border-radius:10px; border:2px solid var(--line); background:var(--surface); color:var(--ink); font-size:16px; font-weight:700; line-height:1.3; }
+.rate span { display:block; font-size:26px; }
+.rate[aria-pressed="true"], .save[aria-pressed="true"] { border-color:var(--green); background:var(--green); color:var(--green-ink); }
+.fstep { display:flex; align-items:center; justify-content:center; gap:14px; }
+.fstep button { width:56px; height:56px; border-radius:50%; border:2px solid var(--green); background:var(--surface); color:var(--green); font-size:28px; font-weight:700; }
+.fstep output { min-width:5.5em; text-align:center; font-size:22px; font-weight:700; }
+.packrow { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px; margin-top:12px; } .pk { display:block; text-align:center; font-weight:700; margin-bottom:4px; }
+.fhint { margin:8px 0 0; text-align:center; color:var(--muted); }
+#logMemo, #expText { width:100%; box-sizing:border-box; padding:10px; border-radius:10px; border:2px solid var(--line); background:var(--surface); color:var(--ink); font:inherit; font-size:17px; margin-bottom:12px; }
+.hist-h { font-size:19px; margin:20px 0 6px; }
+.hist { list-style:none; margin:0; padding:0; background:var(--surface); border:1px solid var(--line); border-radius:10px; }
+.hist li { padding:12px 14px; border-top:1px solid var(--line); } .hist li:first-child { border-top:0; }
+.hist .h1 { display:flex; justify-content:space-between; gap:8px; font-weight:700; } .hist .ht { font-family:var(--display); font-size:20px; font-weight:700; } .hist .ht a { color:inherit; }
+.hist .h2, .hist .h3 { font-size:16px; margin-top:2px; } .hist .h3 { color:var(--muted); }
+.hdel { margin-top:8px; min-height:40px; padding:2px 14px; border-radius:8px; border:2px solid var(--line); background:transparent; color:var(--muted); font-size:15px; }
+.kesera { margin:24px 0 0; padding:16px; border-radius:12px; border:2px solid var(--seal); background:var(--surface); }
+.krow { display:grid; gap:10px; } .klink { text-align:center; text-decoration:none; line-height:56px; background:var(--green); color:var(--green-ink); box-sizing:border-box; }
+#petals { position:fixed; inset:0; z-index:40; pointer-events:none; overflow:hidden; }
+#petals i { position:absolute; top:-30px; border-radius:150% 0 150% 0; opacity:.9; animation:petal linear forwards; }
+@keyframes petal { 0% { transform:translate(0,0) rotate(0deg); opacity:0; } 8% { opacity:.95; } 100% { transform:translate(var(--sw), 110vh) rotate(var(--rot)); opacity:.85; } }
+.dalt { margin:0 0 20px; padding:12px 16px; border-radius:12px; border:2px solid var(--green); background:var(--green-soft); }
+.dalt summary { cursor:pointer; min-height:44px; display:flex; align-items:center; font-weight:700; font-size:19px; color:var(--green); }
+.dalt ol { margin:8px 0; padding-left:0; list-style:none; } .dalt li { margin:0 0 12px; padding:10px 12px; border-radius:8px; background:var(--surface); line-height:1.7; }
+.dalt .drec { margin:6px 0; padding:10px 12px; border-radius:8px; background:var(--surface); border-left:6px solid var(--green); font-weight:700; line-height:1.7; }
+.dalt .dnote { margin:0; padding:8px 10px; border-radius:6px; background:var(--warn-bg); color:var(--warn-ink); font-size:15px; }
+.row .dh { color:var(--green); font-weight:700; }
+.fromk { margin:0 0 12px; } .fromk a { display:inline-flex; align-items:center; min-height:44px; padding:0 16px; border-radius:999px; border:2px solid var(--seal); color:var(--seal); font-weight:700; text-decoration:none; }
+.vids { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 10px; }
+.vlink {
+  display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 12px; align-items: center;
+  min-height: 56px; padding: 10px 16px 10px 12px; border-radius: 10px;
+  background: var(--green); color: var(--green-ink); text-decoration: none; font-weight: 700; line-height: 1.5;
+}
+.vlink .play { width: 40px; height: 40px; border-radius: 50%; background: var(--green-ink); color: var(--green); display: grid; place-items: center; font-size: 16px; padding-left: 3px; }
+.vlink.alt { background: transparent; color: var(--green); border: 2px solid var(--green); }
+.vlink.alt .play { background: var(--green); color: var(--green-ink); }
+.vnote { margin: 8px 0 0; font-size: 15px; color: var(--muted); }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+
+
+<div class="wrap" id="app"></div>
+
+<script>
+const YODOKU = [['麦','小麦'],['乳','乳製品'],['油','植物油'],['糖','砂糖']];
+const SHOYU = '一般的なしょうゆには小麦が入っています。原材料表示に「小麦」がないものを選びます（たまりしょうゆに多くあります）。';
+const MIRIN = '「みりん風調味料」には糖類が入ります。米・米麹・焼酎などで作られた「本みりん」を選びます。';
+
+const MISO = '「だし入り」「砂糖入り」の商品は、原材料表示を確認します。大豆・米・塩などで作られたものが安心です。';
+const SABA = '味噌煮などの味付けの缶詰には砂糖が入ります。原材料が「さば・食塩」の水煮缶を選びます。';
+const CURRY = 'カレー粉には、小麦粉や砂糖、油脂が入っている商品があります。原材料が香辛料だけのものを選びます。';
+const TOMATO = 'トマトと食塩だけなど、砂糖や油が入っていないものを選びます。';
+const KATAKURI = '原材料が「じゃがいもでんぷん」だけのものを選びます。';
+
+const RECIPES = [
+  {
+    id: 'nikujaga', title: '豚肉の肉じゃが', cat: '主菜', time: '約40分', base: 4, unit: '人分', max: 8,
+    lead: '砂糖もサラダ油も使わず、豚バラの脂と玉ねぎの甘みでコクを出します。煮ている間は鍋にお任せです。',
+    ing: [
+      { n: '豚バラ肉', a: 200, u: 'g' },
+      { n: 'じゃがいも', a: 4, u: '個', x: '約500g' },
+      { n: '玉ねぎ', a: 1.5, u: '個' },
+      { n: 'にんじん', a: 1, u: '本' },
+      { n: 'こんにゃく', a: 1, u: '枚', x: 'しらたきなら1袋' },
+      { n: 'だし汁', a: 300, u: 'ml', x: '昆布・煮干しなどで取ったもの' },
+      { n: '本みりん', a: 3, u: '大さじ', note: MIRIN },
+      { n: '酒', a: 2, u: '大さじ' },
+      { n: 'しょうゆ', a: 3, u: '大さじ', note: SHOYU }
+    ],
+    steps: [
+      'じゃがいもは皮をむいて4〜6等分にし、水に5分ほどさらして水気を切ります。にんじんは乱切り、玉ねぎはくし切りにします。',
+      'こんにゃくは一口大にちぎり、塩少々でもんで2〜3分下茹でし、水気を切ります。豚肉は4〜5cm幅に切ります。',
+      '鍋を熱し、油はひかずに豚バラ肉を入れて、脂が出て色が変わるまで炒めます。',
+      '出てきた脂で、玉ねぎ、にんじん、じゃがいも、こんにゃくを2〜3分炒めます。玉ねぎがしんなりするまで炒めると、自然な甘みが出ます。',
+      'だし汁、酒、みりんを加え、煮立ったらアクを取ります。',
+      'しょうゆを加え、落とし蓋をして中火〜弱火で15〜20分煮ます。',
+      'じゃがいもに竹串がすっと通ったら火を止め、そのまま10分ほど置いて味をしみ込ませます。'
+    ],
+    tips: [
+      '豚バラ肉をじっくり炒めると、油の代わりになりコクも出ます。脂が多すぎるときは、キッチンペーパーで少し拭き取ります。',
+      '玉ねぎは多めに、しっかり炒めます。砂糖なしでも、やさしい甘みが出ます。',
+      '甘みが足りないときは、仕上げに味を見て、みりんを少しずつ足します。',
+      'じゃがいもは大きめに切り、煮ている間はあまり混ぜないと、煮崩れません。',
+      '一度冷ましてから温め直すと、さらに味がなじみます。',
+      '肉がくっつくときは、最初に水を少しだけ入れると焦げつきません。'
+    ]
+  },
+  {
+    id: 'tonjiru', title: '具だくさんの豚汁', cat: '汁物', time: '約30分', base: 4, unit: '人分', max: 8,
+    lead: '豚バラの脂で根菜を炒めてから煮ます。油を使わなくても、しっかりうまみが出ます。',
+    ing: [
+      { n: '豚バラ肉', a: 150, u: 'g' },
+      { n: '大根', a: 200, u: 'g', x: '約5cm' },
+      { n: 'にんじん', a: 0.5, u: '本' },
+      { n: 'ごぼう', a: 0.5, u: '本' },
+      { n: '里芋', a: 4, u: '個' },
+      { n: '長ねぎ', a: 0.5, u: '本' },
+      { n: 'だし汁', a: 800, u: 'ml', x: '昆布と煮干しのだし' },
+      { n: '味噌', a: 3, u: '大さじ', note: '「だし入り」「砂糖入り」の商品は、原材料表示を確認します。大豆・米・塩などで作られたものが安心です。' }
+    ],
+    steps: [
+      '大根とにんじんはいちょう切り、ごぼうはささがきにして水にさらします。里芋は皮をむいて一口大に切ります。長ねぎは小口切りにします。',
+      '豚バラ肉は3〜4cm幅に切ります。',
+      '鍋を熱し、油はひかずに豚肉を炒めます。脂が出て色が変わったら、ごぼう、大根、にんじん、里芋を加えて2〜3分炒めます。',
+      'だし汁を加え、煮立ったらアクを取り、弱めの中火で野菜がやわらかくなるまで15分ほど煮ます。',
+      '火を弱めて味噌を溶き入れ、温まったら火を止めます。',
+      '器に盛り、長ねぎをのせます。'
+    ],
+    tips: [
+      '味噌を入れたあとは煮立たせないと、香りが残ります。',
+      '味噌の量は味を見ながら加減します。足りなければ少しずつ足してください。',
+      '具材を大きめに切ると食べごたえが出ます。'
+    ]
+  },
+  {
+    id: 'torishio', title: '鶏もも肉の塩焼き', cat: '主菜', time: '約20分', base: 2, unit: '人分', max: 6,
+    lead: '油はひかず、皮から出る脂で焼きます。皮はカリッと、中はふっくら仕上がります。',
+    ing: [
+      { n: '鶏もも肉', a: 1, u: '枚', x: '約300g' },
+      { n: '塩', a: 0.5, u: '小さじ' },
+      { n: 'こしょう', t: '少々' },
+      { n: '酒', a: 1, u: '大さじ' },
+      { n: 'レモン', a: 0.25, u: '個', x: '添え用' }
+    ],
+    steps: [
+      '冷蔵庫から出して15分ほど常温に置きます。余分な脂と筋を取り、厚い部分に包丁を入れて、厚みを均一にします。',
+      '両面に塩とこしょうをふります。',
+      '冷たいフライパンに皮目を下にして入れ、油はひかずに、弱めの中火にかけます。',
+      '8〜10分、出た脂をときどきキッチンペーパーで拭きながら、皮がきつね色になるまで焼きます。',
+      '裏返して酒をふり、ふたをして弱火で3〜4分、中まで火を通します。',
+      '少し休ませてから切り分け、レモンを添えます。'
+    ],
+    tips: [
+      '冷たいフライパンから焼き始めると、皮から脂がじっくり出て、焦げにくくなります。',
+      '竹串を刺して、透明な汁が出れば中まで火が通っています。',
+      '焼いている間はあまり動かさないと、皮がきれいに焼けます。'
+    ]
+  },
+  {
+    id: 'kiriboshi', title: '切り干し大根の煮物', cat: '副菜', time: '約30分', base: 4, unit: '人分', max: 8,
+    lead: '干ししいたけの戻し汁を使い、うまみで味を整えます。作り置きにも向いています。',
+    ing: [
+      { n: '切り干し大根', a: 40, u: 'g' },
+      { n: 'にんじん', a: 0.5, u: '本' },
+      { n: '干ししいたけ', a: 2, u: '枚' },
+      { n: 'しいたけの戻し汁とだし汁', a: 300, u: 'ml', x: '合わせて' },
+      { n: '本みりん', a: 2, u: '大さじ', note: MIRIN },
+      { n: '酒', a: 1, u: '大さじ' },
+      { n: 'しょうゆ', a: 1.5, u: '大さじ', note: SHOYU }
+    ],
+    steps: [
+      '干ししいたけは、かぶるくらいの水に30分以上つけて戻し、薄切りにします。戻し汁は取っておきます。',
+      '切り干し大根はたっぷりの水で2〜3回もみ洗いし、10分ほど水につけて戻します。水気をしっかり絞り、食べやすい長さに切ります。',
+      'にんじんは細切りにします。',
+      '鍋に切り干し大根、にんじん、しいたけ、戻し汁とだし汁を入れて火にかけます。',
+      '煮立ったら酒、みりん、しょうゆを加え、落とし蓋をして弱火で15分ほど煮ます。',
+      '汁気が少なくなったら火を止め、そのまま冷まして味をなじませます。'
+    ],
+    tips: [
+      '油揚げを入れるとコクが出ますが、多くは植物油で揚げてあります。この作り方では入れません。',
+      '切り干し大根は戻しすぎないほうが、歯ごたえが残ります。',
+      '冷めるときに味が入るので、作ってから少し置くとおいしくなります。'
+    ]
+  },
+  {
+    id: 'dashi', title: '昆布と煮干しのだし', cat: 'だし', time: '約15分＋浸水30分', base: 1, unit: '倍量', max: 4,
+    lead: '1倍量で約600mlできます。市販の顆粒だしには砂糖や植物油が入るものがあるので、自分で取ると安心です。',
+    ing: [
+      { n: '水', a: 700, u: 'ml' },
+      { n: '昆布', a: 10, u: 'g', x: '10cm角1枚ほど' },
+      { n: '煮干し', a: 15, u: 'g', x: '頭とはらわたを取ったもの' }
+    ],
+    steps: [
+      '鍋に水、昆布、煮干しを入れて、30分以上置きます。時間があれば、冷蔵庫で一晩つけておきます。',
+      '弱めの中火にかけ、小さな泡が出てきたら昆布を取り出します。',
+      '弱火で3〜5分煮て、アクを取ります。',
+      '火を止めて、ざるにキッチンペーパーを敷いてこします。'
+    ],
+    tips: [
+      '煮干しは頭とはらわたを取ると、苦みが出にくくなります。',
+      '昆布を煮立たせると、ぬめりやえぐみが出ます。泡が出てきたら取り出します。',
+      '余っただしは冷蔵庫で2〜3日保存できます。製氷皿で冷凍しておくと使いやすいです。'
+    ]
+  },
+  {
+    id: 'yakizakana', title: '焼き魚（鮭・さば・あじ）', cat: '主菜', time: '約15分', base: 2, unit: '人分', max: 6,
+    lead: '塩をふって焼くだけです。魚の脂があるので、油は要りません。',
+    ing: [
+      { n: '魚の切り身', a: 2, u: '切れ', x: '鮭・さば・あじなど' },
+      { n: '塩', a: 0.5, u: '小さじ', x: '甘塩の鮭は、塩をふらずに焼きます' },
+      { n: '大根おろし', a: 100, u: 'g', x: '添え用' },
+      { n: 'しょうゆ', t: '少々', x: '大根おろしにかける分', note: SHOYU }
+    ],
+    steps: [
+      '切り身の水気をキッチンペーパーで拭き取ります。さばやあじは、両面に塩をふって10分ほど置き、出てきた水気を拭き取ります。',
+      '魚焼きグリルを温めておきます。',
+      '皮目を上にして、グリルに並べます。両面焼きなら7〜8分、片面焼きなら皮目を5分焼いて、裏返して3〜4分焼きます。',
+      '皮に焼き色がつき、身がふっくらしたら出来上がりです。大根おろしを添え、しょうゆを少しかけます。'
+    ],
+    tips: [
+      '水気を拭くと臭みが取れて、皮がパリッと焼けます。',
+      'グリルの網をあらかじめ温めておくと、皮がくっつきにくくなります。',
+      '甘塩の鮭は、すでに塩がついているので、塩をふらずに焼きます。'
+    ]
+  },
+  {
+    id: 'kasanemushi', title: '豚バラと白菜の重ね蒸し', cat: '主菜', time: '約25分', base: 4, unit: '人分', max: 8,
+    lead: '重ねて蒸し煮にするだけです。白菜から出る水分とうまみで、水もだしも要りません。',
+    ing: [
+      { n: '白菜', a: 500, u: 'g', x: '1/4株ほど' },
+      { n: '豚バラ薄切り肉', a: 200, u: 'g' },
+      { n: '酒', a: 2, u: '大さじ' },
+      { n: '塩', a: 0.5, u: '小さじ' },
+      { n: 'レモン', a: 0.5, u: '個', x: '添え用' },
+      { n: 'しょうゆ', t: '少々', x: 'つけて食べる分', note: SHOYU }
+    ],
+    steps: [
+      '白菜は5cm幅に切り、芯と葉に分けておきます。豚バラ肉は5cm幅に切ります。',
+      '鍋に、白菜の芯、豚肉、白菜の葉の順に、何層かに重ねて入れます。各層に塩を軽くふります。',
+      '酒を回しかけ、ふたをして中火にかけます。煮立ったら弱火にして、15〜20分蒸し煮にします。',
+      '白菜がしんなりして、豚肉に火が通ったら出来上がりです。出た汁ごと盛り、レモンやしょうゆで食べます。'
+    ],
+    tips: [
+      '白菜から水分がたくさん出るので、水は足しません。',
+      '鍋の底に白菜の芯を敷くと、焦げつきにくくなります。',
+      '残った汁は、そのままスープとして飲めます。'
+    ]
+  },
+  {
+    id: 'mizutaki', title: '鶏肉と野菜の水炊き', cat: '主菜', time: '約30分', base: 4, unit: '人分', max: 8,
+    lead: '昆布だしで鶏肉と野菜を煮るだけの鍋です。レモンと塩で食べると、さっぱりいただけます。',
+    ing: [
+      { n: '鶏もも肉', a: 400, u: 'g' },
+      { n: '白菜', a: 400, u: 'g' },
+      { n: '長ねぎ', a: 1, u: '本' },
+      { n: '豆腐', a: 1, u: '丁' },
+      { n: '生しいたけ', a: 4, u: '枚' },
+      { n: '昆布', a: 10, u: 'g' },
+      { n: '水', a: 1000, u: 'ml' },
+      { n: '酒', a: 2, u: '大さじ' },
+      { n: 'レモン', a: 1, u: '個', x: 'つけて食べる分' },
+      { n: '塩', t: '少々', x: 'つけて食べる分' }
+    ],
+    steps: [
+      '鍋に水と昆布を入れて、30分ほど置きます。',
+      '鶏肉は一口大に切ります。白菜はざく切り、長ねぎは斜め切り、豆腐は食べやすい大きさに切ります。しいたけは石づきを取ります。',
+      '鍋に鶏肉と酒を入れて火にかけ、沸騰する直前に昆布を取り出します。アクを取りながら、弱火で15分ほど煮ます。',
+      '白菜、しいたけ、長ねぎ、豆腐を加え、野菜がやわらかくなるまで10分ほど煮ます。',
+      'レモンと塩でいただきます。'
+    ],
+    tips: [
+      '鶏肉は水から煮ると、うまみがだしに出ます。アクはこまめに取ります。',
+      '市販のポン酢には、砂糖や小麦が入っていることが多いので、レモンと塩が安心です。',
+      '最後に残ったスープは、そのまま飲んでもおいしいです。'
+    ]
+  },
+  {
+    id: 'shogayaki', title: '豚の生姜焼き', cat: '主菜', time: '約15分', base: 2, unit: '人分', max: 6,
+    lead: '小麦粉をまぶさず、砂糖も使いません。豚バラの脂と玉ねぎの甘みで仕上げます。',
+    ing: [
+      { n: '豚バラ薄切り肉', a: 200, u: 'g' },
+      { n: '玉ねぎ', a: 0.5, u: '個' },
+      { n: 'しょうが', a: 1, u: 'かけ', x: 'すりおろします' },
+      { n: '酒', a: 1, u: '大さじ' },
+      { n: '本みりん', a: 1, u: '大さじ', note: MIRIN },
+      { n: 'しょうゆ', a: 1.5, u: '大さじ', note: SHOYU },
+      { n: 'キャベツ', a: 2, u: '枚', x: '添え用のせん切り' }
+    ],
+    steps: [
+      '豚肉は食べやすい長さに切ります。玉ねぎは薄切りにします。キャベツはせん切りにして、器に盛っておきます。',
+      'しょうが、酒、みりん、しょうゆを混ぜて、たれを作ります。',
+      '冷たいフライパンに、油をひかずに豚肉を並べ、中火にかけます。脂が出て、色が変わるまで3〜4分焼きます。',
+      '玉ねぎを加えて、しんなりするまで炒めます。',
+      'たれを加えて、汁気がなくなるまで絡め、キャベツの横に盛ります。'
+    ],
+    tips: [
+      '小麦粉をつけなくても、豚バラの脂でしっとり焼けます。',
+      '玉ねぎをしっかり炒めると、砂糖なしでも甘みが出ます。',
+      'たれは、強火で煮詰めすぎないほうが、焦げつかず、味もまろやかです。'
+    ]
+  },
+  {
+    id: 'daikonbuta', title: '大根と豚バラの煮物', cat: '主菜', time: '約35分', base: 4, unit: '人分', max: 8,
+    lead: '豚バラの脂で大根を炒めてから煮ます。砂糖もサラダ油も使いません。',
+    ing: [
+      { n: '大根', a: 600, u: 'g', x: '1/2本ほど' },
+      { n: '豚バラ肉', a: 150, u: 'g' },
+      { n: 'だし汁', a: 400, u: 'ml' },
+      { n: '酒', a: 2, u: '大さじ' },
+      { n: '本みりん', a: 2, u: '大さじ', note: MIRIN },
+      { n: 'しょうゆ', a: 2, u: '大さじ', note: SHOYU },
+      { n: 'しょうが', a: 1, u: 'かけ', x: '薄切り' },
+      { n: '小ねぎ', t: '少々', x: '仕上げ用' }
+    ],
+    steps: [
+      '大根は2cm厚さのいちょう切りにします。豚バラ肉は4cm幅に切ります。',
+      '鍋を熱し、油はひかずに豚肉を炒めます。脂が出たら大根を加え、表面が透き通るまで2〜3分炒めます。',
+      'だし汁、酒、みりん、しょうがを加え、煮立ったらアクを取ります。',
+      '落とし蓋をして、弱めの中火で15分ほど煮ます。',
+      'しょうゆを加えて、さらに10分ほど煮ます。竹串がすっと通ったら火を止め、そのまま冷まして味をなじませます。',
+      '器に盛り、小ねぎをのせます。'
+    ],
+    tips: [
+      '大根を最初に炒めると、下茹でしなくても、味がしみやすくなります。',
+      'しょうゆは後から入れると、大根がやわらかく煮えます。',
+      '一度冷ましてから温め直すと、さらにおいしくなります。'
+    ]
+  },
+  {
+    id: 'kabocha', title: 'かぼちゃの煮物', cat: '副菜', time: '約20分', base: 4, unit: '人分', max: 8,
+    lead: '砂糖がなくても、かぼちゃの甘みで十分おいしくできます。',
+    ing: [
+      { n: 'かぼちゃ', a: 400, u: 'g', x: '1/4個ほど' },
+      { n: 'だし汁', a: 200, u: 'ml' },
+      { n: '酒', a: 1, u: '大さじ' },
+      { n: '本みりん', a: 1, u: '大さじ', note: MIRIN },
+      { n: 'しょうゆ', a: 1, u: '大さじ', note: SHOYU }
+    ],
+    steps: [
+      'かぼちゃは種とわたを取り、3〜4cm角に切ります。皮は、ところどころむきます。',
+      '鍋に、皮を下にして並べます。だし汁、酒、みりんを加えます。',
+      '落とし蓋をして、中火にかけ、煮立ったら弱火で10分ほど煮ます。',
+      'しょうゆを加え、さらに5分ほど煮ます。竹串がすっと通ったら火を止め、そのまま冷まして味をなじませます。'
+    ],
+    tips: [
+      'かぼちゃは重ならないように並べると、煮崩れません。',
+      '煮ている間は混ぜずに、鍋をゆするだけにします。',
+      '冷めるときに味がしみるので、少し置いてから食べるのがおすすめです。'
+    ]
+  },
+  {
+    id: 'hijiki', title: 'ひじきの煮物', cat: '副菜', time: '約25分', base: 4, unit: '人分', max: 8,
+    lead: '油揚げを入れずに、にんじんとだしで煮ます。作り置きにも向いています。',
+    ing: [
+      { n: '乾燥ひじき', a: 20, u: 'g' },
+      { n: 'にんじん', a: 0.5, u: '本' },
+      { n: 'だし汁', a: 300, u: 'ml' },
+      { n: '酒', a: 1, u: '大さじ' },
+      { n: '本みりん', a: 2, u: '大さじ', note: MIRIN },
+      { n: 'しょうゆ', a: 1.5, u: '大さじ', note: SHOYU }
+    ],
+    steps: [
+      'ひじきはたっぷりの水に20〜30分つけて戻します。ざるに上げて、水でよく洗います。',
+      'にんじんは細切りにします。',
+      '鍋に、ひじき、にんじん、だし汁、酒、みりんを入れて火にかけます。',
+      '煮立ったら落とし蓋をして、弱火で10分ほど煮ます。',
+      'しょうゆを加え、汁気が少なくなるまで5〜10分煮ます。火を止めて、そのまま冷まします。'
+    ],
+    tips: [
+      '芽ひじきは15分ほど、長ひじきは30分ほどで戻ります。',
+      '戻したあとに、水でよく洗うと、口当たりがよくなります。',
+      '冷蔵庫で3〜4日保存できます。'
+    ]
+  },
+  {
+    id: 'ohitashi', title: 'ほうれん草のおひたし', cat: '副菜', time: '約10分', base: 2, unit: '人分', max: 6,
+    lead: 'ほうれん草を茹でて、だしとしょうゆにつけるだけです。',
+    ing: [
+      { n: 'ほうれん草', a: 200, u: 'g', x: '1束ほど' },
+      { n: 'だし汁', a: 100, u: 'ml' },
+      { n: 'しょうゆ', a: 2, u: '小さじ', note: SHOYU },
+      { n: 'かつお節', a: 1, u: 'パック' }
+    ],
+    steps: [
+      'ほうれん草は、根元に十字の切り込みを入れ、水の中で洗って砂を落とします。',
+      '湯を沸かして塩少々（分量外）を入れ、根元から入れて、30秒〜1分茹でます。',
+      '冷水にとって冷まし、水気をしっかり絞ります。4cm長さに切ります。',
+      'だし汁としょうゆを合わせます。ほうれん草を入れて10分ほどつけ、軽く絞って器に盛ります。',
+      'かつお節をのせます。'
+    ],
+    tips: [
+      '茹ですぎると、食感が悪くなります。ゆっくり数えて、1分以内にします。',
+      '冷水にとると、アクが抜けて、色もきれいになります。',
+      '水気をしっかり絞らないと、味が薄くなります。'
+    ]
+  },
+  {
+    id: 'tamago', title: 'ゆで卵と温泉卵', cat: '副菜', time: '約15分', base: 4, unit: '個', max: 8,
+    lead: '材料は卵だけです。朝ごはんや、お弁当、どんぶりのトッピングに使えます。',
+    ing: [
+      { n: '卵', a: 4, u: '個', x: '冷蔵庫から出したもの' },
+      { n: '塩', t: '少々', x: '食べるとき' }
+    ],
+    steps: [
+      '【ゆで卵】卵がかぶるくらいの湯を沸かします。お玉でそっと卵を入れ、中火で、半熟なら6分30秒、固ゆでなら10分茹でます。',
+      '冷水にとって冷まし、殻をむきます。',
+      '【温泉卵】卵がかぶるくらいの湯を沸かし、火を止めます。沸騰した湯5に対して水1の割合で水を足します（約80℃になります）。',
+      '卵を入れ、ふたをして15分置きます。',
+      '冷水にとって冷まし、殻を割って器に出します。塩を少しかけます。'
+    ],
+    tips: [
+      '卵は冷蔵庫から出したてのものを使います。常温だと、固まり具合が変わります。',
+      '卵をそっと入れると、殻が割れにくくなります。',
+      '温泉卵は、ごはんにのせたり、おひたしに添えたりすると、おいしくいただけます。'
+    ]
+  },
+  {
+    id: 'misoshiru', title: '豆腐とわかめの味噌汁', cat: '汁物', time: '約10分', base: 4, unit: '人分', max: 8,
+    lead: '昆布と煮干しのだしで作ると、味噌汁がぐっとおいしくなります。',
+    ing: [
+      { n: 'だし汁', a: 800, u: 'ml', x: '昆布と煮干しのだし' },
+      { n: '豆腐', a: 1, u: '丁' },
+      { n: '乾燥わかめ', a: 2, u: '大さじ' },
+      { n: '長ねぎ', a: 0.5, u: '本' },
+      { n: '味噌', a: 3, u: '大さじ', note: '「だし入り」「砂糖入り」の商品は、原材料表示を確認します。大豆・米・塩などで作られたものが安心です。' }
+    ],
+    steps: [
+      '豆腐は1.5cm角に切ります。長ねぎは小口切りにします。',
+      '鍋にだし汁を入れて温めます。沸いたら豆腐と乾燥わかめを入れ、1〜2分煮ます。',
+      '火を弱めて味噌を溶き入れ、長ねぎを加えます。煮立つ前に火を止めます。'
+    ],
+    tips: [
+      '味噌を入れたあとは煮立たせないと、香りが残ります。',
+      '油揚げは、多くが植物油で揚げてあるので、入れずに作ります。',
+      '味噌の量は、味を見ながら加減してください。'
+    ]
+  },
+  {
+    id: 'toriteri', title: '鶏の照り焼き', cat: '主菜', time: '約20分', base: 2, unit: '人分', max: 6,
+    lead: '本みりんとしょうゆだけで、照りを出します。砂糖も油も使いません。',
+    ing: [
+      { n: '鶏もも肉', a: 1, u: '枚', x: '約300g' },
+      { n: '酒', a: 1, u: '大さじ' },
+      { n: '本みりん', a: 1.5, u: '大さじ', note: MIRIN },
+      { n: 'しょうゆ', a: 1.5, u: '大さじ', note: SHOYU }
+    ],
+    steps: [
+      '鶏肉は、余分な脂と筋を取り、厚い部分に包丁を入れて、厚みを均一にします。皮にフォークで数か所穴をあけます。',
+      '酒、みりん、しょうゆを混ぜて、たれを作ります。',
+      '冷たいフライパンに、皮目を下にして入れ、油はひかずに、弱めの中火にかけます。8〜10分、出た脂を拭きながら、皮に焼き色をつけます。',
+      '裏返して、ふたをして、弱火で4〜5分焼き、中まで火を通します。',
+      '余分な脂をキッチンペーパーで拭き取ります。たれを加えて、中火で2〜3分、照りが出るまで煮絡めます。',
+      '食べやすく切って盛り、フライパンに残ったたれをかけます。'
+    ],
+    tips: [
+      '脂をよく拭き取ってからたれを入れると、味がよく絡みます。',
+      'たれは煮詰めすぎると、からくなります。とろりとしたら火を止めます。',
+      '皮目から焼くと、皮の脂が油の代わりになります。'
+    ]
+  },
+  {
+    id: 'nikutofu', title: '肉豆腐', cat: '主菜', time: '約25分', base: 4, unit: '人分', max: 8,
+    lead: '甘辛い味ですが、砂糖は使いません。本みりんとだしのうまみで煮ます。',
+    ing: [
+      { n: '豚こま切れ肉', a: 200, u: 'g' },
+      { n: '木綿豆腐', a: 1, u: '丁' },
+      { n: '長ねぎ', a: 1, u: '本' },
+      { n: 'しらたき', a: 1, u: '袋' },
+      { n: 'しょうが', a: 1, u: 'かけ', x: '薄切り' },
+      { n: 'だし汁', a: 300, u: 'ml' },
+      { n: '酒', a: 2, u: '大さじ' },
+      { n: '本みりん', a: 2, u: '大さじ', note: MIRIN },
+      { n: 'しょうゆ', a: 2, u: '大さじ', note: SHOYU }
+    ],
+    steps: [
+      'しらたきは食べやすい長さに切り、下茹でします。豆腐は6等分、長ねぎは斜め切りにします。',
+      '鍋に、だし汁、酒、みりん、しょうがを入れて煮立てます。',
+      '豚肉を一枚ずつ広げながら入れ、アクを取ります。',
+      'しらたき、長ねぎ、豆腐、しょうゆを加え、弱めの中火で10〜15分煮ます。',
+      '火を止めて、5分ほど置いて味をなじませます。'
+    ],
+    tips: [
+      '豚肉は、煮立った汁に広げて入れると、固まりません。',
+      '豆腐が崩れないように、煮ている間は混ぜません。',
+      '冷めるときに味がしみるので、少し置いてから食べるのがおすすめです。'
+    ]
+  },
+  {
+    id: 'foilyaki', title: '鮭ときのこのホイル焼き', cat: '主菜', time: '約20分', base: 2, unit: '人分', max: 6,
+    lead: 'バターを使わず、塩と酒、レモンで食べます。洗い物が少なく、片づけも楽です。',
+    ing: [
+      { n: '生鮭', a: 2, u: '切れ' },
+      { n: 'しめじ', a: 1, u: 'パック', x: '約100g' },
+      { n: '玉ねぎ', a: 0.5, u: '個' },
+      { n: '塩', t: '少々' },
+      { n: '酒', a: 1, u: '大さじ' },
+      { n: 'レモン', a: 0.5, u: '個' },
+      { n: 'しょうゆ', t: '少々', x: '仕上げ用', note: SHOYU }
+    ],
+    steps: [
+      '鮭に塩をふって10分ほど置き、出てきた水気を拭き取ります。',
+      'しめじは石づきを取ってほぐします。玉ねぎは薄切りにします。',
+      'アルミホイルを広げ、玉ねぎ、鮭、しめじの順にのせ、酒をふります。隙間がないように包みます。',
+      'フライパンに並べ、底から1cmほどの水を入れてふたをし、中火で10〜12分蒸し焼きにします。オーブントースターなら12〜15分焼きます。',
+      'ホイルを開き、レモンをしぼり、しょうゆを少しかけます。'
+    ],
+    tips: [
+      '玉ねぎを一番下に敷くと、鮭がホイルにくっつきません。',
+      'ホイルは隙間なく包むと、蒸気がこもってふっくら仕上がります。',
+      '開けるときは、蒸気でやけどをしないようにご注意ください。'
+    ]
+  },
+  {
+    id: 'butashabu', title: '豚しゃぶ', cat: '主菜', time: '約15分', base: 2, unit: '人分', max: 6,
+    lead: '湯にくぐらせるだけです。大根おろしとレモンで、さっぱり食べます。',
+    ing: [
+      { n: '豚しゃぶしゃぶ用肉', a: 200, u: 'g' },
+      { n: '白菜', a: 150, u: 'g' },
+      { n: '水', a: 1000, u: 'ml' },
+      { n: '昆布', a: 5, u: 'g' },
+      { n: '酒', a: 2, u: '大さじ' },
+      { n: '大根おろし', a: 150, u: 'g' },
+      { n: 'レモン', a: 0.5, u: '個' },
+      { n: '小ねぎ', t: '少々' },
+      { n: 'しょうゆ', t: '少々', x: 'つけて食べる分', note: SHOYU }
+    ],
+    steps: [
+      '鍋に水、昆布、酒を入れて中火にかけ、沸騰する直前に昆布を取り出します。',
+      '白菜は食べやすく切り、先に茹でて取り出します。',
+      '火を弱め、ふつふつとする程度の湯で、豚肉を一枚ずつ入れます。色が変わったら取り出します。',
+      '水気を切って盛り、大根おろし、小ねぎ、レモン、しょうゆを少しかけて食べます。'
+    ],
+    tips: [
+      '湯がぐらぐらすると、肉が固くなります。ふつふつとする火加減にします。',
+      '市販のごまだれやポン酢には、砂糖や小麦が入ることが多いので、レモンがおすすめです。',
+      '残った湯は、スープとして飲めます。塩を少し足してください。'
+    ]
+  },
+  {
+    id: 'tsukune', title: '鶏つくね', cat: '主菜', time: '約25分', base: 4, unit: '人分', max: 8,
+    lead: '豆腐を入れて、ふんわり仕上げます。パン粉も小麦粉も使いません。',
+    ing: [
+      { n: '鶏ひき肉', a: 400, u: 'g' },
+      { n: '木綿豆腐', a: 150, u: 'g' },
+      { n: '卵', a: 1, u: '個' },
+      { n: '長ねぎ', a: 0.5, u: '本', x: 'みじん切り' },
+      { n: 'しょうが', a: 1, u: 'かけ', x: 'すりおろし' },
+      { n: '塩', a: 0.25, u: '小さじ' },
+      { n: '片栗粉', a: 1, u: '大さじ', note: KATAKURI },
+      { n: '酒', a: 1, u: '大さじ', x: 'たれ用' },
+      { n: '本みりん', a: 2, u: '大さじ', x: 'たれ用', note: MIRIN },
+      { n: 'しょうゆ', a: 2, u: '大さじ', x: 'たれ用', note: SHOYU }
+    ],
+    steps: [
+      '豆腐はキッチンペーパーに包んで、5分ほど置いて水気を切ります。',
+      'ボウルに、ひき肉、豆腐、卵、長ねぎ、しょうが、塩、片栗粉を入れ、粘りが出るまで混ぜます。',
+      '8〜10個に分けて、小判形に整えます。',
+      '冷たいフライパンに並べ、油はひかずに、中火にかけます。ふたをして3〜4分焼き、裏返して、弱火で4分焼きます。',
+      '中まで火が通ったら、余分な脂を拭き取ります。酒、みりん、しょうゆを混ぜたたれを加え、煮絡めます。'
+    ],
+    tips: [
+      '豆腐を入れると、パン粉がなくてもふんわり仕上がります。',
+      '手を水でぬらすと、成形しやすくなります。',
+      '焼き始めはあまり触らず、焼き色がついてから返すと、くっつきません。'
+    ]
+  },
+  {
+    id: 'sabamiso', title: 'さばの味噌煮', cat: '主菜', time: '約25分', base: 2, unit: '人分', max: 6,
+    lead: '砂糖を使わず、本みりんと酒で甘みを出します。霜降りをすれば、臭みが気になりません。',
+    ing: [
+      { n: 'さばの切り身', a: 2, u: '切れ' },
+      { n: 'しょうが', a: 1, u: 'かけ', x: '薄切り' },
+      { n: '水', a: 150, u: 'ml' },
+      { n: '酒', a: 3, u: '大さじ' },
+      { n: '本みりん', a: 2, u: '大さじ', note: MIRIN },
+      { n: '味噌', a: 2, u: '大さじ', note: MISO }
+    ],
+    steps: [
+      'さばは皮に十字の切り込みを入れ、熱湯をかけて、すぐに冷水で洗います。水気を拭き取ります。',
+      '鍋に、水、酒、みりん、しょうがを入れて煮立てます。',
+      'さばを皮目を上にして並べ、落とし蓋をして、中火で5分煮ます。',
+      '味噌を、煮汁で溶いてから加えます。煮汁をかけながら、弱めの中火で8〜10分、とろみが出るまで煮ます。'
+    ],
+    tips: [
+      '熱湯をかけて洗う「霜降り」で、臭みと汚れが取れます。',
+      '味噌は煮汁で溶いてから入れると、ダマになりません。',
+      'さばを動かさず、煮汁をかけながら煮ると、形が崩れません。'
+    ]
+  },
+  {
+    id: 'tebamoto', title: '手羽元と大根の煮物', cat: '主菜', time: '約50分', base: 4, unit: '人分', max: 8,
+    lead: '手羽元から出るうまみで、味がしっかり決まります。煮ている間は鍋にお任せです。',
+    ing: [
+      { n: '鶏手羽元', a: 8, u: '本', x: '約500g' },
+      { n: '大根', a: 500, u: 'g' },
+      { n: 'しょうが', a: 1, u: 'かけ', x: '薄切り' },
+      { n: '水', a: 500, u: 'ml' },
+      { n: '酒', a: 3, u: '大さじ' },
+      { n: '本みりん', a: 2, u: '大さじ', note: MIRIN },
+      { n: 'しょうゆ', a: 3, u: '大さじ', note: SHOYU }
+    ],
+    steps: [
+      '大根は3cm厚さの半月切りにして、皮をむきます。',
+      '手羽元は、熱湯をさっとかけて、水気を拭き取ります。',
+      '鍋に、手羽元、水、酒、みりん、しょうがを入れて火にかけ、煮立ったらアクを取ります。',
+      '大根を加え、落とし蓋をして、弱火で20分煮ます。',
+      'しょうゆを加えて、さらに15分ほど煮ます。火を止めて、そのまま冷まし、味をなじませます。'
+    ],
+    tips: [
+      '手羽元に熱湯をかけると、臭みが取れて、すっきりした味になります。',
+      '大根が固いときは、先に電子レンジで5分ほど加熱してから入れると、早くやわらかくなります。',
+      '一度冷ましてから温め直すと、さらにおいしくなります。'
+    ]
+  },
+  {
+    id: 'kakuni', title: '豚の角煮', cat: '主菜', time: '約2時間', base: 4, unit: '人分', max: 8,
+    lead: '時間はかかりますが、ほとんど鍋にお任せです。砂糖なしで、とろとろに仕上げます。',
+    ing: [
+      { n: '豚バラかたまり肉', a: 500, u: 'g' },
+      { n: '長ねぎの青い部分', a: 1, u: '本分' },
+      { n: 'しょうが', a: 2, u: 'かけ', x: '薄切り' },
+      { n: '水', a: 600, u: 'ml', x: '煮る用' },
+      { n: '酒', a: 100, u: 'ml' },
+      { n: '本みりん', a: 3, u: '大さじ', note: MIRIN },
+      { n: 'しょうゆ', a: 4, u: '大さじ', note: SHOYU },
+      { n: '卵', a: 4, u: '個', x: 'ゆで卵にして加えます' }
+    ],
+    steps: [
+      '豚肉は4cm角に切ります。鍋に豚肉、長ねぎの青い部分、しょうが半量、かぶるくらいの水を入れて火にかけます。',
+      '沸騰したら弱火にして、アクを取りながら、1時間ほど下茹でします。',
+      '肉を取り出して、軽く洗います。ゆで汁は捨てます。',
+      '鍋に、肉、水、酒、みりん、残りのしょうがを入れて煮立て、アクを取ります。落とし蓋をして、弱火で30分煮ます。',
+      'しょうゆと、殻をむいたゆで卵を加えて、さらに30分煮ます。汁気が少なくなり、照りが出たら火を止め、冷まして味をなじませます。'
+    ],
+    tips: [
+      '下茹でをしっかりすると、余分な脂が落ちて、さっぱり仕上がります。',
+      '一度冷ますと、表面に脂が固まるので、取り除くと脂っこくなりません。',
+      '圧力鍋をお持ちなら、下茹では15分ほどに短縮できます。'
+    ]
+  },
+  {
+    id: 'sabakan-oroshi', title: 'さば缶の大根おろしのせ', cat: '主菜', tags: ['さば缶'], time: '約5分', base: 2, unit: '人分', max: 6,
+    lead: '缶を開けて、のせるだけです。火を使わないので、忙しい日の一品になります。',
+    ing: [
+      { n: 'さば水煮缶', a: 1, u: '缶', note: SABA },
+      { n: '大根おろし', a: 150, u: 'g' },
+      { n: '小ねぎ', t: '少々' },
+      { n: 'レモン', a: 0.5, u: '個' },
+      { n: 'しょうゆ', t: '少々', note: SHOYU }
+    ],
+    steps: [
+      'さば缶の身を、汁を少し残して器に盛り、軽くほぐします。',
+      '大根おろしと、小口切りにした小ねぎをのせます。',
+      'レモンをしぼり、しょうゆを少しかけます。'
+    ],
+    tips: [
+      '大根おろしは、軽く水気を切ると、味がぼやけません。',
+      '缶の汁には塩分とうまみがあるので、少し残して一緒に食べるとおいしいです。',
+      '温かいごはんにのせても、おいしくいただけます。'
+    ]
+  },
+  {
+    id: 'sabakan-miso', title: 'さば缶の味噌汁', cat: '汁物', tags: ['さば缶'], time: '約10分', base: 4, unit: '人分', max: 8,
+    lead: 'さば缶のうまみが出るので、だしを取らなくても、おいしくできます。',
+    ing: [
+      { n: '水', a: 700, u: 'ml' },
+      { n: 'さば水煮缶', a: 1, u: '缶', x: '汁ごと使います', note: SABA },
+      { n: '大根', a: 150, u: 'g' },
+      { n: '長ねぎ', a: 0.5, u: '本' },
+      { n: 'しょうが', a: 1, u: 'かけ', x: 'せん切り' },
+      { n: '味噌', a: 2, u: '大さじ', note: MISO }
+    ],
+    steps: [
+      '大根は短冊切り、長ねぎは小口切りにします。',
+      '鍋に、水と大根を入れて火にかけ、煮立ったら弱火で5分煮ます。',
+      'さば缶を汁ごと加え、身を軽くほぐして、2分煮ます。',
+      '火を弱めて味噌を溶き入れます。長ねぎとしょうがを加え、煮立つ前に火を止めます。'
+    ],
+    tips: [
+      '缶の汁にも塩分があるので、味噌は少なめから入れて、味を見て足します。',
+      'しょうがを入れると、魚の臭みが気になりません。',
+      '煮立たせると、味噌の香りが飛びます。'
+    ]
+  },
+  {
+    id: 'sabakan-curry', title: 'さば缶カレー', cat: 'カレー', tags: ['さば缶'], time: '約20分', base: 2, unit: '人分', max: 6,
+    lead: 'さば缶の汁で玉ねぎを炒めるので、油は要りません。ルウも使わず、カレー粉とトマトで作ります。',
+    ing: [
+      { n: 'さば水煮缶', a: 1, u: '缶', x: '汁と身に分けます', note: SABA },
+      { n: '玉ねぎ', a: 1, u: '個' },
+      { n: 'しょうが', a: 1, u: 'かけ', x: 'みじん切り' },
+      { n: 'にんにく', a: 1, u: 'かけ', x: 'みじん切り' },
+      { n: 'カットトマト缶', a: 200, u: 'g', note: TOMATO },
+      { n: 'カレー粉', a: 1, u: '大さじ', note: CURRY },
+      { n: '塩', t: '少々' }
+    ],
+    steps: [
+      '玉ねぎは薄切りにします。',
+      '鍋に、さば缶の汁だけを入れて、玉ねぎ、しょうが、にんにくを加えて中火で炒めます。しんなりするまで5〜6分炒めます。焦げつきそうなときは、水を少し足します。',
+      'カレー粉を加えて、1分ほど炒めて、香りを出します。',
+      'カットトマトと、さばの身を大きめにほぐして加えます。',
+      '煮立ったら弱火にして、8〜10分煮ます。塩で味を調えます。'
+    ],
+    tips: [
+      'さばの身は崩しすぎないほうが、食べごたえが出ます。',
+      '玉ねぎをしっかり炒めると、甘みとコクが出ます。',
+      '市販のカレールウは、小麦粉、植物油、砂糖、乳製品が入っているので、使いません。'
+    ]
+  },
+  {
+    id: 'chicken-curry', title: '鶏肉と野菜のカレー', cat: 'カレー', time: '約50分', base: 4, unit: '人分', max: 8,
+    lead: 'ルウを使わず、カレー粉と玉ねぎ、トマトで作ります。鶏の皮から出る脂で、油も要りません。',
+    ing: [
+      { n: '鶏もも肉', a: 300, u: 'g' },
+      { n: '玉ねぎ', a: 2, u: '個' },
+      { n: 'にんじん', a: 1, u: '本' },
+      { n: 'じゃがいも', a: 2, u: '個' },
+      { n: 'しょうが', a: 1, u: 'かけ', x: 'みじん切り' },
+      { n: 'にんにく', a: 1, u: 'かけ', x: 'みじん切り' },
+      { n: 'カットトマト缶', a: 400, u: 'g', x: '1缶', note: TOMATO },
+      { n: 'カレー粉', a: 2, u: '大さじ', note: CURRY },
+      { n: '水', a: 300, u: 'ml' },
+      { n: '塩', a: 1, u: '小さじ' }
+    ],
+    steps: [
+      '玉ねぎは薄切り、にんじんとじゃがいもは乱切りにします。鶏肉は一口大に切ります。',
+      '鍋に鶏肉を皮目を下にして入れ、油はひかずに、中火で焼きます。脂が出て、表面に焼き色がついたら、鶏肉をいったん取り出します。',
+      '同じ鍋に、玉ねぎ、しょうが、にんにくを入れ、水大さじ2を加えて、ふたをして蒸し炒めにします。焦げそうなときは、水を大さじ1ずつ足しながら、飴色になるまで15〜20分炒めます。',
+      'カレー粉を加えて、1分ほど炒めて、香りを出します。',
+      'カットトマト、水、にんじん、じゃがいも、鶏肉を加えます。煮立ったら弱火にして、20分煮ます。',
+      '塩で味を調えます。'
+    ],
+    tips: [
+      '玉ねぎをしっかり炒めると、とろみと甘みが出ます。',
+      'とろみが足りないときは、じゃがいもを少しつぶして混ぜます。',
+      '一晩置くと、味がなじんでさらにおいしくなります。'
+    ]
+  },
+  {
+    id: 'tori-soboro', title: '鶏そぼろ', cat: '主菜', time: '約15分', base: 4, unit: '人分', max: 8,
+    lead: '砂糖を使わず、本みりんで甘みを出します。ごはんにのせるだけで一品になります。',
+    ing: [
+      { n: '鶏ひき肉', a: 300, u: 'g' },
+      { n: 'しょうが', a: 1, u: 'かけ', x: 'すりおろし' },
+      { n: '酒', a: 2, u: '大さじ' },
+      { n: '本みりん', a: 3, u: '大さじ', note: MIRIN },
+      { n: 'しょうゆ', a: 2, u: '大さじ', note: SHOYU }
+    ],
+    steps: [
+      '冷たい鍋に、鶏ひき肉、しょうが、酒、みりんを入れて、火にかける前によく混ぜます。',
+      '中火にかけ、菜箸を数本まとめて持ち、混ぜながらほぐして、ぽろぽろになるまで火を通します。',
+      'しょうゆを加えて、汁気がなくなるまで5〜6分、混ぜながら煮詰めます。',
+      '温かいごはんにのせます。'
+    ],
+    tips: [
+      '火にかける前に調味料と混ぜておくと、肉がかたまらず、ふんわり仕上がります。',
+      '冷めたら小分けにして、冷凍保存できます。',
+      'ゆでたほうれん草や、炒り卵を添えると、彩りがよくなります。'
+    ]
+  },
+  {
+    id: 'tori-hamburg', title: '鶏ひき肉と豆腐のハンバーグ', cat: '主菜', time: '約30分', base: 4, unit: '人分', max: 8,
+    lead: 'パン粉も小麦粉も使わず、豆腐でふんわり仕上げます。大根おろしとレモンで、さっぱり食べます。',
+    ing: [
+      { n: '鶏ひき肉', a: 300, u: 'g' },
+      { n: '木綿豆腐', a: 150, u: 'g' },
+      { n: '玉ねぎ', a: 0.5, u: '個', x: 'みじん切り' },
+      { n: '卵', a: 1, u: '個' },
+      { n: '塩', a: 0.5, u: '小さじ' },
+      { n: 'こしょう', t: '少々' },
+      { n: '片栗粉', a: 1, u: '大さじ', note: KATAKURI },
+      { n: '大根おろし', a: 150, u: 'g', x: '添え用' },
+      { n: 'レモン', a: 0.5, u: '個' },
+      { n: 'しょうゆ', t: '少々', x: '仕上げ用', note: SHOYU }
+    ],
+    steps: [
+      '豆腐は、キッチンペーパーに包んで5分ほど置き、水気を切ります。玉ねぎは耐熱皿に入れて、電子レンジで2分加熱し、冷まします。',
+      'ボウルに、ひき肉、豆腐、玉ねぎ、卵、塩、こしょう、片栗粉を入れ、粘りが出るまでよく混ぜます。',
+      '4等分にして、手のひらで軽く叩いて空気を抜き、小判形に整えます。中央を少しくぼませます。',
+      '冷たいフライパンに並べ、油はひかずに、中火にかけます。ふたをして4分焼き、焼き色がついたら裏返します。',
+      '弱火にして、ふたをして6〜7分焼きます。竹串を刺して、透明な汁が出たら出来上がりです。',
+      '大根おろしとレモンを添え、しょうゆを少しかけます。'
+    ],
+    tips: [
+      '豆腐を入れると、パン粉を使わなくてもふんわり仕上がります。',
+      '中央をくぼませると、火が通りやすく、ふくらんでも割れません。',
+      '焼いている間にあまり動かさないと、きれいな焼き色がつきます。'
+    ]
+  },
+  {
+    id: 'tori-dango', title: '鶏団子と白菜のスープ', cat: '汁物', time: '約25分', base: 4, unit: '人分', max: 8,
+    lead: 'ふわふわの鶏団子と、白菜のやさしい甘みを楽しみます。体が温まる一品です。',
+    ing: [
+      { n: '鶏ひき肉', a: 250, u: 'g' },
+      { n: 'しょうが', a: 1, u: 'かけ', x: 'すりおろし' },
+      { n: '片栗粉', a: 1, u: '大さじ', note: KATAKURI },
+      { n: '塩', a: 0.25, u: '小さじ', x: '団子用' },
+      { n: '白菜', a: 300, u: 'g' },
+      { n: '長ねぎ', a: 0.5, u: '本' },
+      { n: 'だし汁', a: 800, u: 'ml' },
+      { n: '酒', a: 1, u: '大さじ' },
+      { n: '塩', a: 1, u: '小さじ', x: 'スープの味つけ用' }
+    ],
+    steps: [
+      'ボウルに、ひき肉、しょうが、片栗粉、団子用の塩を入れ、粘りが出るまでよく混ぜます。',
+      '白菜は、芯と葉に分けて、ざく切りにします。長ねぎは斜め切りにします。',
+      '鍋に、だし汁と酒を入れて沸かし、白菜の芯を入れます。',
+      'ひき肉をスプーンですくって丸め、鍋に落としていきます。',
+      '浮いてきたら、白菜の葉と長ねぎを加えて、弱火で10分ほど煮ます。',
+      'スープの味つけ用の塩で味を調えます。'
+    ],
+    tips: [
+      '団子は、スプーン2本で形を整えながら入れると、手が汚れません。',
+      'アクが出たら、すくって取ると、すっきりした味になります。',
+      '残ったスープに、ごはんを入れると、おじやになります。'
+    ]
+  },
+  {
+    id: 'tori-keema', title: '鶏ひき肉のキーマカレー', cat: 'カレー', time: '約30分', base: 4, unit: '人分', max: 8,
+    lead: 'ルウを使わず、カレー粉とトマトで作ります。鶏ひき肉の脂で炒めるので、油は要りません。',
+    ing: [
+      { n: '鶏ひき肉', a: 300, u: 'g' },
+      { n: '玉ねぎ', a: 2, u: '個' },
+      { n: 'にんじん', a: 0.5, u: '本' },
+      { n: 'しょうが', a: 1, u: 'かけ', x: 'みじん切り' },
+      { n: 'にんにく', a: 1, u: 'かけ', x: 'みじん切り' },
+      { n: 'カットトマト缶', a: 400, u: 'g', x: '1缶', note: TOMATO },
+      { n: 'カレー粉', a: 2, u: '大さじ', note: CURRY },
+      { n: '水', a: 100, u: 'ml' },
+      { n: '塩', a: 1, u: '小さじ' }
+    ],
+    steps: [
+      '玉ねぎ、にんじんは、みじん切りにします。',
+      '鍋に、ひき肉を入れて、油はひかずに中火で炒めます。脂が出て、ぽろぽろになるまで炒めます。',
+      '玉ねぎ、にんじん、しょうが、にんにくを加え、水大さじ2を加えて、ふたをして蒸し炒めにします。焦げそうなときは、水を少しずつ足しながら、10分ほど炒めます。',
+      'カレー粉を加えて、1分ほど炒めて、香りを出します。',
+      'カットトマトと水を加えて、煮立ったら弱火にして、15分ほど煮ます。',
+      '塩で味を調えます。'
+    ],
+    tips: [
+      '温泉卵をのせると、まろやかになります。ゆで卵と温泉卵のレシピをご覧ください。',
+      'みじん切りの野菜を増やしても、おいしくなります。',
+      '小分けにして冷凍できます。'
+    ]
+  },
+  {
+    id: 'tori-soboan', title: '鶏ひき肉と豆腐のそぼろあん', cat: '主菜', time: '約20分', base: 4, unit: '人分', max: 8,
+    lead: 'やわらかい豆腐に、とろみのあるそぼろあんをかけます。食べやすく、体にやさしい一品です。',
+    ing: [
+      { n: '鶏ひき肉', a: 200, u: 'g' },
+      { n: '木綿豆腐', a: 1, u: '丁' },
+      { n: '長ねぎ', a: 0.5, u: '本', x: 'みじん切り' },
+      { n: 'しょうが', a: 1, u: 'かけ', x: 'すりおろし' },
+      { n: 'だし汁', a: 300, u: 'ml' },
+      { n: '酒', a: 1, u: '大さじ' },
+      { n: '本みりん', a: 1, u: '大さじ', note: MIRIN },
+      { n: 'しょうゆ', a: 1.5, u: '大さじ', note: SHOYU },
+      { n: '片栗粉', a: 1, u: '大さじ', x: '同量の水で溶きます', note: KATAKURI }
+    ],
+    steps: [
+      '豆腐は、食べやすい大きさに切り、耐熱皿にのせて電子レンジで2〜3分温めます。水気を切って、器に盛ります。',
+      '鍋に、ひき肉、しょうが、酒を入れて、火にかける前によく混ぜます。中火にかけて、ぽろぽろになるまで炒めます。',
+      'だし汁、みりん、しょうゆを加えて、煮立ったらアクを取ります。長ねぎを加えます。',
+      '火を弱めて、水溶き片栗粉を回し入れ、混ぜながらとろみをつけます。',
+      '豆腐にかけます。'
+    ],
+    tips: [
+      '水溶き片栗粉は、火を弱めてから入れると、ダマになりません。',
+      '豆腐を温めておくと、あんが冷めにくくなります。',
+      '豆腐のかわりに、ゆでた大根や、ごはんにかけてもおいしいです。'
+    ]
+  },
+  {
+    id: 'buta-miso-kyabetsu', title: '豚肉とキャベツの味噌炒め', cat: '主菜', time: '約15分', base: 2, unit: '人分', max: 6,
+    lead: '豚バラの脂で炒めるので、油は要りません。味噌と本みりんで、ごはんがすすむ味になります。',
+    ing: [
+      { n: '豚バラ薄切り肉', a: 150, u: 'g' },
+      { n: 'キャベツ', a: 200, u: 'g', x: '1/4個ほど' },
+      { n: 'ピーマン', a: 2, u: '個' },
+      { n: '味噌', a: 1.5, u: '大さじ', note: MISO },
+      { n: '酒', a: 1, u: '大さじ' },
+      { n: '本みりん', a: 1, u: '大さじ', note: MIRIN }
+    ],
+    steps: [
+      '豚肉は4cm幅に切ります。キャベツはざく切り、ピーマンは乱切りにします。',
+      '味噌、酒、みりんを混ぜて、たれを作ります。',
+      '冷たいフライパンに豚肉を並べ、油はひかずに、中火にかけます。脂が出て、色が変わるまで炒めます。',
+      'キャベツとピーマンを加えて、水大さじ1を足して、2〜3分炒めます。',
+      'たれを加えて、全体に絡めて、30秒ほど炒めます。'
+    ],
+    tips: [
+      '味噌は焦げやすいので、最後に入れて、手早く絡めます。',
+      'キャベツは、炒めすぎないほうが、シャキッとします。',
+      '味が濃いときは、水を少し足して調整します。'
+    ]
+  },
+  {
+    id: 'buta-misozuke', title: '豚の味噌漬け焼き', cat: '主菜', time: '約15分＋漬け込み', base: 2, unit: '人分', max: 6,
+    lead: '味噌に漬けて焼くだけです。漬けている間に、肉がやわらかくなります。',
+    ing: [
+      { n: '豚ロース肉', a: 2, u: '枚', x: '約200g' },
+      { n: '味噌', a: 2, u: '大さじ', note: MISO },
+      { n: '酒', a: 1, u: '大さじ' },
+      { n: '本みりん', a: 1, u: '大さじ', note: MIRIN },
+      { n: 'しょうが', a: 1, u: 'かけ', x: 'すりおろし' },
+      { n: 'キャベツ', a: 2, u: '枚', x: '添え用のせん切り' }
+    ],
+    steps: [
+      '味噌、酒、みりん、しょうがを混ぜて、漬けだれを作ります。',
+      '豚肉の両面に、漬けだれを塗り、ラップで包んで、冷蔵庫で30分以上漬けます。一晩漬けると、さらにやわらかくなります。',
+      '漬けだれを、キッチンペーパーで軽く拭き取ります。',
+      '冷たいフライパンに並べて、中火にかけます。弱めの中火で、片面3〜4分ずつ焼きます。',
+      '食べやすく切って、キャベツを添えます。'
+    ],
+    tips: [
+      '味噌を拭き取ってから焼くと、焦げにくくなります。',
+      '漬けた状態で冷凍しておくと、使いたいときに解凍して焼けます。',
+      '焼くときは、あまり動かさないほうが、きれいな焼き色がつきます。'
+    ]
+  },
+  {
+    id: 'buta-niku-maki', title: '野菜の豚バラ巻き', cat: '主菜', time: '約20分', base: 2, unit: '人分', max: 6,
+    lead: '野菜を豚バラで巻いて焼きます。豚の脂が出るので、油は要りません。',
+    ing: [
+      { n: '豚バラ薄切り肉', a: 8, u: '枚', x: '約200g' },
+      { n: 'にんじん', a: 0.5, u: '本', x: '細切り' },
+      { n: 'いんげん', a: 8, u: '本' },
+      { n: '塩', a: 0.25, u: '小さじ' },
+      { n: 'レモン', a: 0.5, u: '個' },
+      { n: 'しょうゆ', t: '少々', x: '仕上げ用', note: SHOYU }
+    ],
+    steps: [
+      'いんげんは、へたを取って、電子レンジで1分ほど加熱します。にんじんは細切りにして、同じく電子レンジで1分加熱します。',
+      '豚肉を1枚ずつ広げ、いんげんとにんじんを並べて、巻きます。軽く塩をふります。',
+      '冷たいフライパンに、巻き終わりを下にして並べ、中火にかけます。',
+      '転がしながら、8〜10分焼きます。出た脂は、キッチンペーパーで拭き取ります。',
+      '食べやすく切って、レモンをしぼり、しょうゆを少しかけます。'
+    ],
+    tips: [
+      '巻き終わりを下にして焼き始めると、はがれません。',
+      '野菜を先に加熱しておくと、中まで火が通ります。',
+      'アスパラガスやえのきなど、お好みの野菜でも作れます。'
+    ]
+  },
+  {
+    id: 'buta-nasu', title: '豚ひき肉となすの味噌煮', cat: '主菜', time: '約25分', base: 4, unit: '人分', max: 8,
+    lead: '油で炒めずに、だしで煮ます。なすがとろっとやわらかくなります。',
+    ing: [
+      { n: 'なす', a: 4, u: '本', x: '約320g' },
+      { n: '豚ひき肉', a: 200, u: 'g' },
+      { n: 'しょうが', a: 1, u: 'かけ', x: 'すりおろし' },
+      { n: 'だし汁', a: 300, u: 'ml' },
+      { n: '酒', a: 2, u: '大さじ' },
+      { n: '本みりん', a: 2, u: '大さじ', note: MIRIN },
+      { n: '味噌', a: 2, u: '大さじ', note: MISO },
+      { n: '小ねぎ', t: '少々', x: '仕上げ用' }
+    ],
+    steps: [
+      'なすは、へたを取って乱切りにします。さっと水にくぐらせて、水気を切ります。',
+      '鍋に、ひき肉、しょうが、酒を入れて、火にかける前によく混ぜます。中火にかけて、ぽろぽろになるまで炒めます。',
+      'なす、だし汁、みりんを加えます。煮立ったら落とし蓋をして、弱めの中火で10分煮ます。',
+      '味噌を煮汁で溶いて加え、さらに5分煮ます。',
+      '器に盛り、小ねぎをのせます。'
+    ],
+    tips: [
+      'なすは長く水にさらすと、味がしみにくくなります。さっとくぐらせる程度にします。',
+      '味噌は最後に入れると、香りが残ります。',
+      'ごはんにかけて、丼にしてもおいしいです。'
+    ]
+  },
+  {
+    id: 'buta-curry', title: '豚肉と野菜のカレー', cat: 'カレー', time: '約50分', base: 4, unit: '人分', max: 8,
+    lead: 'ルウを使わず、カレー粉と玉ねぎ、トマトで作ります。豚バラの脂で炒めるので、油は要りません。',
+    ing: [
+      { n: '豚バラ切り落とし肉', a: 300, u: 'g' },
+      { n: '玉ねぎ', a: 2, u: '個' },
+      { n: 'にんじん', a: 1, u: '本' },
+      { n: 'じゃがいも', a: 2, u: '個' },
+      { n: 'しょうが', a: 1, u: 'かけ', x: 'みじん切り' },
+      { n: 'にんにく', a: 1, u: 'かけ', x: 'みじん切り' },
+      { n: 'カットトマト缶', a: 400, u: 'g', x: '1缶', note: TOMATO },
+      { n: 'カレー粉', a: 2, u: '大さじ', note: CURRY },
+      { n: '水', a: 300, u: 'ml' },
+      { n: '塩', a: 1, u: '小さじ' }
+    ],
+    steps: [
+      '玉ねぎは薄切り、にんじんとじゃがいもは乱切りにします。豚肉は4cm幅に切ります。',
+      '鍋に豚肉を入れて、油はひかずに中火で炒めます。脂が出て、色が変わったら、いったん取り出します。',
+      '同じ鍋に、玉ねぎ、しょうが、にんにくを入れ、水大さじ2を加えて、ふたをして蒸し炒めにします。焦げそうなときは、水を大さじ1ずつ足しながら、飴色になるまで15〜20分炒めます。',
+      'カレー粉を加えて、1分ほど炒めて、香りを出します。',
+      'カットトマト、水、にんじん、じゃがいも、豚肉を加えます。煮立ったら弱火にして、20分煮ます。',
+      '塩で味を調えます。'
+    ],
+    tips: [
+      '玉ねぎをしっかり炒めると、とろみと甘みが出ます。',
+      '豚肩ロースの角切りで作ると、煮込み時間を長くして、とろとろに仕上げられます。',
+      '一晩置くと、味がなじんでさらにおいしくなります。'
+    ]
+  }
+];
+
+// 材料の名前から、「豚肉」「鶏ひき肉」の絞り込みを自動で付けます。
+RECIPES.forEach(function (r) {
+  var names = r.ing.map(function (g) { return g.n; }).join(' ');
+  r.tags = r.tags || [];
+  if (names.indexOf('豚') >= 0) r.tags.push('豚肉');
+  if (names.indexOf('鶏ひき肉') >= 0) r.tags.push('鶏ひき肉');
+});
+
+const LV = {
+  '初級': ['dashi', 'misoshiru', 'ohitashi', 'tamago', 'sabakan-oroshi', 'sabakan-miso', 'tori-soboro', 'buta-miso-kyabetsu', 'yakizakana', 'torishio', 'butashabu', 'kabocha', 'kiriboshi'],
+  '中級': ['nikujaga', 'tonjiru', 'kasanemushi', 'mizutaki', 'shogayaki', 'daikonbuta', 'hijiki', 'toriteri', 'nikutofu', 'foilyaki', 'tsukune', 'sabakan-curry', 'tori-keema', 'tori-soboan', 'buta-misozuke', 'buta-niku-maki', 'buta-nasu', 'tori-dango'],
+  '上級': ['kakuni', 'tebamoto', 'sabamiso', 'tori-hamburg', 'chicken-curry', 'buta-curry']
+};
+RECIPES.forEach(function (r) {
+  r.lv = Object.keys(LV).filter(function (k) { return LV[k].indexOf(r.id) >= 0; })[0] || '中級';
+  r.tags.push(r.lv);
+});
+
+const CATS = ['すべて', '初級', '中級', '上級', '主菜', '汁物', '副菜', 'カレー', '豚肉', '鶏ひき肉', 'さば缶', 'だし'];
+
+// 動画リンク。レシピごとに { title: '動画の題名', url: 'YouTubeのURL' } を入れると、一覧に表示されます。
+const PLAYLIST = { title: '四毒抜きの食生活におすすめのレシピ（再生リスト）', url: 'https://www.youtube.com/playlist?list=PLaaIOHGsxHJhKXqX7SEEmmmCrnATm8spP' };
+const VIDEOS = {
+  nikujaga: [
+    { title: '四毒抜き・重ね煮レシピ8選（油不要・肉じゃがほか）', url: 'https://www.youtube.com/watch?v=p6lNHiY0Yak' }
+  ],
+  tonjiru: [
+    { title: '四毒抜き・重ね煮レシピ8選（油不要・豚汁ほか）', url: 'https://www.youtube.com/watch?v=p6lNHiY0Yak' },
+    { title: '四毒抜き・豚肉料理10選（豚汁ほか）', url: 'https://www.youtube.com/watch?v=G0_20M5FfKE' }
+  ],
+  torishio: [PLAYLIST],
+  kiriboshi: [
+    { title: '四毒抜きレシピ 切り干し大根の旨煮', url: 'https://www.youtube.com/watch?v=TDfJ7KEt2VE' },
+    { title: '小麦粉・油・砂糖・乳製品をやめている方へ 切り干し大根の煮物', url: 'https://www.youtube.com/watch?v=JS0YCdWrumc' }
+  ],
+  dashi: [
+    { title: '煮干しだしのススメ（4毒抜きの食生活にも）', url: 'https://www.youtube.com/watch?v=ogkonlRQ4RA' }
+  ],
+  yakizakana: [],
+  kasanemushi: [
+    { title: '四毒抜き・重ね煮レシピ8選（油不要の重ね煮の基本）', url: 'https://www.youtube.com/watch?v=p6lNHiY0Yak' }
+  ],
+  mizutaki: [
+    { title: '四毒抜き・重ね煮レシピ8選（水炊きほか）', url: 'https://www.youtube.com/watch?v=p6lNHiY0Yak' }
+  ],
+  shogayaki: [
+    { title: '油・甘味・粉不使用の豚肉の生姜焼き（四毒抜き）', url: 'https://www.youtube.com/watch?v=iOkU-TEGifc' }
+  ],
+  daikonbuta: [
+    { title: '四毒ぬき 豚バラ大根（砂糖・味醂・植物油不使用）', url: 'https://www.youtube.com/watch?v=b3wL2BuDK8o' }
+  ],
+  kabocha: [
+    { title: '4毒抜きレシピのかぼちゃの煮物（油・砂糖・小麦粉・乳製品不使用）', url: 'https://www.youtube.com/watch?v=pOAaRNDEfIE' }
+  ],
+  hijiki: [
+    { title: '四毒抜きレシピ ひじきの煮物', url: 'https://www.youtube.com/watch?v=Wx2894ia5_w' }
+  ],
+  ohitashi: [],
+  tamago: [],
+  misoshiru: [
+    { title: '4毒抜き献立＃1（しじみの味噌汁ほか）', url: 'https://www.youtube.com/watch?v=slkoefKoP_E' }
+  ],
+  toriteri: [],
+  nikutofu: [],
+  foilyaki: [],
+  butashabu: [
+    { title: '【四毒抜き】豚しゃぶしゃぶ【4毒5悪抜き】', url: 'https://www.youtube.com/watch?v=eYriC_LDHtY' }
+  ],
+  tsukune: [],
+  sabamiso: [
+    { title: '四毒抜きレシピ 和食の代表『鯖の味噌煮』', url: 'https://www.youtube.com/watch?v=GRi3_v07VRI' }
+  ],
+  tebamoto: [],
+  kakuni: [
+    { title: '豚の角煮【四毒抜き】', url: 'https://www.youtube.com/watch?v=yTmu3Sv6P1A' },
+    { title: '四毒抜き・豚肉料理10選（角煮ほか）', url: 'https://www.youtube.com/watch?v=G0_20M5FfKE' }
+  ],
+  'sabakan-oroshi': [],
+  'sabakan-miso': [
+    { title: '四毒抜き 簡単スープレシピ（サバ缶レシピ）', url: 'https://www.youtube.com/watch?v=tCDRW2vBxEs' }
+  ],
+  'sabakan-curry': [
+    { title: '四毒抜きカレー サバ缶と夏野菜カレー（小麦・油・乳製品・甘いもの無し）', url: 'https://www.youtube.com/watch?v=szxa-Q4pAyA' }
+  ],
+  'chicken-curry': [
+    { title: '4毒抜きカレー 簡単すぎる！もう市販のルーは買わない！', url: 'https://www.youtube.com/watch?v=r15L5ffcRmA' },
+    { title: '四毒抜き チキンビーンズカレー（トマトの旨みだけで作る）', url: 'https://www.youtube.com/watch?v=LiaB5rRTZBw' },
+    { title: '四毒抜きカレー ルウなし・油なし・無添加のレシピ集（再生リスト）', url: 'https://www.youtube.com/playlist?list=PLdQo1Axh6SRiuGyzZJFDv_0AJO3zt3Fur' }
+  ],
+  'tori-soboro': [],
+  'tori-hamburg': [
+    { title: '四毒抜きで再現できる？ レンコンと豆腐のハンバーグ', url: 'https://www.youtube.com/watch?v=zVAScrbe8pI' },
+    { title: '【四毒抜き】煮込みハンバーグ', url: 'https://www.youtube.com/watch?v=hmChW3lZDBc' }
+  ],
+  'tori-dango': [],
+  'tori-keema': [
+    { title: '料理人の４毒抜きレシピ ほったらかし温玉キーマカレー', url: 'https://www.youtube.com/watch?v=yGgQfDEmz00' },
+    { title: '４毒抜きレシピ ミートソースとキーマカレー', url: 'https://www.youtube.com/watch?v=lbPzAx9vgkU' }
+  ],
+  'tori-soboan': [],
+  'buta-miso-kyabetsu': [
+    { title: '４毒抜きの炒め物 肉野菜炒め（油無し・味つけは別の味です）', url: 'https://www.youtube.com/watch?v=Sl9YqDOjkTM' }
+  ],
+  'buta-misozuke': [],
+  'buta-niku-maki': [],
+  'buta-nasu': [
+    { title: '【四毒抜き】10分でお助け丼！ナスとひき肉のさっぱりごはん', url: 'https://www.youtube.com/watch?v=ug_nIsae3zU' },
+    { title: '４毒抜きの炒め物 豚肉とナスとキュウリ（油不使用）', url: 'https://www.youtube.com/watch?v=rdBm2aCIjb0' }
+  ],
+  'buta-curry': [
+    { title: '4毒抜きカレー 簡単すぎる！もう市販のルーは買わない！', url: 'https://www.youtube.com/watch?v=r15L5ffcRmA' },
+    { title: '四毒抜きカレー ルウなし・油なし・無添加のレシピ集（再生リスト）', url: 'https://www.youtube.com/playlist?list=PLdQo1Axh6SRiuGyzZJFDv_0AJO3zt3Fur' }
+  ]
+};
+// 検索リンクは、この言葉でYouTube検索を開きます。
+const UMAMI = {
+  'nikujaga': ['豚バラの脂を先に炒めて、そのうまみを鍋に残します。', '玉ねぎはしっかり炒めると、砂糖なしでも甘みとコクが出ます。', '煮たあと火を止めて冷ますと、味がじゃがいもの中までしみ込みます。'],
+  'tonjiru': ['豚肉を最初に炒めて、うまみと脂を出してから水を入れます。', '根菜は先に煮て、味噌は火を弱めてから溶きます。味噌は煮立たせると香りが飛びます。', 'ごぼうやきのこを入れると、うまみが重なって深い味になります。'],
+  'torishio': ['焼く30分前に塩をふると、うまみが肉に入って身がやわらかくなります。', '皮目から、じっくり焼きます。出てきた脂で焼くと、油はいりません。', '焼いたあと2〜3分休ませると、肉汁が逃げません。'],
+  'kiriboshi': ['切り干し大根の戻し汁にはうまみが出ています。捨てずに煮汁に使います。', '戻すときは、もみ洗いしたあと短時間にします。長く水につけると、うまみが抜けます。', 'にんじんと油揚げ（油の入っていないもの）を入れると、味に幅が出ます。'],
+  'dashi': ['昆布は、水から入れてゆっくり温めます。沸騰する直前に取り出します。', '煮干しは頭とはらわたを取ると、苦みとえぐみが出ません。', '昆布のグルタミン酸と煮干しのイノシン酸は、合わせるとうまみが何倍にも感じられます。'],
+  'yakizakana': ['焼く前に塩をふって10〜15分置き、出てきた水気をふき取ります。臭みが取れて、うまみが残ります。', '皮目から焼くと、皮がパリッとして脂が回ります。', 'あまり動かさないで焼くと、きれいな焼き色とうまみがつきます。'],
+  'kasanemushi': ['白菜は、蒸すと水分が出て自然な甘みが出ます。その汁が一番のうまみです。', '豚バラの脂が白菜にしみ込みます。蒸し汁も、いっしょに食べます。', '昆布を1枚敷いて蒸すと、だし不要でうまみが増します。'],
+  'mizutaki': ['水から鶏肉を入れて、ゆっくり温めます。うまみがスープに出ます。', 'アクは丁寧に取ります。澄んだスープになります。', '昆布を入れ、最後に雑炊にすると、スープのうまみを全部いただけます。'],
+  'shogayaki': ['しょうがは、すりおろしたものを使うと香りが立ちます。', '漬け込みすぎると肉がかたくなります。10〜15分でじゅうぶんです。', '焼いた最後にタレを入れて、からめるように煮詰めると、うまみが肉にまとまります。'],
+  'daikonbuta': ['大根は面取りして下茹ですると、味がしみ込みやすくなります。', '豚バラを先に炒めて脂を出し、そのうまみで大根を煮ます。', '一度冷ますと、味がしっかり入ります。'],
+  'kabocha': ['かぼちゃは、皮を下にして並べて、水を少なめにして煮ます。甘みが逃げません。', '砂糖を使わなくても、じっくり火を通すと自然な甘みが出ます。', '火を止めて、ふたをしたまま置くと、味がなじんで形も崩れません。'],
+  'hijiki': ['ひじきは戻したあと、水気を切ってから炒めると、磯の香りが立ちます。', 'にんじんと油揚げ（油の入っていないもの）を入れると、甘みとうまみが加わります。', '煮汁が少なくなるまで煮て、一晩置くと味がなじみます。'],
+  'ohitashi': ['ほうれん草は、茹でたらすぐ冷水にとって色を止め、しっかり絞ります。', 'だしにしょうゆを少し加えた地で、軽く浸します。', 'かつお節をかけると、うまみがぐっと増します。'],
+  'tamago': ['卵は常温に戻してから茹でると、割れにくく仕上がりがきれいです。', '温泉卵は、熱湯を注いでふたをして放置します。時間を守ると、白身がやわらかくなります。', '食べるときに、しょうゆを数滴とかつお節をのせると、うまみが引き立ちます。'],
+  'misoshiru': ['わかめは煮すぎると味が抜けます。最後に入れます。', '味噌は沸騰させず、火を止める直前に溶きます。香りとうまみが残ります。', '昆布と煮干しのだし（レシピ集のだしをご覧ください）で作ると、味噌が引き立ちます。'],
+  'toriteri': ['皮目から焼いて、鶏の脂を出し切ります。その脂でそのまま焼くので、油は不要です。', 'タレは、最後に入れて煮詰めます。早く入れると焦げます。', 'みりんとしょうゆの比率を決めておくと、毎回同じ味になります。'],
+  'nikutofu': ['豆腐はあらかじめ水切りして、煮汁を薄めないようにします。', '肉を先に炒めて脂を出し、玉ねぎの甘みを煮汁に移します。', '最後に10分ほど置くと、豆腐の中まで味がしみ込みます。'],
+  'foilyaki': ['きのこは、数種類を合わせるとうまみが重なります。', 'きのこから出る水分が、鮭を蒸して味付けしてくれます。', '昆布を1枚敷いて蒸し焼きにすると、ふっくらして、うまみも増します。'],
+  'butashabu': ['お湯は沸騰させず、ふつふつとする程度で、肉をさっとくぐらせます。かたくなりません。', '茹で汁にも、うまみが出ています。野菜を茹でて、スープとして使えます。', 'ごまだれや、ポン酢（原材料を確認したもの）で、うまみを味わえます。'],
+  'tsukune': ['ひき肉は冷たいうちに、粘りが出るまでよく練ります。肉汁が逃げません。', '玉ねぎはみじん切りにして、水分を絞らず入れると、甘みが出ます。', '中火で両面に焼き色をつけ、ふたをして蒸し焼きにすると、ふっくらします。'],
+  'sabamiso': ['さばは霜降りして、臭みを取ります。', '煮汁が煮立ってから魚を入れると、表面が固まってうまみが逃げません。', 'しょうがをたっぷり入れると、臭みが消えて味が引き締まります。'],
+  'tebamoto': ['手羽元は骨のまわりからうまみが出ます。最初に焼き色をつけます。', '大根は、鶏のうまみを吸います。とろっとするまで煮ます。', '冷ますと味がしみ込みます。食べる前に温め直します。'],
+  'kakuni': ['肉は、先に表面を焼き固め、茹でこぼして余分な脂を落とします。', '弱火で長く煮ると、肉がとろけてうまみが煮汁に出ます。', '一晩置くと脂が固まって取りやすく、味も深くなります。'],
+  'sabakan-oroshi': ['さば缶の汁には、うまみが詰まっています。大根おろしに少し混ぜます。', '大根おろしは、おろしたてを使うと辛みと香りが生きます。', 'しょうがやねぎを添えると、さばの風味が引き立ちます。'],
+  'sabakan-miso': ['さば缶の汁をそのまま使うと、だしいらずでうまみが出ます。', '味噌は、最後に火を弱めてから溶きます。', 'しょうがを加えると、さばの臭みが消えます。'],
+  'sabakan-curry': ['さば缶は汁ごと入れます。うまみがカレーに溶け込みます。', '玉ねぎを、時間をかけて炒めて甘みを出します。', 'トマトを加えると、うまみと酸味でコクが出ます。'],
+  'chicken-curry': ['鶏肉の皮目を焼いて、うまみを出してから煮ます。', '玉ねぎを、しっかり炒めます。これが甘みの土台です。', '一晩置くと、香辛料とうまみがなじみます。'],
+  'tori-soboro': ['ひき肉は、火にかける前に調味料と混ぜておくと、ほろほろに仕上がります。', '菜箸を数本束ねてかき混ぜると、細かくなります。', 'しょうがを加えると、臭みが消えてうまみが引き立ちます。'],
+  'tori-hamburg': ['豆腐を水切りして加えると、ふんわりして、肉のうまみも残ります。', '玉ねぎは、炒めてから冷まして加えると、甘みが出ます。', '焼いたあと、ふたをして蒸し焼きにすると、中まで火が通ります。'],
+  'tori-dango': ['鶏団子の肉のうまみが、スープに出ます。', '白菜は、スープに甘みを出してくれます。', '昆布を入れて煮ると、うまみが重なって深い味になります。'],
+  'tori-keema': ['玉ねぎ、にんじん、トマトなどの野菜を、しっかり炒めて水分を飛ばすと、うまみが濃くなります。', 'ひき肉は、焼き色がつくまでいじらず、香ばしさを出します。', 'カレー粉は、最初に炒めて香りを立たせます。'],
+  'tori-soboan': ['そぼろは、ひき肉が煮汁をしっかり吸うまで煮ます。', 'とろみは、片栗粉（じゃがいもでんぷん）を水で溶いて、火を弱めて加えます。', 'しょうがを加えると、味が引き締まります。'],
+  'buta-miso-kyabetsu': ['キャベツは、強火で手早く炒めると、甘みとシャキシャキ感が残ります。', '味噌は、あらかじめ酒やみりんで溶いておくと、むらなくからみます。', '豚肉を先に炒めて脂を出し、その脂でキャベツを炒めます。'],
+  'buta-misozuke': ['味噌に漬けると、肉がやわらかくなり、うまみが加わります。', '焼くときは、味噌をぬぐい取るか、軽く落としてから焼くと焦げません。', '弱めの中火で、じっくり焼きます。'],
+  'buta-niku-maki': ['巻くときは、野菜をしっかり巻き込み、巻き終わりを下にして焼くと、はがれません。', '豚バラの脂が、野菜に回ってうまみになります。', '最後にタレをからめると、肉巻きがつやよく仕上がります。'],
+  'buta-nasu': ['なすは、先に炒めると味がのります。', 'ひき肉のうまみとなすの水分が合わさって、味噌とよくなじみます。', 'しょうがを加えると、味が引き締まります。'],
+  'buta-curry': ['豚肉は、最初に焼き色をつけて、うまみを閉じ込めます。', '玉ねぎを、飴色に近くなるまで炒めると、砂糖なしでも甘みが出ます。', 'トマトを加えると、うまみと酸味でコクが出ます。']
+};
+
+/* ===== 料理への道 ===== */
+const STAGES = [
+  { id: 1, rank: '初級', name: '台所の入口', need: 3, lessons: ['1a', '1b', '1c', '1d', '1e', '1f'], goal: '塩・計量・火加減・だし・包丁の基本を身につけます。' },
+  { id: 2, rank: '中級', name: '一人前への道', need: 8, lessons: ['2a', '2b', '2c', '2d', '2e', '2f'], goal: '魚をさばき、肉を焼き、煮物の味をしみ込ませます。' },
+  { id: 3, rank: '上級', name: '料理人への道', need: 15, lessons: ['3a', '3b', '3c', '3d'], goal: '包丁を研ぎ、刺身を引き、味と献立を組み立てます。' },
+  { id: 4, rank: '最終', name: '調理師免許への道', need: 25, lessons: ['4a', '4b', '4c', '4d'], goal: '調理師の資格と、衛生・栄養の基本を学びます。' }
+];
+const RANKS = ['料理見習い', '初級修了', '中級修了', '上級修了（料理人）', '調理師への道を完走'];
+const PT_LESSON = 10, PT_MADE = 5;
+
+const LESSONS = {
+  '1a': { title: '塩ふりの極意', intro: '塩ふりは、料理の味の土台です。量・高さ・タイミングの3つを覚えます。',
+    points: ['量の目安は、肉や魚の重さの約1%です。100gなら塩1g（小さじ1の約6分の1）です。', '20〜30cmほど高いところから、ぱらぱらとふります。むらなく全体にかかります。', '魚は焼く10〜15分前にふり、出てきた水気をキッチンペーパーでふき取ります。臭みが取れて、うまみが残ります。', '塩は種類で粒の大きさと重さが違います。同じ小さじ1でも、塩気が変わります。使う塩を決めて、量に慣れることが近道です。'],
+    q: [{ q: '肉100gにふる塩の目安は？', o: ['約0.1g', '約1g', '約10g'], a: 1, e: '重さの約1%が目安です。' }, { q: '塩をふった魚から出てきた水気は、どうしますか？', o: ['ふき取る', 'そのまま焼く', '調味料として使う'], a: 0, e: '水気には臭みが出ています。ふき取ると、うまみが残ります。' }] },
+  '1b': { title: '計量と火加減', intro: '同じ味を毎回出すには、量と火加減が決め手です。',
+    points: ['大さじ1は15ml、小さじ1は5ml、1カップは200mlです。', '粉や塩は、山盛りにして、へらですり切ります。', '弱火は炎が鍋底に届かない火、中火は炎の先が鍋底に軽く当たる火、強火は炎が鍋底全体に当たる火です。', '煮物は、煮立つまで中火〜強火にして、煮立ったら弱火〜中火に落とします。'],
+    q: [{ q: '大さじ1は何mlですか？', o: ['5ml', '15ml', '50ml'], a: 1, e: '大さじ1は15ml、小さじ1は5mlです。' }, { q: '「すり切り」とは？', o: ['山盛りにすること', 'へらで平らにならすこと', '半分だけ入れること'], a: 1, e: 'すり切りで量ると、毎回同じ量になります。' }] },
+  '1c': { title: 'だしの取り方', intro: 'だしは、四毒抜きの料理のうまみの土台です。レシピ集の「昆布と煮干しのだし」もご覧ください。',
+    points: ['昆布は水から入れて、ゆっくり温めます。沸騰する直前に取り出します。煮立たせると、ぬめりと雑味が出ます。', '煮干しは、頭とはらわたを取ると、苦みとえぐみが出ません。', '昆布のうまみ（グルタミン酸）と煮干しのうまみ（イノシン酸）は、合わせると何倍にも感じられます。', 'だしは冷蔵庫で保存し、早めに使い切ります。', 'むずかしいときは、昆布を水に浸して冷蔵庫に一晩置く「水だし」が、いちばん簡単です。火は使いません。'],
+    q: [{ q: '昆布を取り出すのは、いつですか？', o: ['水に入れてすぐ', '沸騰する直前', '10分ぐつぐつ煮てから'], a: 1, e: '煮立たせると、ぬめりと雑味が出ます。' }, { q: '煮干しの苦みを減らすには？', o: ['頭とはらわたを取る', '塩を入れる', '強火で煮る'], a: 0, e: '頭とはらわたが、苦みの元です。' }] },
+  '1d': { title: '包丁と野菜の切り方', intro: '切り方がそろうと、火の通りが均一になり、見た目もきれいです。',
+    points: ['包丁は、柄の付け根を握り、人差し指を峰（背）に添えます。', '材料を押さえる手は「猫の手」にします。指先を丸めて、包丁の腹に当てて切ります。', '基本の切り方は、輪切り・半月切り・いちょう切り・乱切り・くし切り・せん切りです。', '大きさをそろえると、火が均一に通ります。'],
+    q: [{ q: '材料を押さえる手の形は？', o: ['指をまっすぐ伸ばす', '猫の手（指先を丸める）', 'こぶしを握る'], a: 1, e: '指先を丸めると、指を切りにくくなります。' }, { q: '野菜の大きさをそろえる一番の理由は？', o: ['見た目だけのため', '火が均一に通るため', '早く切れるため'], a: 1, e: '大きさがそろうと、火の通りがそろいます。' }] },
+
+  '1e': { title: '包丁の握り方', intro: '握り方が正しいと、力が楽に伝わり、疲れにくく、ケガも減ります。',
+    points: ['基本は「つまみ持ち」です。刃の付け根（柄と刃の境目）を、親指と人差し指ではさみ、残りの3本の指で、柄を軽く握ります。', '柄の端だけを握ると、力がぶれて、刃が不安定になります。', '力を入れすぎず、やさしく握ります。刃の重みを使って切ります。', '野菜は、刃を前に押し出すように、肉や魚は、手前に引くように切ります。刃全体を使います。', '安全のため、まな板の下にぬれ布巾を敷きます。使わないときは、刃を向こう側に向けて置きます。包丁が落ちたときは、つかもうとせず、足を引いて離れます。'],
+    q: [{ q: 'つまみ持ちでは、どこをはさみますか？', o: ['柄のいちばん端', '刃の付け根', '刃の先'], a: 1, e: '刃の付け根を、親指と人差し指ではさむと、安定します。' }, { q: '包丁が落ちたときは？', o: ['つかもうとする', 'つかまず、足を引いて離れる', '足で受け止める'], a: 1, e: 'つかもうとすると、ケガをします。離れるのが安全です。' }] },
+  '1f': { title: '千切りの仕方', intro: '千切りは、にんじん・大根・キャベツなどに使う、基本の切り方です。慣れると、速く、きれいにできます。',
+    points: ['太さは、1〜2mmが目安です。そろえると、火の通りや、口当たりがよくなります。', 'にんじん：4〜5cmの長さに切り、縦に薄切りにします。薄切りを少しずらして重ね、端から細く切ります。', '大根：4〜5cmの長さの筒に切り、皮をむきます。繊維に沿って縦に薄切りにし、重ねて、繊維に沿って細く切ると、シャキッとします。繊維を断つように切ると、やわらかくなります。', 'キャベツ：葉を数枚重ねて、くるっと丸めて、端から細く切ります。', 'ぐらぐらして危ないときは、先に端を薄く切り落として、平らな面を作り、その面を下にして置くと、安定します。押さえる手は、猫の手にします。'],
+    q: [{ q: '千切りの太さの目安は？', o: ['約1〜2mm', '約1cm', '約3cm'], a: 0, e: '細くそろえるほど、火の通りと口当たりがよくなります。' }, { q: '切るとき、ぐらぐらして危ないときは？', o: ['力を入れて押さえつける', '端を切り落として、平らな面を下にして置く', '包丁を速く動かす'], a: 1, e: '平らな面を作ると、野菜が安定します。' }] },
+  '2f': { title: '煮物のトラブル対応', intro: '煮物は、失敗しても直せることが多いです。落ち着いて、味見をしながら直します。',
+    points: ['味が濃すぎたとき：水かだしを足し、じゃがいも、大根、玉ねぎ、豆腐など、味を吸う材料を足します。砂糖で整えることはできないので、薄めるのが基本です。', '味が薄いとき：煮汁を煮詰めるか、しょうゆを小さじ1ずつ足して、その都度、味見をします。', '煮崩れしたとき：次回は、煮立ったら弱火にし、かき混ぜず、鍋をゆするようにします。面取りと落としぶたも効果があります。', '火が通らないとき：ふたをして、弱火で、もう少し煮ます。煮汁が減っていれば、水を足します。かたい根菜は、先に下茹ですると安心です。', '焦げたとき：すぐ火を止め、焦げた底をかき混ぜずに、上の部分だけを別の鍋に移します。', '煮汁が多すぎるときは、ふたを取って、強めの火で煮詰めます。少ないときは、水かだしを足します。'],
+    q: [{ q: '煮物の味が濃すぎたときは？', o: ['水かだしを足し、味を吸う材料を足す', '塩を足す', '強火で煮詰める'], a: 0, e: '薄めるのが基本です。大根や豆腐などを足すと、味が落ち着きます。' }, { q: '煮崩れを防ぐには？', o: ['強火で煮立たせ続ける', '煮立ったら弱火にして、かき混ぜない', '何度もかき混ぜる'], a: 1, e: '弱火で静かに煮ると、形が崩れにくくなります。' }] },
+  '2a': { title: '魚のさばき方（あじの三枚おろし）', intro: '魚をさばけると、料理の幅が一気に広がります。あじは、最初の一尾にぴったりです。',
+    points: ['①ぜいご（尾の方の硬いうろこ）を、包丁で削ぎ取ります。②うろこを落とします。', '③胸びれの下から包丁を入れて、頭を落とします。④腹を開き、はらわたを出して、水で洗います。', '洗ったあとは、キッチンペーパーで水気をしっかりふきます。臭みが出にくくなります。', '⑤頭の方から、中骨に沿って包丁を入れ、身を外します。三枚おろしは、身が2枚と中骨1枚です。', 'まな板の下に、ぬれ布巾を敷くと滑りません。包丁は必ず、手前に引きます。'],
+    q: [{ q: '三枚おろしの「三枚」とは？', o: ['身2枚と中骨1枚', '頭と身と尾', '身3枚'], a: 0, e: '上の身、下の身、中骨の3つです。' }, { q: '洗ったあとの魚は？', o: ['濡れたまま置く', '水気をしっかりふき取る', '塩水に浸けっぱなしにする'], a: 1, e: '水気が残ると、臭みの原因になります。' }] },
+  '2b': { title: '霜降りと下味', intro: '「ひと手間」で、臭みが消えて、味がよくなります。',
+    points: ['霜降りは、熱湯をさっとかけて、すぐ冷水にとる方法です。表面の汚れと臭み、ぬめりが取れます。', 'さばや鶏の手羽、角煮の豚肉などに向いています。', '肉や魚には、酒（四毒抜きなら、砂糖の入っていないもの）を少しふると、臭みが和らぎます。', '下味は、焼く前に、軽く塩をふるだけでも変わります。'],
+    q: [{ q: '霜降りの手順は？', o: ['熱湯をかけて、冷水にとる', '冷水に1日浸ける', 'フライパンで炒める'], a: 0, e: '表面を固めて、汚れと臭みを落とします。' }, { q: '霜降りの一番の目的は？', o: ['臭みと汚れを落とす', '味をつける', '色をつける'], a: 0, e: '余分な臭みやぬめりを取ります。' }] },
+  '2c': { title: '肉の焼き方', intro: '焼き方で、肉のやわらかさとうまみが決まります。',
+    points: ['冷蔵庫から出して、15〜30分おき、常温に近づけてから焼きます。', '肉を入れたら、焼き色がつくまで触りません。動かすと、肉汁が逃げます。', '脂のある肉（豚バラ、鶏の皮）は、油なしで、自分の脂で焼けます。', '焼いたあと2〜3分休ませると、肉汁が落ち着いて、やわらかく仕上がります。'],
+    q: [{ q: '肉を入れた直後は？', o: ['何度も動かす', '焼き色がつくまで触らない', 'すぐにふたをして蒸す'], a: 1, e: '焼き色がつくまで待つと、うまみが閉じ込められます。' }, { q: '焼いたあとにすることは？', o: ['すぐに切る', '2〜3分休ませる', '冷水で冷やす'], a: 1, e: '休ませると、肉汁が落ち着きます。' }] },
+  '2d': { title: '煮物の味をしみ込ませる', intro: '煮物は、煮ている間より、冷める間に味がしみます。',
+    points: ['落としぶた（ぬらしたクッキングシートなど）をすると、少ない煮汁でも全体に味が回ります。', '煮立ったら弱火〜中火で、静かに煮ます。強火で煮立たせ続けると、崩れます。', '火を止めて、そのまま冷ますと、味がしっかりしみ込みます。', 'しょうゆは入れすぎると戻せません。少なめに入れて、味を見て足します。'],
+    q: [{ q: '煮物に味がしみ込みやすいのは？', o: ['強火で煮ている間', '火を止めて冷める間', '最初の水の中'], a: 1, e: '冷める間に、味が材料の中に入ります。' }, { q: '落としぶたの役割は？', o: ['少ない煮汁でも味が回る', '焦がすため', '音を小さくするため'], a: 0, e: '煮汁が全体に回ります。' }] },
+
+  '2e': { title: '肉の「筋」と、おいしい調理法', intro: '肉には「筋」があります。知っているだけで、焼き上がりが変わります。',
+    points: ['筋とは、赤身と脂身の境目や、肉の表面にある、白くてかたい線や膜のことです。加熱すると縮んで、肉が反ったり、かたくなったりします。', '筋切り：生姜焼きの豚ロースや、鶏もも肉は、筋に包丁の先で数か所切れ目を入れます。縮みと反りを防ぎ、味もしみやすくなります。', '鶏もも肉は、黄色い余分な脂と白い筋を取り除くと、臭みが減って、食べやすくなります。', '繊維の向きに気をつけます。薄切りや焼く肉は、繊維を断つように（繊維に直角に）切ると、かみ切りやすくなります。', '煮込みの筋はごちそうです。すね肉や牛すじ、豚バラのかたまり肉は、弱火で長く煮ると、筋（コラーゲン）がとろとろになって、うまみが出ます。角煮がその例です。'],
+    q: [{ q: '筋切りの目的は？', o: ['肉の縮みや反りを防ぐ', '肉の色をよくする', '塩を減らす'], a: 0, e: '筋に切れ目を入れると、加熱しても縮みにくくなります。' }, { q: '筋が多い、かたまり肉をおいしくするには？', o: ['弱火で長く煮込む', '強火で短く焼く', '生のまま食べる'], a: 0, e: '長く煮ると、筋がとろとろになり、うまみが出ます。' }] },
+  '3a': { title: '包丁を研ぐ', intro: '切れる包丁は、料理が楽になり、ケガも減ります。',
+    points: ['砥石の種類によって、水に浸す時間が違います。説明書を確認します。', '角度は、刃を砥石に約15度寝かせます。同じ角度を保って、手前と奥に動かします。', '研ぐと刃の裏に「かえり」（ざらつき）が出ます。軽く裏側を研いで取ります。', '研いだあとは、水でよく洗い、水気をふいてしまいます。'],
+    q: [{ q: '包丁を研ぐときの角度の目安は？', o: ['約15度', '約45度', '約90度'], a: 0, e: '寝かせた角度を保つことが大切です。' }, { q: '研いだあと、刃の裏に出るものは？', o: ['かえり', 'さび', '油'], a: 0, e: '裏側を軽く研いで、かえりを取ります。' }] },
+  '3b': { title: '刺身の切り方と安全', intro: '刺身は、切り方と衛生が大切です。',
+    points: ['刺身包丁は、押さずに、手前に一度で引いて切ります。切り口がなめらかになります。', '皮を引くときは、皮の端に包丁を入れ、包丁を寝かせて、皮を引っぱりながら進みます。', 'アニサキスという寄生虫には、目で見て取り除くこと、−20℃で24時間以上冷凍すること、70℃以上で加熱することが有効です。', '生で食べる魚は、新鮮なものを選び、冷蔵庫で保存し、早く食べます。'],
+    q: [{ q: '刺身を切るときの包丁の動きは？', o: ['押して切る', '手前に引いて切る', '叩いて切る'], a: 1, e: '一度で引くと、切り口がなめらかです。' }, { q: 'アニサキス対策として有効なのは？', o: ['−20℃で24時間以上の冷凍', '塩水に浸けること', '酢に1分浸けること'], a: 0, e: '冷凍や加熱が有効です。塩や酢では、死にません。' }] },
+  '3c': { title: '味の組み立て（砂糖なし）', intro: '砂糖を使わなくても、味は組み立てられます。',
+    points: ['甘み：玉ねぎ、かぼちゃ、さつまいも、本みりんが、自然な甘みを出します。', 'コク：肉の脂、きのこ、味噌、ごまが、深みを加えます。', 'うまみ：昆布とかつお（煮干し）を合わせると、重なって感じられます。', '酸味：酢やレモン、すだちなどで、味を引き締めます。最後に少し加えるのがコツです。'],
+    q: [{ q: '砂糖の代わりに甘みを出せるのは？', o: ['よく炒めた玉ねぎ', '塩の量を増やすこと', '水を足すこと'], a: 0, e: '玉ねぎは、炒めるほど甘くなります。' }, { q: '味を引き締めるために加えるのは？', o: ['酢やレモン', '水', '片栗粉'], a: 0, e: '酸味で、全体が引き締まります。' }] },
+  '3d': { title: '献立の組み立て', intro: '1品1品より、組み合わせで食事は完成します。',
+    points: ['基本は「一汁三菜」です。ごはん、汁物、主菜1品、副菜2品です。', '主菜が焼き物なら副菜は煮物やおひたしにするなど、調理法と色が重ならないようにします。', '時間がかかる煮物から作り始め、最後に汁物と焼き物をつくると、全部が温かく出せます。', '冷蔵庫の残り物を先に使う、という考え方も大切です。'],
+    q: [{ q: '一汁三菜の「一汁」とは？', o: ['汁物1品', 'ごはん1杯', '飲み物1杯'], a: 0, e: 'ごはん、汁物1、主菜1、副菜2の形です。' }, { q: '調理は、どの順番がよいですか？', o: ['時間のかかるものから', '汁物から', 'デザートから'], a: 0, e: '煮物などから始めると、全部が温かく出せます。' }] },
+
+  '4a': { title: '調理師とは', intro: '調理師は、国の資格です。',
+    points: ['調理師は、調理師法に基づく国家資格で、免許は都道府県知事が与えます。', '調理師の名称は、免許を持つ人だけが名乗れます（名称独占）。', '調理の仕事に就くのに、必ず必要な資格ではありません。ただし、信頼や知識の証明になります。', '飲食店、給食施設、病院、福祉施設など、活躍の場は広くあります。'],
+    q: [{ q: '調理師の免許を与えるのは？', o: ['都道府県知事', '学校の校長', '飲食店の店長'], a: 0, e: '調理師法に基づく、都道府県知事の免許です。' }, { q: '調理の仕事に就くために、調理師免許は？', o: ['必ず必要', '必須ではない', '年齢で決まる'], a: 1, e: '必須ではありませんが、知識と信頼の証明になります。' }] },
+  '4b': { title: '免許の取り方', intro: '免許を取る道は、大きく2つあります。',
+    points: ['①調理師養成施設（調理の専門学校など）を卒業する道です。', '②飲食店などで、調理の業務を2年以上経験したあと、調理師試験を受けて合格する道です。', '試験は都道府県が実施します。日程・申し込み・会場は毎年変わります。熊本県の案内を、県のホームページなどで確認してください。', '試験科目は、食品衛生、栄養学、食文化概論、調理理論などです。'],
+    q: [{ q: '調理師試験の受験に必要な経験は？', o: ['調理業務2年以上', '経験は不要', '調理業務10年以上'], a: 0, e: '飲食店などでの調理業務に2年以上従事することが条件です。' }, { q: '試験の日程を調べるには？', o: ['都道府県の案内で確認', '近所の人に聞く', '調べなくてよい'], a: 0, e: '毎年変わるので、最新の案内で確認します。' }] },
+  '4c': { title: '食中毒を防ぐ三原則', intro: '食中毒予防は、調理の一番の基本です。',
+    points: ['三原則は「つけない・増やさない・やっつける」です。', 'つけない：調理の前に手を洗います。生の肉・魚と、野菜は、包丁とまな板を分けるか、使うたびに洗います。', '増やさない：食品は低温で保存します。調理後は、早く食べます。', 'やっつける：中心部を75℃で1分以上加熱します。包丁やまな板、ふきんは、洗って熱湯などで消毒します。'],
+    q: [{ q: '食中毒予防の三原則は？', o: ['つけない・増やさない・やっつける', '洗う・切る・煮る', '焼く・炒める・揚げる'], a: 0, e: 'この3つが、基本の考え方です。' }, { q: '加熱の目安は？', o: ['中心部を75℃で1分以上', '表面だけ軽く温める', '30℃で10分'], a: 0, e: '中心部までしっかり加熱します。' }] },
+  '4d': { title: '栄養の基本', intro: '栄養を知ると、献立を考える力がつきます。',
+    points: ['五大栄養素は、たんぱく質・脂質・炭水化物・ビタミン・ミネラルです。', 'たんぱく質・脂質・炭水化物は、エネルギーのもとになります（三大栄養素）。', 'ビタミンとミネラルは、体の調子を整えます。野菜・海藻・きのこに多く含まれます。', '調理師試験では、一般的な栄養学が出題されます。四毒抜きは食事法のひとつですので、試験の勉強は、試験の範囲に沿って進めてください。'],
+    q: [{ q: '体の調子を整える栄養素は？', o: ['ビタミンとミネラル', '炭水化物だけ', '脂質だけ'], a: 0, e: 'ビタミンとミネラルが、体の調子を整えます。' }, { q: '五大栄養素に入らないのは？', o: ['ビタミン', 'たんぱく質', 'かつおだし'], a: 2, e: '五大栄養素は、たんぱく質・脂質・炭水化物・ビタミン・ミネラルです。' }] }
+};
+
+/* ===== ちょっとひといき：食材への感謝 ===== */
+const HITOIKI = [
+  { id: 'daikon', name: '大根', key: '大根', months: [11, 12, 1, 2], season: '11月〜2月（冬）',
+    grow: ['8月下旬〜9月に、畑に直接種をまきます。根が曲がらないように、植え替えをしません。', '種まきから約2〜3か月で、白い根がふくらんで収穫になります。'],
+    story: ['古くから日本で食べられ、古事記や日本書紀にも出てきます。', '「大根役者」の言葉は、大根は食あたりしない＝「当たらない」役者、という洒落からといわれます。'],
+    thanks: '畑の土の中でじっくり太った根です。皮や葉まで、大切にいただきます。' },
+  { id: 'hakusai', name: '白菜', key: '白菜', months: [11, 12, 1, 2], season: '11月〜2月（冬）',
+    grow: ['8月下旬〜9月上旬に種をまき、芽が出たら苗を畑に植えます。', '葉が内側に巻いていき、結球します。収穫は11月ごろからです。'],
+    story: ['原産は中国で、日本で広く栽培されるようになったのは明治時代以降といわれます。', '霜に当たると、甘みが増します。冬の寒さが、おいしさをつくります。'],
+    thanks: '寒さの中で、ゆっくり巻いて育った葉です。芯まで無駄なくいただきます。' },
+  { id: 'jaga', name: 'じゃがいも', key: 'じゃがいも', months: [4, 5, 6, 9, 10, 11], season: '春（新じゃが 4〜6月）と秋（9〜11月）',
+    grow: ['2〜3月に種いもを植えます（春作）。種いもを切って植えることもあります。', '約3か月で、葉が黄色くなったら、土を掘り起こして収穫します。'],
+    story: ['原産は南米のアンデス高地です。', '名前の「ジャガイモ」は、ジャガタラ（今のジャカルタ）からオランダ船で伝わったことに由来するといわれます。'],
+    thanks: '土の中で、一つの種いもから、たくさんの実りになりました。皮を洗って、いただきます。' },
+  { id: 'tamanegi', name: '玉ねぎ', key: '玉ねぎ', months: [3, 4, 5], season: '新玉ねぎは3〜5月（春）。ふつうの玉ねぎは貯蔵して一年中',
+    grow: ['9月ごろに種をまき、11月ごろに苗を畑に植えます。', '冬を越して育ち、翌年の5〜6月に収穫します。半年以上かけて育ちます。'],
+    story: ['古代エジプトの時代から食べられていたといわれます。', '炒めると甘くなるのは、辛みのもとが変化して、もともとの糖分が引き立つからです。'],
+    thanks: '半年以上、冬の畑で待って育った玉ねぎです。じっくり炒めて、甘みを味わいます。' },
+  { id: 'ninjin', name: 'にんじん', key: 'にんじん', months: [10, 11, 12], season: '秋〜冬（10〜12月ごろ）',
+    grow: ['7月ごろに種をまきます。芽が出るまでに日数がかかるので、土が乾かないようにします。', '約3か月で収穫になります。'],
+    story: ['原産は中央アジア（アフガニスタン周辺）といわれます。', '昔は紫や黄色が中心で、いまのオレンジ色は、ヨーロッパで改良されたといわれます。'],
+    thanks: '芽が出るまで待ち、土の中で育った根です。皮ごと、いただきます。' },
+  { id: 'kabocha', name: 'かぼちゃ', key: 'かぼちゃ', months: [7, 8, 9], season: '夏〜秋に収穫（7〜9月）。保存して冬至（12月）にいただきます',
+    grow: ['4〜5月に苗を畑に植えます。つるが長く伸びて、実がなります。', '7〜8月に収穫し、1〜2週間置くと、でんぷんが糖に変わって甘くなります。'],
+    story: ['冬至にかぼちゃを食べる習慣があります。「ん」が付く食べ物（南瓜＝なんきん）で運が良くなる「運盛り」といわれます。', '「かぼちゃ」は、カンボジアから伝わったことに由来する、といわれます。'],
+    thanks: '夏に育てて、冬まで保存できる、ありがたい野菜です。種とわたにも栄養があります。' },
+  { id: 'nasu', name: 'なす', key: 'なす', months: [6, 7, 8, 9], season: '夏〜初秋（6〜9月）',
+    grow: ['4〜5月に苗を植えます。たっぷりの水と日光が好きです。', '6月ごろから10月ごろまで、次々に実がなります。'],
+    story: ['原産はインドです。', '「一富士二鷹三茄子」のように、初夢に縁起がよいものとして知られます（由来は諸説あります）。'],
+    thanks: '夏の暑さと水で育った実です。つやのあるうちに、いただきます。' },
+  { id: 'kyabetsu', name: 'キャベツ', key: 'キャベツ', months: [3, 4, 5, 11, 12, 1, 2], season: '春キャベツは3〜5月、冬キャベツは11〜2月',
+    grow: ['春どりは、秋（9月ごろ）に種をまき、冬を越して春に収穫します。', '葉が巻いて、ぎゅっと重くなったころが収穫です。'],
+    story: ['ヨーロッパでは古くから栽培されていて、古代には薬草としても使われていたといわれます。', '春キャベツはやわらかく、冬キャベツは葉がしっかりして甘みがあります。'],
+    thanks: '一枚一枚、重なって育った葉です。芯の近くまで、いただきます。' },
+  { id: 'horenso', name: 'ほうれん草', key: 'ほうれん草', months: [11, 12, 1, 2], season: '冬（11〜2月）',
+    grow: ['9〜10月に種をまきます。', '冬の寒さにあたると、凍らないように糖分をたくわえて、甘くなります。収穫は種まきから約1〜2か月です。'],
+    story: ['原産は西アジア（今のイラン付近）といわれます。', '日本には江戸時代に伝わったとされます。'],
+    thanks: '冬の寒さに耐えて、甘くなった葉です。根元の赤いところも、いただきます。' },
+  { id: 'gobo', name: 'ごぼう', key: 'ごぼう', months: [11, 12, 1], season: '秋〜冬（11〜1月）',
+    grow: ['3〜4月に種をまきます。', '根を深く伸ばしながら、秋〜冬まで育てて、掘り起こします。'],
+    story: ['ごぼうの根を食べる習慣は、日本が中心だといわれます。', '昔は、薬としても使われていました。'],
+    thanks: '土の深いところまで伸びた根です。皮は削りすぎず、香りごと、いただきます。' },
+  { id: 'negi', name: 'ねぎ', key: '(長|小)ねぎ', months: [11, 12, 1, 2], season: '冬（11〜2月）',
+    grow: ['春か秋に種をまき、苗を溝に植えます。', '土寄せ（根元に土を寄せること）をくり返し、白い部分を長く育てます。'],
+    story: ['関東では白い部分を食べる根深ねぎ、関西では緑の葉を食べる葉ねぎ、というように、食べ方の文化が違います。', '昔から、風邪のときに食べるものとしても親しまれてきました。'],
+    thanks: '土を寄せて、手間をかけて白く育てたねぎです。薬味にも、ありがたくいただきます。' },
+  { id: 'tomato', name: 'トマト', key: 'トマト', months: [6, 7, 8], season: '夏（6〜8月）',
+    grow: ['4〜5月に苗を植え、支柱を立てて育てます。', '余分な脇芽を摘みながら、赤く熟したものから収穫します。'],
+    story: ['原産は南米のアンデス高地です。', 'ヨーロッパには「トマトが赤くなると医者が青くなる」ということわざがあります。'],
+    thanks: '夏の太陽をたっぷり浴びた実です。うまみのもとを、いただきます。' },
+  { id: 'shiitake', name: 'しいたけ', key: 'しいたけ', months: [3, 4, 5, 9, 10, 11], season: '春（3〜5月）と秋（9〜11月）',
+    grow: ['原木栽培では、秋〜春にクヌギなどの原木に菌の駒を打ち込み、1〜2年ほど待つと、しいたけが出ます。', '菌床栽培では、おがくずを固めたものに菌を植え、室内で育てます。'],
+    story: ['干しいたけは、干すことで、うまみのもと（グアニル酸）が増えるといわれます。', '昔から、日本の料理のだしとして使われてきました。'],
+    thanks: '木や菌と、育てる人の手間でできる恵みです。戻し汁も、大切にいただきます。' },
+  { id: 'satoimo', name: '里芋', key: '里芋', months: [9, 10, 11], season: '秋（9〜11月）',
+    grow: ['4〜5月に種芋を植えます。', '夏はたっぷりの水が必要です。10〜11月に掘ると、親芋に子芋、孫芋がたくさんついています。'],
+    story: ['子芋、孫芋がたくさんつくので、「子孫繁栄」の縁起物とされます。', '十五夜（中秋の名月）に里芋を供える風習があり、「芋名月」と呼ばれます。'],
+    thanks: '親芋から子、孫へと、つながって育つ芋です。ぬめりまで、ありがたくいただきます。' }
+];
+
+HITOIKI.push(
+  { id: 'buta', g: '肉・卵', name: '豚肉', key: '豚', months: [], season: '一年中。寒い時期は、脂がのっておいしいといわれます',
+    grow: ['子豚は、生まれてから約6か月で、出荷の大きさになります。', '豚舎で、とうもろこしなどの穀物を中心にした飼料で育てられます。毎日の掃除と健康の見守りが欠かせません。'],
+    story: ['沖縄には「豚は、鳴き声以外、すべて食べる」という言葉があります。', '豚肉には、疲れをとるビタミンB1が多いといわれます。'],
+    thanks: '育てる方の毎日の世話と、いのちをいただいています。残さず、大切にいただきます。' },
+  { id: 'tori', g: '肉・卵', name: '鶏肉', key: '鶏', months: [], season: '一年中',
+    grow: ['ふつうの若鶏は、約50日前後で出荷されます。地鶏は、80日以上かけて、ゆっくり育てるきまりがあります。', '鶏舎で、穀物の飼料を食べて育ちます。'],
+    story: ['古く、天武天皇の時代に、牛・馬・犬・猿・鶏の肉を食べることを禁じる命令が出されたと伝わります。', '鶏は、朝を告げる鳥として、昔から人のくらしの近くにいました。'],
+    thanks: '育てる方の手間と、いのちをいただきます。むだなく、おいしくいただきます。' },
+  { id: 'tamago', g: '肉・卵', name: '卵', key: '卵', months: [], season: '一年中',
+    grow: ['めんどりは、生まれて約5か月（150日ごろ）から卵を産み始めます。', '1羽が1年に、約300個近く産みます。毎日の卵集めは、育てる方の大切な仕事です。'],
+    story: ['殻の色（白・赤）は、鶏の種類で決まります。栄養は変わらないといわれます。', '黄身の色は、えさで変わります。とうもろこしなどを多く食べると、濃い黄色になります。'],
+    thanks: '毎日産んでくれる鶏と、世話をする方に感謝して、いただきます。' },
+  { id: 'tofu', g: '豆', name: '豆腐（大豆）', key: '豆腐', months: [10, 11], season: '大豆の収穫は秋（10〜11月）。豆腐は一年中',
+    grow: ['大豆は、5〜6月に種をまきます。', '秋に、さやが枯れて、豆が熟したら収穫します。枝豆は、熟す前の大豆です。', '豆腐は、大豆をしぼった豆乳を、にがりで固めて作ります。'],
+    story: ['大豆は「畑の肉」と呼ばれるほど、たんぱく質が多い豆です。', '豆腐は、中国から日本に伝わったといわれ、古くから食べられてきました。'],
+    thanks: '畑の恵みと、作る方の手間でできた豆腐です。やさしくいただきます。' },
+  { id: 'sake', g: '魚・海藻', name: '鮭', key: '鮭', months: [9, 10, 11], season: '秋（9〜11月）',
+    grow: ['川で生まれ、海に出て、2〜4年ほど育ちます。', '秋に、生まれた川に戻ってきます。そのところを漁でとります（定置網など）。'],
+    story: ['鮭は、生まれた川に戻ってくる魚として有名です（母川回帰）。', 'それで「ふるさとに戻る魚」として、縁起をかつがれることもあります。'],
+    thanks: '長い旅をしてきた魚です。海と川の恵みに感謝して、いただきます。' },
+  { id: 'saba', g: '魚・海藻', name: 'さば', key: 'さば', months: [10, 11, 12, 1, 2], season: '秋〜冬（10〜2月ごろ）',
+    grow: ['海を回遊して育つ魚で、養殖ではなく、漁でとる魚が中心です。', '秋〜冬は、脂がのって、おいしくなります。'],
+    story: ['「秋さばは嫁に食わすな」ということわざがあります。おいしいから、という意味などといわれます（諸説あります）。', '傷みやすい魚なので、新鮮なうちに食べるのが大切です。缶詰は、そのおいしさを閉じ込めたものです。'],
+    thanks: '海でとれた魚です。缶詰も、漁をした方と、作った方に感謝して、いただきます。' },
+  { id: 'aji', g: '魚・海藻', name: 'あじ', key: 'あじ', months: [5, 6, 7, 8], season: '春〜夏（5〜8月ごろ）',
+    grow: ['沿岸を群れで回遊する魚で、漁でとります。', '三枚おろしの練習に、よく使われる魚です。'],
+    story: ['「味がよいから、あじ」という名の由来が、よく語られます（諸説あります）。', '日本では、塩焼き、たたき、干物など、いろいろな食べ方で親しまれてきました。'],
+    thanks: '海からの恵みです。さばくときも、いのちに感謝して、丁寧にいただきます。' },
+  { id: 'konbu', g: '魚・海藻', name: '昆布', key: '昆布', months: [7, 8, 9], season: '夏（7〜9月）に収穫。乾燥して一年中',
+    grow: ['海の中の岩に付いて、約2年かけて育ちます。', '夏に、海から引き上げ、天日で干します。'],
+    story: ['江戸時代には、北海道から、北前船で大坂まで運ばれ、日本中に広がりました。', '昆布のうまみ（グルタミン酸）は、日本のだし文化の土台です。'],
+    thanks: '海の中で2年かけて育った恵みです。だしを取ったあとの昆布も、大切にいただきます。' },
+  { id: 'katsuo', g: '魚・海藻', name: 'かつお節', key: 'かつお節', months: [], season: '一年中',
+    grow: ['かつおを煮て、骨を取り、いぶして乾かします。', 'カビ付けを何度も繰り返し、約半年かけて、固い節になります。'],
+    story: ['かつお節は、とても固い食品として知られます。昔は、かんなで削って使いました。', '削りたての香りは、格別です。'],
+    thanks: '漁をする方、作る方の、長い手間が詰まっています。香りまで、いただきます。' }
+);
+
+const YT_QUERY = {
+  nikujaga: '肉じゃが 四毒抜き 砂糖なし 油なし',
+  tonjiru: '豚汁 四毒抜き 砂糖なし 油なし',
+  torishio: '鶏もも肉 塩焼き 四毒抜き 油なし',
+  kiriboshi: '切り干し大根 煮物 四毒抜き',
+  dashi: '煮干しだし 四毒抜き',
+  yakizakana: '焼き魚 四毒抜き 油なし',
+  kasanemushi: '白菜 豚バラ 重ね蒸し 四毒抜き',
+  mizutaki: '水炊き 四毒抜き',
+  shogayaki: '豚の生姜焼き 四毒抜き 油なし 砂糖なし',
+  daikonbuta: '豚バラ大根 四毒抜き',
+  kabocha: 'かぼちゃの煮物 四毒抜き',
+  hijiki: 'ひじきの煮物 四毒抜き',
+  ohitashi: 'ほうれん草 おひたし 四毒抜き',
+  tamago: '温泉卵 ゆで卵 四毒抜き',
+  misoshiru: '味噌汁 豆腐 わかめ 四毒抜き',
+  toriteri: '鶏の照り焼き 四毒抜き 砂糖なし',
+  nikutofu: '肉豆腐 四毒抜き 砂糖なし',
+  foilyaki: '鮭 ホイル焼き 四毒抜き',
+  butashabu: '豚しゃぶ 四毒抜き',
+  tsukune: '鶏つくね 四毒抜き',
+  sabamiso: 'さばの味噌煮 四毒抜き',
+  tebamoto: '手羽元 大根 煮物 四毒抜き',
+  kakuni: '豚の角煮 四毒抜き',
+  'sabakan-oroshi': 'さば缶 四毒抜き レシピ',
+  'sabakan-miso': 'さば缶 味噌汁 四毒抜き',
+  'sabakan-curry': 'さば缶カレー 四毒抜き',
+  'chicken-curry': 'チキンカレー 四毒抜き ルウなし',
+  'tori-soboro': '鶏そぼろ 四毒抜き 砂糖なし',
+  'tori-hamburg': '鶏ひき肉 豆腐ハンバーグ 四毒抜き',
+  'tori-dango': '鶏団子 白菜 スープ 四毒抜き',
+  'tori-keema': 'キーマカレー 四毒抜き',
+  'tori-soboan': '鶏そぼろあん 豆腐 四毒抜き',
+  'buta-miso-kyabetsu': '豚肉 キャベツ 味噌炒め 四毒抜き',
+  'buta-misozuke': '豚肉 味噌漬け 焼き 四毒抜き',
+  'buta-niku-maki': '豚バラ 野菜巻き 四毒抜き',
+  'buta-nasu': '豚ひき肉 なす 四毒抜き',
+  'buta-curry': 'ポークカレー 四毒抜き ルウなし'
+};
+
+function videoHtml(r) {
+  var vids = VIDEOS[r.id] || [];
+  var q = YT_QUERY[r.id] || r.title;
+  var search = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(q);
+  return '<section><h2>動画で見る</h2>' +
+    (vids.length ? '<ul class="vids">' + vids.map(function (v) {
+      return '<li><a class="vlink" href="' + v.url + '" target="_blank" rel="noopener noreferrer"><span class="play" aria-hidden="true">▶</span><span>' + v.title + '</span></a></li>';
+    }).join('') + '</ul>' : '') +
+    '<a class="vlink alt" href="' + search + '" target="_blank" rel="noopener noreferrer"><span class="play" aria-hidden="true">▶</span><span>YouTubeで「' + q + '」を探す</span></a>' +
+    '<p class="vnote">YouTubeが新しいタブで開きます。</p></section>';
+}
+const app = document.getElementById('app');
+let cat = 'すべて';
+const servings = {};
+
+function seal(ch, size) {
+  return '<svg class="seal" width="' + size + '" height="' + size + '" viewBox="0 0 60 60" aria-hidden="true">' +
+    '<circle cx="30" cy="30" r="27" fill="none" stroke="currentColor" stroke-width="3"/>' +
+    '<text x="30" y="41" text-anchor="middle" font-size="30" fill="currentColor">' + ch + '</text>' +
+    '<line x1="11" y1="11" x2="49" y2="49" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>';
+}
+
+function fmt(ing, k) {
+  if (ing.a == null) return ing.t || '';
+  var v = ing.a * k, u = ing.u;
+  if (u === 'g' || u === 'ml') {
+    v = v >= 50 ? Math.round(v / 5) * 5 : Math.round(v);
+    return v + u;
+  }
+  var spoon = (u === '大さじ' || u === '小さじ');
+  var s = spoon ? 0.25 : 0.5;
+  var r = Math.round(v / s) * s;
+  if (r < s) r = s;
+  var w = Math.floor(r + 1e-9);
+  var f = ['', '1/4', '1/2', '3/4'][Math.round((r - w) * 4)];
+  var t = w ? (f ? w + 'と' + f : String(w)) : f;
+  return spoon ? u + t : t + u;
+}
+
+function loadChecks(id) {
+  try {
+    var raw = localStorage.getItem('yodoku-checks-' + id);
+    return new Set(raw ? JSON.parse(raw) : []);
+  } catch (e) { return new Set(); }
+}
+function saveChecks(id, set) {
+  try { localStorage.setItem('yodoku-checks-' + id, JSON.stringify(Array.from(set))); } catch (e) {}
+}
+
+var FROM_KESERA = /[?&]from=kesera/.test(location.search || '');
+
+function renderList() {
+  app.className = 'wrap';
+  var items = RECIPES.filter(function (r) { return cat === 'すべて' || r.cat === cat || (r.tags || []).indexOf(cat) >= 0; });
+  app.innerHTML =
+    (FROM_KESERA ? '<p class="fromk"><a href="kesera-club.html">← ケセラにもどる</a></p>' : '') +
+    '<header>' +
+      '<p class="eyebrow">家庭料理</p>' +
+      '<h1 class="title">四毒抜きレシピ帳</h1>' +
+      '<p class="intro">小麦・乳製品・植物油・砂糖を使わない、毎日のごはんです。</p>' +
+      '<div class="seals" role="group" aria-label="使わない四つの食材">' +
+        YODOKU.map(function (y) { return '<figure>' + seal(y[0], 60) + '<figcaption>' + y[1] + '</figcaption></figure>'; }).join('') +
+      '</div>' +
+    '</header>' +
+    homeTiles() +
+    '<nav class="filters" aria-label="料理の種類">' +
+      CATS.map(function (c) { return '<button type="button" class="chip" aria-pressed="' + (c === cat) + '" data-act="cat" data-v="' + c + '">' + c + '</button>'; }).join('') +
+    '</nav>' +
+    '<p class="count">' + items.length + '品</p>' +
+    '<ul class="list">' +
+      items.map(function (r) {
+        return '<li><a href="#' + r.id + '"><div class="name">' + r.title + '</div>' +
+          '<p class="sub"><span class="lv lv-' + r.lv + '">' + r.lv + '</span>　' + r.cat + '　' + r.time + '　' + r.base + r.unit + '</p>' +
+          '<p class="desc">' + r.lead + '</p></a></li>';
+      }).join('') +
+    '</ul>';
+}
+
+function isSeason(g) {
+  return (g.u === '大さじ' || g.u === '小さじ') && !/片栗粉|わかめ|ごはん|ご飯/.test(g.n);
+}
+
+function paintIng(r) {
+  var n = servings[r.id] != null ? servings[r.id] : r.base;
+  var k = n / r.base;
+  var checked = loadChecks(r.id);
+  document.getElementById('ing').innerHTML = r.ing.map(function (g, i) {
+    return '<li><label class="row' + (isSeason(g) ? ' season' : '') + '"><input type="checkbox" data-i="' + i + '"' + (checked.has(i) ? ' checked' : '') + '>' +
+      '<span class="nm"><span class="t">' + g.n + '</span>' + (isSeason(g) ? '<span class="badge">味つけ</span>' : '') +
+      (g.x ? '<span class="x">' + g.x + '</span>' : '') + (/^だし汁$/.test(g.n) ? '<span class="x dh">むずかしいときは、下の「代わりの方法」を見てください</span>' : '') +
+      (g.note ? '<span class="note">' + g.note + '</span>' : '') +
+      '</span><span class="am">' + fmt(g, k) + '</span></label></li>';
+  }).join('');
+  var ss = r.ing.filter(isSeason);
+  document.getElementById('season').innerHTML = ss.length
+    ? '<h3>味つけの量（ここが大切です）</h3><p>計量スプーンで、すり切りにして量ります。目分量で入れると、味が変わります。</p><ul>' +
+      ss.map(function (g) { return '<li><span>' + g.n + '</span><span>' + fmt(g, k) + '</span></li>'; }).join('') + '</ul>'
+    : '';
+  document.getElementById('season').hidden = !ss.length;
+  document.getElementById('qty').textContent = n + r.unit;
+  document.querySelector('[data-act="dec"]').disabled = n <= 1;
+  document.querySelector('[data-act="inc"]').disabled = n >= r.max;
+}
+
+function renderDetail(r) {
+  var notes = r.ing.filter(function (g) { return g.note; });
+  app.innerHTML =
+    '<button type="button" class="back" data-act="back">← レシピ一覧</button>' +
+    '<div class="wake"><button type="button" id="wakeBtn" data-act="wake" aria-pressed="true">画面をつけたまま：オン</button><p id="wakeMsg" aria-live="polite"></p></div>' +
+    '<article>' +
+      '<p class="rcat"><span class="lv lv-' + r.lv + '">' + r.lv + '</span>　' + r.cat + '</p>' +
+      '<h1 class="rtitle">' + r.title + '</h1>' +
+      '<p class="lead">' + r.lead + '</p>' +
+      '<p class="meta">調理時間　' + r.time + '</p>' +
+      '<section><h2>材料</h2>' +
+        '<div class="stepper" role="group" aria-label="分量">' +
+          '<button type="button" data-act="dec" aria-label="分量を減らす">−</button>' +
+          '<output id="qty" aria-live="polite"></output>' +
+          '<button type="button" data-act="inc" aria-label="分量を増やす">＋</button>' +
+        '</div>' +
+        '<p class="stepper-hint">材料の分量は、人数に合わせて変わります。使ったものはチェックできます。</p>' +
+        '<div class="seasonbox" id="season"></div>' +
+        '<ul class="ing" id="ing"></ul>' +
+        '<button type="button" class="ghost" data-act="clear">チェックをすべてはずす</button>' +
+      '</section>' +
+      dashiAlt(r) +
+      '<section><h2>作り方</h2><ol class="steps">' +
+        r.steps.map(function (s) { return '<li><span>' + s + '</span></li>'; }).join('') +
+      '</ol></section>' +
+      videoHtml(r) +
+      '<section><h2>コツ</h2><ul class="tips">' +
+        r.tips.map(function (t) { return '<li>' + t + '</li>'; }).join('') +
+      '</ul></section>' +
+      '<section class="check"><h2>四毒チェック</h2>' +
+        '<ul class="oks">' + YODOKU.map(function (y) { return '<li>✓ ' + y[1] + 'なし</li>'; }).join('') + '</ul>' +
+        '<p style="margin:0">この料理では、四毒にあたる材料を使っていません。' +
+        (notes.length ? '調味料は商品によって原材料が違うので、買うときに表示を見てください。' : '') + '</p>' +
+        (notes.length ? '<p class="buy-h">買うときの確認</p><ul class="buy">' +
+          notes.map(function (g) { return '<li><strong>' + g.n + '</strong>' + g.note + '</li>'; }).join('') + '</ul>' : '') +
+      '</section>' +
+    hitoikiSection(r) +
+    logSection() +
+    '</article>' +
+    (UMAMI[r.id] ? '<div class="pop" id="pop" hidden data-act="popclose"><div class="pop-card" role="dialog" aria-modal="true" aria-labelledby="popTitle"><h2 id="popTitle">うまみのポイント</h2><p class="pop-sub">' + r.title + '</p><ol>' + UMAMI[r.id].map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ol><button type="button" class="pop-close" data-act="popclose">とじる</button></div></div>' : '') +
+    '<div class="bar">' + (UMAMI[r.id] ? '<button type="button" class="umami-btn" data-act="popopen">💡 うまみのポイント</button>' : '') + '<button type="button" class="bar-btn" data-act="back">← 戻る</button></div>';
+  app.className = 'wrap has-bar';
+  form = newForm(r);
+  pendingDel = -1;
+  paintIng(r);
+  paintLog(r);
+  updateWakeUI();
+}
+
+// 調理中に画面が消えないようにします（画面をつけたままにする機能）。
+var wake = null, wakeWanted = true, wakePending = false;
+
+function updateWakeUI() {
+  var btn = document.getElementById('wakeBtn'), msg = document.getElementById('wakeMsg');
+  if (!btn || !msg) return;
+  btn.setAttribute('aria-pressed', String(wakeWanted));
+  btn.textContent = '画面をつけたまま：' + (wakeWanted ? 'オン' : 'オフ');
+  var later = '端末の設定で、画面の自動ロックを長めにする方法もあります。';
+  if (!wakeWanted) msg.textContent = '画面は、端末の設定どおりに消えます。';
+  else if (wake) msg.textContent = '調理中は、画面をつけたままにしています。';
+  else if (wakePending) msg.textContent = '設定しています。';
+  else if (!('wakeLock' in navigator)) msg.textContent = 'この端末では、この機能を使えません。' + later;
+  else msg.textContent = '画面をつけたままにできませんでした。ボタンを押して、もう一度お試しください。' + later;
+}
+
+async function requestWake() {
+  if (!wakeWanted || wake || wakePending || !currentRecipe()) { updateWakeUI(); return; }
+  if (!('wakeLock' in navigator) || document.visibilityState !== 'visible') { updateWakeUI(); return; }
+  wakePending = true;
+  updateWakeUI();
+  try {
+    wake = await navigator.wakeLock.request('screen');
+    wake.addEventListener('release', function () { wake = null; updateWakeUI(); });
+  } catch (e) { wake = null; }
+  wakePending = false;
+  if (wake && (!currentRecipe() || !wakeWanted)) releaseWake();
+  updateWakeUI();
+}
+
+function releaseWake() {
+  var w = wake;
+  wake = null;
+  if (w) { try { w.release().catch(function () {}); } catch (e) {} }
+  updateWakeUI();
+}
+
+// 一覧からレシピを開いて戻ったときに、一覧の位置を覚えておきます。
+var lastView = 'list', listScroll = 0;
+
+
+var MK = 'yodoku-michi';
+var prog = (function () {
+  try { var o = JSON.parse(localStorage.getItem(MK) || '{}'); return { les: o.les || {}, made: o.made || {}, log: o.log || [] }; }
+  catch (e) { return { les: {}, made: {}, log: [] }; }
+})();
+function saveProg() { try { localStorage.setItem(MK, JSON.stringify(prog)); } catch (e) {} }
+var flash = '';
+var qs = {};
+
+function madeCount() { return Object.keys(prog.made).length; }
+function stageLessonsDone(s) { return s.lessons.filter(function (l) { return prog.les[l]; }).length; }
+function stageCleared(s) { return stageLessonsDone(s) === s.lessons.length && madeCount() >= s.need; }
+function clearedCount() { var n = 0; for (var i = 0; i < STAGES.length; i++) { if (stageCleared(STAGES[i])) n++; else break; } return n; }
+function stageOpen(s) { return s.id === 1 || stageCleared(STAGES[s.id - 2]); }
+function points() { return Object.keys(prog.les).length * PT_LESSON + madeCount() * PT_MADE; }
+function rankName() { return RANKS[clearedCount()]; }
+
+function clearMsg(before) {
+  var after = clearedCount();
+  if (after > before) {
+    var s = STAGES[after - 1];
+    return '🏆 ' + s.rank + '「' + s.name + '」をクリアしました！　称号：' + RANKS[after];
+  }
+  return '';
+}
+
+function michiBanner() {
+  return '<a class="michi-banner" href="#michi"><span class="mb-t">🏆 料理への道</span><span class="mb-s">' +
+    rankName() + '　' + points() + 'pt　→ 進む</span></a>';
+}
+
+function renderMichi() {
+  app.className = 'wrap has-bar';
+  var cleared = clearedCount();
+  app.innerHTML =
+    '<header><p class="eyebrow">ゲーム感覚で上達</p><h1 class="title">料理への道</h1>' +
+    '<p class="intro">学んで、クイズに合格し、実際に料理を作ると、段階が進みます。</p></header>' +
+    (flash ? '<p class="flash" role="status">' + flash + '</p>' : '') +
+    progressHtml() +
+    '<div class="rank"><div class="rank-l">いまの称号</div><div class="rank-n">' + RANKS[cleared] + '</div>' +
+    '<div class="rank-p">' + points() + 'pt　／　作った料理 ' + madeCount() + '品</div></div>' +
+    STAGES.map(function (s) {
+      var open = stageOpen(s), done = stageCleared(s), ld = stageLessonsDone(s);
+      return '<section class="stage' + (open ? '' : ' locked') + (done ? ' done' : '') + '">' +
+        '<h2>' + (done ? '✅ ' : open ? '▶ ' : '🔒 ') + s.rank + '：' + s.name + '</h2>' +
+        '<p class="stage-goal">' + s.goal + '</p>' +
+        '<p class="mission">クリア条件：学ぶ ' + ld + '/' + s.lessons.length + '　作った料理 ' + Math.min(madeCount(), s.need) + '/' + s.need + '品</p>' +
+        (open && LV[s.rank] ? '<p class="rec">おすすめレシピ（' + s.rank + '）：' + RECIPES.filter(function (x) { return x.lv === s.rank; }).map(function (x) { return '<a href="#' + x.id + '">' + x.title + '</a>'; }).join('、') + '</p>' : '') +
+        (open ? '<ul class="les-list">' + s.lessons.map(function (l) {
+          return '<li><a href="#les-' + l + '"><span class="lk">' + (prog.les[l] ? '✓' : '○') + '</span>' + LESSONS[l].title + '</a></li>';
+        }).join('') + '</ul>' : '<p class="lock-note">ひとつ前の段階をクリアすると、開きます。</p>') +
+        '</section>';
+    }).join('') +
+    '<div class="bar"><button type="button" class="bar-btn" data-act="goto" data-v="list">← レシピ一覧へ</button></div>';
+}
+
+function renderLesson(id) {
+  var L = LESSONS[id];
+  app.className = 'wrap has-bar';
+  var passed = !!prog.les[id];
+  var st = qs[id] || (qs[id] = {});
+  app.innerHTML =
+    '<p class="eyebrow">料理への道</p><h1 class="rtitle">' + L.title + '</h1>' +
+    '<p class="lead">' + L.intro + '</p>' +
+    (flash ? '<p class="flash" role="status">' + flash + '</p>' : '') +
+    '<section><h2>ポイント</h2><ol class="steps">' +
+      L.points.map(function (p) { return '<li><span>' + p + '</span></li>'; }).join('') +
+    '</ol></section>' +
+    '<section class="quiz"><h2>確認クイズ' + (passed ? '　✓ 合格済み' : '') + '</h2>' +
+      L.q.map(function (q, i) {
+        var s = st[i];
+        var locked = passed || (s && s.ok);
+        return '<div class="qa"><p class="qq">' + (i + 1) + '. ' + q.q + '</p>' +
+          q.o.map(function (o, j) {
+            var cls = 'opt';
+            if (locked && j === q.a) cls += ' ok';
+            else if (s && !s.ok && s.chosen === j) cls += ' ng';
+            return '<button type="button" class="' + cls + '" data-act="ans" data-q="' + i + '" data-o="' + j + '"' + (locked ? ' disabled' : '') + '>' + o + '</button>';
+          }).join('') +
+          (locked ? '<p class="exp">⭕ ' + q.e + '</p>' : (s && !s.ok ? '<p class="exp ngm">もう一度、選んでみましょう。</p>' : '')) +
+          '</div>';
+      }).join('') +
+    '</section>' +
+    '<div class="bar"><button type="button" class="bar-btn" data-act="goto" data-v="michi">← 料理への道へ</button></div>';
+}
+
+function answer(lessonId, qi, oi) {
+  var L = LESSONS[lessonId];
+  if (prog.les[lessonId]) return;
+  var st = qs[lessonId] || (qs[lessonId] = {});
+  if (st[qi] && st[qi].ok) return;
+  st[qi] = { chosen: oi, ok: oi === L.q[qi].a };
+  flash = '';
+  var allOk = L.q.every(function (q, i) { return st[i] && st[i].ok; });
+  if (allOk) {
+    var before = clearedCount();
+    prog.les[lessonId] = 1;
+    saveProg();
+    flash = '🎉 合格です！　+' + PT_LESSON + 'pt';
+    var cm = clearMsg(before);
+    if (cm) flash += '<br>' + cm;
+    else {
+      var s = STAGES.filter(function (x) { return x.lessons.indexOf(lessonId) >= 0; })[0];
+      if (stageLessonsDone(s) === s.lessons.length && madeCount() < s.need) flash += '<br>学ぶ課題は終わりました。あと ' + (s.need - madeCount()) + '品 作ると、クリアです。';
+    }
+  }
+  renderLesson(lessonId);
+  if (prog.les[lessonId] && allOk) confetti(flash.indexOf('🏆') >= 0);
+}
+
+
+/* ===== 料理ノート ===== */
+var RATES = {
+  great: { icon: '😄', label: 'うまくできた！', msg: 'すばらしい出来です！この調子で進みましょう。' },
+  normal: { icon: '🙂', label: '普通のでき', msg: '上々です。次は、もう少し工夫してみましょう。' },
+  next: { icon: '💪', label: '次はよくなる', msg: '大丈夫です。次は必ずよくなります。続けることが上達の道です。' }
+};
+var KESERA_URL = 'https://realizefield.github.io/kesera/kesera-club.html';
+var form = null, pendingDel = -1;
+
+function newForm(r) {
+  var n = servings[r.id] != null ? servings[r.id] : r.base;
+  return { rate: '', size: n, touched: false, save: 'none', packs: 2, per: 1, memo: '' };
+}
+function todayStr() {
+  var d = new Date();
+  function z(x) { return (x < 10 ? '0' : '') + x; }
+  return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate());
+}
+function recipeById(id) { return RECIPES.filter(function (x) { return x.id === id; })[0]; }
+function saveText(e) {
+  if (e.save === 'none') return '保存なし（その日に食べた）';
+  return (e.save === 'freezer' ? '冷凍' : '冷蔵') + ' ' + e.packs + 'パック（1パック' + e.per + '人分）';
+}
+
+function pct(a, b) { return b ? Math.round(a * 100 / b) : 0; }
+function bar(p) { return '<div class="pbar" role="img" aria-label="' + p + '%"><div style="width:' + p + '%"></div></div>'; }
+function progressHtml() {
+  var rows = ['初級', '中級', '上級'].map(function (lv) {
+    var all = RECIPES.filter(function (r) { return r.lv === lv; });
+    var done = all.filter(function (r) { return prog.made[r.id]; }).length;
+    var p = pct(done, all.length);
+    return '<div class="prow"><div class="pl"><span>' + lv + 'の料理</span><strong>' + p + '%</strong></div>' + bar(p) + '<div class="pn">' + done + ' / ' + all.length + '品を作りました</div></div>';
+  });
+  var tot = Object.keys(LESSONS).length, ld = Object.keys(prog.les).length;
+  var lp = pct(ld, tot);
+  rows.push('<div class="prow base"><div class="pl"><span>基礎知識</span><strong>' + lp + '%</strong></div>' + bar(lp) + '<div class="pn">' + ld + ' / ' + tot + 'つ合格しました</div></div>');
+  return '<div class="progress"><h2>どこまで進んだか</h2>' + rows.join('') + '</div>';
+}
+
+function homeTiles() {
+  return '<nav class="tiles" aria-label="メニュー">' +
+    '<a href="#michi"><b>🏆 料理への道</b><span>' + rankName() + '　' + points() + 'pt</span></a>' +
+    '<a href="#note"><b>📒 料理ノート</b><span>作った ' + madeCount() + '品　' + prog.log.length + '回</span></a>' +
+    '<a href="#hitoiki"><b>🌱 ちょっとひといき</b><span>食材への感謝・旬</span></a>' +
+    '</nav>';
+}
+
+/* 花吹雪 */
+function confetti(big) {
+  try {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var old = document.getElementById('petals'); if (old && old.parentNode) old.parentNode.removeChild(old);
+    var box = document.createElement('div');
+    box.id = 'petals'; box.setAttribute('aria-hidden', 'true');
+    var cols = ['#f7b6c8', '#f29bb5', '#fbd0dc', '#ffffff', '#f4a6bd'];
+    var n = big ? 90 : 45, html = '';
+    for (var i = 0; i < n; i++) {
+      var sz = 10 + Math.random() * 12, left = Math.random() * 100, dur = 3 + Math.random() * 3, del = Math.random() * (big ? 1.8 : 1), sw = (Math.random() * 120 - 60).toFixed(0), rot = (Math.random() * 720 - 360).toFixed(0);
+      html += '<i style="left:' + left.toFixed(1) + '%;width:' + sz.toFixed(0) + 'px;height:' + (sz * 0.8).toFixed(0) + 'px;background:' + cols[i % cols.length] +
+        ';animation-duration:' + dur.toFixed(1) + 's;animation-delay:' + del.toFixed(2) + 's;--sw:' + sw + 'px;--rot:' + rot + 'deg"></i>';
+    }
+    box.innerHTML = html;
+    document.body.appendChild(box);
+    setTimeout(function () { if (box.parentNode) box.parentNode.removeChild(box); }, 7500);
+  } catch (e) {}
+}
+
+function stepper(act, val, unit, label) {
+  return '<div class="fstep" role="group" aria-label="' + label + '"><button type="button" data-act="' + act + '" data-d="-1" aria-label="' + label + 'を減らす">−</button><output>' + val + unit + '</output><button type="button" data-act="' + act + '" data-d="1" aria-label="' + label + 'を増やす">＋</button></div>';
+}
+
+function logSection() {
+  return '<section class="made"><h2>作りましたか？　記録しましょう</h2><div id="logbox"></div></section>';
+}
+
+function paintLog(r) {
+  var box = document.getElementById('logbox');
+  if (!box) return;
+  var f = form;
+  var keep = document.getElementById('logMemo');
+  if (keep) f.memo = keep.value || '';
+  var mine = [];
+  prog.log.forEach(function (e, i) { if (e.id === r.id) mine.push({ e: e, i: i }); });
+  box.innerHTML =
+    '<p class="flabel">①　今日の出来は？</p><div class="rates">' +
+      Object.keys(RATES).map(function (k) {
+        return '<button type="button" class="rate" data-act="rate" data-v="' + k + '" aria-pressed="' + (f.rate === k) + '"><span>' + RATES[k].icon + '</span>' + RATES[k].label + '</button>';
+      }).join('') + '</div>' +
+    '<p class="flabel">②　何人分、作りましたか？</p>' + stepper('fsize', f.size, '人分', '作った量') +
+    '<p class="flabel">③　パックして保存しますか？</p><div class="saves">' +
+      [['none', '保存しない'], ['fridge', '冷蔵'], ['freezer', '冷凍']].map(function (x) {
+        return '<button type="button" class="save" data-act="fsave" data-v="' + x[0] + '" aria-pressed="' + (f.save === x[0]) + '">' + x[1] + '</button>';
+      }).join('') + '</div>' +
+    (f.save !== 'none'
+      ? '<div class="packrow"><div><span class="pk">パックの数</span>' + stepper('fpack', f.packs, 'パック', 'パックの数') + '</div>' +
+        '<div><span class="pk">1パックの量</span>' + stepper('fper', f.per, '人分', '1パックの量') + '</div></div>' +
+        '<p class="fhint">パックの合計は ' + (f.packs * f.per) + '人分です。' + (f.packs * f.per > f.size ? '作った量より多くなっています。' : '') + '</p>'
+      : '') +
+    '<p class="flabel">④　ひとことメモ（なくても大丈夫です）</p>' +
+    '<textarea id="logMemo" rows="2" maxlength="120" placeholder="例：しょうゆを少し減らした。家族に好評。">' + f.memo.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</textarea>' +
+    '<button type="button" class="made-btn" data-act="logsave">📒 記録する（+' + PT_MADE + 'pt）</button>' +
+    '<p class="made-msg" id="madeMsg" aria-live="polite">' + (f.msg || '') + '</p>' +
+    (mine.length ? '<h3 class="hist-h">このレシピの記録（' + mine.length + '回）</h3><ul class="hist">' + mine.slice().reverse().map(function (x) { return histItem(x.e, x.i, false); }).join('') + '</ul>' : '') +
+    '<p class="made-msg"><a href="#note">料理ノートを見る</a>　／　<a href="#michi">料理への道を見る</a></p>';
+}
+
+function histItem(e, i, withTitle) {
+  var rt = RATES[e.rate] || RATES.normal;
+  var r = recipeById(e.id);
+  return '<li><div class="h1"><span>' + e.d + '</span><span class="hr">' + rt.icon + ' ' + rt.label + '</span></div>' +
+    (withTitle ? '<div class="ht"><a href="#' + e.id + '">' + (r ? r.title : e.id) + '</a></div>' : '') +
+    '<div class="h2">' + e.size + '人分を作りました。　' + saveText(e) + '</div>' +
+    (e.memo ? '<div class="h3">メモ：' + e.memo.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</div>' : '') +
+    '<button type="button" class="hdel" data-act="logdel" data-i="' + i + '">' + (pendingDel === i ? '本当に消す' : '消す') + '</button></li>';
+}
+
+function saveLog(r) {
+  var f = form;
+  if (!f.rate) { f.msg = '「今日の出来」を選んでください。'; paintLog(r); return; }
+  var keep = document.getElementById('logMemo'); if (keep) f.memo = keep.value || '';
+  var before = clearedCount();
+  var first = !prog.made[r.id];
+  prog.log.push({ id: r.id, d: todayStr(), ts: Date.now(), rate: f.rate, size: f.size, save: f.save, packs: f.packs, per: f.per, memo: f.memo.slice(0, 120) });
+  prog.made[r.id] = 1;
+  saveProg();
+  var cm = clearMsg(before);
+  var rt = RATES[f.rate];
+  f.msg = rt.icon + ' 記録しました！　' + (first ? '+' + PT_MADE + 'pt　' : '（同じ料理は2回目以降、ポイントなし）　') + rt.msg +
+    (cm ? '<br><strong>' + cm + '</strong>' : '');
+  f.rate = ''; f.memo = '';
+  paintLog(r);
+  confetti(!!cm);
+}
+
+function deleteLog(i, r) {
+  if (pendingDel !== i) { pendingDel = i; return false; }
+  var e = prog.log[i];
+  prog.log.splice(i, 1);
+  pendingDel = -1;
+  if (e && !prog.log.some(function (x) { return x.id === e.id; })) delete prog.made[e.id];
+  saveProg();
+  return true;
+}
+
+function exportText() {
+  var lines = ['【料理ノート】' + todayStr() + '時点', '作った料理 ' + madeCount() + '品／記録 ' + prog.log.length + '回'];
+  ['初級', '中級', '上級'].forEach(function (lv) {
+    var all = RECIPES.filter(function (r) { return r.lv === lv; });
+    lines.push(lv + '：' + pct(all.filter(function (r) { return prog.made[r.id]; }).length, all.length) + '%');
+  });
+  lines.push('基礎知識：' + pct(Object.keys(prog.les).length, Object.keys(LESSONS).length) + '%', '');
+  prog.log.forEach(function (e) {
+    var r = recipeById(e.id), rt = RATES[e.rate] || RATES.normal;
+    lines.push(e.d + '　' + (r ? r.title : e.id) + '　' + e.size + '人分　' + rt.label + '　' + saveText(e) + (e.memo ? '　メモ：' + e.memo : ''));
+  });
+  return lines.join('\n');
+}
+
+function renderNote() {
+  app.className = 'wrap has-bar';
+  var cnt = { great: 0, normal: 0, next: 0 };
+  prog.log.forEach(function (e) { if (cnt[e.rate] != null) cnt[e.rate]++; });
+  app.innerHTML =
+    '<header><p class="eyebrow">挑戦した料理の記録</p><h1 class="title">料理ノート</h1>' +
+    '<p class="intro">作った料理の出来、量、パック保存の記録です。</p></header>' +
+    progressHtml() +
+    '<div class="rank"><div class="rank-p">記録 ' + prog.log.length + '回　　😄 ' + cnt.great + '　🙂 ' + cnt.normal + '　💪 ' + cnt.next + '</div></div>' +
+    '<h2 class="hi-h">これまでの記録</h2>' +
+    (prog.log.length
+      ? '<ul class="hist">' + prog.log.map(function (e, i) { return { e: e, i: i }; }).reverse().map(function (x) { return histItem(x.e, x.i, true); }).join('') + '</ul>'
+      : '<p>まだ記録がありません。レシピの一番下で、「記録する」を押してください。</p>') +
+    '<section class="kesera"><h2>ケセラとつなぐ</h2>' +
+    '<p>ケセラ（毎日に、小さな楽しみを。）の「食事の記録」につなぐための、控えです。下の文字をコピーして、ケセラに貼り付けてお使いください。</p>' +
+    '<textarea id="expText" rows="6" readonly></textarea>' +
+    '<div class="krow"><button type="button" class="made-btn" data-act="copyexp">記録をコピーする</button>' +
+    '<a class="made-btn klink" href="' + KESERA_URL + '" target="_blank" rel="noopener">ケセラを開く</a></div>' +
+    '<p class="made-msg" id="copyMsg" aria-live="polite"></p></section>' +
+    '<div class="bar"><button type="button" class="bar-btn" data-act="goto" data-v="list">← レシピ一覧へ</button></div>';
+  var ta = document.getElementById('expText');
+  if (ta) ta.value = exportText();
+}
+
+/* ===== だし汁の代わり ===== */
+const DASHI_ALT = [
+  { t: '① 昆布の水だし（いちばん簡単）', d: '水1Lに昆布10gを入れて、冷蔵庫に一晩（6〜8時間）置くだけです。火を使いません。昆布は取り出して、そのまま使います。' },
+  { t: '② かつお節を湯に入れる', d: '鍋に水500mlを沸かし、かつお節をひとつかみ（約10g）入れて、1分ほどで火を止め、こします。昆布の水だしと合わせると、うまみが重なります。' },
+  { t: '③ 煮干しの水出し', d: '水1Lに、頭とはらわたを取った煮干し20gを入れ、冷蔵庫に一晩置きます。こして使います。' },
+  { t: '④ 無添加のだしパック', d: '原材料が「かつお節・昆布・煮干し」などだけのものを選びます。砂糖（ぶどう糖）、小麦、油脂、「調味料（アミノ酸等）」が入るものは避けます。表示を確認してください。' },
+  { t: '⑤ 具材のうまみだけで作る', d: '肉や魚、干ししいたけ（戻し汁）、玉ねぎ、きのこ、トマトからは、うまみが出ます。だし汁の代わりに、同じ量の水を入れても作れます。肉を先に炒めて、うまみを出してから水を入れると、より濃くなります。' }
+];
+var DASHI_BY = {
+  'nikujaga': '豚バラの脂とうまみが出るので、⑤の水でも、おいしく作れます。',
+  'tonjiru': '豚肉・根菜・きのこのうまみが出ます。⑤の水で作れます。仕上げに、味噌を溶きます。',
+  'kiriboshi': '切り干し大根の戻し汁にうまみが出ています。その戻し汁だけでも作れます。①の水だしを足すと、さらに濃くなります。',
+  'daikonbuta': '豚バラのうまみが出ます。⑤の水で作れます。',
+  'kabocha': 'かぼちゃは、水だけでも甘みが出ます。①の昆布の水だしを使うと、味がまとまります。',
+  'hijiki': 'ひじき自体にうまみがあります。①の昆布の水だしが合います。',
+  'ohitashi': '量が少ないので、②のかつお節を湯に入れる方法がおすすめです。かつお節を直接かけても、おいしくなります。',
+  'misoshiru': '味噌汁は、①の水だしか、②のかつお節が、おすすめです。④のだしパックなら、一番手軽です。',
+  'nikutofu': '肉のうまみが出ます。⑤の水で作れます。①を足すと、より深い味になります。',
+  'tori-dango': '鶏団子と白菜からうまみが出ます。⑤の水で作れます。昆布を1枚入れると、さらにおいしくなります。',
+  'tori-soboan': '鶏ひき肉のうまみがあります。⑤の水でも作れます。',
+  'buta-nasu': '豚ひき肉のうまみと味噌があるので、⑤の水で作れます。'
+};
+function dashiAlt(r) {
+  if (!r.ing.some(function (g) { return /だし汁/.test(g.n); })) return '';
+  return '<details class="dalt"><summary>だし汁がむずかしいとき（代わりの方法）</summary>' +
+    (DASHI_BY[r.id] ? '<p class="drec">このレシピなら：' + DASHI_BY[r.id] + '</p>' : '') +
+    '<p>だし汁は、次のどれで代えても作れます。やさしい順に並べました。</p><ol>' +
+    DASHI_ALT.map(function (a) { return '<li><b>' + a.t + '</b><br>' + a.d + '</li>'; }).join('') +
+    '</ol><p class="dnote">市販の「和風だしの素」「顆粒だし」には、砂糖や調味料が入るものが多いので、原材料表示を確認してください。</p></details>';
+}
+
+function monthNow() { return new Date().getMonth() + 1; }
+function vegsFor(r) {
+  var names = r.ing.map(function (g) { return g.n; });
+  return HITOIKI.filter(function (v) {
+    var re = new RegExp(v.key);
+    return names.some(function (n) { return re.test(n); });
+  });
+}
+function hitoikiBanner() {
+  return '<a class="michi-banner hi-banner" href="#hitoiki"><span class="mb-t">🌱 ちょっとひといき</span><span class="mb-s">食材への感謝　旬・育て方・いわれ　→ 見る</span></a>';
+}
+function renderHitoiki() {
+  app.className = 'wrap has-bar';
+  var m = monthNow();
+  var now = HITOIKI.filter(function (v) { return v.months.indexOf(m) >= 0; });
+  function item(v) { return '<li><a href="#hi-' + v.id + '"><span class="hn">' + v.name + '</span><span class="hs">' + v.season + '</span></a></li>'; }
+  app.innerHTML =
+    '<header><p class="eyebrow">手を止めて</p><h1 class="title">ちょっとひといき</h1>' +
+    '<p class="intro">いただく前に、食材のことを少し。どう育ち、いつがおいしいのか。育てた人と自然への感謝を、思い出します。</p></header>' +
+    (now.length ? '<h2 class="hi-h">いま（' + m + '月）が旬</h2><ul class="hi-list">' + now.map(item).join('') + '</ul>' : '') +
+    ['野菜・きのこ', '肉・卵', '魚・海藻', '豆'].map(function (gname) {
+      var items = HITOIKI.filter(function (v) { return (v.g || '野菜・きのこ') === gname; });
+      return items.length ? '<h2 class="hi-h">' + gname + '</h2><ul class="hi-list">' + items.map(item).join('') + '</ul>' : '';
+    }).join('') +
+    '<div class="bar"><button type="button" class="bar-btn" data-act="goto" data-v="list">← レシピ一覧へ</button></div>';
+}
+function renderHi(id) {
+  var v = HITOIKI.filter(function (x) { return x.id === id; })[0];
+  app.className = 'wrap has-bar';
+  var inSeason = v.months.indexOf(monthNow()) >= 0;
+  function ul(a) { return '<ul class="tips">' + a.map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ul>'; }
+  var rel = RECIPES.filter(function (r) { return vegsFor(r).indexOf(v) >= 0; });
+  app.innerHTML =
+    '<p class="eyebrow">ちょっとひといき</p><h1 class="rtitle">' + v.name + (inSeason ? '<span class="badge">いま旬</span>' : '') + '</h1>' +
+    '<section><h2>旬</h2><p>' + v.season + '</p></section>' +
+    '<section><h2>どうやって育てるか</h2>' + ul(v.grow) + '</section>' +
+    '<section><h2>いわれ・ものがたり</h2>' + ul(v.story) + '</section>' +
+    '<p class="thanks">🙏 ' + v.thanks + '</p>' +
+    (rel.length ? '<section><h2>この食材を使うレシピ</h2><ul class="les-list">' + rel.map(function (r) { return '<li><a href="#' + r.id + '">' + r.title + '</a></li>'; }).join('') + '</ul></section>' : '') +
+    '<div class="bar"><button type="button" class="bar-btn" data-act="goto" data-v="hitoiki">← ちょっとひといきへ</button></div>';
+}
+function hitoikiSection(r) {
+  var vs = vegsFor(r);
+  if (!vs.length) return '';
+  return '<section class="hito"><h2>🌱 ちょっとひといき</h2><p>この料理の食材のことを、少し。</p><div class="hito-links">' +
+    vs.map(function (v) { return '<a href="#hi-' + v.id + '">' + v.name + '</a>'; }).join('') + '</div>' +
+    '<p class="thanks">いただく前に、育てた方と自然に、感謝を。</p></section>';
+}
+
+function route() {
+  var id = (location.hash || '').slice(1);
+  var r = RECIPES.find(function (x) { return x.id === id; });
+  var lesId = id.indexOf('les-') === 0 && LESSONS[id.slice(4)] ? id.slice(4) : '';
+  flash = '';
+  var hiId = id.indexOf('hi-') === 0 && HITOIKI.some(function (x) { return x.id === id.slice(3); }) ? id.slice(3) : '';
+  if (id === 'hitoiki' || hiId) {
+    if (lastView === 'list') listScroll = window.pageYOffset || 0;
+    lastView = 'detail';
+    releaseWake();
+    if (hiId) renderHi(hiId); else renderHitoiki();
+    window.scrollTo(0, 0);
+    return;
+  }
+  if (id === 'note') {
+    if (lastView === 'list') listScroll = window.pageYOffset || 0;
+    lastView = 'detail';
+    releaseWake();
+    pendingDel = -1;
+    renderNote();
+    window.scrollTo(0, 0);
+    return;
+  }
+  if (id === 'michi' || lesId) {
+    if (lastView === 'list') listScroll = window.pageYOffset || 0;
+    lastView = 'detail';
+    releaseWake();
+    if (lesId) {
+      var ls = STAGES.filter(function (x) { return x.lessons.indexOf(lesId) >= 0; })[0];
+      if (!stageOpen(ls)) { location.hash = 'michi'; return; }
+      renderLesson(lesId);
+    } else renderMichi();
+    window.scrollTo(0, 0);
+    return;
+  }
+  if (r) {
+    if (lastView === 'list') listScroll = window.pageYOffset || 0;
+    lastView = 'detail';
+    renderDetail(r);
+    requestWake();
+    window.scrollTo(0, 0);
+  } else {
+    var fromDetail = lastView === 'detail';
+    lastView = 'list';
+    renderList();
+    releaseWake();
+    window.scrollTo(0, fromDetail ? listScroll : 0);
+  }
+}
+
+function currentRecipe() {
+  var id = (location.hash || '').slice(1);
+  return RECIPES.find(function (x) { return x.id === id; });
+}
+
+app.addEventListener('click', function (e) {
+  var b = e.target.closest('[data-act]');
+  if (!b) return;
+  var act = b.getAttribute('data-act');
+  if (act === 'cat') {
+    cat = b.getAttribute('data-v');
+    renderList();
+    var again = app.querySelector('[data-act="cat"][aria-pressed="true"]');
+    if (again) again.focus();
+    return;
+  }
+  if (act === 'popopen') { var pp = document.getElementById('pop'); if (pp) { pp.hidden = false; var cb = pp.querySelector('.pop-close'); if (cb) cb.focus(); } return; }
+  if (act === 'popclose') {
+    if (b.classList.contains('pop') && e.target !== b) return;
+    var p2 = document.getElementById('pop'); if (p2) p2.hidden = true; return;
+  }
+  if (act === 'back') { location.hash = 'list'; return; }
+  if (act === 'goto') { location.hash = b.getAttribute('data-v'); return; }
+  if (act === 'ans') {
+    var lid = (location.hash || '').slice(5);
+    answer(lid, +b.getAttribute('data-q'), +b.getAttribute('data-o'));
+    return;
+  }
+  var cr = currentRecipe();
+  if (act === 'rate' && cr) { form.rate = b.getAttribute('data-v'); form.msg = ''; paintLog(cr); return; }
+  if (act === 'fsave' && cr) { form.save = b.getAttribute('data-v'); paintLog(cr); return; }
+  if ((act === 'fsize' || act === 'fpack' || act === 'fper') && cr) {
+    var dd = Number(b.getAttribute('data-d'));
+    if (act === 'fsize') { form.size = Math.min(12, Math.max(1, form.size + dd)); form.touched = true; }
+    if (act === 'fpack') form.packs = Math.min(12, Math.max(1, form.packs + dd));
+    if (act === 'fper') form.per = Math.min(6, Math.max(1, form.per + dd));
+    paintLog(cr); return;
+  }
+  if (act === 'logsave' && cr) { saveLog(cr); return; }
+  if (act === 'logdel') {
+    var di = Number(b.getAttribute('data-i'));
+    var done = deleteLog(di, cr);
+    if (cr) paintLog(cr); else renderNote();
+    return;
+  }
+  if (act === 'copyexp') {
+    var ta = document.getElementById('expText'), cm2 = document.getElementById('copyMsg');
+    ta.value = exportText(); ta.focus(); ta.select();
+    var okc = false;
+    try { okc = document.execCommand && document.execCommand('copy'); } catch (er) {}
+    if (!okc && navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(ta.value).then(function () { cm2.textContent = 'コピーしました。ケセラに貼り付けてください。'; }, function () { cm2.textContent = '文字を選んだままにしました。長押しして、コピーしてください。'; });
+      return;
+    }
+    cm2.textContent = okc ? 'コピーしました。ケセラに貼り付けてください。' : '文字を選んだままにしました。長押しして、コピーしてください。';
+    return;
+  }
+  if (act === 'wake') {
+    wakeWanted = !wakeWanted;
+    if (wakeWanted) requestWake(); else releaseWake();
+    updateWakeUI();
+    return;
+  }
+  var r = currentRecipe();
+  if (!r) return;
+  var n = servings[r.id] != null ? servings[r.id] : r.base;
+  if (act === 'inc' && n < r.max) { servings[r.id] = n + 1; paintIng(r); if (form && !form.touched) { form.size = n + 1; paintLog(r); } }
+  if (act === 'dec' && n > 1) { servings[r.id] = n - 1; paintIng(r); if (form && !form.touched) { form.size = n - 1; paintLog(r); } }
+  if (act === 'clear') { saveChecks(r.id, new Set()); paintIng(r); }
+});
+
+app.addEventListener('change', function (e) {
+  var box = e.target;
+  if (!box.matches || !box.matches('input[data-i]')) return;
+  var r = currentRecipe();
+  if (!r) return;
+  var set = loadChecks(r.id);
+  var i = Number(box.getAttribute('data-i'));
+  if (box.checked) set.add(i); else set.delete(i);
+  saveChecks(r.id, set);
+});
+
+// 別のアプリに切り替えると、画面を消さない設定は自動で外れます。戻ったときに、もう一度設定します。
+document.addEventListener('visibilitychange', function () {
+  if (document.visibilityState === 'visible' && currentRecipe()) requestWake();
+});
+// 最初の設定が通らなかったときは、画面のどこかをさわったときに、もう一度試します。
+document.addEventListener('click', function () {
+  if (currentRecipe() && wakeWanted && !wake && !wakePending) requestWake();
+});
+window.addEventListener('hashchange', route);
+route();
+</script>
+
+</body>
+</html>
