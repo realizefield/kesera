@@ -255,6 +255,17 @@ article .check h2 { border-bottom-color: var(--green); }
 .dgb { padding:4px 16px 16px; line-height:1.8; } .dgb p { margin:8px 0; }
 .mech { padding:10px 12px; border-radius:8px; background:var(--green-soft); }
 .amz { display:flex; align-items:center; justify-content:center; min-height:52px; border-radius:10px; background:var(--green); color:var(--green-ink); font-weight:700; font-size:18px; text-decoration:none; }
+.gate { margin:0 0 18px; padding:16px; border-radius:12px; border:2px solid var(--green); background:var(--surface); }
+.gtabs { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:12px; }
+.gtabs button { min-height:52px; padding:4px 6px; border-radius:10px; border:2px solid var(--line); background:var(--surface); color:var(--ink); font-size:16px; font-weight:700; }
+.gtabs button[aria-selected="true"] { background:var(--green); color:var(--green-ink); border-color:var(--green); }
+.gl { display:block; margin:12px 0 4px; font-weight:700; font-size:18px; }
+.gi { width:100%; box-sizing:border-box; min-height:52px; padding:8px 12px; border-radius:10px; border:2px solid var(--line); background:var(--bg); color:var(--ink); font:inherit; font-size:20px; margin-bottom:4px; }
+.gshow { display:flex; align-items:center; gap:10px; margin:12px 0; font-size:17px; min-height:44px; } .gshow input { width:24px; height:24px; accent-color:var(--green); }
+.gmsg { color:var(--seal); font-weight:700; min-height:1.5em; }
+.gpriv { margin:0 0 18px; padding:14px 16px; border-radius:12px; border:1px solid var(--line); background:var(--surface); } .gpriv h2 { font-size:19px; margin-bottom:6px; }
+.reccode { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:30px; font-weight:700; text-align:center; letter-spacing:.08em; padding:14px; border-radius:10px; background:var(--warn-bg); color:var(--warn-ink); margin:12px 0; user-select:all; }
+.mbar { margin:0 0 10px; font-size:16px; color:var(--muted); } .mbar a { color:var(--green); font-weight:700; }
 .vids { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 10px; }
 .vlink {
   display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 12px; align-items: center;
@@ -1727,6 +1738,7 @@ function renderList() {
   app.className = 'wrap';
   var items = RECIPES.filter(function (r) { return cat === 'すべて' || r.cat === cat || (r.tags || []).indexOf(cat) >= 0; });
   app.innerHTML =
+    memberBar() +
     (FROM_KESERA ? '<p class="fromk"><a href="kesera-club.html">← ケセラにもどる</a></p>' : '') +
     '<header>' +
       '<p class="eyebrow">家庭料理</p>' +
@@ -1871,7 +1883,7 @@ var prog = (function () {
   try { var o = JSON.parse(localStorage.getItem(MK) || '{}'); return { les: o.les || {}, made: o.made || {}, log: o.log || [] }; }
   catch (e) { return { les: {}, made: {}, log: [] }; }
 })();
-function saveProg() { try { localStorage.setItem(MK, JSON.stringify(prog)); } catch (e) {} }
+function saveProg() { try { localStorage.setItem(MK, JSON.stringify(prog)); } catch (e) {} scheduleSync(); }
 var flash = '';
 var qs = {};
 
@@ -2240,7 +2252,155 @@ function hitoikiSection(r) {
     '<p class="thanks">いただく前に、育てた方と自然に、感謝を。</p></section>';
 }
 
+/* ===== 無料会員 ===== */
+// 会員の中継所（member-worker.js）のアドレス。空のままなら、会員の機能は使いません。
+var API_URL = '';
+var MEMBERS_ON = !!API_URL;
+var auth = (function () { try { return JSON.parse(localStorage.getItem('yodoku-auth') || 'null'); } catch (e) { return null; } })();
+var gate = { mode: 'in', msg: '', rec: '', busy: false, show: false };
+var syncT = null, syncMsg = '';
+
+function setAuth(a) {
+  auth = a;
+  try { if (a) localStorage.setItem('yodoku-auth', JSON.stringify(a)); else localStorage.removeItem('yodoku-auth'); } catch (e) {}
+}
+function api(path, body) {
+  return fetch(API_URL.replace(/\/$/, '') + '/' + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) })
+    .then(function (r) { return r.json().catch(function () { return { error: 'bad' }; }).then(function (j) { j._s = r.status; return j; }); });
+}
+var ERRS = {
+  nick: 'ニックネームは、2〜12文字で入れてください。',
+  pass: '合言葉は、4文字以上で入れてください。',
+  taken: 'そのニックネームは、すでに使われています。別のニックネームにしてください。',
+  login: 'ニックネームか合言葉が、ちがうようです。もう一度、確かめてください。',
+  recovery: 'ニックネームか復旧コードが、ちがうようです。',
+  locked: '何度もまちがえたので、15分ほど、お待ちください。',
+  bad: '通信がうまくいきませんでした。しばらくしてから、もう一度お試しください。'
+};
+function errText(j) { return ERRS[j && j.error] || ERRS.bad; }
+
+function mergeProg(remote) {
+  if (!remote || typeof remote !== 'object') return;
+  Object.keys(remote.les || {}).forEach(function (k) { if (LESSONS[k]) prog.les[k] = 1; });
+  Object.keys(remote.made || {}).forEach(function (k) { if (recipeById(k)) prog.made[k] = 1; });
+  var seen = {};
+  prog.log.forEach(function (e) { seen[e.id + '@' + e.ts] = 1; });
+  (remote.log || []).forEach(function (e) {
+    if (e && recipeById(e.id) && !seen[e.id + '@' + e.ts]) { prog.log.push(e); seen[e.id + '@' + e.ts] = 1; }
+  });
+  prog.log.sort(function (a, b) { return (a.ts || 0) - (b.ts || 0); });
+  prog.log.forEach(function (e) { prog.made[e.id] = 1; });
+}
+function pushNow() {
+  if (!MEMBERS_ON || !auth) return Promise.resolve();
+  return api('put', { token: auth.token, data: JSON.stringify(prog) }).then(function (j) {
+    if (j.error === 'auth') { setAuth(null); route(); return; }
+    syncMsg = j.ok ? '記録を保存しました（別の端末でも見られます）' : '記録の保存に失敗しました。あとで、もう一度保存します';
+    var el = document.getElementById('syncMsg'); if (el) el.textContent = syncMsg;
+  }, function () { syncMsg = '通信できませんでした。あとで、もう一度保存します'; });
+}
+function scheduleSync() {
+  if (!MEMBERS_ON || !auth) return;
+  clearTimeout(syncT);
+  syncT = setTimeout(pushNow, 1500);
+}
+function pullAndMerge() {
+  return api('get', { token: auth.token }).then(function (j) {
+    if (j.error === 'auth') { setAuth(null); return; }
+    if (j.data) { try { mergeProg(JSON.parse(j.data)); } catch (e) {} }
+    saveProg();
+    return pushNow();
+  }, function () {});
+}
+function sendEv(t, id) {
+  if (!MEMBERS_ON || !auth) return;
+  try {
+    fetch(API_URL.replace(/\/$/, '') + '/ev', { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: auth.token, t: t, id: id }) }).catch(function () {});
+  } catch (e) {}
+}
+
+function field(id, label, type, ph) {
+  return '<label class="gl" for="' + id + '">' + label + '</label><input class="gi" id="' + id + '" type="' + type + '" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="' + (ph || '') + '">';
+}
+function renderGate() {
+  app.className = 'wrap';
+  var g = gate, t = g.show ? 'text' : 'password';
+  var head = '<header><p class="eyebrow">無料の会員制</p><h1 class="title">四毒抜きレシピ帳</h1></header>';
+  if (g.mode === 'rec') {
+    app.innerHTML = head + '<section class="gate"><h2>登録できました</h2>' +
+      '<p>次の「復旧コード」は、合言葉を忘れたときに使います。<strong>紙に書き写して、大切に保管してください。</strong>この画面を閉じると、二度と表示されません。</p>' +
+      '<p class="reccode">' + g.rec + '</p>' +
+      '<button type="button" class="made-btn" data-act="gdone">書き留めました。はじめる</button></section>';
+    return;
+  }
+  var tabs = '<div class="gtabs" role="tablist">' +
+    [['in', '入る'], ['new', 'はじめて登録'], ['reset', '合言葉を忘れた']].map(function (x) {
+      return '<button type="button" role="tab" aria-selected="' + (g.mode === x[0]) + '" data-act="gmode" data-v="' + x[0] + '">' + x[1] + '</button>';
+    }).join('') + '</div>';
+  var body = '';
+  if (g.mode === 'in') body = field('gNick', 'ニックネーム', 'text') + field('gPass', '合言葉', t) +
+    '<button type="button" class="made-btn" data-act="gsubmit">入る</button>';
+  if (g.mode === 'new') body = '<p>ニックネームと合言葉を決めてください。<strong>本名は使わないでください。</strong></p>' +
+    field('gNick', 'ニックネーム（2〜12文字）', 'text') + field('gPass', '合言葉（4文字以上）', t) + field('gPass2', '合言葉（もう一度）', t) +
+    '<button type="button" class="made-btn" data-act="gsubmit">無料で登録する</button>';
+  if (g.mode === 'reset') body = '<p>登録のときにお渡しした「復旧コード」を入れて、新しい合言葉を決めます。</p>' +
+    field('gNick', 'ニックネーム', 'text') + field('gRec', '復旧コード（例：ABCD-EFGH-JKLM）', 'text') + field('gPass', '新しい合言葉（4文字以上）', t) +
+    '<button type="button" class="made-btn" data-act="gsubmit">合言葉を変える</button>';
+  app.innerHTML = head +
+    '<p class="intro">無料の会員になると、料理ノートや進み具合を、スマホでもパソコンでも、同じように見られます。</p>' +
+    '<section class="gate">' + tabs + body +
+    '<label class="gshow"><input type="checkbox" data-act="gshow"' + (g.show ? ' checked' : '') + '> 合言葉を表示する</label>' +
+    '<p class="made-msg gmsg" id="gmsg" role="alert">' + (g.msg || '') + '</p></section>' +
+    '<section class="gpriv"><h2>集める情報について</h2><ul class="tips">' +
+    '<li>集めるのは、ニックネーム、合言葉（暗号化して保存します）、料理ノートや学びの記録です。メールアドレスは集めません。</li>' +
+    '<li>会員の人数や、よく見られているレシピの集計に使います。個人を特定する使い方はしません。</li>' +
+    '<li>いつでも、「会員ページ」から、退会して記録を消せます。</li></ul></section>';
+}
+
+function renderMember() {
+  app.className = 'wrap has-bar';
+  app.innerHTML =
+    '<header><p class="eyebrow">無料会員</p><h1 class="title">会員ページ</h1></header>' +
+    '<div class="rank"><div class="rank-l">ニックネーム</div><div class="rank-n">' + (auth ? auth.nick : '') + '</div>' +
+    '<div class="rank-p" id="syncMsg">' + (syncMsg || '記録は、会員の中に保存されます') + '</div></div>' +
+    '<button type="button" class="made-btn" data-act="msave">いま、記録を保存する</button>' +
+    '<button type="button" class="ghost" data-act="mlogout">ログアウト</button>' +
+    '<section class="gpriv"><h2>退会する</h2><p>退会すると、会員の中の記録が消えます（この端末の中の記録は残ります）。合言葉を入れてください。</p>' +
+    field('mDelPass', '合言葉', 'password') +
+    '<button type="button" class="hdel" data-act="mdel">退会する</button><p class="made-msg" id="mmsg" role="alert"></p></section>' +
+    '<div class="bar"><button type="button" class="bar-btn" data-act="goto" data-v="list">← レシピ一覧へ</button></div>';
+}
+function memberBar() {
+  if (!MEMBERS_ON || !auth) return '';
+  return '<p class="mbar">ようこそ、' + auth.nick + 'さん　<a href="#member">会員ページ</a></p>';
+}
+
+function gateSubmit() {
+  var g = gate;
+  function v(id) { var e = document.getElementById(id); return e ? e.value : ''; }
+  var nick = v('gNick').trim(), pass = v('gPass');
+  var msgEl = document.getElementById('gmsg');
+  function say(t) { g.msg = t; if (msgEl) msgEl.textContent = t; }
+  if (g.busy) return;
+  if (g.mode === 'new' && pass !== v('gPass2')) { say('合言葉が、一致しません。もう一度、入れてください。'); return; }
+  if (nick.length < 2) { say(ERRS.nick); return; }
+  if (pass.length < 4) { say(ERRS.pass); return; }
+  g.busy = true; say('確認しています…');
+  var req = g.mode === 'new' ? api('register', { nick: nick, pass: pass })
+    : g.mode === 'reset' ? api('reset', { nick: nick, recovery: v('gRec'), pass: pass })
+    : api('login', { nick: nick, pass: pass });
+  req.then(function (j) {
+    g.busy = false;
+    if (!j.token) { say(errText(j)); return; }
+    setAuth({ token: j.token, nick: j.nick });
+    g.msg = '';
+    if (g.mode === 'new') { g.rec = j.recovery; g.mode = 'rec'; pullAndMerge(); renderGate(); return; }
+    pullAndMerge().then(function () { route(); });
+  }, function () { g.busy = false; say(ERRS.bad); });
+}
+
 function route() {
+  if (MEMBERS_ON && !auth) { renderGate(); window.scrollTo(0, 0); return; }
   var id = (location.hash || '').slice(1);
   var r = RECIPES.find(function (x) { return x.id === id; });
   var lesId = id.indexOf('les-') === 0 && LESSONS[id.slice(4)] ? id.slice(4) : '';
@@ -2250,11 +2410,19 @@ function route() {
     if (lastView === 'list') listScroll = window.pageYOffset || 0;
     lastView = 'detail';
     releaseWake();
-    if (hiId) renderHi(hiId); else renderHitoiki();
+    if (hiId) { sendEv('hitoiki', hiId); renderHi(hiId); } else renderHitoiki();
+    window.scrollTo(0, 0);
+    return;
+  }
+  if (id === 'member' && MEMBERS_ON) {
+    lastView = 'detail';
+    releaseWake();
+    renderMember();
     window.scrollTo(0, 0);
     return;
   }
   if (id === 'dougu') {
+    sendEv('page', 'dougu');
     if (lastView === 'list') listScroll = window.pageYOffset || 0;
     lastView = 'detail';
     releaseWake();
@@ -2263,6 +2431,7 @@ function route() {
     return;
   }
   if (id === 'note') {
+    sendEv('page', 'note');
     if (lastView === 'list') listScroll = window.pageYOffset || 0;
     lastView = 'detail';
     releaseWake();
@@ -2278,6 +2447,7 @@ function route() {
     if (lesId) {
       var ls = STAGES.filter(function (x) { return x.lessons.indexOf(lesId) >= 0; })[0];
       if (!stageOpen(ls)) { location.hash = 'michi'; return; }
+      sendEv('lesson', lesId);
       renderLesson(lesId);
     } else renderMichi();
     window.scrollTo(0, 0);
@@ -2286,6 +2456,7 @@ function route() {
   if (r) {
     if (lastView === 'list') listScroll = window.pageYOffset || 0;
     lastView = 'detail';
+    sendEv('recipe', r.id);
     renderDetail(r);
     requestWake();
     window.scrollTo(0, 0);
@@ -2320,6 +2491,20 @@ app.addEventListener('click', function (e) {
     var p2 = document.getElementById('pop'); if (p2) p2.hidden = true; return;
   }
   if (act === 'back') { location.hash = 'list'; return; }
+  if (act === 'gmode') { gate.mode = b.getAttribute('data-v'); gate.msg = ''; renderGate(); return; }
+  if (act === 'gsubmit') { gateSubmit(); return; }
+  if (act === 'gdone') { gate.mode = 'in'; gate.rec = ''; route(); return; }
+  if (act === 'msave') { var sm = document.getElementById('syncMsg'); if (sm) sm.textContent = '保存しています…'; pushNow(); return; }
+  if (act === 'mlogout') { clearTimeout(syncT); setAuth(null); gate.mode = 'in'; route(); return; }
+  if (act === 'mdel') {
+    var dp = document.getElementById('mDelPass'), mm = document.getElementById('mmsg');
+    if (!dp || dp.value.length < 4) { mm.textContent = '合言葉を入れてください。'; return; }
+    mm.textContent = '確認しています…';
+    api('delete', { token: auth.token, pass: dp.value }).then(function (j) {
+      if (j.ok) { setAuth(null); gate.mode = 'in'; route(); } else mm.textContent = errText(j);
+    }, function () { mm.textContent = ERRS.bad; });
+    return;
+  }
   if (act === 'goto') { location.hash = b.getAttribute('data-v'); return; }
   if (act === 'ans') {
     var lid = (location.hash || '').slice(5);
@@ -2371,6 +2556,13 @@ app.addEventListener('click', function (e) {
 
 app.addEventListener('change', function (e) {
   var box = e.target;
+  if (box && box.matches && box.matches('input[data-act="gshow"]')) {
+    var vals = {};
+    ['gNick', 'gPass', 'gPass2', 'gRec'].forEach(function (id) { var el = document.getElementById(id); if (el) vals[id] = el.value; });
+    gate.show = box.checked; renderGate();
+    Object.keys(vals).forEach(function (id) { var el = document.getElementById(id); if (el) el.value = vals[id]; });
+    return;
+  }
   if (!box.matches || !box.matches('input[data-i]')) return;
   var r = currentRecipe();
   if (!r) return;
@@ -2390,6 +2582,7 @@ document.addEventListener('click', function () {
 });
 window.addEventListener('hashchange', route);
 route();
+if (MEMBERS_ON && auth) pullAndMerge().then(function () { if (!document.getElementById('logMemo')) route(); });
 </script>
 
 </body>
