@@ -384,6 +384,10 @@ button[aria-pressed="true"] { font-weight:700; }
 #memoText[readonly] { background:var(--accent-soft); }
 .memo-row { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
 .memo-row input[type=date], .memo-row input[type=time] { font-size:1.1rem; min-height:46px; padding:4px 8px; border-radius:8px; border:1.5px solid var(--line); background:var(--surface); color:inherit; }
+.safe-grid { display:grid; grid-template-columns:1fr; gap:10px; }
+.safe-btn { display:flex; flex-direction:column; align-items:flex-start; gap:2px; min-height:64px; text-align:left; justify-content:center; font-size:1.1rem; }
+.safe-btn span { font-size:.92rem; font-weight:400; }
+@media (min-width:560px) { .safe-grid { grid-template-columns:1fr 1fr; } }
 .float-home { position:fixed; top:10px; right:10px; z-index:60; min-height:46px; padding:8px 16px; border-radius:999px; border:2px solid var(--accent); background:var(--surface); color:var(--accent); font-weight:700; font-size:1rem; box-shadow:0 3px 12px #0003; }
 .float-home[hidden] { display:none; }
 </style></head><body>
@@ -411,6 +415,7 @@ button[aria-pressed="true"] { font-weight:700; }
       <h2 id="greet"></h2>
       <div class="wx-row"><div class="wx-icon" id="wxIcon" aria-hidden="false"></div><p id="wx"></p></div>
       <p id="wxWords" style="font-weight:700;font-size:1.12rem;margin:8px 0 4px"></p>
+      <p id="tyLine" style="margin:6px 0;font-weight:700;font-size:1.1rem" hidden></p>
       <p id="wxSun" style="margin:4px 0 8px;font-weight:700"></p>
       <div class="wx-next" id="wxNext" hidden>
         <div class="wx-next-row" id="wxNightRow"><div class="wx-mini" id="wxNightIcon" aria-hidden="true"></div><p id="wxNight"></p></div>
@@ -445,6 +450,47 @@ button[aria-pressed="true"] { font-weight:700; }
     </div>
 
 
+    <div class="card" id="safeCard" style="border:3px solid var(--accent)">
+      <h2>🆘 もしものとき、迷わずここへ</h2>
+      <p class="muted">押すと、電話の画面が開きます。かけるかどうかは、ご自分で決められます。</p>
+      <div class="safe-grid">
+        <a class="btnlink primary safe-btn" href="tel:119"><b>💊 急に具合が悪い・倒れた</b><span>救急車を呼ぶ　119</span></a>
+        <a class="btnlink safe-btn" href="tel:%237119"><b>🤔 救急車を呼ぶか迷う</b><span>救急安心センター　#7119（地域によります）</span></a>
+        <a class="btnlink primary safe-btn" href="tel:110"><b>🚨 犯罪・あぶない人・だまされた</b><span>警察　110</span></a>
+        <a class="btnlink safe-btn" href="tel:%239110"><b>🤔 警察に相談したい</b><span>警察相談専用電話　#9110</span></a>
+        <a class="btnlink safe-btn" href="tel:188"><b>💴 お金・契約・詐欺かな？</b><span>消費者ホットライン　188</span></a>
+        <button class="btnlink safe-btn" id="safeFam" type="button"><b>👪 ご家族に知らせる</b><span id="safeFamSub">電話をかける</span></button>
+      </div>
+      <p class="msg" id="safeMsg" role="status"></p>
+      <details><summary>クマ・不審者・災害の情報を見る</summary>
+        <div class="row" style="margin-top:8px">
+          <a class="btnlink" id="safeBear" href="https://news.yahoo.co.jp/search?p=クマ+出没&amp;ei=UTF-8" target="_blank" rel="noopener">🐻 クマの出没情報</a>
+          <a class="btnlink" id="safeSus" href="https://news.yahoo.co.jp/search?p=不審者&amp;ei=UTF-8" target="_blank" rel="noopener">👤 不審者の情報</a>
+          <a class="btnlink" href="https://www.jma.go.jp/bosai/" target="_blank" rel="noopener">🌧 気象庁 防災情報</a>
+        </div>
+        <p class="muted">クマや不審者の情報は、お住まいの市町村や警察が出す連絡（メール配信など）が、いちばん早く正確です。ここのボタンは、ニュースの検索結果です。</p>
+      </details>
+    </div>
+
+    <div class="card" id="scamCard">
+      <h2>🛡 きょうの「だまされない」一言</h2>
+      <h3 id="scamTitle" style="margin:0"></h3>
+      <p id="scamBody" style="font-size:1.1rem;line-height:1.7;margin:0"></p>
+      <details><summary>ほかの手口も見る</summary><div id="scamAll" style="margin-top:8px"></div></details>
+    </div>
+
+    <div class="card" id="transCard">
+      <h2>🚃 交通機関の運行情報</h2>
+      <p class="muted">台風や大雨のときは、電車・バス・飛行機が止まることがあります。出かける前に、公式の情報で確かめてください。</p>
+      <div class="row">
+        <a class="btnlink" href="https://transit.yahoo.co.jp/diainfo" target="_blank" rel="noopener">🚃 電車の運行情報（全国）</a>
+        <a class="btnlink" href="https://www.ana.co.jp/" target="_blank" rel="noopener">✈ ANA</a>
+        <a class="btnlink" href="https://www.jal.co.jp/" target="_blank" rel="noopener">✈ JAL</a>
+        <a class="btnlink" href="https://www.kumamoto-airport.co.jp/" target="_blank" rel="noopener">✈ 熊本空港</a>
+      </div>
+      <p class="muted">お使いのバス・電車の会社の公式ページでも、確認してください。</p>
+    </div>
+
     <div class="card trip-card">
       <h2>お出かけのお手伝い</h2><p class="muted">いまいる場所から、行きたい場所へ。</p>
       <div class="trip-modes">
@@ -457,10 +503,13 @@ button[aria-pressed="true"] { font-weight:700; }
     </div>
 
     <div class="card news-card" aria-label="最新ニュース">
-      <div class="news-copy"><h2>世の中のできごと</h2><p class="muted" id="newsDescription">全国のニュースと、お住まいの県のニュースを、Yahoo!ニュースで読めます。別のタブで開きます。ケセラにもどるときは、ブラウザの「タブ」(重なった四角のボタン)から、ケセラを選びます。</p></div>
+      <div class="news-copy"><h2>世の中のできごと</h2><p class="muted" id="newsDescription">トレンド、全国、国内、海外、お住まいの県のニュースを、Yahoo!ニュースで読めます。別のタブで開きます。ケセラにもどるときは、ブラウザの「タブ」(重なった四角のボタン)から、ケセラを選びます。</p></div>
       <a class="btnlink primary" id="latestNews" href="https://news.yahoo.co.jp/" target="_blank" rel="noopener noreferrer" aria-describedby="newsDescription"><span aria-hidden="true">📰</span>全国のニュースを見る</a>
       <a class="btnlink primary" id="localNews" href="https://news.yahoo.co.jp/" target="_blank" rel="noopener noreferrer" aria-describedby="newsDescription"><span aria-hidden="true">📍</span><span id="localNewsName">地域のニュースを見る</span></a>
-      <p class="muted" style="margin:6px 0 0">お住まいの県は、「お名前・お住まい・今日の天気を入れる」で変えられます。</p>
+      <a class="btnlink" href="https://news.yahoo.co.jp/ranking/access/news" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">🔥</span>いま読まれているニュース（トレンド）</a>
+      <a class="btnlink" href="https://news.yahoo.co.jp/categories/domestic" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">🗾</span>国内のニュース</a>
+      <a class="btnlink" href="https://news.yahoo.co.jp/categories/world" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">🌏</span>海外のニュース</a>
+      <p class="muted" style="margin:6px 0 0">お住まいの県は、「⚙ 設定」の「お名前・お住まい」で変えられます。</p>
     </div>
 
     <div class="card news-card" aria-label="文学へのいざない">
@@ -2919,14 +2968,14 @@ button[aria-pressed="true"] { font-weight:700; }
     rain: ['線状降水帯・大雨に気をつけてください', '大雨の危険が高まっています。川、崖、低い土地には近づかないでください。市町村の避難の情報に従い、早めに、安全な場所へ。命にかかわるときは、119や110に電話してください。']
   };
   var alertDismiss = load('kesera-alert-dismiss', {});
-  var feedAlerts = [], demoAlerts = [];
+  var feedAlerts = [], demoAlerts = [], liveAlerts = [];
   function localAlerts() {
     var out = [], mx = Number($('tmax').value);
     if (mx >= 33) out.push({ id: 'heat-' + today, kind: 'heat', level: 'warn', title: ADVICE.heat[0], body: ADVICE.heat[1] });
     return out;
   }
   function allAlerts() {
-    return demoAlerts.concat(feedAlerts, localAlerts()).filter(function (a) { return !alertDismiss[a.id]; });
+    return demoAlerts.concat(feedAlerts, liveAlerts, localAlerts()).filter(function (a) { return !alertDismiss[a.id]; });
   }
   function renderAlerts() {
     var box = $('alerts'); box.innerHTML = '';
@@ -2939,7 +2988,9 @@ button[aria-pressed="true"] { font-weight:700; }
       sp.addEventListener('click', function () { try { window.speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance(a.title + '。' + a.body); u.lang = 'ja-JP'; u.rate = 0.9; var jv = jaVoice(); if (jv) u.voice = jv; window.speechSynthesis.speak(u); } catch (e) {} });
       var cl = mk('button', '読みました（消す）', 'btn'); cl.type = 'button';
       cl.addEventListener('click', function () { try { window.speechSynthesis.cancel(); } catch (e) {} alertDismiss[a.id] = today; save('kesera-alert-dismiss', alertDismiss); renderAlerts(); });
-      r.appendChild(sp); r.appendChild(cl); d.appendChild(r);
+      r.appendChild(sp); r.appendChild(cl);
+      if (a.help) { var hb = mk('button', '🆘 もしものとき（119・110・ご家族）', 'btn primary'); hb.type = 'button'; hb.addEventListener('click', function () { show('home'); setTimeout(function () { try { $('safeCard').scrollIntoView({ block: 'start' }); } catch (e) {} }, 80); }); r.appendChild(hb); }
+      d.appendChild(r);
       if (a.url) { var l = document.createElement('a'); l.href = a.url; l.target = '_blank'; l.rel = 'noopener'; l.textContent = 'くわしい情報（新しい画面で開きます）'; l.style.fontSize = '1.05rem'; d.appendChild(l); }
       box.appendChild(d);
     });
@@ -3435,6 +3486,100 @@ button[aria-pressed="true"] { font-weight:700; }
     var sd = $('wxPref') && $('wxPref').closest('details'); if (sd) sd.open = true;
     $('settingsBtn').addEventListener('click', function () { show('settings'); });
   })();
+
+  /* ---------- 台風・警報・だまされない一言・もしものとき ---------- */
+  var SCAMS = [
+    ['「オレオレ」電話詐欺', '「俺だけど」「風邪で声が変なんだ」と、子や孫になりすまします。「会社のお金を落とした」「示談金が必要」などと、急いでお金を求めます。電話を切って、元から知っている番号に、かけ直してください。'],
+    ['還付金詐欺', '市役所や税務署をかたり、「医療費や保険料が戻ります。ATMへ」と誘います。ATMで、お金が戻ることは、ありません。ATMへ行くよう言われたら、詐欺です。'],
+    ['警察官・銀行員になりすます詐欺', '「あなたの口座が犯罪に使われた」「キャッシュカードを預かる」と言います。警察も銀行も、暗証番号を聞いたり、カードを預かりに来たりしません。誰にも渡さないでください。'],
+    ['架空請求（SMS・はがき・メール）', '「未払いの料金があります」「本日中に連絡を」と、あわてさせます。身に覚えがなければ、連絡せず、リンクも開かないでください。迷ったら、消費者ホットライン188へ。'],
+    ['宅配便の不在通知を装うSMS', '「お荷物をお届けにあがりました」と、リンクを送ってきます。押すと、暗証番号などを盗まれることがあります。心当たりがなければ、開かずに消してください。'],
+    ['ロマンス詐欺・投資詐欺', 'ネットで知り合った人が、「必ずもうかる」「ふたりの将来のために」とお金を求めます。会ったことのない人に、お金を送らないでください。'],
+    ['家に来る訪問販売・点検商法', '「屋根が壊れている」「無料で点検します」と来て、高い工事を勧めます。その場で決めないでください。契約しても、8日以内なら、やめられる場合があります（クーリング・オフ）。'],
+    ['ニセの警告画面（ウイルス感染）', '画面に「ウイルスに感染しました。電話してください」と出ます。電話すると、お金を求められます。画面は、ブラウザを閉じれば消えます。電話しないでください。']
+  ];
+  (function () {
+    var d = new Date(), doy = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 86400000), s = SCAMS[doy % SCAMS.length];
+    $('scamTitle').textContent = s[0]; $('scamBody').textContent = s[1];
+    var all = $('scamAll'); SCAMS.forEach(function (x) { var h = document.createElement('h4'); h.textContent = x[0]; h.style.margin = '10px 0 2px'; var p = document.createElement('p'); p.textContent = x[1]; p.style.margin = '0'; all.appendChild(h); all.appendChild(p); });
+    function safeLinks() {
+      var n = prefName() || '';
+      $('safeBear').href = 'https://news.yahoo.co.jp/search?p=' + encodeURIComponent('クマ 出没 ' + n) + '&ei=UTF-8';
+      $('safeSus').href = 'https://news.yahoo.co.jp/search?p=' + encodeURIComponent('不審者 ' + n) + '&ei=UTF-8';
+    }
+    safeLinks(); $('wxPref').addEventListener('change', safeLinks);
+    function famPhone() { var s2 = load('kesera-sos', {}); return String((s2 && s2.phone) || '').replace(/[^0-9]/g, ''); }
+    function famSub() { var p = famPhone(), nm = (load('kesera-sos', {}) || {}).name; $('safeFamSub').textContent = p ? ((nm ? nm + '　' : '') + '電話をかける') : '設定の「緊急連絡先」に、電話番号を入れてください'; }
+    famSub();
+    $('safeFam').addEventListener('click', function () {
+      var p = famPhone();
+      if (!p) { $('safeMsg').textContent = 'ご家族の電話番号が、まだ入っていません。「⚙ 設定」の「緊急連絡先」に入れてください。'; return; }
+      $('safeMsg').textContent = ''; window.location.href = 'tel:' + p;
+    });
+    $('sosphone').addEventListener('input', famSub);
+  })();
+
+  function haversine(a, b, c, d) { var R = 6371, t = Math.PI / 180, dl = (c - a) * t, dg = (d - b) * t, x = Math.sin(dl / 2) * Math.sin(dl / 2) + Math.cos(a * t) * Math.cos(c * t) * Math.sin(dg / 2) * Math.sin(dg / 2); return 2 * R * Math.asin(Math.sqrt(x)); }
+  var tyAlerts = [], wnAlerts = [];
+  function setLive() { liveAlerts = tyAlerts.concat(wnAlerts); renderAlerts(); }
+  function nowLabel(s) { var m = /(\d{4})-(\d\d)-(\d\d)T(\d\d):(\d\d)/.exec(s || ''); return m ? (+m[2]) + '月' + (+m[3]) + '日' + (+m[4]) + '時ごろ' : ''; }
+  function loadTyphoon() {
+    var ll = PREF_LL[$('wxPref').value]; if (!ll) return;
+    fetch('https://www.jma.go.jp/bosai/typhoon/data/targetTc.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (list) {
+      list = (Array.isArray(list) ? list : []).filter(function (t) { return t && t.tropicalCyclone && /^[A-Za-z0-9]+$/.test(t.tropicalCyclone); });
+      return Promise.all(list.map(function (t) {
+        return fetch('https://www.jma.go.jp/bosai/typhoon/data/' + t.tropicalCyclone + '/specifications.json', { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (sp) { return { t: t, sp: sp }; }).catch(function () { return null; });
+      }));
+    }).then(function (res) {
+      tyAlerts = []; var lines = [];
+      res.filter(Boolean).forEach(function (x) {
+        var sp = x.sp, head = sp[0] || {}, pts = sp.slice(1).filter(function (p) { return p && p.position && p.position.deg; });
+        if (!pts.length) return;
+        var cur = pts[0], num = parseInt(String(head.typhoonNumber || x.t.typhoonNumber || '').slice(-2), 10);
+        var nm = isNaN(num) ? '台風' : '台風' + num + '号';
+        var dcur = haversine(ll[0], ll[1], cur.position.deg[0], cur.position.deg[1]);
+        var best = null; pts.forEach(function (p) { if ((p.advancedHours || 0) > 72) return; var dd = haversine(ll[0], ll[1], p.position.deg[0], p.position.deg[1]); if (!best || dd < best.d) best = { d: dd, p: p }; });
+        if (!best) best = { d: dcur, p: cur };
+        var near = Math.round(best.d / 10) * 10, curKm = Math.round(dcur / 10) * 10;
+        var strength = (cur.intensity && cur.intensity !== '-' ? cur.intensity : '') + ((cur.scale) ? '・' + cur.scale : '');
+        var where = cur.location ? cur.location + 'にいます' : 'います';
+        var info = nm + (strength ? '（' + strength + '）' : '') + 'が、' + where + '。お住まいの' + (prefName() || '地域') + 'からは、いま約' + curKm + 'kmです。';
+        var mw = cur.maximumWind && cur.maximumWind.sustained && cur.maximumWind.sustained['m/s'];
+        var detail = (cur.pressure ? '中心気圧 ' + cur.pressure + 'hPa' : '') + (mw ? '、最大風速 ' + mw + 'm/s' : '') + (cur.course && cur.course !== '-' ? '、' + cur.course + 'へ進んでいます' : '');
+        var level = best.d < 300 ? 'danger' : (best.d < 800 ? 'warn' : '');
+        if (level) {
+          var when = nowLabel(best.p.validtime && best.p.validtime.JST);
+          lines.push('🌀 ' + nm + 'が近づいています。最も近づくのは、' + when + '、約' + near + 'kmの見込みです。');
+          tyAlerts.push({ id: 'ty-' + (x.t.tropicalCyclone) + '-' + today + '-' + level, kind: 'typhoon', level: level, help: true,
+            title: nm + 'が近づいています',
+            body: info + (detail ? detail + '。' : '') + 'お住まいに最も近づくのは、' + when + '（約' + near + 'km）の見込みです。' + ADVICE.typhoon[1].replace('台風が近づいています。', '') + '電車・バス・飛行機は、止まることがあります。「交通機関の運行情報」で確かめてください。',
+            url: 'https://www.jma.go.jp/bosai/map.html#contents=typhoon' });
+        } else {
+          lines.push('🌀 ' + nm + 'が発生していますが、いまのところ、お住まいの地域には、近づかない見込みです。');
+        }
+      });
+      var tl = $('tyLine'); tl.hidden = !lines.length; tl.textContent = lines.join(' ');
+      setLive();
+    }).catch(function () {});
+  }
+  var WN_NAME = { '02': '暴風雪警報', '03': '大雨警報', '04': '洪水警報', '05': '暴風警報', '06': '大雪警報', '07': '波浪警報', '08': '高潮警報', '14': '雷注意報', '32': '暴風雪特別警報', '33': '大雨特別警報', '35': '暴風特別警報', '36': '大雪特別警報', '37': '波浪特別警報', '38': '高潮特別警報' };
+  function loadWarnings() {
+    var code = $('wxPref').value;
+    fetch('https://www.jma.go.jp/bosai/warning/data/warning/' + code + '.json', { cache: 'no-store' }).then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (j) {
+      var found = {}; ((j.areaTypes && j.areaTypes[0] && j.areaTypes[0].areas) || []).forEach(function (a) { (a.warnings || []).forEach(function (w) { if (WN_NAME[w.code] && (w.status === '発表' || w.status === '継続')) found[w.code] = true; }); });
+      wnAlerts = []; var url = 'https://www.jma.go.jp/bosai/warning/#area_type=class20s&area_code=' + code;
+      var sp = Object.keys(found).filter(function (c) { return /^3[2-8]$/.test(c); }), wr = Object.keys(found).filter(function (c) { return /^0[2-8]$/.test(c); });
+      var pn = prefName() || 'お住まいの県';
+      if (sp.length) wnAlerts.push({ id: 'wn-sp-' + today, kind: 'rain', level: 'danger', help: true, title: pn + 'に、特別警報が出ています', body: sp.map(function (c) { return WN_NAME[c]; }).join('、') + 'が出ています。命を守る行動が必要な、非常に危険な状態です。市町村の避難の情報に従い、すぐに安全を確保してください。', url: url });
+      if (wr.length) wnAlerts.push({ id: 'wn-wr-' + wr.join('') + '-' + today, kind: 'rain', level: 'danger', help: true, title: pn + 'に、警報が出ています', body: wr.map(function (c) { return WN_NAME[c]; }).join('、') + 'が出ています。' + (found['03'] ? '大雨のときは、線状降水帯が発生していないかも、気象庁の情報で確かめてください。' : '') + '川、崖、低い土地には近づかず、市町村の避難の情報に従ってください。', url: url });
+      if (found['14']) wnAlerts.push({ id: 'wn-th-' + today, kind: 'rain', level: 'warn', title: pn + 'に、雷注意報が出ています', body: '空が暗くなる、雷の音が聞こえたら、すぐに建物の中に入ってください。木の下や、開けた場所は、あぶないです。', url: url });
+      setLive();
+    }).catch(function () { wnAlerts = []; setLive(); });
+  }
+  function loadLive() { loadTyphoon(); loadWarnings(); }
+  loadLive(); setInterval(loadLive, 30 * 60 * 1000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) loadLive(); });
+  $('wxPref').addEventListener('change', loadLive);
   renderWxIcon();
   renderSun(); updateNews();
   loadWeather();
