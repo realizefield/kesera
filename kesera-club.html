@@ -388,12 +388,33 @@ button[aria-pressed="true"] { font-weight:700; }
 .safe-btn { display:flex; flex-direction:column; align-items:flex-start; gap:2px; min-height:64px; text-align:left; justify-content:center; font-size:1.1rem; }
 .safe-btn span { font-size:.92rem; font-weight:400; }
 @media (min-width:560px) { .safe-grid { grid-template-columns:1fr 1fr; } }
+.odd-q { display:flex; gap:12px; align-items:flex-start; border:1.5px solid var(--line); border-radius:10px; padding:12px; font-size:1.08rem; line-height:1.5; background:var(--surface); }
+.odd-q input { width:28px; height:28px; flex:none; margin-top:2px; }
+.odd-big { width:100%; min-height:76px; font-size:1.35rem; font-weight:700; border-radius:14px; border:3px solid #b3261e; background:#b3261e; color:#fff; box-shadow:0 3px 12px #0003; cursor:pointer; }
+.odd-res { border-radius:12px; padding:14px; font-size:1.1rem; line-height:1.7; }
+.odd-res.bad { border:3px solid #b3261e; background:#fdeceb; color:#4a0d09; }
+.odd-res.ok { border:2px solid var(--line); background:var(--surface); }
 .float-home { position:fixed; top:10px; right:10px; z-index:60; min-height:46px; padding:8px 16px; border-radius:999px; border:2px solid var(--accent); background:var(--surface); color:var(--accent); font-weight:700; font-size:1rem; box-shadow:0 3px 12px #0003; }
 .float-home[hidden] { display:none; }
 </style></head><body>
 
 <canvas id="petals" aria-hidden="true"></canvas>
 <dialog class="design-dialog location-dialog" id="memoDlg" aria-labelledby="memoDlgT"><div style="display:flex;flex-direction:column;gap:12px;padding:6px"><h2 id="memoDlgT" style="margin:0">📅 予約した予定の一覧</h2><div id="memoDlgList" style="display:flex;flex-direction:column;gap:8px;max-height:55vh;overflow-y:auto"></div><button class="btn primary" id="memoDlgClose" type="button" style="min-height:56px;font-size:1.1rem">閉じる</button></div></dialog>
+<dialog class="design-dialog location-dialog" id="oddDlg" aria-labelledby="oddT"><div style="display:flex;flex-direction:column;gap:12px;padding:6px">
+<h2 id="oddT" style="margin:0">🤔 おかしい？と思ったら</h2>
+<p style="margin:0;font-weight:700">電話の最中なら、いったん「少し待ってください」と言って、ここを見てください。当てはまるものに、チェックを入れてください。</p>
+<div id="oddQs" style="display:flex;flex-direction:column;gap:8px">
+<label class="odd-q"><input type="checkbox" name="odd"><span>お金を、振り込む・渡すように言われた</span></label>
+<label class="odd-q"><input type="checkbox" name="odd"><span>ATM（銀行の機械）に行くように言われた</span></label>
+<label class="odd-q"><input type="checkbox" name="odd"><span>キャッシュカード・通帳・暗証番号を、渡す・教えるように言われた</span></label>
+<label class="odd-q"><input type="checkbox" name="odd"><span>「急いで」「今日中に」「すぐに」と言われた</span></label>
+<label class="odd-q"><input type="checkbox" name="odd"><span>「誰にも言わないで」「家族に黙って」と言われた</span></label>
+<label class="odd-q"><input type="checkbox" name="odd"><span>息子・孫・警察・銀行・市役所・税務署などを名のるが、確かめられない</span></label>
+<label class="odd-q"><input type="checkbox" name="odd"><span>「口座が犯罪に使われた」「未払いがある」「還付金がある」と言われた</span></label>
+</div>
+<button class="btn primary" id="oddJudge" type="button" style="min-height:56px;font-size:1.15rem">確かめる</button>
+<div id="oddResult" role="alert" style="display:flex;flex-direction:column;gap:10px"></div>
+<button class="btn" id="oddClose" type="button" style="min-height:52px">閉じる</button></div></dialog>
 <button id="memoBar" class="memo-bar" type="button" hidden aria-live="polite"></button>
 <button id="floatHome" class="float-home" type="button" data-go="home" hidden>🏠 ホームへ</button>
 
@@ -410,6 +431,7 @@ button[aria-pressed="true"] { font-weight:700; }
   <!-- ホーム -->
   <section class="view" id="v-home" aria-label="ホーム">
     <div class="welcome"><h1 class="logo-h1"><img src="logo-kesera.png?v=20261018" alt="ケセラ　毎日に、小さな楽しみを。" onerror="this.outerHTML='ケセラ'"></h1><p>あなたのペースで、今日の「したいこと」を。</p></div>
+    <button class="odd-big" id="oddBtn" type="button" aria-haspopup="dialog">🤔 おかしい？と思ったら、ここを押す</button>
     <div class="card memo-due" id="memoDue" hidden role="alert"><h2>📌 きょうの うっかりメモ・予定</h2><div id="memoDueList"></div></div>
     <div class="card greet">
       <h2 id="greet"></h2>
@@ -3580,6 +3602,44 @@ button[aria-pressed="true"] { font-weight:700; }
   loadLive(); setInterval(loadLive, 30 * 60 * 1000);
   document.addEventListener('visibilitychange', function () { if (!document.hidden) loadLive(); });
   $('wxPref').addEventListener('change', loadLive);
+
+  /* ---------- おかしい？ボタン ---------- */
+  (function () {
+    var dlg = $('oddDlg');
+    function openOdd() {
+      Array.prototype.forEach.call(document.getElementsByName('odd'), function (c) { c.checked = false; });
+      $('oddResult').innerHTML = '';
+      if (dlg.showModal) { if (!dlg.open) dlg.showModal(); } else dlg.setAttribute('open', '');
+    }
+    function tel(label, num, primary) { var a = document.createElement('a'); a.className = 'btnlink' + (primary ? ' primary' : ''); a.href = 'tel:' + num; a.textContent = label; a.style.minHeight = '56px'; a.style.justifyContent = 'center'; a.style.fontSize = '1.1rem'; return a; }
+    $('oddBtn').addEventListener('click', openOdd);
+    $('oddClose').addEventListener('click', function () { if (dlg.close) dlg.close(); else dlg.removeAttribute('open'); });
+    $('oddJudge').addEventListener('click', function () {
+      var n = 0; Array.prototype.forEach.call(document.getElementsByName('odd'), function (c) { if (c.checked) n++; });
+      var box = $('oddResult'); box.innerHTML = '';
+      var res = document.createElement('div'); res.className = 'odd-res ' + (n ? 'bad' : 'ok');
+      var s2 = load('kesera-sos', {}) || {}, ph = String(s2.phone || '').replace(/[^0-9]/g, '');
+      if (n) {
+        res.innerHTML = '<b style="font-size:1.25rem">⚠ 詐欺の可能性が高いです。</b><br>いま、電話を切ってください。お金・カード・暗証番号は、渡さないでください。<br>あとで、元から知っている番号に、かけ直して確かめてください。';
+        box.appendChild(res);
+        box.appendChild(tel('🚨 警察（110）に電話', '110', true));
+        box.appendChild(tel('🤔 警察に相談する（#9110）', '%239110', false));
+        if (ph) box.appendChild(tel('👪 ご家族に電話' + (s2.name ? '（' + s2.name + '）' : ''), ph, true));
+        var d = new Date(), when = (d.getMonth() + 1) + '月' + d.getDate() + '日 ' + d.getHours() + '時' + (d.getMinutes() < 10 ? '0' : '') + d.getMinutes() + '分';
+        var body = 'いま（' + when + '）、あやしい電話がありました。ケセラの「おかしい？」で確かめたら、詐欺の可能性が高いと出ました。お金は渡していません。あとで連絡します。';
+        var m = document.createElement('a'); m.className = 'btnlink'; m.style.minHeight = '56px'; m.style.justifyContent = 'center'; m.style.fontSize = '1.1rem';
+        m.href = 'mailto:' + (s2.mail || '') + '?subject=' + encodeURIComponent('【ケセラ】あやしい電話がありました') + '&body=' + encodeURIComponent(body);
+        m.textContent = '✉ ご家族にメールで知らせる（内容を見てから送れます）'; box.appendChild(m);
+        if (!ph) { var t = document.createElement('p'); t.className = 'muted'; t.textContent = '「⚙ 設定」の「緊急連絡先」に、ご家族の電話番号とメールを入れておくと、ここから、すぐに連絡できます。'; box.appendChild(t); }
+      } else {
+        res.innerHTML = '<b>あやしい点は、選ばれていません。</b><br>でも、「安全です」とは言い切れません。少しでも不安なら、いったん電話を切って、ご家族か、警察相談（#9110）に聞いてください。<br><b>お金の話が出たら、必ず、いったん切りましょう。</b>';
+        box.appendChild(res);
+        box.appendChild(tel('🤔 警察に相談する（#9110）', '%239110', false));
+        if (ph) box.appendChild(tel('👪 ご家族に電話', ph, false));
+      }
+      try { res.scrollIntoView({ block: 'nearest' }); } catch (e) {}
+    });
+  })();
   renderWxIcon();
   renderSun(); updateNews();
   loadWeather();
