@@ -394,6 +394,8 @@ button[aria-pressed="true"] { font-weight:700; }
 .odd-res { border-radius:12px; padding:14px; font-size:1.1rem; line-height:1.7; }
 .odd-res.bad { border:3px solid #b3261e; background:#fdeceb; color:#4a0d09; }
 .odd-res.ok { border:2px solid var(--line); background:var(--surface); }
+.readbar { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 8px; }
+.readbar .btn { min-height:48px; font-size:1.02rem; }
 .float-home { position:fixed; top:10px; right:10px; z-index:60; min-height:46px; padding:8px 16px; border-radius:999px; border:2px solid var(--accent); background:var(--surface); color:var(--accent); font-weight:700; font-size:1rem; box-shadow:0 3px 12px #0003; }
 .float-home[hidden] { display:none; }
 </style></head><body>
@@ -3100,7 +3102,6 @@ button[aria-pressed="true"] { font-weight:700; }
       window.speechSynthesis.speak(u);
     } catch (er) { gStop(); }
   }
-  $('gspeak').addEventListener('click', speakGuide);
   $('gauto').addEventListener('click', function () {
     gAuto = !gAuto; this.setAttribute('aria-pressed', String(gAuto));
     if (gAuto) speakGuide(); else { try { window.speechSynthesis.cancel(); } catch (er) {} gStop(); }
@@ -3640,6 +3641,71 @@ button[aria-pressed="true"] { font-weight:700; }
       try { res.scrollIntoView({ block: 'nearest' }); } catch (e) {}
     });
   })();
+
+  /* ---------- 画面を読み上げる・もう一度聞く ---------- */
+  var lastRead = '';
+  var SKIP_TAG = { BUTTON: 1, SELECT: 1, TEXTAREA: 1, INPUT: 1, SCRIPT: 1, STYLE: 1, svg: 1, SVG: 1, IMG: 1, IFRAME: 1, NOSCRIPT: 1, DIALOG: 1, OPTION: 1, VIDEO: 1, AUDIO: 1 };
+  var BLOCK_TAG = { P: 1, LI: 1, H1: 1, H2: 1, H3: 1, H4: 1, DIV: 1, SUMMARY: 1, LABEL: 1, TR: 1, BR: 1, SECTION: 1 };
+  function collect(el, out, isRoot) {
+    if (!el || el.nodeType !== 1) return;
+    if (!isRoot && (SKIP_TAG[el.tagName] || el.hidden || el.getAttribute('aria-hidden') === 'true' || (el.classList && el.classList.contains('readbar')))) return;
+    try { var cs = getComputedStyle(el); if (cs.display === 'none' || cs.visibility === 'hidden') return; } catch (e) {}
+    var par = el.parentElement;
+    if (par && par.tagName === 'DETAILS' && !par.open && el.tagName !== 'SUMMARY') return;
+    for (var n = el.firstChild; n; n = n.nextSibling) {
+      if (n.nodeType === 3) { var t = n.nodeValue.replace(/\s+/g, ' ').trim(); if (t) out.push(t); }
+      else if (n.nodeType === 1) collect(n, out, false);
+    }
+    if (BLOCK_TAG[el.tagName] && out.length && !/[。！？!?]$/.test(out[out.length - 1])) out.push('。');
+  }
+  function textOf(el) { var o = []; collect(el, o, true); return o.join('').replace(/。+/g, '。').replace(/\s+/g, ' '); }
+  function screenText() {
+    var parts = [], al = $('alerts'); if (al && al.children.length) parts.push('お知らせです。' + textOf(al));
+    var v = null; (views || []).forEach(function (x) { if (!$('v-' + x).hidden) v = x; });
+    if (v === 'home') { ['memoDue'].forEach(function (id) { if (!$(id).hidden) parts.push(textOf($(id))); }); var g = document.querySelector('#v-home .greet'); if (g) parts.push(textOf(g)); }
+    else if (v) parts.push(textOf($('v-' + v)));
+    parts.push($('gtext').textContent);
+    return parts.join('。');
+  }
+  function readAloud(text) {
+    text = String(text || '').trim(); if (!text) return;
+    lastRead = text;
+    if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') { try { gStart(); setTimeout(gStop, 2500); } catch (e) {} return; }
+    try {
+      window.speechSynthesis.cancel();
+      var chunks = [], cur = '';
+      text.split(/(?<=[。！？!?])/).forEach(function (s) { if ((cur + s).length > 90 && cur) { chunks.push(cur); cur = s; } else cur += s; }); if (cur) chunks.push(cur);
+      var rate = Number($('voiceRate') && $('voiceRate').value) || 1, jv = jaVoice();
+      chunks.forEach(function (c, i) {
+        var u = new SpeechSynthesisUtterance(c); u.lang = 'ja-JP'; u.rate = rate; u.pitch = 1.1; if (jv) u.voice = jv;
+        if (i === 0) u.onstart = function () { try { gStart(); } catch (e) {} };
+        if (i === chunks.length - 1) { u.onend = function () { try { gStop(); } catch (e) {} }; u.onerror = u.onend; }
+        window.speechSynthesis.speak(u);
+      });
+    } catch (er) { try { gStop(); } catch (e) {} }
+  }
+  function readStop() { try { window.speechSynthesis.cancel(); gStop(); } catch (e) {} }
+  function readBar(getText) {
+    var bar = document.createElement('div'); bar.className = 'readbar';
+    function b(label, fn) { var x = document.createElement('button'); x.type = 'button'; x.className = 'btn'; x.textContent = label; x.addEventListener('click', fn); bar.appendChild(x); }
+    b('🔊 声で聞く', function () { readAloud(getText()); });
+    b('↻ もう一度聞く', function () { readAloud(lastRead || getText()); });
+    b('■ とめる', readStop);
+    return bar;
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('dialog'), function (dg) {
+    var inner = dg.firstElementChild && dg.firstElementChild.tagName === 'DIV' ? dg.firstElementChild : dg;
+    var first = inner.firstElementChild; if (first && first.tagName === 'FORM') { first = first.firstElementChild; inner = inner.firstElementChild; }
+    inner.insertBefore(readBar(function () { return textOf(dg); }), inner.firstChild);
+    dg.addEventListener('close', readStop);
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('section.view'), function (sec) {
+    if (sec.id === 'v-home' || sec.id === 'v-dress') return;
+    var k = sec.firstElementChild; sec.insertBefore(readBar(function () { return screenText(); }), k && k.nextSibling);
+  });
+  $('gspeak').textContent = '🔊 声で聞く';
+  $('gspeak').addEventListener('click', function () { readAloud(screenText()); });
+  (function () { var r = document.createElement('button'); r.className = 'btn small'; r.id = 'grepeat'; r.type = 'button'; r.textContent = '↻ もう一度聞く'; r.addEventListener('click', function () { readAloud(lastRead || screenText()); }); $('gspeak').insertAdjacentElement('afterend', r); })();
   renderWxIcon();
   renderSun(); updateNews();
   loadWeather();
