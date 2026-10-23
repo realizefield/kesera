@@ -270,6 +270,15 @@ article .check h2 { border-bottom-color: var(--green); }
 .helpcard h2 { font-size:21px; color:var(--seal); margin-bottom:6px; } .helpcard p { margin:0 0 12px; line-height:1.8; }
 .helpbtns { display:grid; gap:10px; } .klink.alt { background:var(--surface); color:var(--green); border:2px solid var(--green); }
 .helpbtns .klink { display:flex; align-items:center; justify-content:center; line-height:1.3; min-height:56px; text-decoration:none; text-align:center; box-sizing:border-box; }
+.kbtn { display:flex; flex-direction:column; gap:2px; margin:0 0 18px; padding:14px 18px; border-radius:12px; background:#a4335a; color:#fff; text-decoration:none; min-height:64px; justify-content:center; }
+.kbtn b { font-family:var(--display); font-size:21px; } .kbtn span { font-size:15px; }
+.kp { font-size:20px; line-height:1.8; margin:8px 0; }
+.kadenadv { margin:0 0 12px; padding:14px 16px; border-radius:12px; border:2px solid var(--green); background:var(--green-soft); }
+.kadenadv h3 { margin:0 0 6px; font-size:20px; color:var(--green); }
+.kadenadv ul { list-style:none; margin:0; padding:0; } .kadenadv li { padding:8px 0; border-top:1px solid var(--line); line-height:1.7; } .kadenadv li:first-child { border-top:0; }
+.kadenadv li b { display:block; font-size:18px; } .kadenadv li span { font-size:16px; }
+.kadenadv .kn { margin:8px 0 0; font-size:15px; color:var(--muted); }
+.advl { margin-top:0; } .adv { margin-bottom:0; }
 .vids { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 10px; }
 .vlink {
   display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 12px; align-items: center;
@@ -1623,13 +1632,41 @@ const MECH = {
   '低温調理器': 'お湯の温度を一定に保ち、肉を低い温度で、ゆっくり加熱します。肉のたんぱく質は、高温になると縮んで、かたくなります。60℃台で加熱すると、縮みすぎず、しっとり仕上がります。'
 };
 
+
+const ADV = {
+  '電気圧力鍋': ['火のそばに、ずっといなくてもよく、ほったらかしにできます。', 'かたまり肉や根菜が、短い時間でやわらかくなります。', '味がしみ込みやすく、煮込み料理がおいしくできます。', 'タイマーや保温があり、火の消し忘れの心配が少なくなります。'],
+  'ノンフライヤー（エアフライヤー）': ['油を使わないので、四毒抜きに合います。', '食材の脂が落ちて、あっさり仕上がります。', '揚げ油の後始末がいりません。', '焼き色がきれいにつき、冷めた料理の温め直しもカリッとします。'],
+  'ホットプレート': ['食卓で調理でき、できたてを食べられます。', '家族で囲むと、会話が弾みます。', '温度が調節でき、油なしでも焼けます。'],
+  '電子レンジ（オーブンレンジ）': ['温め・解凍が早く、少量でも手軽です。', '火を使わないので、安心です。', '洗い物が少なくてすみます。', '野菜の下ごしらえが、すぐにできます。'],
+  '電気ケトル': ['すぐにお湯が沸き、時間が節約できます。', '沸くと自動で止まるので、安全です。', '必要な量だけ沸かせます。'],
+  'フードプロセッサー': ['みじん切りが、あっという間にできます。', '玉ねぎで涙が出ず、手や目も疲れません。', 'ひき肉づくりや、つくねの下ごしらえが楽になります。'],
+  'ハンドブレンダー': ['鍋の中で、そのまま使えるので、洗い物が少なくてすみます。', 'なめらかになり、食べやすいスープができます。', '野菜をたっぷり、食べやすくできます。'],
+  '炊飯器': ['ほったらかしで炊けます。', '予約や保温ができます。', '玄米モードや、煮物・蒸しのモードがあるものもあります。'],
+  '食品乾燥機': ['天気に関係なく、干し野菜が作れます。', '干すと、うまみが濃くなります。', '保存ができて、食材をむだにしません。'],
+  '低温調理器': ['温度を一定に保つので、失敗が少なくなります。', '肉が、しっとりやわらかく仕上がります。', 'ほったらかしでできます。']
+};
+const KADEN_ADV = [
+  ['時間が節約できる', '煮込み、お湯を沸かす、みじん切りなどが、短い時間でできます。'],
+  ['ほったらかしにできる', 'タイマーで、火のそばに、ずっといなくてもよくなります。'],
+  ['火の心配が少ない', '自動で止まる機能があり、火の消し忘れの不安が減ります。'],
+  ['失敗が少ない', '温度や時間が一定なので、毎回、同じ味に近づきます。'],
+  ['油を使わない料理がしやすい', 'ノンフライヤーなどで、四毒抜きの料理の幅が広がります。'],
+  ['後片付けが楽', '洗い物が少なく、体の負担が減ります。']
+];
+
 function amazonUrl(q) { return 'https://www.amazon.co.jp/s?k=' + encodeURIComponent(q); }
+function kadenIntro() {
+  return '<div class="kadenadv"><h3>家電を使う6つの利点</h3><ul>' +
+    KADEN_ADV.map(function (a) { return '<li><b>' + a[0] + '</b><span>' + a[1] + '</span></li>'; }).join('') +
+    '</ul><p class="kn">気をつける点：置き場所、電気代、お手入れがいります。説明書の使用量や使い方を守ってください。</p></div>';
+}
 function renderDougu() {
   app.className = 'wrap has-bar';
   var sections = ['基本の道具', '調理家電'].map(function (gname) {
-    return '<h2 class="hi-h">' + gname + '</h2>' + DOUGU.filter(function (d) { return d.g === gname; }).map(function (d) {
+    return '<h2 class="hi-h">' + gname + '</h2>' + (gname === '調理家電' ? kadenIntro() : '') + DOUGU.filter(function (d) { return d.g === gname; }).map(function (d) {
       return '<details class="dg"><summary><span class="dn">' + d.n + '</span><span class="dl lvl-' + d.lv.length + '">' + d.lv + '</span></summary><div class="dgb">' +
         '<p><b>どんなときに？</b><br>' + d.why + '</p>' +
+        (ADV[d.n] ? '<p class="adv"><b>✅ 利点</b></p><ul class="tips advl">' + ADV[d.n].map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ul>' : '') +
         '<p><b>選ぶポイント</b><br>' + d.pick + '</p>' +
         (MECH[d.n] ? '<p class="mech"><b>🔍 どうしてそうなる？（しくみ）</b><br>' + MECH[d.n] + '</p>' : '') +
         (d.ex ? '<p><b>できる料理の例</b></p><ul class="tips">' + d.ex.map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ul>' : '') +
@@ -1752,7 +1789,7 @@ function renderList() {
         YODOKU.map(function (y) { return '<figure>' + seal(y[0], 60) + '<figcaption>' + y[1] + '</figcaption></figure>'; }).join('') +
       '</div>' +
     '</header>' +
-    homeTiles() +
+    homeTiles() + keseraBtn() +
     '<nav class="filters" aria-label="料理の種類">' +
       CATS.map(function (c) { return '<button type="button" class="chip" aria-pressed="' + (c === cat) + '" data-act="cat" data-v="' + c + '">' + c + '</button>'; }).join('') +
     '</nav>' +
@@ -1763,7 +1800,7 @@ function renderList() {
           '<p class="sub"><span class="lv lv-' + r.lv + '">' + r.lv + '</span>　' + r.cat + '　' + r.time + '　' + r.base + r.unit + '</p>' +
           '<p class="desc">' + r.lead + '</p></a></li>';
       }).join('') +
-    '</ul>' + helpCard();
+    '</ul>' + helpCard() + kpop();
 }
 
 function isSeason(g) {
@@ -2373,7 +2410,7 @@ function renderMember() {
     '<section class="gpriv"><h2>退会する</h2><p>退会すると、会員の中の記録が消えます（この端末の中の記録は残ります）。合言葉を入れてください。</p>' +
     field('mDelPass', '合言葉', 'password') +
     '<button type="button" class="hdel" data-act="mdel">退会する</button><p class="made-msg" id="mmsg" role="alert"></p></section>' +
-    helpCard() +
+    keseraBtn() + helpCard() +
     '<div class="bar"><button type="button" class="bar-btn" data-act="goto" data-v="list">← レシピ一覧へ</button></div>';
 }
 function memberBar() {
@@ -2411,6 +2448,24 @@ function helpCard() {
     '<div class="helpbtns"><a class="made-btn klink" href="https://kogenyobikou.jp/" target="_blank" rel="noopener noreferrer">江原予備校のホームページ</a>' +
     '<a class="made-btn klink alt" href="tel:0963826761">📞 電話 096-382-6761</a>' +
     '<a class="made-btn klink alt" href="mailto:kogen@coast.ocn.ne.jp">✉ メールで相談</a></div></section>';
+}
+
+/* ===== ケセラのご案内（ポップアップ） ===== */
+var kSeen = false;
+function kpopSeen() {
+  try { return kSeen || sessionStorage.getItem('yodoku-kpop') === '1'; } catch (e) { return kSeen; }
+}
+function kpopMark() { kSeen = true; try { sessionStorage.setItem('yodoku-kpop', '1'); } catch (e) {} }
+function keseraBtn() {
+  return '<a class="kbtn" href="' + KESERA_URL + '" target="_blank" rel="noopener noreferrer"><b>🌸 ケセラへ</b><span>50代・60代・70代・80代の、毎日のおともに</span></a>';
+}
+function kpop() {
+  return '<div class="pop" id="kpop"' + (kpopSeen() || FROM_KESERA ? ' hidden' : '') + ' data-act="kclose"><div class="pop-card" role="dialog" aria-modal="true" aria-labelledby="kpopTitle">' +
+    '<h2 id="kpopTitle">🌸 ケセラのご案内</h2>' +
+    '<p class="kp">ケセラは、50代・60代・70代・80代の、毎日の生活のおともです。<br><strong>きっとお役に立ちます。</strong></p>' +
+    '<p class="pop-sub">旬の花やおでかけ、健康、学び、毎日のお話し相手など、ささやかな楽しみをお届けします。</p>' +
+    '<a class="made-btn klink" href="' + KESERA_URL + '" target="_blank" rel="noopener noreferrer" data-act="kgo">ケセラへ</a>' +
+    '<button type="button" class="pop-close" data-act="kclose" style="margin-top:10px">あとで見る（とじる）</button></div></div>';
 }
 
 function route() {
@@ -2505,6 +2560,12 @@ app.addEventListener('click', function (e) {
     var p2 = document.getElementById('pop'); if (p2) p2.hidden = true; return;
   }
   if (act === 'back') { location.hash = 'list'; return; }
+  if (act === 'kclose' || act === 'kgo') {
+    if (act === 'kclose' && b.classList.contains('pop') && e.target !== b) return;
+    var kp = document.getElementById('kpop'); if (kp) kp.hidden = true;
+    kpopMark();
+    return;
+  }
   if (act === 'gmode') { gate.mode = b.getAttribute('data-v'); gate.msg = ''; renderGate(); return; }
   if (act === 'gsubmit') { gateSubmit(); return; }
   if (act === 'gdone') { gate.mode = 'in'; gate.rec = ''; route(); return; }
