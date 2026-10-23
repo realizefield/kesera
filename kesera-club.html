@@ -515,6 +515,13 @@ button[aria-pressed="true"] { font-weight:700; }
       <p class="muted">お使いのバス・電車の会社の公式ページでも、確認してください。</p>
     </div>
 
+    <div class="card" id="schoolCard">
+      <h2>🏫 学校の臨時休校の目安</h2>
+      <p id="schoolLine" style="font-weight:700;font-size:1.1rem;margin:0">確認しています…</p>
+      <p class="muted">学校ごとの臨時休校は、全国をまとめて見られる公式の情報がありません。ここの表示は、警報などから見た「目安」です。実際の休校は、お子さんやお孫さんの学校、市町村の教育委員会のお知らせ（メール配信・ホームページ）で、必ず確かめてください。</p>
+      <div class="row"><a class="btnlink" id="schoolSearch" href="https://news.yahoo.co.jp/search?p=%E8%87%A8%E6%99%82%E4%BC%91%E6%A0%A1&amp;ei=UTF-8" target="_blank" rel="noopener">🏫 臨時休校のニュースを探す</a></div>
+    </div>
+
     <div class="card trip-card">
       <h2>お出かけのお手伝い</h2><p class="muted">いまいる場所から、行きたい場所へ。</p>
       <div class="trip-modes">
@@ -3544,7 +3551,17 @@ button[aria-pressed="true"] { font-weight:700; }
 
   function haversine(a, b, c, d) { var R = 6371, t = Math.PI / 180, dl = (c - a) * t, dg = (d - b) * t, x = Math.sin(dl / 2) * Math.sin(dl / 2) + Math.cos(a * t) * Math.cos(c * t) * Math.sin(dg / 2) * Math.sin(dg / 2); return 2 * R * Math.asin(Math.sqrt(x)); }
   var tyAlerts = [], wnAlerts = [];
-  function setLive() { liveAlerts = tyAlerts.concat(wnAlerts); renderAlerts(); }
+
+  var wnSevere = '';
+  function schoolRender() {
+    var pn = prefName() || 'お住まいの県', el = $('schoolLine'); if (!el) return;
+    var ty = tyAlerts.length ? '台風が近づいています。' : '';
+    if (wnSevere) el.textContent = '⚠ ' + pn + 'に、' + wnSevere + 'が出ています。' + ty + '学校が臨時休校になっている地域があるかもしれません（目安です）。';
+    else if (ty) el.textContent = ty + '台風の接近で、学校が臨時休校になることがあります。学校や教育委員会のお知らせを、確かめてください。';
+    else el.textContent = 'いまのところ、休校の目安になる警報は、出ていません。';
+    $('schoolSearch').href = 'https://news.yahoo.co.jp/search?p=' + encodeURIComponent('臨時休校 ' + (prefName() || '')) + '&ei=UTF-8';
+  }
+  function setLive() { liveAlerts = tyAlerts.concat(wnAlerts); renderAlerts(); schoolRender(); }
   function nowLabel(s) { var m = /(\d{4})-(\d\d)-(\d\d)T(\d\d):(\d\d)/.exec(s || ''); return m ? (+m[2]) + '月' + (+m[3]) + '日' + (+m[4]) + '時ごろ' : ''; }
   function loadTyphoon() {
     var ll = PREF_LL[$('wxPref').value]; if (!ll) return;
@@ -3590,14 +3607,14 @@ button[aria-pressed="true"] { font-weight:700; }
     var code = $('wxPref').value;
     fetch('https://www.jma.go.jp/bosai/warning/data/warning/' + code + '.json', { cache: 'no-store' }).then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (j) {
       var found = {}; ((j.areaTypes && j.areaTypes[0] && j.areaTypes[0].areas) || []).forEach(function (a) { (a.warnings || []).forEach(function (w) { if (WN_NAME[w.code] && (w.status === '発表' || w.status === '継続')) found[w.code] = true; }); });
-      wnAlerts = []; var url = 'https://www.jma.go.jp/bosai/warning/#area_type=class20s&area_code=' + code;
+      wnAlerts = []; wnSevere = Object.keys(found).filter(function (c) { return c !== '14'; }).map(function (c) { return WN_NAME[c]; }).join('、'); var url = 'https://www.jma.go.jp/bosai/warning/#area_type=class20s&area_code=' + code;
       var sp = Object.keys(found).filter(function (c) { return /^3[2-8]$/.test(c); }), wr = Object.keys(found).filter(function (c) { return /^0[2-8]$/.test(c); });
       var pn = prefName() || 'お住まいの県';
       if (sp.length) wnAlerts.push({ id: 'wn-sp-' + today, kind: 'rain', level: 'danger', help: true, title: pn + 'に、特別警報が出ています', body: sp.map(function (c) { return WN_NAME[c]; }).join('、') + 'が出ています。命を守る行動が必要な、非常に危険な状態です。市町村の避難の情報に従い、すぐに安全を確保してください。', url: url });
       if (wr.length) wnAlerts.push({ id: 'wn-wr-' + wr.join('') + '-' + today, kind: 'rain', level: 'danger', help: true, title: pn + 'に、警報が出ています', body: wr.map(function (c) { return WN_NAME[c]; }).join('、') + 'が出ています。' + (found['03'] ? '大雨のときは、線状降水帯が発生していないかも、気象庁の情報で確かめてください。' : '') + '川、崖、低い土地には近づかず、市町村の避難の情報に従ってください。', url: url });
       if (found['14']) wnAlerts.push({ id: 'wn-th-' + today, kind: 'rain', level: 'warn', title: pn + 'に、雷注意報が出ています', body: '空が暗くなる、雷の音が聞こえたら、すぐに建物の中に入ってください。木の下や、開けた場所は、あぶないです。', url: url });
       setLive();
-    }).catch(function () { wnAlerts = []; setLive(); });
+    }).catch(function () { wnAlerts = []; wnSevere = ''; setLive(); });
   }
   function loadLive() { loadTyphoon(); loadWarnings(); }
   loadLive(); setInterval(loadLive, 30 * 60 * 1000);
