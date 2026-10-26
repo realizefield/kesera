@@ -394,6 +394,7 @@ button[aria-pressed="true"] { font-weight:700; }
 .up-d{border:2px solid var(--line,#d9c9cf);border-radius:12px;background:var(--surface,#fff);overflow:hidden}.up-d>summary{cursor:pointer;padding:14px;font-weight:700;font-size:1.1rem;min-height:52px;display:flex;align-items:center}.up-d[open]>summary{background:#fbeff3}.up-c{padding:12px 14px;display:flex;flex-direction:column;gap:10px;border-top:1px solid #0001}.up-c ol,.up-c ul{margin:0;padding-left:1.3em;line-height:1.8}.up-big{font-size:2rem;font-weight:700;text-align:center;letter-spacing:.2em;padding:10px}.up-c input{min-height:52px;font-size:1.2rem;width:100%;box-sizing:border-box}.ml-i{display:flex;gap:8px;align-items:center;border:1px solid #0002;border-radius:10px;padding:6px 10px;min-height:52px}.ml-i.done span{text-decoration:line-through;opacity:.55}.ml-i span{flex:1;font-size:1.1rem}
 #vcCard textarea,#vcCard input{width:100%;box-sizing:border-box;font-size:1.05rem;min-height:52px;font-family:inherit}
 .mm-stars{display:flex;gap:4px}.mm-stars button{font-size:2rem;line-height:1;min-width:52px;min-height:52px;border:0;background:none;cursor:pointer;color:#c9b8be}.mm-stars button.on{color:#e0a100}
+.dj-i{display:flex;gap:8px;align-items:center;border:2px solid var(--line,#d9c9cf);border-radius:12px;padding:10px;background:var(--surface,#fff)}.dj-i .dj-n{font-size:1.4rem;font-weight:700;min-width:2em;text-align:center}.dj-i .dj-t{flex:1;font-size:1.1rem;line-height:1.5}.dj-i .btn{min-height:52px}
 .sos-row{display:flex;gap:8px;align-items:stretch}.sos-row .odd-big{flex:1;width:auto}.sos-mini{flex:0 0 auto;min-width:84px;min-height:52px;border:0;border-radius:12px;background:#fff;color:#b3261e;border:3px solid #b3261e;font-size:1.3rem;font-weight:700;line-height:1.1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}.sos-mini small{font-size:.78rem}#sosDlg #safeCard{border:0!important;margin:0;padding:0;box-shadow:none}
 .odd-big { width:100%; min-height:76px; font-size:1.35rem; font-weight:700; border-radius:14px; border:3px solid #b3261e; background:#b3261e; color:#fff; box-shadow:0 3px 12px #0003; cursor:pointer; }
 .odd-res { border-radius:12px; padding:14px; font-size:1.1rem; line-height:1.7; }
@@ -591,6 +592,7 @@ button[aria-pressed="true"] { font-weight:700; }
         <button class="pgt" type="button" data-go="mania"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6l5 11 12 1-9 8 3 12-11-7-11 7 3-12-9-8 12-1z"/></svg><span>マニアージュ</span></button>
         <button class="pgt" type="button" data-go="laugh"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="18"/><path d="M14 20c2-3 6-3 8 0M26 20c2-3 6-3 8 0"/><path d="M13 28h22c0 7-5 11-11 11s-11-4-11-11z"/></svg><span>笑ってすっきり！</span></button>
         <button class="pgt" type="button" data-go="album"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="12" width="38" height="28" rx="4"/><circle cx="24" cy="26" r="8"/><path d="M16 12l3-5h10l3 5"/></svg><span>思い出の記録</span></button>
+        <button class="pgt" type="button" data-go="dajare"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10h36v22H24l-8 8v-8H6z"/><path d="M15 19h18M15 25h10"/></svg><span>ダジャレバトル</span></button>
         <button class="pgt" type="button" data-go="flower"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="9" r="5"/><circle cx="34" cy="17" r="5"/><circle cx="30" cy="28" r="5"/><circle cx="18" cy="28" r="5"/><circle cx="14" cy="17" r="5"/><circle cx="24" cy="20" r="3"/><path d="M24 33v11"/></svg><span>花の見どころ</span></button>
         <button class="pgt" type="button" data-go="learn"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 12c-4-3-10-4-16-3v27c6-1 12 0 16 3 4-3 10-4 16-3V9c-6-1-12 0-16 3zM24 12v27"/></svg><span>学ぶ</span></button>
         <button class="pgt" type="button" data-go="move"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="30" cy="9" r="4"/><path d="M28 15l-6 11 8 6-3 11M22 26l-8 2M26 20l10 2M22 26l-6 14"/></svg><span>動く</span></button>
@@ -963,6 +965,31 @@ button[aria-pressed="true"] { font-weight:700; }
       <div class="row" id="shAct" style="display:none"></div>
       <p class="fl-sub" style="margin:0">保険証・お薬は、持ち物の確認です。番号などは、書かなくて大丈夫です。体調がいちばん。いつもと違うときは、予定を、やめてかまいません。</p></div></details>
     <p class="fl-sub">写真・動画は、この端末のなかだけに、保存されます。ブラウザの「サイトデータ」を消すと、消えてしまうので、大切な写真は、携帯のアルバムにも、残してください。動画は、20MBまでです。</p>
+  </section>
+
+  <section class="view" id="v-dajare" hidden aria-label="ダジャレバトル">
+    <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
+    <h2>😆 ダジャレバトル</h2>
+    <p class="muted">ダジャレを作って、投稿して、「共感」を集めましょう。共感の多い順に、ランキングされます。</p>
+    <details class="up-d" id="djSusume" open><summary>📖 ダジャレのススメ</summary><div class="up-c">
+      <b>なぜ、ダジャレ？</b>
+      <ul><li>声に出して、笑うと、気持ちが軽くなります。</li><li>音の似たことばを探すのは、頭の体操になります。</li><li>ひとこと添えるだけで、会話が、はずみます。お孫さんとも、盛り上がれます。</li></ul>
+      <b>作り方・4つのステップ</b>
+      <ol><li>お題のことばを、ひとつ決める（例：かさ）</li><li>同じ音・似た音のことばを、探す（かさ → 傘・貸さ・笠・かさばる）</li><li>ふたつを、ひとつの文に、つなぐ（傘は重いが、貸さない）</li><li>声に出して、言ってみる。笑えたら、成功！</li></ol>
+      <b>🎲 きょうのお題</b>
+      <div class="notice" id="djToday" style="line-height:1.8"></div>
+      <button class="btn primary" id="djTry" type="button" style="min-height:52px">✏ このお題で、作ってみる</button>
+      <p class="fl-sub" style="margin:0">うまく作れなくても、大丈夫。「ことばで遊ぶ」ことが、いちばんの目的です。</p></div></details>
+    <div class="card" style="gap:8px"><b>① レベルをえらぶ</b><div class="fl-chips" id="djLv" role="group" aria-label="レベル"></div>
+      <p class="fl-sub" id="djLvNote" style="margin:0"></p></div>
+    <div id="djBoss" class="card" hidden style="gap:8px;border:3px solid var(--accent)"></div>
+    <div class="card" id="djForm" style="gap:8px"><b>② ダジャレを投稿する</b>
+      <input id="djText" type="text" maxlength="60" placeholder="例：布団が吹っ飛んだ" style="min-height:52px;font-size:1.15rem;width:100%;box-sizing:border-box">
+      <button class="btn primary" id="djPost" type="button" style="min-height:56px;font-size:1.1rem">📣 投稿する</button>
+      <p class="fl-sub" id="djMsg" role="status" style="margin:0"></p></div>
+    <h3 style="margin:6px 0 0" id="djRankH">🏆 共感ランキング</h3>
+    <div id="djRank" style="display:flex;flex-direction:column;gap:8px"></div>
+    <p class="fl-sub">この「共感」は、この端末の中だけの記録です。ほかの方との、全国ランキングは、サーバーが必要なため、まだつながっていません。人を傷つけることばは、使わない、のがルールです。</p>
   </section>
 
   <section class="view" id="v-flower" hidden aria-label="花の見どころ">
@@ -2078,7 +2105,7 @@ button[aria-pressed="true"] { font-weight:700; }
   });
 
   /* 画面の切り替え */
-  var views = ['album', 'laugh', 'up', 'mania', 'town', 'book', 'flower', 'settings', 'home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask', 'dress'];
+  var views = ['dajare', 'album', 'laugh', 'up', 'mania', 'town', 'book', 'flower', 'settings', 'home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask', 'dress'];
   var navView = 'home', navDepth = 0;
   function show(v, fromPop) {
     if (v !== 'talk' && typeof chatOn !== 'undefined' && chatOn) chatStop();
@@ -4825,6 +4852,74 @@ button[aria-pressed="true"] { font-weight:700; }
     });
     $('alOrd').addEventListener('click', function () { ord = ord === 'new' ? 'old' : 'new'; save('kesera-al-order', ord); draw(); });
     stDraw(); chips(); draw();
+  })();
+
+  /* ---------- ダジャレバトル ---------- */
+  (function () {
+    var root = $('djRank'); if (!root) return;
+    var LV = ['初めの一歩', '初級', '中級', '四天王決戦'];
+    var NOTE = ['まずは、定番のダジャレを、声に出して、笑ってみましょう。', '少しひねった、ダジャレです。', 'ことばを、ふたつの意味にかける、上級手前です。', '四天王が、お題を出します。お題のことばを入れた、ダジャレで、勝ちましょう！'];
+    var SEED = [
+      [['布団が吹っ飛んだ'], ['電話に出んわ'], ['トイレに行っといれ'], ['アルミ缶の上にあるみかん'], ['イカは美味しイカ'], ['猫が寝転んだ']],
+      [['このカレー、辛えー！'], ['象は、なかなか想像できない大きさだ'], ['傘は重いが、貸さない'], ['パンダの好物は、パンだ'], ['このイス、いーっすね'], ['犬がワンダフルと、ほめられた']],
+      [['校長先生は、いつも絶好調（ぜっこうちょう）'], ['温泉で、ほっこりして、ほっとこー（放っておこう）'], ['玉ねぎを切って、タマげた（たまげた）'], ['ライオンが来たので、ライオン（来ないで）！'], ['この梅干し、うめー（うまい）ぼし']]
+    ];
+    var BOSS = [
+      { n: '布団の将', w: ['布団', 'ふとん', 'フトン'], p: '布団が吹っ飛んだ', o: 'ふとん' },
+      { n: '猫の将', w: ['猫', 'ねこ', 'ネコ'], p: '猫が寝転んだ', o: 'ねこ' },
+      { n: '傘の将', w: ['傘', 'かさ', 'カサ'], p: '傘は重いが、貸さない', o: 'かさ' },
+      { n: 'イカの将', w: ['イカ', 'いか', '烏賊'], p: 'イカは美味しイカ', o: 'いか' }
+    ];
+    var lv = load('kesera-dj-lv', 0), data = load('kesera-dj', { votes: {}, mine: [], beat: [] });
+    function key(l, t) { return l + '|' + t; }
+    function items(l) {
+      var out = [];
+      if (l < 3) (SEED[l] || []).forEach(function (x) { out.push({ k: key(l, x[0]), t: x[0], mine: false }); });
+      data.mine.forEach(function (m) { if (m.l === l) out.push({ k: key(l, m.t), t: m.t, mine: true }); });
+      return out;
+    }
+    function lvDraw() { var el = $('djLv'); el.innerHTML = ''; LV.forEach(function (t, i) { var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = t; b.setAttribute('aria-pressed', String(lv === i)); b.addEventListener('click', function () { lv = i; save('kesera-dj-lv', lv); draw(); }); el.appendChild(b); }); $('djLvNote').textContent = NOTE[lv]; }
+    function bossDraw() {
+      var bx = $('djBoss'); bx.hidden = lv !== 3; if (lv !== 3) return; bx.innerHTML = '';
+      var nb = data.beat.length, b = BOSS[Math.min(nb, 3)], h = document.createElement('b'); h.style.fontSize = '1.2rem';
+      if (nb >= 4) { h.textContent = '🏆 四天王を、全員、倒しました！　称号：ダジャレ名人'; bx.appendChild(h); var rs = document.createElement('button'); rs.type = 'button'; rs.className = 'btn'; rs.textContent = 'もう一度、挑戦する'; rs.addEventListener('click', function () { data.beat = []; save('kesera-dj', data); draw(); }); bx.appendChild(rs); return; }
+      h.textContent = '⚔ 第' + (nb + 1) + '戦　' + b.n + ' があらわれた！'; bx.appendChild(h);
+      var p = document.createElement('p'); p.style.cssText = 'margin:0;line-height:1.7'; p.textContent = '「' + b.p + '」　お題は「' + b.o + '」。お題のことばを入れた、ダジャレで、勝負！（投稿すると、判定します）'; bx.appendChild(p);
+      var st = document.createElement('span'); st.className = 'fl-sub'; st.textContent = '倒した四天王：' + nb + ' / 4'; bx.appendChild(st);
+    }
+    function rankDraw() {
+      root.innerHTML = ''; var l = items(lv); $('djRankH').textContent = '🏆 共感ランキング（' + LV[lv] + '）';
+      l.forEach(function (x) { x.c = data.votes[x.k] || 0; });
+      l.sort(function (a, b) { return b.c - a.c; });
+      if (!l.length) { var e = document.createElement('p'); e.className = 'fl-sub'; e.textContent = 'まだ投稿がありません。1つ目を、投稿してみましょう。'; root.appendChild(e); return; }
+      l.forEach(function (x, i) {
+        var r = document.createElement('div'); r.className = 'dj-i'; var n = document.createElement('span'); n.className = 'dj-n'; n.textContent = (i === 0 && x.c > 0) ? '👑' : (i + 1);
+        var t = document.createElement('span'); t.className = 'dj-t'; t.textContent = x.t + (x.mine ? '　（わたし）' : '');
+        var b = document.createElement('button'); b.type = 'button'; b.className = 'btn'; b.textContent = '👍 共感 ' + x.c; b.setAttribute('aria-label', '共感する。いま' + x.c);
+        b.addEventListener('click', function () { data.votes[x.k] = (data.votes[x.k] || 0) + 1; save('kesera-dj', data); rankDraw(); });
+        r.appendChild(n); r.appendChild(t); r.appendChild(b); root.appendChild(r);
+      });
+    }
+    function draw() { lvDraw(); bossDraw(); rankDraw(); }
+    $('djPost').addEventListener('click', function () {
+      var t = $('djText').value.trim(), msg = $('djMsg');
+      if (t.length < 3) { msg.textContent = '3文字以上の、ダジャレを、書いてください。'; return; }
+      if (items(lv).some(function (x) { return x.t === t; })) { msg.textContent = 'すでに、同じダジャレがあります。'; return; }
+      data.mine.push({ l: lv, t: t, at: Date.now() }); data.mine = data.mine.slice(-100);
+      var extra = '';
+      if (lv === 3 && data.beat.length < 4) { var b = BOSS[data.beat.length]; if (b.w.some(function (w) { return t.indexOf(w) >= 0; })) { data.beat.push(b.n); extra = '　⚔ ' + b.n + ' を、倒した！！' + (data.beat.length >= 4 ? '　🏆 四天王、全員、撃破！ ダジャレ名人です！' : ' つぎの相手が、あらわれます。'); } else extra = '　…お題「' + b.o + '」が、入っていないので、' + b.n + ' には、まだ勝てません。'; }
+      save('kesera-dj', data); $('djText').value = ''; msg.textContent = '📣 投稿しました！' + extra; draw();
+    });
+    $('djText').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); $('djPost').click(); } });
+    draw();
+  })();
+
+  /* ---------- ダジャレのススメ ---------- */
+  (function () {
+    var box = $('djToday'); if (!box) return;
+    var T = [['かさ', '傘・貸さ・笠・かさばる'], ['いす', '椅子・行す・いすず'], ['ねこ', '猫・寝こ・ねこそぎ'], ['たい', '鯛・〜たい・退く'], ['かき', '柿・牡蠣・書き・火気'], ['はし', '橋・箸・端・走し'], ['あめ', '雨・飴・天'], ['くつ', '靴・苦痛・くつろぐ'], ['しろ', '城・白・知ろう'], ['きく', '菊・聞く・効く'], ['なす', '茄子・成す・なすべき'], ['かみ', '紙・髪・神・噛み'], ['ふね', '船・舟・不値'], ['もも', '桃・腿・百'], ['たこ', '蛸・凧・多湖']], ti = doy(now) % T.length;
+    box.textContent = '「' + T[ti][0] + '」　ヒント：' + T[ti][1];
+    $('djTry').addEventListener('click', function () { var i = $('djText'); i.placeholder = '「' + T[ti][0] + '」を入れて、作ってみましょう'; i.focus(); try { i.scrollIntoView({ block: 'center' }); } catch (e) {} });
   })();
   renderWxIcon();
   renderSun(); updateNews();
