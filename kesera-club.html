@@ -550,8 +550,8 @@ button[aria-pressed="true"] { font-weight:700; }
     </div>
 
     <div class="card" id="inspireCard">
-      <h2>💡 ひらめきをあなたに　きょうのおすすめ</h2>
-      <p class="muted" style="margin:0">体調、歩いた量、お住まい、いつも楽しんでいることから、「すこし広げる」ことを、ご案内します。この判断は、この端末の中だけで行います。</p>
+      <h2>💡 自分と1mm違う、あなたへの発見</h2>
+      <p class="muted" style="margin:0">体調、歩いた量、お住まい、いつも楽しんでいることから、いつもの自分と「1mmだけ違う」ことを、ご案内します。この判断は、この端末の中だけで行います。</p>
       <b>きょうの体調は？</b>
       <div class="fl-chips" id="inCond" role="group" aria-label="きょうの体調"></div>
       <p class="fl-sub" id="inFacts" style="margin:0"></p>
@@ -4148,7 +4148,7 @@ button[aria-pressed="true"] { font-weight:700; }
     var res = inPick(), r = res[0], c = IN_C[r.k], pn = (typeof prefName === 'function' && prefName()) || '';
     var facts = []; if (pn) facts.push('お住まい：' + pn); if (r.st !== null) facts.push('最近の歩数：1日 約' + r.st + '歩'); if (r.top) facts.push('いつもの楽しみ：' + IN_G[r.top]);
     $('inFacts').textContent = facts.join('　');
-    $('inHead').textContent = '今日は、すこし広げて、「' + c.n + '」';
+    $('inHead').textContent = '今日は、1mmだけ広げて、「' + c.n + '」';
     var lead = r.why.indexOf('adj') >= 0 ? 'いつもの「' + IN_G[r.top] + '」から、ひとつ隣へ。' : (r.why.indexOf('tired') >= 0 ? 'お疲れのようですから、ゆったりしたものを。' : (r.why.indexOf('steps') >= 0 ? '最近の歩数が少なめなので、少しだけ動くことを。' : (r.cond === 'good' ? 'お元気なので、少し新しいことに。' : 'まだ触れていないところへ。')));
     var city = (r.k === 'travel' && pn) ? pn + 'を、画面の中で歩いてみるのも、おすすめです。' : (r.k === 'flower' && pn ? pn + 'の近くの見ごろも、のっています。' : '');
     $('inWhy').textContent = lead + c.h + '。' + c.w + city;
