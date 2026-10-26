@@ -413,6 +413,14 @@ button[aria-pressed="true"] { font-weight:700; }
 #v-home .welcome p { margin:0 !important; font-size:.85rem !important; }
 .odd-big { min-height:52px; font-size:1.08rem; border-width:0; border-radius:12px; background:linear-gradient(135deg,#b3261e,#8f1b15); box-shadow:0 2px 8px #b3261e44; letter-spacing:.03em; }
 @media (max-width:420px) { .top .brand-note { font-size:.75rem; } .top .brand-note .tag { display:none; } .header-tools .btn { padding:4px 9px !important; font-size:.82rem !important; } }
+.brand { display:flex; align-items:center; gap:8px; min-width:0; }
+.brand-mark { width:40px; height:40px; flex:none; }
+.brand-txt { display:flex; flex-direction:column; line-height:1.15; min-width:0; }
+.brand-h1 { margin:0; font-size:1.55rem; font-weight:800; letter-spacing:.08em; color:var(--fg); }
+.brand-txt small { font-size:.62rem; letter-spacing:.06em; color:var(--accent); font-weight:700; }
+#v-home .welcome { display:none !important; }
+.brand-h1 { white-space:nowrap; } .brand { flex:none; }
+@media (max-width:480px) { .header-tools { gap:4px; } .header-tools .btn { padding:4px 8px !important; font-size:.78rem !important; } .brand-txt small { display:none; } .brand-h1 { font-size:1.4rem; } .brand-mark { width:34px; height:34px; } }
 .float-home { position:fixed; top:10px; right:10px; z-index:60; min-height:46px; padding:8px 16px; border-radius:999px; border:2px solid var(--accent); background:var(--surface); color:var(--accent); font-weight:700; font-size:1rem; box-shadow:0 3px 12px #0003; }
 .float-home[hidden] { display:none; }
 </style></head><body>
@@ -438,9 +446,8 @@ button[aria-pressed="true"] { font-weight:700; }
 <button id="floatHome" class="float-home" type="button" data-go="home" hidden>🏠 ホームへ</button>
 
 <div class="wrap">
-  <p class="site-tagline">50代・60代・70代・80代のおともに</p>
   <div class="top">
-    <span class="brand-note">暮らしに、ひと息。 <span class="tag">試作版</span></span>
+    <div class="brand"><img class="brand-mark" src="favicon.png" alt="" onerror="this.style.display='none'"><div class="brand-txt"><h1 class="brand-h1">ケセラ</h1><small>50代・60代・70代・80代のおともに</small></div></div>
     <div class="header-tools"><button class="btn" id="tripOpen" type="button" aria-haspopup="dialog">歩く・電車・バス・タクシー</button><button class="btn design-button" id="settingsBtn" type="button">⚙ 設定</button><button class="btn design-button" id="designBtn" type="button" aria-haspopup="dialog">✿ デザインの変更</button><button class="btn" id="sizeBtn" aria-pressed="false">文字を大きくする</button></div>
   </div>
   <p class="appearance-note" id="appearanceNote" role="status"></p>
