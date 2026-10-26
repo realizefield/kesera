@@ -393,6 +393,7 @@ button[aria-pressed="true"] { font-weight:700; }
 .bk-d{border:2px solid var(--line,#d9c9cf);border-radius:12px;background:var(--surface,#fff);overflow:hidden}.bk-d>summary{cursor:pointer;padding:14px;font-weight:700;font-size:1.1rem;min-height:52px;display:flex;align-items:center;gap:8px}.bk-d[open]>summary{background:#fbeff3}.bk-w{padding:10px 14px;border-top:1px solid #0001;display:flex;flex-direction:column;gap:4px}.bk-w b{font-size:1.05rem}.bk-t{display:inline-block;font-size:.8rem;border-radius:999px;padding:1px 9px;background:#eee;margin-left:6px}.bk-w a{align-self:flex-start;min-height:44px;display:inline-flex;align-items:center}
 .up-d{border:2px solid var(--line,#d9c9cf);border-radius:12px;background:var(--surface,#fff);overflow:hidden}.up-d>summary{cursor:pointer;padding:14px;font-weight:700;font-size:1.1rem;min-height:52px;display:flex;align-items:center}.up-d[open]>summary{background:#fbeff3}.up-c{padding:12px 14px;display:flex;flex-direction:column;gap:10px;border-top:1px solid #0001}.up-c ol,.up-c ul{margin:0;padding-left:1.3em;line-height:1.8}.up-big{font-size:2rem;font-weight:700;text-align:center;letter-spacing:.2em;padding:10px}.up-c input{min-height:52px;font-size:1.2rem;width:100%;box-sizing:border-box}.ml-i{display:flex;gap:8px;align-items:center;border:1px solid #0002;border-radius:10px;padding:6px 10px;min-height:52px}.ml-i.done span{text-decoration:line-through;opacity:.55}.ml-i span{flex:1;font-size:1.1rem}
 #vcCard textarea,#vcCard input{width:100%;box-sizing:border-box;font-size:1.05rem;min-height:52px;font-family:inherit}
+.mm-stars{display:flex;gap:4px}.mm-stars button{font-size:2rem;line-height:1;min-width:52px;min-height:52px;border:0;background:none;cursor:pointer;color:#c9b8be}.mm-stars button.on{color:#e0a100}
 .sos-row{display:flex;gap:8px;align-items:stretch}.sos-row .odd-big{flex:1;width:auto}.sos-mini{flex:0 0 auto;min-width:84px;min-height:52px;border:0;border-radius:12px;background:#fff;color:#b3261e;border:3px solid #b3261e;font-size:1.3rem;font-weight:700;line-height:1.1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}.sos-mini small{font-size:.78rem}#sosDlg #safeCard{border:0!important;margin:0;padding:0;box-shadow:none}
 .odd-big { width:100%; min-height:76px; font-size:1.35rem; font-weight:700; border-radius:14px; border:3px solid #b3261e; background:#b3261e; color:#fff; box-shadow:0 3px 12px #0003; cursor:pointer; }
 .odd-res { border-radius:12px; padding:14px; font-size:1.1rem; line-height:1.7; }
@@ -911,12 +912,15 @@ button[aria-pressed="true"] { font-weight:700; }
       <img id="alPrev" alt="えらんだ写真" hidden style="max-width:100%;border-radius:10px">
       <b>③ ひとこと</b><input id="alText" type="text" placeholder="例：孫と食べた、あつあつのたこ焼き" style="min-height:52px;font-size:1.1rem;width:100%;box-sizing:border-box">
       <input id="alPlace" type="text" placeholder="場所（なくても大丈夫です）" style="min-height:52px;font-size:1.1rem;width:100%;box-sizing:border-box">
+      <b>📅 いつの思い出？（空なら、きょう）</b><input id="alDate" type="date" style="min-height:52px;font-size:1.1rem;width:100%;box-sizing:border-box">
+      <b>⭐ 評価（☆を押す）</b><div class="mm-stars" id="alStars" role="group" aria-label="評価"></div>
       <b>💬 感想・コメント</b><textarea id="alComment" rows="2" placeholder="例：景色がきれいで、気持ちがよかった" style="width:100%;box-sizing:border-box;font-size:1.05rem;font-family:inherit"></textarea>
       <b>📚 学んだこと</b><textarea id="alLearn" rows="2" placeholder="例：この神社は、江戸時代の創建だった" style="width:100%;box-sizing:border-box;font-size:1.05rem;font-family:inherit"></textarea>
       <b>🌟 経験したこと</b><textarea id="alExp" rows="2" placeholder="例：はじめて、手びねりの陶芸をした" style="width:100%;box-sizing:border-box;font-size:1.05rem;font-family:inherit"></textarea>
       <button class="btn primary" id="alSave" type="button" style="min-height:56px;font-size:1.15rem">💾 思い出に、しまう</button>
       <p class="fl-sub" id="alMsg" role="status" style="margin:0"></p></div>
     <b id="alSum"></b>
+    <div class="row"><button class="btn" id="alOrd" type="button">↕ 新しい順</button></div>
     <div id="alList" style="display:flex;flex-direction:column;gap:10px"></div>
     <details class="up-d" id="alShiori"><summary>🗒 旅のしおりを作る</summary><div class="up-c">
       <input id="shTitle" type="text" placeholder="しおりの題（例：黒川温泉　日帰りの旅）">
@@ -4638,7 +4642,19 @@ button[aria-pressed="true"] { font-weight:700; }
   /* ---------- 思い出の記録（写真・動画・食事）＋旅のしおり ---------- */
   (function () {
     var list = $('alList'); if (!list) return;
-    var TY = ['🍽 食事', '📷 写真', '🎬 動画', '🚃 おでかけ'], cur = 0, file = null, db = null;
+    var TY = ['🍽 食事', '📷 写真', '🎬 動画', '🚃 おでかけ'], cur = 0, file = null, db = null, star = 0, ord = load('kesera-al-order', 'new');
+    function p2(n) { return (n < 10 ? '0' : '') + n; }
+    function nd(x) { var a = String(x || '').split('-'); return a.length === 3 ? a[0] + '-' + p2(+a[1]) + '-' + p2(+a[2]) : String(x || ''); }
+    function sstr(n) { var t = ''; for (var i = 1; i <= 5; i++) t += i <= n ? '★' : '☆'; return t; }
+    function starsDraw(el, val, on) { el.innerHTML = ''; for (var i = 1; i <= 5; i++) (function (n) { var b = document.createElement('button'); b.type = 'button'; b.className = n <= val ? 'on' : ''; b.textContent = n <= val ? '★' : '☆'; b.setAttribute('aria-label', n + 'つ星'); b.addEventListener('click', function () { on(n === val ? 0 : n); }); el.appendChild(b); })(i); }
+    function stDraw() { starsDraw($('alStars'), star, function (n) { star = n; stDraw(); }); }
+    function sendLine(r, note) {
+      var L = ['【思い出】' + nd(r.d) + '　' + r.ty]; if (r.st) L.push('評価：' + sstr(r.st)); if (r.t) L.push(r.t); if (r.pl) L.push('場所：' + r.pl); if (r.cm) L.push('感想：' + r.cm); if (r.lr) L.push('学んだこと：' + r.lr); if (r.ex) L.push('経験したこと：' + r.ex); var text = L.join('\n'), fl = null;
+      if (r.blob) { try { fl = new File([r.blob], /^video/.test(r.blob.type) ? 'omoide.' + ((r.blob.type.split('/')[1] || 'mp4').replace(/[^a-z0-9]/gi, '')) : 'omoide.jpg', { type: r.blob.type || 'image/jpeg' }); } catch (e) { fl = null; } }
+      if (fl && navigator.canShare && navigator.share && navigator.canShare({ files: [fl] })) { navigator.share({ text: text, files: [fl] }).then(function () { note.textContent = '送る画面で、LINEをえらんでください。'; }, function () { note.textContent = '送るのを、やめました。'; }); return; }
+      window.open('https://line.me/R/msg/text/?' + encodeURIComponent(text), '_blank');
+      note.textContent = r.blob ? 'LINEが開きます。文章だけが入ります。写真・動画は、LINEの画面の「＋」から、えらんでください。' : 'LINEが開きます。送る相手を、えらんでください。';
+    }
     function open(cb) { if (db) return cb(db); try { var rq = indexedDB.open('kesera-album', 1); rq.onupgradeneeded = function () { rq.result.createObjectStore('m', { keyPath: 'id' }); }; rq.onsuccess = function () { db = rq.result; cb(db); }; rq.onerror = function () { cb(null); }; } catch (e) { cb(null); } }
     function all(cb) { open(function (d) { if (!d) return cb([]); var r = d.transaction('m').objectStore('m').getAll(); r.onsuccess = function () { cb(r.result || []); }; r.onerror = function () { cb([]); }; }); }
     function put(rec, cb) { open(function (d) { if (!d) return cb(false); var t = d.transaction('m', 'readwrite'); t.objectStore('m').put(rec); t.oncomplete = function () { cb(true); }; t.onerror = function () { cb(false); }; }); }
@@ -4651,15 +4667,15 @@ button[aria-pressed="true"] { font-weight:700; }
     function chips() { var el = $('alType'); el.innerHTML = ''; TY.forEach(function (t, i) { var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = t; b.setAttribute('aria-pressed', String(i === cur)); b.addEventListener('click', function () { cur = i; chips(); }); el.appendChild(b); }); }
     function draw() {
       all(function (a) {
-        a.sort(function (x, y) { return y.id - x.id; }); list.innerHTML = ''; $('alSum').textContent = a.length ? '思い出が ' + a.length + ' 個、たまっています。' : 'まだ、思い出はありません。最初の1枚を、しまってみましょう。';
+        a.sort(function (x, y) { var kx = nd(x.d) + String(x.id), ky = nd(y.d) + String(y.id); return (kx < ky ? -1 : 1) * (ord === 'new' ? -1 : 1); }); $('alOrd').textContent = ord === 'new' ? '↕ 新しい順（おす と 古い順）' : '↕ 古い順（おす と 新しい順）'; list.innerHTML = ''; $('alSum').textContent = a.length ? '思い出が ' + a.length + ' 個、たまっています。' : 'まだ、思い出はありません。最初の1枚を、しまってみましょう。';
         a.forEach(function (r) {
           var c = document.createElement('div'); c.className = 'card'; c.style.gap = '6px';
-          var h = document.createElement('b'); h.textContent = r.d + '　' + r.ty; c.appendChild(h);
+          var h = document.createElement('b'); h.textContent = nd(r.d) + '　' + r.ty; c.appendChild(h); var sr = document.createElement('div'); sr.className = 'mm-stars'; starsDraw(sr, r.st || 0, function (n) { r.st = n; put(r, function () { draw(); }); }); c.appendChild(sr);
           if (r.blob) { var u = URL.createObjectURL(r.blob), el; if (/^video/.test(r.blob.type)) { el = document.createElement('video'); el.controls = true; el.playsInline = true; } else { el = document.createElement('img'); el.alt = r.t || '思い出の写真'; } el.src = u; el.style.cssText = 'max-width:100%;border-radius:10px'; c.appendChild(el); }
           if (r.t) { var p = document.createElement('span'); p.style.fontSize = '1.1rem'; p.textContent = r.t; c.appendChild(p); }
           if (r.pl) { var q = document.createElement('span'); q.className = 'fl-sub'; q.textContent = '📍 ' + r.pl; c.appendChild(q); }
           [['💬 ', r.cm], ['📚 ', r.lr], ['🌟 ', r.ex]].forEach(function (z) { if (z[1]) { var zp = document.createElement('span'); zp.style.lineHeight = '1.7'; zp.textContent = z[0] + z[1]; c.appendChild(zp); } });
-          var x = document.createElement('button'); x.type = 'button'; x.className = 'btn'; x.textContent = '🗑 消す'; x.addEventListener('click', function () { if (confirm('この思い出を、消してもよいですか？')) del(r.id, draw); }); c.appendChild(x); list.appendChild(c);
+          var x = document.createElement('button'); x.type = 'button'; x.className = 'btn'; x.textContent = '🗑 消す'; x.addEventListener('click', function () { if (confirm('この思い出を、消してもよいですか？')) del(r.id, draw); }); var lb = document.createElement('button'); lb.type = 'button'; lb.className = 'btn primary'; lb.textContent = '💬 LINEで送る'; var nt = document.createElement('p'); nt.className = 'fl-sub'; nt.style.margin = '0'; nt.setAttribute('role', 'status'); lb.addEventListener('click', function () { sendLine(r, nt); }); var rw = document.createElement('div'); rw.className = 'row'; rw.appendChild(lb); rw.appendChild(x); c.appendChild(rw); c.appendChild(nt); list.appendChild(c);
         });
       });
     }
@@ -4667,7 +4683,7 @@ button[aria-pressed="true"] { font-weight:700; }
     $('alSave').addEventListener('click', function () {
       var t = $('alText').value.trim(), pl = $('alPlace').value.trim(), msg = $('alMsg'), cm = $('alComment').value.trim(), lr = $('alLearn').value.trim(), ex = $('alExp').value.trim();
       if (!t && !file && !cm && !lr && !ex) { msg.textContent = '写真か、ひとことを、入れてください。'; return; }
-      function done(blob) { var d = new Date(); put({ id: Date.now(), d: d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(), ty: TY[cur], t: t, pl: pl, cm: cm, lr: lr, ex: ex, blob: blob || null }, function (ok) { msg.textContent = ok ? '✨ 思い出に、しまいました。' : 'しまえませんでした（この端末の保存が使えないようです）。'; if (ok) { $('alText').value = ''; $('alPlace').value = ''; $('alComment').value = ''; $('alLearn').value = ''; $('alExp').value = ''; $('alFile').value = ''; $('alPrev').hidden = true; file = null; draw(); } }); }
+      function done(blob) { var d = new Date(); put({ id: Date.now(), d: ($('alDate').value || (d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()))), st: star, ty: TY[cur], t: t, pl: pl, cm: cm, lr: lr, ex: ex, blob: blob || null }, function (ok) { msg.textContent = ok ? '✨ 思い出に、しまいました。' : 'しまえませんでした（この端末の保存が使えないようです）。'; if (ok) { $('alText').value = ''; $('alPlace').value = ''; $('alComment').value = ''; $('alLearn').value = ''; $('alExp').value = ''; $('alFile').value = ''; $('alPrev').hidden = true; file = null; star = 0; stDraw(); $('alDate').value = ''; draw(); } }); }
       if (!file) return done(null);
       if (/^video/.test(file.type)) { if (file.size > 20 * 1024 * 1024) { msg.textContent = '動画が大きすぎます（20MBまで）。携帯のアルバムに、残してください。'; return; } return done(file); }
       shrink(file, done);
@@ -4680,7 +4696,8 @@ button[aria-pressed="true"] { font-weight:700; }
       var ml = document.createElement('a'); ml.className = 'btnlink'; ml.textContent = '✉ ご家族に、メールで送る'; ml.href = 'mailto:?subject=' + encodeURIComponent(t) + '&body=' + encodeURIComponent(o.value);
       act.appendChild(cp); act.appendChild(ml); save('kesera-shiori', { d: today, t: o.value });
     });
-    chips(); draw();
+    $('alOrd').addEventListener('click', function () { ord = ord === 'new' ? 'old' : 'new'; save('kesera-al-order', ord); draw(); });
+    stDraw(); chips(); draw();
   })();
   renderWxIcon();
   renderSun(); updateNews();
