@@ -3191,7 +3191,7 @@ button[aria-pressed="true"] { font-weight:700; }
   var PREFS_DEFAULT = '430000';
   function svgWx(kind) {
     var nm = { sunny: '晴れ', suncloud: '晴れとくもり', rain: '雨', snow: '雪', thunder: '雷', cloudy: 'くもり' }[kind] || 'くもり';
-    return '<img src="wx-' + (kind || 'cloudy') + '.png?v=20261018" alt="' + nm + '" style="width:100%;height:100%;object-fit:contain" onerror="this.outerHTML=svgWxInline(\'' + kind + '\')">';
+    return '<img src="wx-' + (kind || 'cloudy') + '.png?v=20261018" alt="' + nm + '" style="width:100%;height:100%;object-fit:contain" onerror="if(this.parentNode)this.outerHTML=svgWxInline(\'' + kind + '\')">';
   }
   window.svgWxInline = function (k) { return svgWxInline(k); };
   function svgWxInline(kind) {
