@@ -882,6 +882,14 @@ button[aria-pressed="true"] { font-weight:700; }
       <button class="btn primary" id="lgTap" type="button" style="min-height:64px;font-size:1.3rem">😂 笑った！</button>
       <p class="fl-sub" id="lgMsg" role="status" style="margin:0"></p></div>
     <div class="notice" id="lgEga" style="display:flex;flex-direction:column;gap:6px;border:3px solid var(--accent);text-align:center"><b style="font-size:1.4rem">🔥 エガちゃん</b><span style="line-height:1.7">全力で、体を張って、笑わせてくれる。元気がほしい日は、「エガちゃんねる」へ。</span><a class="btnlink" id="lgEgaLink" target="_blank" rel="noopener" style="align-self:center;min-height:56px;font-size:1.15rem" href="https://www.youtube.com/results?search_query=%E3%82%A8%E3%82%AC%E3%81%A1%E3%82%83%E3%82%93%E3%81%AD%E3%82%8B">▶ エガちゃんねるを見る（YouTube）</a></div>
+    <div class="card" id="lgLet" style="gap:8px"><b style="font-size:1.15rem">🌬 わらってスッキリ　5秒で、手ばなす</b>
+      <p class="fl-sub" style="margin:0">怒りたいこと、いやだなと思うことを、ここに書いてください。書いた文字は、5秒で、消えます。どこにも、保存されません。</p>
+      <textarea id="lgLetTx" rows="3" placeholder="例：さっきの、あの言い方が、いやだった" style="width:100%;box-sizing:border-box;font-size:1.1rem;font-family:inherit"></textarea>
+      <button class="btn primary" id="lgLetGo" type="button" style="min-height:56px;font-size:1.15rem">🌬 5秒で、手ばなす</button>
+      <div class="up-big" id="lgLetOut" role="status" style="padding:6px;font-size:1.5rem;letter-spacing:.05em"></div>
+      <p class="fl-sub" style="margin:0" id="lgLetSum"></p>
+      <p class="fl-sub" style="margin:0">つらい気持ちが、何日も続くときは、ひとりでかかえず、身近な人や、お住まいの相談窓口に、話してみてください。</p></div>
+
     <h3 style="margin:6px 0 0">🎬 YouTube お笑い おすすめ10選</h3>
     <p class="fl-sub" style="margin:0">押すと、YouTubeで検索します。気に入った動画を、見つけてください。</p>
     <div id="lgList" style="display:flex;flex-direction:column;gap:8px"></div>
@@ -4559,6 +4567,22 @@ button[aria-pressed="true"] { font-weight:700; }
     function draw() { var l = get(), n = l[today] || 0, days = Object.keys(l).length; $('lgCount').textContent = n; $('lgMsg').textContent = n ? ('笑うほど、気持ちが軽くなります。これまでに ' + days + ' 日、笑いました。') : 'ひとつ動画を見て、笑ったら、ボタンを押してください。'; }
     $('lgTap').addEventListener('click', function () { var l = get(); l[today] = (l[today] || 0) + 1; save('kesera-laugh', l); draw(); });
     draw();
+  })();
+
+  (function () {
+    var go = $('lgLetGo'); if (!go) return;
+    function sum() { var n = Number(load('kesera-letgo', 0)) || 0; $('lgLetSum').textContent = n ? 'これまでに ' + n + ' 回、手ばなしました。' : ''; }
+    go.addEventListener('click', function () {
+      var tx = $('lgLetTx'), out = $('lgLetOut'); if (!tx.value.trim()) { out.textContent = 'まず、ひとこと、書いてみてください。'; return; }
+      go.disabled = true; tx.readOnly = true; tx.style.transition = 'opacity 5s linear'; tx.style.opacity = '0';
+      var n = 5, msgs = ['', 'ふぅ〜…', 'はぁ〜…', 'ゆっくり、息をはく', '大きく、息をすう', '深呼吸、はじめます']; out.textContent = '5　' + msgs[5];
+      var t = setInterval(function () {
+        n--; if (n > 0) { out.textContent = n + '　' + msgs[n]; return; }
+        clearInterval(t); tx.value = ''; tx.style.transition = 'none'; tx.style.opacity = '1'; tx.readOnly = false; go.disabled = false;
+        save('kesera-letgo', (Number(load('kesera-letgo', 0)) || 0) + 1); out.textContent = '✨ すっきり！ ひとつ笑って、おしまい。😄'; sum();
+      }, 1000);
+    });
+    sum();
   })();
   renderWxIcon();
   renderSun(); updateNews();
