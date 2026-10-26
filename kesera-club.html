@@ -4401,7 +4401,7 @@ button[aria-pressed="true"] { font-weight:700; }
       var ul = E('ul'); ul.style.cssText = 'margin:0;padding-left:1.3em;line-height:1.8';
       ['車いす・歩行器を使う、または、杖でも、乗り降りが不安', '一人で、階段・段差を、のぼりおりするのが、むずかしい', '付き添いの方が、運転できない、または、いない'].forEach(function (x) { ul.appendChild(E('li', '', x)); });
       tip.appendChild(ul); tip.appendChild(E('p', 'fl-sub', '一つも当てはまらなければ、「不要」でも大丈夫なことが多いです。福祉タクシーは、予約制です。温泉の脱衣所・浴室の段差や、介助の可否も、先に問い合わせると、安心です。入浴の介助は、運賃とは別です。'));
-      tip.appendChild(E('p', 'fl-sub', '湯あたり対策：長湯・熱い湯・食後すぐ・飲酒後は、避けましょう。血圧・心臓の持病のある方は、先に、お医者さんへ。'));
+      tip.appendChild(E('p', 'fl-sub', '体調がいちばんです。いつもと違うときは、行かない・入らない、が正解です。湯あたり対策：長湯・熱い湯・食後すぐ・飲酒後は、避けましょう。血圧・心臓の持病のある方は、先に、お医者さんへ。'));
       c.appendChild(tip);
       c.appendChild(linkRow([['福祉タクシーを探す', M('福祉タクシー 介護タクシー ' + cityNow())], ['料金の目安を調べる', G('福祉タクシー 料金 ' + (cityNow() || '近く') + ' 温泉')]]));
       bd.appendChild(c); draw();
@@ -4433,6 +4433,20 @@ button[aria-pressed="true"] { font-weight:700; }
       c2.appendChild(inp); c2.appendChild(sv); c2.appendChild(ul); c2.appendChild(add); bd.appendChild(c2); if (m[0].indexOf('♨') === 0) { onsenCard(bd); onsenLog(bd); }
     }
     mnRender();
+  })();
+
+  /* ---------- 体調優先・いのち優先の言葉 ---------- */
+  (function () {
+    function note() {
+      var d = document.createElement('div'); d.className = 'notice life-note'; d.style.cssText = 'display:flex;flex-direction:column;gap:6px';
+      var b = document.createElement('b'); b.textContent = '🌟 あくまで、体調がいちばんです。';
+      var p = document.createElement('span'); p.style.lineHeight = '1.7'; p.textContent = 'いつもと違う変化があるときは、予定を、やめてかまいません。あなたが生まれてきたことは、奇跡です。宇宙でいちばん大切な、あなたの命を、なによりも優先してください。';
+      var r = document.createElement('div'); r.className = 'row';
+      var h = document.createElement('button'); h.type = 'button'; h.className = 'btn'; h.textContent = '🆘 もしもの時（119・#7119）'; h.addEventListener('click', function () { var s = document.getElementById('sosMini'); if (s) s.click(); });
+      r.appendChild(h); d.appendChild(b); d.appendChild(p); d.appendChild(r); return d;
+    }
+    ['v-up', 'v-mania'].forEach(function (id) { var s = document.getElementById(id), h2 = s && s.querySelector('h2'); if (h2) h2.insertAdjacentElement('afterend', note()); });
+    var cond = document.getElementById('inCond'); if (cond) cond.parentNode.insertBefore(note(), cond.nextSibling);
   })();
   renderWxIcon();
   renderSun(); updateNews();
