@@ -835,6 +835,7 @@ button[aria-pressed="true"] { font-weight:700; }
     <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
     <h2>🏘 まちの発見</h2>
     <p class="muted">お住まいの近くの、神社・学校・お店・行事を、ひとつずつ、調べる入口です。押すと、検索の画面が開きます。</p>
+    <p class="fl-sub" style="margin:0">各カードの「🚃 行き方・運賃」「🚗 所要時間」「🚶 歩いて」は、地図の経路の画面が開きます。位置情報を許可すると、出発地が「いまいる場所」になり、電車・バスの時刻、所要時間、運賃（電車・バスの場合）が出ます。</p>
     <div class="card"><b>調べる場所（市や町の名前）</b>
       <input id="tnCity" type="text" placeholder="例：熊本市、菊池市（空だと「いまいる場所の近く」）" style="min-height:52px;font-size:1.1rem;width:100%;box-sizing:border-box">
       <p class="fl-sub" id="tnNow"></p></div>
@@ -4327,6 +4328,11 @@ button[aria-pressed="true"] { font-weight:700; }
         var r = document.createElement('div'); r.className = 'row';
         if (it.go) { var b = document.createElement('button'); b.type = 'button'; b.className = 'btn primary'; b.textContent = '🌸 花の見どころへ'; b.addEventListener('click', function () { show(it.go); }); r.appendChild(b); }
         it.l.forEach(function (x) { var a = document.createElement('a'); a.className = 'btnlink'; a.target = '_blank'; a.rel = 'noopener'; a.textContent = x[0]; a.href = x[1]; r.appendChild(a); });
+        if (!it.go) {
+          var dq = ''; it.l.forEach(function (x) { if (!dq && x[1].indexOf('/maps/search') >= 0) { try { dq = decodeURIComponent(x[1].split('query=')[1]); } catch (e) {} } });
+          if (!dq) dq = it.h.replace(/^\S+\s/, '') + ' ' + (inp.value || '').trim();
+          [['🚃 行き方・運賃（電車・バス）', 'transit'], ['🚗 車での所要時間', 'driving'], ['🚶 歩いて行ける？', 'walking']].forEach(function (n) { var a2 = document.createElement('a'); a2.className = 'btnlink'; a2.target = '_blank'; a2.rel = 'noopener'; a2.style.background = '#eef6f1'; a2.textContent = n[0]; a2.href = 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(dq) + '&travelmode=' + n[1]; r.appendChild(a2); });
+        }
         c.appendChild(h); c.appendChild(p); c.appendChild(r); box.appendChild(c);
       });
     }
