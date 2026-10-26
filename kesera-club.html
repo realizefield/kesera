@@ -443,6 +443,15 @@ button[aria-pressed="true"] { font-weight:700; }
 .fl-row b { color:var(--accent); }
 .fl-btns { display:flex; flex-wrap:wrap; gap:8px; }
 .hana-dot { display:inline-block; width:18px; height:18px; border-radius:50%; vertical-align:-3px; margin-right:6px; border:1.5px solid var(--line); }
+.pgcat { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.pgc { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; min-height:124px; padding:12px 4px; border-radius:18px; border:2px solid var(--accent); background:var(--accent-soft); color:var(--accent); font-weight:800; cursor:pointer; }
+.pgc svg { width:52px; height:52px; }
+.pgc span { font-size:1.05rem; color:var(--fg); line-height:1.3; text-align:center; }
+.pgc.red { border-color:#b3261e; background:#fdeceb; color:#b3261e; }
+.pgdlg .pgg { grid-template-columns:repeat(2,1fr); }
+.pgdlg .readbar { flex-wrap:nowrap; gap:6px; margin:0; }
+.pgdlg .readbar .btn { min-height:40px; font-size:.82rem; padding:4px 8px; white-space:nowrap; }
+@media (min-width:640px) { .pgdlg .pgg { grid-template-columns:repeat(3,1fr); } }
 .float-home { position:fixed; top:10px; right:10px; z-index:60; min-height:46px; padding:8px 16px; border-radius:999px; border:2px solid var(--accent); background:var(--surface); color:var(--accent); font-weight:700; font-size:1rem; box-shadow:0 3px 12px #0003; }
 .float-home[hidden] { display:none; }
 </style></head><body>
@@ -3931,6 +3940,37 @@ button[aria-pressed="true"] { font-weight:700; }
     var d = new Date(), doy = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 86400000), pr = loadProf(), bm = (pr && pr.bm) ? Number(pr.bm) : 0;
     var g = G[(doy * 5 + bm + d.getFullYear()) % G.length], c = C[(doy * 7 + bm * 3) % C.length];
     $('urGood').textContent = g; $('urCau').textContent = c[0]; $('urOpp').textContent = c[1] + '。'; $('urTrain').textContent = '練習：' + c[2];
+  })();
+
+  /* ---------- 絵のメニューを、3つのポップに分ける ---------- */
+  (function () {
+    var menu = $('pgMenu'), groups = menu.querySelectorAll('.pgg'), heads = menu.querySelectorAll('.pgh');
+    var ICON = [
+      '<svg viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="8"/><path d="M24 4v6M24 38v6M4 24h6M38 24h6M10 10l4 4M34 34l4 4M38 10l-4 4M14 34l-4 4"/></svg>',
+      '<svg viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="9" r="5"/><circle cx="34" cy="17" r="5"/><circle cx="30" cy="28" r="5"/><circle cx="18" cy="28" r="5"/><circle cx="14" cy="17" r="5"/><circle cx="24" cy="20" r="3"/><path d="M24 33v11"/></svg>',
+      '<svg viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="17"/><path d="M24 14v20M14 24h20" stroke-width="5"/></svg>'
+    ];
+    var NAME = ['毎日つかう', '楽しむ・学ぶ', 'もしもの時・設定'];
+    var cat = document.createElement('div'); cat.className = 'pgcat';
+    menu.insertBefore(cat, menu.children[1]);
+    Array.prototype.forEach.call(heads, function (h) { h.style.display = 'none'; });
+    Array.prototype.forEach.call(groups, function (g, i) {
+      var dg = document.createElement('dialog'); dg.className = 'design-dialog location-dialog pgdlg'; dg.id = 'pgDlg' + i; dg.setAttribute('aria-label', NAME[i]);
+      var inner = document.createElement('div'); inner.style.cssText = 'display:flex;flex-direction:column;gap:12px;padding:6px';
+      var h = document.createElement('h2'); h.style.margin = '0'; h.textContent = NAME[i];
+      inner.appendChild(readBar(function () { return NAME[i] + '。' + Array.prototype.map.call(g.querySelectorAll('.pgt span'), function (x) { return x.textContent; }).join('、'); }));
+      inner.appendChild(h); inner.appendChild(g);
+      var cl = document.createElement('button'); cl.type = 'button'; cl.className = 'btn'; cl.textContent = '閉じる'; cl.style.minHeight = '52px'; cl.addEventListener('click', function () { dg.close(); });
+      inner.appendChild(cl); dg.appendChild(inner); dg.addEventListener('close', readStop); document.body.appendChild(dg);
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'pgc' + (i === 2 ? ' red' : ''); b.setAttribute('aria-haspopup', 'dialog');
+      b.innerHTML = ICON[i] + '<span>' + NAME[i] + '</span>'; b.addEventListener('click', function () { if (dg.showModal && !dg.open) dg.showModal(); });
+      cat.appendChild(b);
+    });
+    /* えらんだら、ポップを閉じてから、進む */
+    document.addEventListener('click', function (e) {
+      var t = e.target.closest && e.target.closest('.pgt');
+      if (t) Array.prototype.forEach.call(document.querySelectorAll('dialog.pgdlg[open]'), function (d) { d.close(); });
+    }, true);
   })();
   renderWxIcon();
   renderSun(); updateNews();
