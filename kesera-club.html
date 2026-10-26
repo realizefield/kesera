@@ -390,6 +390,7 @@ button[aria-pressed="true"] { font-weight:700; }
 @media (min-width:560px) { .safe-grid { grid-template-columns:1fr 1fr; } }
 .odd-q { display:flex; gap:12px; align-items:flex-start; border:1.5px solid var(--line); border-radius:10px; padding:12px; font-size:1.08rem; line-height:1.5; background:var(--surface); }
 .odd-q input { width:28px; height:28px; flex:none; margin-top:2px; }
+.sos-row{display:flex;gap:8px;align-items:stretch}.sos-row .odd-big{flex:1;width:auto}.sos-mini{flex:0 0 auto;min-width:84px;min-height:52px;border:0;border-radius:12px;background:#fff;color:#b3261e;border:3px solid #b3261e;font-size:1.3rem;font-weight:700;line-height:1.1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}.sos-mini small{font-size:.78rem}#sosDlg #safeCard{border:0!important;margin:0;padding:0;box-shadow:none}
 .odd-big { width:100%; min-height:76px; font-size:1.35rem; font-weight:700; border-radius:14px; border:3px solid #b3261e; background:#b3261e; color:#fff; box-shadow:0 3px 12px #0003; cursor:pointer; }
 .odd-res { border-radius:12px; padding:14px; font-size:1.1rem; line-height:1.7; }
 .odd-res.bad { border:3px solid #b3261e; background:#fdeceb; color:#4a0d09; }
@@ -488,7 +489,7 @@ button[aria-pressed="true"] { font-weight:700; }
   <!-- ホーム -->
   <section class="view" id="v-home" aria-label="ホーム">
     <div class="welcome"><h1 class="logo-h1"><img src="logo-kesera.png?v=20261018" alt="ケセラ　毎日に、小さな楽しみを。" onerror="this.outerHTML='ケセラ'"></h1><p>あなたのペースで、今日の「したいこと」を。</p></div>
-    <button class="odd-big" id="oddBtn" type="button" aria-haspopup="dialog">🤔 おかしい？と思ったら、ここを押す</button>
+    <div class="sos-row"><button class="odd-big" id="oddBtn" type="button" aria-haspopup="dialog">🤔 おかしい？と思ったら</button><button class="sos-mini" id="sosMini" type="button" aria-haspopup="dialog" aria-label="もしものとき（119・110・ご家族）">🆘<small>もしもの時</small></button></div>
     <div class="card memo-due" id="memoDue" hidden role="alert"><h2>📌 きょうの うっかりメモ・予定</h2><div id="memoDueList"></div></div>
     <div class="card greet">
       <h2 id="greet"></h2>
@@ -547,6 +548,19 @@ button[aria-pressed="true"] { font-weight:700; }
       <p class="muted">楽しむための、遊びの占いです。注意は「気づきの合図」。よいことも、気をつけることも、あなたを育てる、チャンスとして受け取ります。</p>
     </div>
 
+    <div class="card" id="inspireCard">
+      <h2>💡 ひらめきをあなたに　きょうのおすすめ</h2>
+      <p class="muted" style="margin:0">体調、歩いた量、お住まい、いつも楽しんでいることから、「すこし広げる」ことを、ご案内します。この判断は、この端末の中だけで行います。</p>
+      <b>きょうの体調は？</b>
+      <div class="fl-chips" id="inCond" role="group" aria-label="きょうの体調"></div>
+      <p class="fl-sub" id="inFacts" style="margin:0"></p>
+      <div class="notice" id="inMain" style="display:flex;flex-direction:column;gap:8px">
+        <b id="inHead" style="font-size:1.15rem"></b><span id="inWhy" style="line-height:1.7"></span>
+        <div class="row"><button class="btn primary" id="inGo" type="button" style="min-height:52px"></button><button class="btn" id="inNext" type="button" style="min-height:52px">ちがうのを見る</button></div>
+      </div>
+      <div id="inAlt" class="fl-btns"></div>
+    </div>
+
     <div class="card" id="pgMenu">
       <h2 style="margin:0">なにを しますか</h2>
       <p class="pgh">毎日つかう</p>
@@ -575,7 +589,7 @@ button[aria-pressed="true"] { font-weight:700; }
       </div>
       <p class="pgh">もしものとき・設定</p>
       <div class="pgg">
-        <button class="pgt red" type="button" data-scroll="#safeCard"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="17"/><path d="M24 14v20M14 24h20" stroke-width="5"/></svg><span>もしもの時</span></button>
+        <button class="pgt red" type="button" data-click="#sosMini"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="17"/><path d="M24 14v20M14 24h20" stroke-width="5"/></svg><span>もしもの時</span></button>
         <button class="pgt red" type="button" data-click="#oddBtn"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 5l15 5v12c0 10-7 17-15 21C16 39 9 32 9 22V10z"/><path d="M19 20a5 5 0 119 2c-2 2-4 2-4 5"/><circle cx="24" cy="32" r="1.5" fill="currentColor"/></svg><span>おかしい？</span></button>
         <button class="pgt" type="button" data-go="settings"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="7"/><circle cx="24" cy="24" r="15" stroke-width="6" stroke-dasharray="6 6.8"/></svg><span>設定</span></button>
       </div>
@@ -3149,7 +3163,7 @@ button[aria-pressed="true"] { font-weight:700; }
       var cl = mk('button', '読みました（消す）', 'btn'); cl.type = 'button';
       cl.addEventListener('click', function () { try { window.speechSynthesis.cancel(); } catch (e) {} alertDismiss[a.id] = today; save('kesera-alert-dismiss', alertDismiss); renderAlerts(); });
       r.appendChild(sp); r.appendChild(cl);
-      if (a.help) { var hb = mk('button', '🆘 もしものとき（119・110・ご家族）', 'btn primary'); hb.type = 'button'; hb.addEventListener('click', function () { show('home'); setTimeout(function () { try { $('safeCard').scrollIntoView({ block: 'start' }); } catch (e) {} }, 80); }); r.appendChild(hb); }
+      if (a.help) { var hb = mk('button', '🆘 もしものとき（119・110・ご家族）', 'btn primary'); hb.type = 'button'; hb.addEventListener('click', function () { show('home'); setTimeout(function () { $('sosMini').click(); }, 80); }); r.appendChild(hb); }
       d.appendChild(r);
       if (a.url) { var l = document.createElement('a'); l.href = a.url; l.target = '_blank'; l.rel = 'noopener'; l.textContent = 'くわしい情報（新しい画面で開きます）'; l.style.fontSize = '1.05rem'; d.appendChild(l); }
       box.appendChild(d);
@@ -3972,6 +3986,74 @@ button[aria-pressed="true"] { font-weight:700; }
       if (t) Array.prototype.forEach.call(document.querySelectorAll('dialog.pgdlg[open]'), function (d) { d.close(); });
     }, true);
   })();
+
+  /* ---------- もしもの時：コンパクトボタン＋ポップ ---------- */
+  (function () {
+    var d = document.createElement('dialog'); d.id = 'sosDlg'; d.className = 'design-dialog location-dialog';
+    var c = $('safeCard'), cl = document.createElement('button'); cl.type = 'button'; cl.className = 'btn'; cl.textContent = '✕ 閉じる'; cl.style.marginTop = '10px';
+    cl.addEventListener('click', function () { d.close(); });
+    d.appendChild(c); d.appendChild(cl); document.body.appendChild(d);
+    $('sosMini').addEventListener('click', function () { if (!d.open) d.showModal(); });
+    d.addEventListener('click', function (e) { if (e.target === d) d.close(); });
+  })();
+
+  /* ---------- ひらめきをあなたに（きょうのおすすめ） ---------- */
+  var VUSE = load('kesera-viewuse', {});
+  (function () {
+    var __show = show;
+    show = function (v) { try { if (v && v !== 'home' && v !== 'settings') { VUSE[v] = (VUSE[v] || 0) + 1; save('kesera-viewuse', VUSE); } } catch (e) {} return __show.apply(this, arguments); };
+  })();
+  var IN_C = {
+    learn:  { n: '学ぶ（折り紙）', g: 'hands', e: 1, h: '手を動かして、ひとつの形を作る', w: '手を動かすと、気分が切りかわり、新しい発想が、浮かびやすくなります。折り紙の基礎を、ひとつ、やってみませんか。' },
+    move:   { n: '動く（プチ筋トレ）', g: 'body', e: 3, h: 'からだを少し動かす', w: '少し体を動かすと、頭もすっきりして、ひらめきが、出やすくなります。無理のない、プチ筋トレから。' },
+    travel: { n: '旅する（バーチャル旅）', g: 'place', e: 1, h: '行ったつもりで、旅に出る', w: 'いつもの場所を離れて、景色を想像すると、気持ちが広がります。画面の中の、小さな旅へ。' },
+    make:   { n: '作る・飾る', g: 'hands', e: 2, h: 'ごはんや花を、10分で整える', w: '作って、ととのえる時間は、心がおちつきます。10分ごはんや、花の飾り方を、のぞいてみませんか。' },
+    music:  { n: '聴く・観る', g: 'ear', e: 1, h: '耳と目で、ゆったり楽しむ', w: '思い出の歌や景色は、記憶をやさしく呼びおこして、気持ちをゆるめます。' },
+    sleep:  { n: '眠る（自然音）', g: 'ear', e: 1, h: '自然の音で、ゆっくり休む', w: '一日の終わりは、自然の音で、頭を休めましょう。休んだあとに、よいひらめきが来ます。' },
+    ask:    { n: '調べる', g: 'curious', e: 1, h: 'ふと気になったことを、聞いてみる', w: '「なぜだろう」は、知ることの入口です。ひとつ、声や文字で、聞いてみませんか。' },
+    talk:   { n: 'お話する', g: 'people', e: 1, h: '誰かと、お話する', w: 'お話しすると、考えが整理されて、思いがけない言葉が出てきます。案内係やお友達と、少し。' },
+    flower: { n: '花の見どころ', g: 'place', e: 2, h: '季節の花に、会いに行く計画', w: 'これから行く場所を考えるだけでも、わくわくします。いま見ごろ・もうすぐ見ごろの花を、見てみませんか。' },
+    farm:   { n: '自然農法', g: 'body', e: 2, h: '土と育ちを、知る', w: '育つものを見ると、時間の流れがゆっくりになります。家庭菜園のヒントを、のぞいてみませんか。' },
+    dress:  { n: '装う', g: 'hands', e: 1, h: '身なりを、少し楽しむ', w: '装いを変えると、気持ちも、すっと変わります。着こなし相談室で、ひとつ、試してみませんか。' }
+  };
+  var IN_ADJ = { body: ['place', 'hands'], place: ['body', 'ear'], hands: ['ear', 'curious'], ear: ['people', 'hands'], people: ['curious', 'ear'], curious: ['people', 'place'] };
+  var IN_G = { hands: '手を使うこと', body: '体を動かすこと', place: '場所や旅', ear: '音や景色', people: '人とのお話', curious: '知ること' };
+  function inSteps() { var s = load('kesera-steps', {}) || {}, ks = Object.keys(s).sort().slice(-7), t = 0; ks.forEach(function (k) { t += Number(s[k]) || 0; }); return ks.length ? Math.round(t / ks.length / 100) * 100 : null; }
+  function inCond() { var c = load('kesera-cond', {}); return c && c.d === today ? c.v : ''; }
+  function inRand(i, seed) { var x = Math.sin((doy(now) * 31 + i * 17 + seed * 101) * 12.9898) * 43758.5453; return x - Math.floor(x); }
+  function inPick() {
+    var seed = Number(load('kesera-inspire-seed', 0)) || 0, cond = inCond(), st = inSteps(), h = new Date().getHours(), rain = /雨|雪/.test($('wxsel').value);
+    var gUse = {}; Object.keys(VUSE).forEach(function (k) { var c = IN_C[k]; if (c) gUse[c.g] = (gUse[c.g] || 0) + VUSE[k]; });
+    var top = Object.keys(gUse).sort(function (a, b) { return gUse[b] - gUse[a]; })[0] || '';
+    var keys = Object.keys(IN_C), res = keys.map(function (k, i) {
+      var c = IN_C[k], sc = inRand(i, seed) * 1.2 + 2 / (1 + (VUSE[k] || 0)), why = [];
+      if (top && IN_ADJ[top] && IN_ADJ[top].indexOf(c.g) >= 0) { sc += 1.5; why.push('adj'); }
+      if (top && c.g === top) sc -= 0.5;
+      if (cond === 'tired') { sc += c.e === 1 ? 1.5 : (c.e === 3 ? -3 : -0.5); if (c.e === 1) why.push('tired'); }
+      if (cond === 'good' && c.e >= 2) { sc += 1; why.push('good'); }
+      if (st !== null && st < 2500 && cond !== 'tired' && (k === 'move' || k === 'flower')) { sc += 1.2; why.push('steps'); }
+      if (h >= 20 || h < 5) { if (k === 'sleep') sc += 3; if (c.e === 3) sc -= 3; if (k === 'music') sc += 1; } else if (k === 'sleep') sc -= 3;
+      if (rain && (k === 'flower' || k === 'travel' && false)) sc -= 2;
+      if (rain && (k === 'learn' || k === 'music' || k === 'make')) sc += 1;
+      return { k: k, sc: sc, why: why, top: top, st: st, cond: cond };
+    }).sort(function (a, b) { return b.sc - a.sc; });
+    return res;
+  }
+  function inRender() {
+    var cc = [['good', '元気'], ['ok', 'ふつう'], ['tired', 'ちょっと疲れた']], cur = inCond(), el = $('inCond'); el.innerHTML = '';
+    cc.forEach(function (x) { var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = x[1]; b.setAttribute('aria-pressed', String(x[0] === cur)); b.addEventListener('click', function () { save('kesera-cond', { d: today, v: x[0] }); inRender(); }); el.appendChild(b); });
+    var res = inPick(), r = res[0], c = IN_C[r.k], pn = (typeof prefName === 'function' && prefName()) || '';
+    var facts = []; if (pn) facts.push('お住まい：' + pn); if (r.st !== null) facts.push('最近の歩数：1日 約' + r.st + '歩'); if (r.top) facts.push('いつもの楽しみ：' + IN_G[r.top]);
+    $('inFacts').textContent = facts.join('　');
+    $('inHead').textContent = '今日は、すこし広げて、「' + c.n + '」';
+    var lead = r.why.indexOf('adj') >= 0 ? 'いつもの「' + IN_G[r.top] + '」から、ひとつ隣へ。' : (r.why.indexOf('tired') >= 0 ? 'お疲れのようですから、ゆったりしたものを。' : (r.why.indexOf('steps') >= 0 ? '最近の歩数が少なめなので、少しだけ動くことを。' : (r.cond === 'good' ? 'お元気なので、少し新しいことに。' : 'まだ触れていないところへ。')));
+    var city = (r.k === 'travel' && pn) ? pn + 'を、画面の中で歩いてみるのも、おすすめです。' : (r.k === 'flower' && pn ? pn + 'の近くの見ごろも、のっています。' : '');
+    $('inWhy').textContent = lead + c.h + '。' + c.w + city;
+    var go = $('inGo'); go.textContent = '👉 ひらいてみる'; go.onclick = function () { show(r.k); };
+    $('inNext').onclick = function () { save('kesera-inspire-seed', (Number(load('kesera-inspire-seed', 0)) || 0) + 1); inRender(); };
+    var alt = $('inAlt'); alt.innerHTML = ''; res.slice(1, 3).forEach(function (x) { var b = document.createElement('button'); b.type = 'button'; b.className = 'btn'; b.textContent = 'ほかに：' + IN_C[x.k].n; b.addEventListener('click', function () { show(x.k); }); alt.appendChild(b); });
+  }
+  inRender();
   renderWxIcon();
   renderSun(); updateNews();
   loadWeather();
