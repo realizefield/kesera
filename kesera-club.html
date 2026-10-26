@@ -826,6 +826,13 @@ button[aria-pressed="true"] { font-weight:700; }
     <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
     <h2>📖 青空文学</h2>
     <p class="muted">著作権が切れて、だれでも無料で読める、日本の名作です。まず「読む力」を選び、つぎに、気分のジャンルを開いてください。</p>
+    <div class="card" id="bkQuiz" style="gap:8px"><b style="font-size:1.1rem">🎯 あなたの好みで、さがす（3つの質問）</b>
+      <b>① いまの気分は？</b><div class="fl-chips" id="bqMood" role="group" aria-label="気分"></div>
+      <b>② 読みやすさは？</b><div class="fl-chips" id="bqEase" role="group" aria-label="読みやすさ"></div>
+      <b>③ 好きなテーマは？</b><div class="fl-chips" id="bqTheme" role="group" aria-label="テーマ"></div>
+      <button class="btn primary" id="bqGo" type="button" style="min-height:56px;font-size:1.1rem">📚 おすすめを見る</button>
+      <div id="bqOut" style="display:flex;flex-direction:column;gap:8px"></div>
+      <p class="fl-sub" style="margin:0">作品の「♥ 好き」「✓ 読んだ」を押すと、好みを学んで、つぎのおすすめに生かします（この端末の中だけ）。</p></div>
     <div class="card"><b>① どのくらい読みますか？</b><div class="fl-chips" id="bkLevel" role="group" aria-label="レベル"></div>
     <b>② 好きな作家は？</b><div class="fl-chips" id="bkAuth" role="group" aria-label="作家"></div></div>
     <p class="fl-sub" id="bkMsg" role="status"></p>
@@ -4195,7 +4202,9 @@ button[aria-pressed="true"] { font-weight:700; }
       var p = document.createElement('span'); p.textContent = w[4];
       var a = document.createElement('a'); a.className = 'btn'; a.target = '_blank'; a.rel = 'noopener'; a.textContent = '📖 青空文庫で探す';
       a.href = 'https://www.google.com/search?q=' + encodeURIComponent('青空文庫 ' + w[0] + ' ' + w[1]);
-      d.appendChild(t); d.appendChild(p); d.appendChild(a); return d;
+      var mr = document.createElement('div'); mr.className = 'row'; var fb = document.createElement('button'); fb.type = 'button'; fb.className = 'btn'; function fl() { fb.textContent = (typeof fav !== 'undefined' && fav[w[0]]) ? '♥ 好き（済）' : '♡ 好き'; } var rb = document.createElement('button'); rb.type = 'button'; rb.className = 'btn'; function rl() { rb.textContent = (typeof rd !== 'undefined' && rd[w[0]]) ? '✓ 読んだ（済）' : '□ 読んだ'; } fl(); rl();
+      fb.addEventListener('click', function () { fav[w[0]] = !fav[w[0]]; save('kesera-bk-fav', fav); fl(); }); rb.addEventListener('click', function () { rd[w[0]] = !rd[w[0]]; save('kesera-bk-read', rd); rl(); });
+      mr.appendChild(fb); mr.appendChild(rb); d.appendChild(t); d.appendChild(p); d.appendChild(a); d.appendChild(mr); return d;
     }
     function render() {
       chips('bkLevel', [[0, 'ぜんぶ'], [1, '初心者'], [2, '中級者'], [3, 'マニア']], lv, function (v) { lv = v; render(); });
@@ -4211,6 +4220,28 @@ button[aria-pressed="true"] { font-weight:700; }
       });
       $('bkMsg').textContent = shown ? 'ジャンルの名前を押すと、作品が開きます。' : 'この組み合わせの作品は、まだありません。作家を「全員」にしてみてください。';
     }
+
+    /* 好みでさがす */
+    var MOOD = [['warm', 'ほっこりしたい'], ['twist', 'ドキドキしたい'], ['jun', 'しみじみしたい'], ['fun', '笑いたい'], ['essay', '学びたい・考えたい']];
+    var EASE = [[1, 'やさしめ'], [2, 'ふつう'], [3, '歯ごたえがほしい'], [0, 'おまかせ']];
+    var THEME = [['love', '恋・ときめき'], ['twist', '不思議・ミステリー'], ['wakaru', '人間ドラマ・生活'], ['world', '旅・異文化'], ['essay', '随筆・古典'], ['', 'おまかせ']];
+    var q = load('kesera-bk-q', { m: 'warm', e: 1, t: '' }), fav = load('kesera-bk-fav', {}), rd = load('kesera-bk-read', {});
+    function qChips(id, arr, key) { var el = $(id); el.innerHTML = ''; arr.forEach(function (x) { var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = x[1]; b.setAttribute('aria-pressed', String(q[key] === x[0])); b.addEventListener('click', function () { q[key] = x[0]; save('kesera-bk-q', q); qChips(id, arr, key); }); el.appendChild(b); }); }
+    function recommend() {
+      var favAu = {}; W.forEach(function (w) { if (fav[w[0]]) favAu[w[1]] = (favAu[w[1]] || 0) + 1; });
+      var res = W.filter(function (w) { return !rd[w[0]]; }).map(function (w) {
+        var g = w[2].split(' '), sc = 0, why = [];
+        if (g.indexOf(q.m) >= 0) { sc += 3; why.push('気分に合います'); }
+        if (q.t && g.indexOf(q.t) >= 0) { sc += 2.5; why.push('好きなテーマです'); }
+        if (q.e) { var dd = Math.abs(w[3] - q.e); sc += dd === 0 ? 2 : (dd === 1 ? 0.5 : -1); if (dd === 0) why.push('読みやすさもちょうど'); }
+        if (favAu[w[1]]) { sc += 2; why.push('お好きな作家です'); }
+        if (fav[w[0]]) sc -= 1;
+        sc += Math.random() * 0.4; return { w: w, sc: sc, why: why };
+      }).sort(function (a, b) { return b.sc - a.sc; }).slice(0, 3);
+      var out = $('bqOut'); out.innerHTML = ''; if (!res.length) { out.textContent = '全部、読んだ作品です。すばらしい！ 作家をえらんで、ほかを探しましょう。'; return; }
+      res.forEach(function (r) { var c = card(r.w); if (r.why.length) { var y = document.createElement('span'); y.className = 'fl-sub'; y.textContent = '✨ ' + r.why.join('・'); c.insertBefore(y, c.children[1]); } c.style.border = '2px solid var(--accent)'; c.style.borderRadius = '10px'; out.appendChild(c); });
+    }
+    qChips('bqMood', MOOD, 'm'); qChips('bqEase', EASE, 'e'); qChips('bqTheme', THEME, 't'); $('bqGo').addEventListener('click', recommend);
     render();
   })();
 
