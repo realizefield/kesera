@@ -391,6 +391,7 @@ button[aria-pressed="true"] { font-weight:700; }
 .odd-q { display:flex; gap:12px; align-items:flex-start; border:1.5px solid var(--line); border-radius:10px; padding:12px; font-size:1.08rem; line-height:1.5; background:var(--surface); }
 .odd-q input { width:28px; height:28px; flex:none; margin-top:2px; }
 .bk-d{border:2px solid var(--line,#d9c9cf);border-radius:12px;background:var(--surface,#fff);overflow:hidden}.bk-d>summary{cursor:pointer;padding:14px;font-weight:700;font-size:1.1rem;min-height:52px;display:flex;align-items:center;gap:8px}.bk-d[open]>summary{background:#fbeff3}.bk-w{padding:10px 14px;border-top:1px solid #0001;display:flex;flex-direction:column;gap:4px}.bk-w b{font-size:1.05rem}.bk-t{display:inline-block;font-size:.8rem;border-radius:999px;padding:1px 9px;background:#eee;margin-left:6px}.bk-w a{align-self:flex-start;min-height:44px;display:inline-flex;align-items:center}
+.up-d{border:2px solid var(--line,#d9c9cf);border-radius:12px;background:var(--surface,#fff);overflow:hidden}.up-d>summary{cursor:pointer;padding:14px;font-weight:700;font-size:1.1rem;min-height:52px;display:flex;align-items:center}.up-d[open]>summary{background:#fbeff3}.up-c{padding:12px 14px;display:flex;flex-direction:column;gap:10px;border-top:1px solid #0001}.up-c ol,.up-c ul{margin:0;padding-left:1.3em;line-height:1.8}.up-big{font-size:2rem;font-weight:700;text-align:center;letter-spacing:.2em;padding:10px}.up-c input{min-height:52px;font-size:1.2rem;width:100%;box-sizing:border-box}.ml-i{display:flex;gap:8px;align-items:center;border:1px solid #0002;border-radius:10px;padding:6px 10px;min-height:52px}.ml-i.done span{text-decoration:line-through;opacity:.55}.ml-i span{flex:1;font-size:1.1rem}
 .sos-row{display:flex;gap:8px;align-items:stretch}.sos-row .odd-big{flex:1;width:auto}.sos-mini{flex:0 0 auto;min-width:84px;min-height:52px;border:0;border-radius:12px;background:#fff;color:#b3261e;border:3px solid #b3261e;font-size:1.3rem;font-weight:700;line-height:1.1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}.sos-mini small{font-size:.78rem}#sosDlg #safeCard{border:0!important;margin:0;padding:0;box-shadow:none}
 .odd-big { width:100%; min-height:76px; font-size:1.35rem; font-weight:700; border-radius:14px; border:3px solid #b3261e; background:#b3261e; color:#fff; box-shadow:0 3px 12px #0003; cursor:pointer; }
 .odd-res { border-radius:12px; padding:14px; font-size:1.1rem; line-height:1.7; }
@@ -584,6 +585,8 @@ button[aria-pressed="true"] { font-weight:700; }
       <div class="pgg">
                 <button class="pgt" type="button" data-go="book"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 12c-5-4-12-4-18-2v28c6-2 13-2 18 2 5-4 12-4 18-2V10c-6-2-13-2-18 2z"/><path d="M24 12v28"/></svg><span>青空文学</span></button>
         <button class="pgt" type="button" data-go="town"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 44S10 30 10 20a14 14 0 0128 0c0 10-14 24-14 24z"/><circle cx="24" cy="20" r="5"/></svg><span>まちの発見</span></button>
+        <button class="pgt" type="button" data-go="up"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 42V10M12 22l12-12 12 12"/><path d="M10 42h28"/></svg><span>1mm違う自分へ</span></button>
+        <button class="pgt" type="button" data-go="mania"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6l5 11 12 1-9 8 3 12-11-7-11 7 3-12-9-8 12-1z"/></svg><span>マニアージュ</span></button>
         <button class="pgt" type="button" data-go="flower"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="9" r="5"/><circle cx="34" cy="17" r="5"/><circle cx="30" cy="28" r="5"/><circle cx="18" cy="28" r="5"/><circle cx="14" cy="17" r="5"/><circle cx="24" cy="20" r="3"/><path d="M24 33v11"/></svg><span>花の見どころ</span></button>
         <button class="pgt" type="button" data-go="learn"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 12c-4-3-10-4-16-3v27c6-1 12 0 16 3 4-3 10-4 16-3V9c-6-1-12 0-16 3zM24 12v27"/></svg><span>学ぶ</span></button>
         <button class="pgt" type="button" data-go="move"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="30" cy="9" r="4"/><path d="M28 15l-6 11 8 6-3 11M22 26l-8 2M26 20l10 2M22 26l-6 14"/></svg><span>動く</span></button>
@@ -835,6 +838,21 @@ button[aria-pressed="true"] { font-weight:700; }
       <p class="fl-sub" id="tnNow"></p></div>
     <div id="tnList" style="display:flex;flex-direction:column;gap:10px"></div>
     <p class="fl-sub">開催日・時間・場所は、リンク先の最新の情報でご確認ください。ケセラの中には、行事の日程は載せていません（古い情報を、お伝えしないためです）。</p>
+  </section>
+
+  <section class="view" id="v-up" hidden aria-label="1mm違う自分へ">
+    <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
+    <h2>⬆ 1mm違う自分へ</h2>
+    <p class="muted">毎日、ほんの少し。知って、動かして、整えて、自分をアップデートします。見出しを押すと、開きます。</p>
+    <div id="upBox" style="display:flex;flex-direction:column;gap:8px"></div>
+  </section>
+
+  <section class="view" id="v-mania" hidden aria-label="マニアージュ">
+    <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
+    <h2>⭐ マニアージュ（マニアック倶楽部）</h2>
+    <div class="notice"><b style="font-size:1.15rem">マニアージュへようこそ。</b><br>あなたの本当にやりたいことが、みつかるとよいですね。人の目は、気にしません。「好き」は、それだけで、じゅうぶんです。</div>
+    <div class="card"><b>あなたの「好き」を、えらんでください</b><div class="fl-chips" id="mnChips" role="group" aria-label="マニアの種類"></div></div>
+    <div id="mnBody" style="display:flex;flex-direction:column;gap:10px"></div>
   </section>
 
   <section class="view" id="v-flower" hidden aria-label="花の見どころ">
@@ -1950,7 +1968,7 @@ button[aria-pressed="true"] { font-weight:700; }
   });
 
   /* 画面の切り替え */
-  var views = ['town', 'book', 'flower', 'settings', 'home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask', 'dress'];
+  var views = ['up', 'mania', 'town', 'book', 'flower', 'settings', 'home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask', 'dress'];
   var navView = 'home', navDepth = 0;
   function show(v, fromPop) {
     if (v !== 'talk' && typeof chatOn !== 'undefined' && chatOn) chatStop();
@@ -4246,6 +4264,110 @@ button[aria-pressed="true"] { font-weight:700; }
     }
     inp.addEventListener('input', function () { save('kesera-city', inp.value); render(); });
     render();
+  })();
+
+  /* ---------- 1mm違う自分へ／マニアージュ ---------- */
+  (function () {
+    function G(q) { return 'https://www.google.com/search?q=' + encodeURIComponent(q); }
+    function M(q) { return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q); }
+    function Y(q) { return 'https://www.youtube.com/results?search_query=' + encodeURIComponent(q); }
+    function E(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; }
+    function cityNow() { return (load('kesera-city', '') || '').trim(); }
+    function linkRow(arr) { var r = E('div', 'row'); arr.forEach(function (x) { var a = E('a', 'btnlink', x[0]); a.href = x[1]; a.target = '_blank'; a.rel = 'noopener'; r.appendChild(a); }); return r; }
+    function det(title, build) { var d = E('details', 'up-d'), s = E('summary', '', title), c = E('div', 'up-c'); d.appendChild(s); d.appendChild(c); var done = false; d.addEventListener('toggle', function () { if (d.open && !done) { done = true; build(c); } }); return d; }
+    function steps(c, ttl, list, note) { c.appendChild(E('b', '', ttl)); var ol = E('ol'); list.forEach(function (x) { ol.appendChild(E('li', '', x)); }); c.appendChild(ol); if (note) c.appendChild(E('p', 'fl-sub', note)); }
+    var CAUT = '痛みやめまいがあるときは、中止してください。持病のある方や、お医者さんから運動を控えるように言われている方は、先にご相談ください。';
+    var box = $('upBox'); if (!box) return;
+    /* 毎日したいことリスト */
+    function ml() { var m = load('kesera-mylist', { d: today, items: [] }); if (m.d !== today) { m = { d: today, items: (m.items || []).filter(function (x) { return !x.done; }) }; save('kesera-mylist', m); } return m; }
+    box.appendChild(det('📝 きょう、自分がしたいことリスト', function (c) {
+      c.appendChild(E('p', 'fl-sub', '人の目は、気にしない。きょう、自分がしたいことだけを、書きます。できなかったことは、明日にもち越します。'));
+      var inp = E('input'); inp.type = 'text'; inp.placeholder = '例：駅まで歩いて、電車を見る'; var add = E('button', 'btn primary', '＋ 入れる'); add.type = 'button'; add.style.minHeight = '52px';
+      var list = E('div'); list.style.cssText = 'display:flex;flex-direction:column;gap:6px'; var msg = E('p', 'fl-sub'); msg.setAttribute('role', 'status');
+      function draw() { var m = ml(); list.innerHTML = ''; var n = 0; m.items.forEach(function (it, i) { if (it.done) n++; var r = E('div', 'ml-i' + (it.done ? ' done' : '')), s = E('span', '', it.t), b = E('button', 'btn', it.done ? '↩' : '✔ できた'), x = E('button', 'btn', '✕'); b.type = x.type = 'button'; b.setAttribute('aria-label', it.done ? 'もどす' : 'できた'); x.setAttribute('aria-label', '消す'); b.addEventListener('click', function () { var mm = ml(); mm.items[i].done = !mm.items[i].done; save('kesera-mylist', mm); draw(); }); x.addEventListener('click', function () { var mm = ml(); mm.items.splice(i, 1); save('kesera-mylist', mm); draw(); }); r.appendChild(s); r.appendChild(b); r.appendChild(x); list.appendChild(r); }); msg.textContent = m.items.length ? ('きょうは、' + n + '個、できました。' + (n ? 'すてきです。' : '')) : 'まだ空です。ひとつ、入れてみましょう。'; }
+      function put() { var v = inp.value.trim(); if (!v) return; var m = ml(); m.items.push({ t: v, done: false }); save('kesera-mylist', m); inp.value = ''; draw(); }
+      add.addEventListener('click', put); inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') put(); });
+      c.appendChild(inp); c.appendChild(add); c.appendChild(list); c.appendChild(msg); draw();
+    }));
+    /* 歴史を知る */
+    box.appendChild(det('🏯 歴史を知る（地域の豆知識・深堀）', function (c) {
+      var ct = cityNow(), n = ct || '近く';
+      c.appendChild(E('p', 'fl-sub', ct ? '「' + ct + '」で調べます。' : '場所が空です。「まちの発見」で市や町の名前を入れると、そこを調べます。'));
+      c.appendChild(linkRow([['地名の由来', G(n + ' 地名 由来')], ['地域の歴史・豆知識', G(n + ' 歴史 豆知識')], ['史跡・文化財', G(n + ' 史跡 文化財')], ['郷土史・郷土資料館', M('郷土資料館 資料館 ' + ct)], ['動画で歴史を見る', Y(n + ' 歴史')]]));
+      var b = E('button', 'btn', '🏘 まちの発見へ（神社・学校・祭り など）'); b.type = 'button'; b.addEventListener('click', function () { show('town'); }); c.appendChild(b);
+      c.appendChild(E('p', 'fl-sub', '深堀のコツ：①地名 → ②神社の由来 → ③古い地図や写真、の順に進むと、つながって見えてきます。'));
+    }));
+    /* 脳ジム */
+    box.appendChild(det('🧠 脳ジム', function (c) {
+      c.appendChild(E('p', 'fl-sub', '遊びながら、少しだけ頭を使います。できなくても、大丈夫です。'));
+      var b1 = E('b', '', '① 数字を、逆から言う'); var big = E('div', 'up-big', ''); var ans = E('input'); ans.inputMode = 'numeric'; ans.placeholder = '逆から入力'; ans.hidden = true; var ok = E('button', 'btn primary', '答える'); ok.type = 'button'; ok.hidden = true; var st = E('button', 'btn primary', '▶ はじめる'); st.type = 'button'; var rs = E('p', 'fl-sub'); rs.setAttribute('role', 'status'); var lenN = 3, cur = '';
+      st.addEventListener('click', function () { cur = ''; for (var i = 0; i < lenN; i++) cur += Math.floor(Math.random() * 10); big.textContent = cur; rs.textContent = '3秒、覚えてください。'; ans.hidden = ok.hidden = true; ans.value = ''; setTimeout(function () { big.textContent = '？'; ans.hidden = ok.hidden = false; rs.textContent = '逆から、入力してください。'; ans.focus(); }, 3000); });
+      ok.addEventListener('click', function () { var r = cur.split('').reverse().join(''); if (ans.value.trim() === r) { rs.textContent = '正解です！ ' + (lenN < 6 ? '1けた増やします。' : ''); if (lenN < 6) lenN++; } else rs.textContent = '惜しい。正解は「' + r + '」でした。もう一度どうぞ。'; ans.hidden = ok.hidden = true; big.textContent = ''; });
+      c.appendChild(b1); c.appendChild(big); c.appendChild(ans); c.appendChild(ok); c.appendChild(st); c.appendChild(rs);
+      c.appendChild(E('b', '', '② 暗算（5問）')); var q = E('div', 'up-big', ''), qa = E('input'); qa.inputMode = 'numeric'; var qb = E('button', 'btn primary', '▶ はじめる'); qb.type = 'button'; var qr = E('p', 'fl-sub'); qr.setAttribute('role', 'status'); var qi = 0, qs = 0, a1, b2; qa.hidden = true;
+      function nq() { if (qi >= 5) { q.textContent = ''; qa.hidden = true; qr.textContent = '5問中 ' + qs + '問 正解でした。' + (qs >= 4 ? 'すばらしい！' : 'また、あした。'); qb.textContent = '▶ もう一度'; qb.hidden = false; return; } a1 = 10 + Math.floor(Math.random() * 40); b2 = 10 + Math.floor(Math.random() * 40); q.textContent = a1 + ' ＋ ' + b2 + ' ＝'; qa.value = ''; qa.hidden = false; qa.focus(); qb.hidden = true; qr.textContent = (qi + 1) + '問目（Enterか、下の「答える」）'; ab.hidden = false; }
+      var ab = E('button', 'btn primary', '答える'); ab.type = 'button'; ab.hidden = true;
+      function chk() { if (qa.value.trim() === '') return; if (Number(qa.value) === a1 + b2) qs++; qi++; ab.hidden = true; nq(); if (qi < 5) ab.hidden = false; }
+      ab.addEventListener('click', chk); qa.addEventListener('keydown', function (e) { if (e.key === 'Enter') chk(); });
+      qb.addEventListener('click', function () { qi = 0; qs = 0; nq(); });
+      c.appendChild(q); c.appendChild(qa); c.appendChild(ab); c.appendChild(qb); c.appendChild(qr);
+      c.appendChild(E('b', '', '③ 言葉さがし')); var W = ['あ', 'か', 'さ', 'た', 'な', 'は', 'ま', 'や', 'ら', 'わ'], wd = E('p', 'fl-sub'); var wb = E('button', 'btn', '🎲 お題を出す'); wb.type = 'button'; wb.addEventListener('click', function () { var ch = W[Math.floor(Math.random() * W.length)]; wd.textContent = '「' + ch + '」で始まる言葉を、30秒で、いくつ言えますか？ 声に出すと、さらに効きます。'; }); c.appendChild(wb); c.appendChild(wd);
+    }));
+    /* 筋肉で元気 */
+    box.appendChild(det('💪 筋肉で元気', function (c) {
+      steps(c, 'いすで、できる3つ（各10回）', ['いすに浅く座り、背すじをのばす。', 'ゆっくり立ち上がり、ゆっくり座る（いすスクワット）。', 'かかとを上げ下げする（ふくらはぎ）。', '両ひざを交互に上げて、足ぶみ（太もも）。'], CAUT);
+      var b = E('button', 'btn', '🏃 もっと動く（プチ筋トレへ）'); b.type = 'button'; b.addEventListener('click', function () { show('move'); }); c.appendChild(b);
+    }));
+    /* バランスアップ */
+    box.appendChild(det('🧘 バランスアップ', function (c) {
+      steps(c, '転ばない体づくり', ['台所の流しや、机など、つかまれる場所に立つ。', '片足を少し上げ、左右 各20秒（つかまりながら）。', '慣れたら、指先だけで、軽くふれる。', '1日1回、歯みがきの間に、するのもおすすめです。'], '無理に、手を離さないでください。' + CAUT);
+    }));
+    /* 目トレ */
+    box.appendChild(det('👀 目トレ', function (c) {
+      steps(c, 'ピント切りかえ（1分）', ['腕をのばして、親指を立てる。', '「近く（親指）」と「遠く（窓の外）」を、5秒ずつ見る。', '合図に合わせて、6回、くり返す。'], '見えにくさが続くときは、眼科でご相談ください。');
+      var out = E('div', 'up-big', ''), go = E('button', 'btn primary', '▶ はじめる'); go.type = 'button'; var t = null;
+      go.addEventListener('click', function () { if (t) clearInterval(t); var n = 0; function tick() { if (n >= 6) { clearInterval(t); t = null; out.textContent = 'おつかれさま！'; return; } out.textContent = (n % 2 === 0) ? '👍 近く（親指）' : '🪟 遠く（窓の外）'; n++; } tick(); t = setInterval(tick, 5000); });
+      c.appendChild(out); c.appendChild(go);
+      steps(c, 'もうひとつ：まばたき体操', ['ぎゅっと、目をつぶる（3秒）。', 'ぱっと開く。これを5回。', '最後に、手をこすって温め、目の上にそっと当てる。']);
+    }));
+    /* 自分のアップデート */
+    box.appendChild(det('✨ 自分のアップデート', function (c) {
+      c.appendChild(E('p', '', 'きょうのひらめき：「1mmちがう世界へ」のカードに、あなた用のおすすめがあります。'));
+      var b = E('button', 'btn primary', '💡 ホームで、おすすめを見る'); b.type = 'button'; b.addEventListener('click', function () { show('home'); setTimeout(function () { try { $('inspireCard').scrollIntoView({ block: 'start' }); } catch (e) {} }, 80); }); c.appendChild(b);
+      var w = load('kesera-wishes', []); c.appendChild(E('b', '', 'しまっておいた「自分の声」'));
+      if (w.length) { var ul = E('ul'); w.slice(-5).reverse().forEach(function (x) { ul.appendChild(E('li', '', x.t)); }); c.appendChild(ul); } else c.appendChild(E('p', 'fl-sub', 'まだありません。「1mmちがう世界へ」のカードで、ひとこと入れてみましょう。'));
+      var cut = E('button', 'btn', '⭐ マニアージュで、好きを探す'); cut.type = 'button'; cut.addEventListener('click', function () { show('mania'); }); c.appendChild(cut);
+    }));
+
+    /* マニアージュ */
+    var MN = [
+      ['🚃 鉄道マニア', '駅、車両、時刻表、旅。見るだけでも、乗るだけでも。', ['近くの駅まで歩き、ホームから列車を眺める', '気になった車両の名前を、ひとつ調べる', '今月、乗ってみたい路線をひとつ決める'], [['鉄道の動画', 'Y', '鉄道 車窓'], ['近くの鉄道・博物館', 'M', '鉄道 博物館 駅'], ['乗り鉄 はじめ方', 'G', '乗り鉄 はじめ方 初心者']]],
+      ['🪆 フィギュアマニア', '集める、飾る、塗る。小さな世界を、つくる。', ['お気に入りの1体を、飾る場所を決める', 'ホビーショップをのぞいてみる', '塗装やカスタムの動画を、見てみる'], [['ホビーショップ', 'M', 'ホビーショップ フィギュア'], ['フィギュア 塗装', 'Y', 'フィギュア 塗装 初心者'], ['飾り方', 'G', 'フィギュア 飾り方 ディスプレイ']]],
+      ['📺 アニメマニア', '好きな作品を、くり返し。聖地をたずねる旅も。', ['好きなシーンを、ひとつ、見返す', '作品の舞台を調べる（聖地巡礼）', '同じ作品のファンの感想を、のぞく'], [['聖地巡礼', 'G', 'アニメ 聖地巡礼 九州'], ['アニメの動画', 'Y', 'アニメ 名シーン'], ['アニメショップ', 'M', 'アニメ グッズ ショップ']]],
+      ['🎙 声優マニア', '声の演技を聞き分ける、ふかい世界。', ['好きな声の人を、ひとり決める', '出演作品を、調べてみる', 'イベントや朗読会を探す'], [['声優 イベント', 'G', '声優 イベント 朗読'], ['声の演技 動画', 'Y', '声優 演技 インタビュー'], ['声優の出演作', 'G', '声優 出演作品 一覧']]],
+      ['👗 コスプレマニア', 'なりきる楽しさ。衣装づくりから、はじめても。', ['なりたいキャラや時代を、ひとつ選ぶ', '衣装を手づくりする方法を、調べる', 'まずは、小物（帽子・ウィッグ）から'], [['衣装の作り方', 'Y', 'コスプレ 衣装 作り方 初心者'], ['手芸店', 'M', '手芸店 生地'], ['コスプレイベント', 'G', 'コスプレ イベント 一般参加']]],
+      ['🧳 旅行マニア', 'ひとり旅も、のんびり旅も。計画する時間も、旅のうち。', ['行ってみたい場所を、3つ書く', '日帰りで行ける所を、ひとつ調べる', '宿・交通を、見くらべてみる'], [['ひとり旅 計画', 'G', 'ひとり旅 計画 おすすめ'], ['日帰り旅', 'G', '日帰り旅行 九州 おすすめ'], ['旅の動画', 'Y', '旅 vlog 国内']]],
+      ['💖 オシカツ', '好きな人・ものを、応援する。元気がもらえます。', ['推しの、好きなところを、3つ言葉にする', '公式の最新情報を、チェックする', '今月、使える金額を、決めておく'], [['推し活の始め方', 'G', '推し活 始め方'], ['グッズの飾り方', 'G', '推し活 グッズ 飾り方 祭壇'], ['ライブ・イベント', 'G', '推し ライブ イベント 日程']]],
+      ['🏃 ランニングマニア', '走るのは、速さより、気持ちよさ。まず歩くことから。', ['近くを、15分歩いて、走ってみる', '自分に合う靴を、見てもらう', '走る時刻と、コースを決める'], [['近くのランニングコース', 'M', 'ランニングコース 公園'], ['走り方の動画', 'Y', 'ランニング フォーム 初心者 シニア'], ['ランニングシューズ', 'M', 'ランニングシューズ 専門店']]],
+      ['🏅 マラソンマニア', '大会の空気を味わう。完走も、観戦も、ボランティアも。', ['近くの大会を、調べる', '5kmや10kmの、小さな大会から', '応援・ボランティアの参加も、探す'], [['マラソン大会', 'G', 'マラソン大会 エントリー 今年'], ['5km 10km の部', 'G', '5km 10km マラソン 初心者 大会'], ['練習法の動画', 'Y', 'マラソン 練習 初心者']]],
+      ['📖 文学マニア', '一冊の本が、世界を変える。まずは短いものから。', ['気になる作家を、ひとり決める', '短編を、ひとつ読む', '読んだ感想を、ひとこと書く'], [['青空文学を、開く', 'GO', 'book'], ['文学館・図書館', 'M', '図書館 文学館'], ['朗読の動画', 'Y', '朗読 青空文庫']]],
+      ['🎨 絵画マニア', '見るのも、描くのも。うまい下手は、関係ありません。', ['好きな絵を、ひとつ探す', '近くの美術館・ギャラリーをのぞく', '10分だけ、身近なものを描いてみる'], [['近くの美術館', 'M', '美術館 ギャラリー'], ['水彩画の動画', 'Y', '水彩画 初心者 簡単'], ['画材店', 'M', '画材店']]]
+    ];
+    var cur = load('kesera-mania-sel', 0), mnote = load('kesera-mania-note', {});
+    function mnRender() {
+      var ch = $('mnChips'); ch.innerHTML = '';
+      MN.forEach(function (m, i) { var b = E('button', 'chip', m[0]); b.type = 'button'; b.setAttribute('aria-pressed', String(i === cur)); b.addEventListener('click', function () { cur = i; save('kesera-mania-sel', i); mnRender(); }); ch.appendChild(b); });
+      var m = MN[cur], bd = $('mnBody'); bd.innerHTML = ''; var ct = cityNow();
+      var c1 = E('div', 'card'); c1.style.gap = '8px'; c1.appendChild(E('b', '', m[0])); c1.appendChild(E('p', '', m[1])); c1.appendChild(E('b', '', 'はじめの一歩（できそうなものから）')); var ol = E('ol'); ol.style.cssText = 'margin:0;padding-left:1.3em;line-height:1.8'; m[2].forEach(function (x) { ol.appendChild(E('li', '', x)); }); c1.appendChild(ol);
+      var r = E('div', 'row'); m[3].forEach(function (x) { if (x[1] === 'GO') { var b = E('button', 'btn primary', x[0]); b.type = 'button'; b.addEventListener('click', function () { show(x[2]); }); r.appendChild(b); } else { var a = E('a', 'btnlink', x[0]); a.target = '_blank'; a.rel = 'noopener'; a.href = x[1] === 'Y' ? Y(x[2]) : (x[1] === 'M' ? M(x[2] + (ct ? ' ' + ct : '')) : G(x[2])); r.appendChild(a); } });
+      c1.appendChild(r); bd.appendChild(c1);
+      var c2 = E('div', 'card'); c2.style.gap = '8px'; c2.appendChild(E('b', '', '✏ ' + m[0].replace(/^\S+\s/, '') + 'の、わたしのメモ')); var inp = E('input'); inp.type = 'text'; inp.placeholder = 'ひとこと（見つけたこと、やってみたいこと）'; inp.style.cssText = 'min-height:52px;font-size:1.1rem;width:100%;box-sizing:border-box'; var sv = E('button', 'btn primary', '💾 しまっておく'); sv.type = 'button'; sv.style.minHeight = '52px'; var ul = E('ul'); ul.style.cssText = 'margin:0;padding-left:1.3em;line-height:1.8';
+      var arr = mnote[m[0]] || []; arr.slice(-5).reverse().forEach(function (x) { ul.appendChild(E('li', '', x.t)); });
+      sv.addEventListener('click', function () { var v = inp.value.trim(); if (!v) return; (mnote[m[0]] = mnote[m[0]] || []).push({ d: today, t: v }); mnote[m[0]] = mnote[m[0]].slice(-30); save('kesera-mania-note', mnote); mnRender(); });
+      var add = E('button', 'btn', '📝 「きょうしたいことリスト」に入れる'); add.type = 'button'; add.addEventListener('click', function () { var mm = ml(); mm.items.push({ t: m[2][0], done: false }); save('kesera-mylist', mm); add.textContent = '✔ 入れました'; });
+      c2.appendChild(inp); c2.appendChild(sv); c2.appendChild(ul); c2.appendChild(add); bd.appendChild(c2);
+    }
+    mnRender();
   })();
   renderWxIcon();
   renderSun(); updateNews();
