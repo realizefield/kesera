@@ -647,6 +647,11 @@ button[aria-pressed="true"] { font-weight:700; }
         <a class="btnlink" href="https://www.google.com/maps/search/?api=1&amp;query=%E3%83%A9%E3%83%B3%E3%83%81%201000%E5%86%86%E4%BB%A5%E5%86%85" target="_blank" rel="noopener">🍚 食事どころ（1,000円くらい）</a>
         <a class="btnlink" href="https://www.google.com/maps/search/?api=1&amp;query=%E9%A3%9F%E4%BA%8B%202000%E5%86%86%E4%BB%A5%E5%86%85" target="_blank" rel="noopener">🍱 食事どころ（2,000円くらい）</a>
       </div>
+      <b>☕ 気分転換に、ほどよく歩く</b>
+      <p class="fl-sub" id="nrAdv" style="margin:0"></p>
+      <div class="fl-chips" id="nrWalk" role="group" aria-label="歩く時間"></div>
+      <div class="row" id="nrBtns"></div>
+      <p class="muted">「徒歩○分」は、探すときの目安です。地図に出る距離を見て、無理のないお店を選んでください。</p>
       <p class="muted">金額は、お店の情報にある目安で探すため、ぴったりとは限りません。メニューや値段は、お店で確かめてください。</p>
     </div>
 
@@ -4152,6 +4157,30 @@ button[aria-pressed="true"] { font-weight:700; }
     var alt = $('inAlt'); alt.innerHTML = ''; res.slice(1, 3).forEach(function (x) { var b = document.createElement('button'); b.type = 'button'; b.className = 'btn'; b.textContent = 'ほかに：' + IN_C[x.k].n; b.addEventListener('click', function () { show(x.k); }); alt.appendChild(b); });
   }
   inRender();
+
+  /* ---------- 近くのお店：歩ける範囲・気分転換 ---------- */
+  (function () {
+    var walk = Number(load('kesera-walk', 0)) || 0, card = $('nearCard'); if (!card) return;
+    var C = [['☕ コーヒー店', 'コーヒー 喫茶店', 'ひと息つく'], ['🍙 手作り弁当・お惣菜', '手作り弁当 お惣菜', '安くて、からだにやさしい'], ['⭐ 人気のグルメ', 'グルメ 人気 ランチ', '口コミの多い人気店'], ['🍰 甘いもの', 'ケーキ 和菓子', 'ごほうび']];
+    function adv() {
+      var cond = inCond(), st = inSteps(), rec, why;
+      if (cond === 'tired') { rec = 5; why = 'お疲れのようなので、ごく近く（徒歩5分）で、ゆっくり。'; }
+      else if (st !== null && st < 2500) { rec = 10; why = '最近の歩数が少なめなので、徒歩10分ほどの散歩を兼ねて。'; }
+      else if (cond === 'good' || (st !== null && st >= 6000)) { rec = 15; why = 'お元気で歩けているので、徒歩15分ほど足をのばして、気分転換を。'; }
+      else { rec = 10; why = '徒歩10分ほどが、ほどよい目安です。'; }
+      return { rec: rec, why: why };
+    }
+    function render() {
+      var a = adv(); if (!walk) walk = a.rec;
+      $('nrAdv').textContent = 'きょうのおすすめ：' + a.why + '（「ひらめき」の体調・歩数をもとに、端末の中だけで決めています）';
+      var w = $('nrWalk'); w.innerHTML = '';
+      [5, 10, 15].forEach(function (m) { var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = '徒歩' + m + '分' + (m === a.rec ? '（おすすめ）' : ''); b.setAttribute('aria-pressed', String(m === walk)); b.addEventListener('click', function () { walk = m; save('kesera-walk', m); render(); }); w.appendChild(b); });
+      var r = $('nrBtns'); r.innerHTML = '';
+      C.forEach(function (c) { var l = document.createElement('a'); l.className = 'btnlink'; l.target = '_blank'; l.rel = 'noopener'; l.textContent = c[0]; l.title = c[2]; l.href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(c[1] + ' 徒歩' + walk + '分'); r.appendChild(l); });
+    }
+    render();
+  })();
+
   renderWxIcon();
   renderSun(); updateNews();
   loadWeather();
