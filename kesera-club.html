@@ -877,6 +877,7 @@ button[aria-pressed="true"] { font-weight:700; }
   <section class="view" id="v-laugh" hidden aria-label="笑ってすっきり！10秒で別世界へ">
     <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
     <h2>😂 笑ってすっきり！10秒で別世界へ</h2>
+    <div class="notice" id="lgSub" style="display:flex;flex-direction:column;gap:6px"><b style="font-size:1.1rem">つらいこと・いやなこと・忘れたいことから、ワープ！ 「何のチャンスかな？」</b><span style="line-height:1.8">いま起きていることは、自分の成長の過程にある「試験」かもしれません。年齢は関係ありません。子育ても、死も、だれもが未体験ゾーン。だから、だれもが初心者です。そう考えると、ちょっと、ワクワクしませんか。痛手を被るより、ちょっとだけ、楽しみましょう。</span><span class="fl-sub" style="margin:0">ワクワクできない日は、無理に前向きにならなくて大丈夫です。</span></div>
     <p class="muted">声を出して笑うと、気持ちが、すっと軽くなります。心のもやもやを、笑いで、空っぽにしましょう。</p>
     <div class="card" style="gap:8px"><b>きょう笑った回数</b><div class="up-big" id="lgCount" style="padding:4px">0</div>
       <button class="btn primary" id="lgTap" type="button" style="min-height:64px;font-size:1.3rem">😂 笑った！</button>
@@ -888,6 +889,8 @@ button[aria-pressed="true"] { font-weight:700; }
       <button class="btn primary" id="lgLetGo" type="button" style="min-height:56px;font-size:1.15rem">🌬 5秒で、手ばなす</button>
       <div class="up-big" id="lgLetOut" role="status" style="padding:6px;font-size:1.5rem;letter-spacing:.05em"></div>
       <p class="fl-sub" style="margin:0" id="lgLetSum"></p>
+      <div id="lgChance" hidden style="display:flex;flex-direction:column;gap:8px"><b>ワープ完了。つぎは、「何のチャンスかな？」</b><div class="fl-chips" id="lgChips" role="group" aria-label="何のチャンス"></div>
+        <input id="lgChanceTx" type="text" placeholder="ほかに思いついたら（自分の言葉で）" style="width:100%;box-sizing:border-box;min-height:52px;font-size:1.1rem"><button class="btn" id="lgChanceSv" type="button">💾 しまっておく</button><p class="fl-sub" id="lgChanceMsg" role="status" style="margin:0"></p></div>
       <p class="fl-sub" style="margin:0">つらい気持ちが、何日も続くときは、ひとりでかかえず、身近な人や、お住まいの相談窓口に、話してみてください。</p></div>
 
     <h3 style="margin:6px 0 0">🎬 YouTube お笑い おすすめ10選</h3>
@@ -4571,6 +4574,12 @@ button[aria-pressed="true"] { font-weight:700; }
 
   (function () {
     var go = $('lgLetGo'); if (!go) return;
+    var CH = ['新しい自分に出会うチャンス', '人にやさしくなれるチャンス', '好きなことを見つけるチャンス', '休んでいいよ、というサイン', '誰かに頼る練習のチャンス', 'まだ、わからない（それでも大丈夫）'];
+    function showChance() {
+      var box = $('lgChance'), ch = $('lgChips'), msg = $('lgChanceMsg'); box.hidden = false; box.style.display = 'flex'; ch.innerHTML = ''; msg.textContent = '';
+      CH.forEach(function (t) { var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = t; b.addEventListener('click', function () { msg.textContent = '「' + t + '」かもしれません。ちょっとだけ、ワクワクしてみましょう。'; var l = load('kesera-chance', []); l.push({ d: today, t: t }); save('kesera-chance', l.slice(-30)); }); ch.appendChild(b); });
+    }
+    $('lgChanceSv').addEventListener('click', function () { var v = $('lgChanceTx').value.trim(); if (!v) return; var l = load('kesera-chance', []); l.push({ d: today, t: v }); save('kesera-chance', l.slice(-30)); $('lgChanceTx').value = ''; $('lgChanceMsg').textContent = '「' + v + '」しまっておきました。すてきな見方です。'; });
     function sum() { var n = Number(load('kesera-letgo', 0)) || 0; $('lgLetSum').textContent = n ? 'これまでに ' + n + ' 回、手ばなしました。' : ''; }
     go.addEventListener('click', function () {
       var tx = $('lgLetTx'), out = $('lgLetOut'); if (!tx.value.trim()) { out.textContent = 'まず、ひとこと、書いてみてください。'; return; }
@@ -4579,7 +4588,7 @@ button[aria-pressed="true"] { font-weight:700; }
       var t = setInterval(function () {
         n--; if (n > 0) { out.textContent = n + '　' + msgs[n]; return; }
         clearInterval(t); tx.value = ''; tx.style.transition = 'none'; tx.style.opacity = '1'; tx.readOnly = false; go.disabled = false;
-        save('kesera-letgo', (Number(load('kesera-letgo', 0)) || 0) + 1); out.textContent = '✨ すっきり！ ひとつ笑って、おしまい。😄'; sum();
+        save('kesera-letgo', (Number(load('kesera-letgo', 0)) || 0) + 1); out.textContent = '✨ すっきり！ ひとつ笑って、おしまい。😄'; sum(); showChance();
       }, 1000);
     });
     sum();
