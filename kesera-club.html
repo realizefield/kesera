@@ -578,6 +578,7 @@ button[aria-pressed="true"] { font-weight:700; }
       <p class="pgh">楽しむ・学ぶ</p>
       <div class="pgg">
                 <button class="pgt" type="button" data-go="book"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 12c-5-4-12-4-18-2v28c6-2 13-2 18 2 5-4 12-4 18-2V10c-6-2-13-2-18 2z"/><path d="M24 12v28"/></svg><span>青空文学</span></button>
+        <button class="pgt" type="button" data-go="town"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 44S10 30 10 20a14 14 0 0128 0c0 10-14 24-14 24z"/><circle cx="24" cy="20" r="5"/></svg><span>まちの発見</span></button>
         <button class="pgt" type="button" data-go="flower"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="9" r="5"/><circle cx="34" cy="17" r="5"/><circle cx="30" cy="28" r="5"/><circle cx="18" cy="28" r="5"/><circle cx="14" cy="17" r="5"/><circle cx="24" cy="20" r="3"/><path d="M24 33v11"/></svg><span>花の見どころ</span></button>
         <button class="pgt" type="button" data-go="learn"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 12c-4-3-10-4-16-3v27c6-1 12 0 16 3 4-3 10-4 16-3V9c-6-1-12 0-16 3zM24 12v27"/></svg><span>学ぶ</span></button>
         <button class="pgt" type="button" data-go="move"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="30" cy="9" r="4"/><path d="M28 15l-6 11 8 6-3 11M22 26l-8 2M26 20l10 2M22 26l-6 14"/></svg><span>動く</span></button>
@@ -818,6 +819,17 @@ button[aria-pressed="true"] { font-weight:700; }
     <p class="fl-sub" id="bkMsg" role="status"></p>
     <div id="bkList" style="display:flex;flex-direction:column;gap:8px"></div>
     <p class="fl-sub">作品は、青空文庫（aozora.gr.jp）で、無料で読めます。「青空文庫で探す」を押すと、検索の画面が開きます。</p>
+  </section>
+
+  <section class="view" id="v-town" hidden aria-label="まちの発見">
+    <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
+    <h2>🏘 まちの発見</h2>
+    <p class="muted">お住まいの近くの、神社・学校・お店・行事を、ひとつずつ、調べる入口です。押すと、検索の画面が開きます。</p>
+    <div class="card"><b>調べる場所（市や町の名前）</b>
+      <input id="tnCity" type="text" placeholder="例：熊本市、菊池市（空だと「いまいる場所の近く」）" style="min-height:52px;font-size:1.1rem;width:100%;box-sizing:border-box">
+      <p class="fl-sub" id="tnNow"></p></div>
+    <div id="tnList" style="display:flex;flex-direction:column;gap:10px"></div>
+    <p class="fl-sub">開催日・時間・場所は、リンク先の最新の情報でご確認ください。ケセラの中には、行事の日程は載せていません（古い情報を、お伝えしないためです）。</p>
   </section>
 
   <section class="view" id="v-flower" hidden aria-label="花の見どころ">
@@ -1933,7 +1945,7 @@ button[aria-pressed="true"] { font-weight:700; }
   });
 
   /* 画面の切り替え */
-  var views = ['book', 'flower', 'settings', 'home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask', 'dress'];
+  var views = ['town', 'book', 'flower', 'settings', 'home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask', 'dress'];
   var navView = 'home', navDepth = 0;
   function show(v, fromPop) {
     if (v !== 'talk' && typeof chatOn !== 'undefined' && chatOn) chatStop();
@@ -4181,6 +4193,41 @@ button[aria-pressed="true"] { font-weight:700; }
     render();
   })();
 
+
+  /* ---------- まちの発見 ---------- */
+  (function () {
+    var inp = $('tnCity'); if (!inp) return;
+    var city = load('kesera-city', '') || ''; inp.value = city;
+    function G(q) { return 'https://www.google.com/search?q=' + encodeURIComponent(q); }
+    function M(q) { return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q); }
+    function T() {
+      var c = (inp.value || '').trim(), mo = (new Date().getMonth() + 1) + '月', near = c || '近く';
+      return [
+        { h: '⛩ 近くの神社と、その由来', d: 'お参りの前に、ご由緒を知ると、味わいがふかくなります。', l: [['地図で近くの神社', M('神社 ' + c)], ['由来・ご祭神を調べる', G(near + ' 神社 由来 ご祭神')]] },
+        { h: '🏫 近くの学校の由来', d: '学校の沿革は、まちの歴史そのものです。', l: [['小・中・高校の沿革', G(near + ' 学校 沿革 創立 由来')], ['地図で近くの学校', M('学校 ' + c)]] },
+        { h: '🎓 有名人の母校', d: 'あの人が通った学校が、すぐそばに。', l: [['この地域の出身校・有名人', G(near + ' 出身 有名人 母校 高校')], ['卒業生が多い学校を見る', G(near + ' 高校 著名な出身者')]] },
+        { h: '👍 評判のいいお店', d: '口コミの多いお店を、地図で見ます。', l: [['評判のいいお店', M('評判 人気 ' + c)], ['人気のランチ', M('人気 ランチ ' + c)], ['手作り・老舗', M('老舗 手作り ' + c)]] },
+        { h: '🏛 公民館のイベント', d: '講座、サークル、教室など。', l: [['公民館のイベント・講座', G(near + ' 公民館 イベント 講座 ' + mo)], ['地図で近くの公民館', M('公民館 ' + c)]] },
+        { h: '🎆 近く行われるお祭り', d: '今月と、来月の、お祭りを探します。', l: [[mo + 'のお祭り', G(near + ' 祭り ' + mo + ' 開催')], ['秋・冬の行事', G(near + ' 祭り 行事 今年')]] },
+        { h: '🌸 旬の花と花の見どころ', d: 'いま見ごろの花と、おすすめの鑑賞地は、こちら。', go: 'flower', l: [] },
+        { h: '📚 図書館のイベント', d: 'おはなし会、講演会、展示など。', l: [['図書館のイベント', G(near + ' 図書館 イベント ' + mo)], ['地図で近くの図書館', M('図書館 ' + c)]] }
+      ];
+    }
+    function render() {
+      $('tnNow').textContent = (inp.value || '').trim() ? '「' + inp.value.trim() + '」で調べます。' : '場所が空なので、「いまいる場所の近く」で調べます（地図は位置情報の許可が要ります）。';
+      var box = $('tnList'); box.innerHTML = '';
+      T().forEach(function (it) {
+        var c = document.createElement('div'); c.className = 'card'; c.style.gap = '8px';
+        var h = document.createElement('b'); h.style.fontSize = '1.1rem'; h.textContent = it.h; var p = document.createElement('p'); p.className = 'muted'; p.style.margin = '0'; p.textContent = it.d;
+        var r = document.createElement('div'); r.className = 'row';
+        if (it.go) { var b = document.createElement('button'); b.type = 'button'; b.className = 'btn primary'; b.textContent = '🌸 花の見どころへ'; b.addEventListener('click', function () { show(it.go); }); r.appendChild(b); }
+        it.l.forEach(function (x) { var a = document.createElement('a'); a.className = 'btnlink'; a.target = '_blank'; a.rel = 'noopener'; a.textContent = x[0]; a.href = x[1]; r.appendChild(a); });
+        c.appendChild(h); c.appendChild(p); c.appendChild(r); box.appendChild(c);
+      });
+    }
+    inp.addEventListener('input', function () { save('kesera-city', inp.value); render(); });
+    render();
+  })();
   renderWxIcon();
   renderSun(); updateNews();
   loadWeather();
