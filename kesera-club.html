@@ -585,7 +585,7 @@ button[aria-pressed="true"] { font-weight:700; }
       </div>
       <p class="pgh">楽しむ・学ぶ</p>
       <div class="pgg">
-                <button class="pgt" type="button" data-go="book"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 12c-5-4-12-4-18-2v28c6-2 13-2 18 2 5-4 12-4 18-2V10c-6-2-13-2-18 2z"/><path d="M24 12v28"/></svg><span>青空文学</span></button>
+                <button class="pgt" type="button" data-go="book"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 12c-5-4-12-4-18-2v28c6-2 13-2 18 2 5-4 12-4 18-2V10c-6-2-13-2-18 2z"/><path d="M24 12v28"/></svg><span>読書くん</span></button>
         <button class="pgt" type="button" data-go="town"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 44S10 30 10 20a14 14 0 0128 0c0 10-14 24-14 24z"/><circle cx="24" cy="20" r="5"/></svg><span>まちの発見</span></button>
         <button class="pgt" type="button" data-go="up"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 42V10M12 22l12-12 12 12"/><path d="M10 42h28"/></svg><span>1mm違う自分へ</span></button>
         <button class="pgt" type="button" data-go="mania"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6l5 11 12 1-9 8 3 12-11-7-11 7 3-12-9-8 12-1z"/></svg><span>マニアージュ</span></button>
@@ -822,10 +822,27 @@ button[aria-pressed="true"] { font-weight:700; }
   </section>
 
   <!-- 花の見どころ -->
-  <section class="view" id="v-book" hidden aria-label="青空文学">
+  <section class="view" id="v-book" hidden aria-label="読書くん">
     <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
-    <h2>📖 青空文学</h2>
+    <h2>📖 読書くん（青空文学）</h2>
     <p class="muted">著作権が切れて、だれでも無料で読める、日本の名作です。まず「読む力」を選び、つぎに、気分のジャンルを開いてください。</p>
+    <div class="card" id="bkTimer" style="gap:8px"><b style="font-size:1.1rem">⏱ 読書タイマー　＋　脳の活性化評価</b>
+      <p class="fl-sub" style="margin:0">読みはじめと、読みおわりに、ボタンを押すだけ。そのたびに、ほめ言葉が出ます。</p>
+      <b>何を読みますか？</b><select id="btWork" style="min-height:52px;font-size:1.05rem;width:100%"></select>
+      <b>読みごたえ</b><div class="fl-chips" id="btLv" role="group" aria-label="読みごたえ"></div>
+      <div class="up-big" id="btClock" style="padding:4px">00:00</div>
+      <div class="row"><button class="btn primary" id="btStart" type="button" style="min-height:56px;font-size:1.1rem">▶ 読みはじめる</button><button class="btn" id="btStop" type="button" style="min-height:56px;font-size:1.1rem" hidden>■ 読みおわる</button></div>
+      <div class="notice" id="btPraise" role="status" hidden style="font-size:1.1rem;line-height:1.7"></div>
+      <div id="btRate" style="display:none;flex-direction:column;gap:6px"><b>頭は、どのくらい働きましたか？</b><div class="mm-stars" id="btStars" role="group" aria-label="頭の働き"></div></div>
+      <div id="btSum" style="line-height:1.8"></div>
+      <div class="notice" id="btCmp" style="gap:6px;display:flex;flex-direction:column"><b>👥 世代の読書時間と、くらべる</b>
+        <div class="fl-chips" id="btAge" role="group" aria-label="世代"></div>
+        <label for="btRef" class="fl-sub" style="margin:0">その世代の「1日の読書の平均（分）」を入れると、あなたの7日間の平均とくらべます。</label>
+        <input id="btRef" type="number" inputmode="numeric" min="0" max="600" placeholder="例：20" style="min-height:52px;font-size:1.2rem;width:100%;box-sizing:border-box">
+        <div id="btCmpOut" role="status" style="line-height:1.8"></div>
+        <p class="fl-sub" style="margin:0">参考：総務省「令和3年社会生活基本調査」では、「趣味としての読書（マンガを除く）」をした人は、10歳以上の31.6%（2016年は38.7%）でした。世代別の読書時間の数字は、公式の統計で、ご確認ください。</p>
+        <a class="btnlink" target="_blank" rel="noopener" href="https://www.google.com/search?q=%E7%A4%BE%E4%BC%9A%E7%94%9F%E6%B4%BB%E5%9F%BA%E6%9C%AC%E8%AA%BF%E6%9F%BB+%E8%AA%AD%E6%9B%B8+%E5%B9%B4%E9%BD%A2%E9%9A%8E%E7%B4%9A%E5%88%A5+%E6%99%82%E9%96%93">📊 世代別の読書時間（公式統計を検索）</a></div>
+      <p class="fl-sub" style="margin:0">「脳の活性化」は、読んだ時間と、読みごたえから出す、楽しむための目安です。医学的な測定ではありません。</p></div>
     <div class="card" id="bkTrend" style="gap:6px"><b style="font-size:1.1rem">📈 好きな作家トレンド</b><div id="bkTrendBody"></div>
       <div class="row"><a class="btnlink" target="_blank" rel="noopener" href="https://www.google.com/search?q=%E9%9D%92%E7%A9%BA%E6%96%87%E5%BA%AB+%E4%BA%BA%E6%B0%97+%E3%83%A9%E3%83%B3%E3%82%AD%E3%83%B3%E3%82%B0">🌐 青空文庫の人気ランキング（検索）</a></div></div>
     <div class="card" id="bkDeep" style="gap:8px"><b style="font-size:1.1rem">🔎 AIと深堀する（声でも、文字でも）</b>
@@ -4219,7 +4236,7 @@ button[aria-pressed="true"] { font-weight:700; }
       var a = document.createElement('a'); a.className = 'btn'; a.target = '_blank'; a.rel = 'noopener'; a.textContent = '📖 青空文庫で探す';
       a.href = 'https://www.google.com/search?q=' + encodeURIComponent('青空文庫 ' + w[0] + ' ' + w[1]);
       var mr = document.createElement('div'); mr.className = 'row'; var fb = document.createElement('button'); fb.type = 'button'; fb.className = 'btn'; function fl() { fb.textContent = (typeof fav !== 'undefined' && fav[w[0]]) ? '♥ 好き（済）' : '♡ 好き'; } var rb = document.createElement('button'); rb.type = 'button'; rb.className = 'btn'; function rl() { rb.textContent = (typeof rd !== 'undefined' && rd[w[0]]) ? '✓ 読んだ（済）' : '□ 読んだ'; } fl(); rl();
-      fb.addEventListener('click', function () { fav[w[0]] = !fav[w[0]]; save('kesera-bk-fav', fav); fl(); if (typeof trend === 'function') trend(); }); rb.addEventListener('click', function () { rd[w[0]] = !rd[w[0]]; save('kesera-bk-read', rd); rl(); if (typeof trend === 'function') trend(); });
+      fb.addEventListener('click', function () { fav[w[0]] = !fav[w[0]]; save('kesera-bk-fav', fav); fl(); if (typeof trend === 'function') trend(); }); rb.addEventListener('click', function () { rd[w[0]] = !rd[w[0]]; save('kesera-bk-read', rd); rl(); if (rd[w[0]] && window.bkPraise) window.bkPraise('✓ 『' + w[0] + '』を、読みました！ すばらしい！ また一冊、人生の宝物がふえました。'); if (typeof trend === 'function') trend(); });
       var ab2 = document.createElement('button'); ab2.type = 'button'; ab2.className = 'btn'; ab2.textContent = '🔎 AIと深堀'; ab2.addEventListener('click', function () { askDeep('『' + w[0] + '』（' + w[1] + '）の見どころと、書かれた時代の背景を、結末は言わずに、教えてください。'); }); mr.appendChild(ab2);
       mr.appendChild(fb); mr.appendChild(rb); d.appendChild(t); d.appendChild(p); d.appendChild(a); d.appendChild(mr); return d;
     }
@@ -4274,6 +4291,53 @@ button[aria-pressed="true"] { font-weight:700; }
     $('bdMic').addEventListener('click', function () { show('ask'); setTimeout(function () { $('askmic').click(); }, 200); });
     ['この作家が好きなら、次は誰？', '歴史ものの、おすすめは？', '初心者が読みやすい長編は？', '熊本ゆかりの作家は？'].forEach(function (t) { var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = t; b.addEventListener('click', function () { askDeep('青空文庫で読める作品を前提に、' + t); }); $('bdEx').appendChild(b); });
     trend();
+
+    /* 読書タイマー・ほめ言葉・脳の活性化評価 */
+    var LVN = { 1: '初級', 2: '中級', 3: '上級' }, LVW = { 1: 1, 2: 1.5, 3: 2 };
+    var PR = { s: ['ひとページでも、立派な一歩です！', '開いただけで、もう、えらい！', '少しでも、読めましたね。すてきです。'], m: ['いい集中です。頭が、よろこんでいますよ。', 'しっかり読めました。おみごと！', 'ゆったり、いい時間でしたね。'], l: ['すばらしい集中力です！ 拍手！', '本の世界に、どっぷり。さすがです。', '長く読めましたね。頭も心も、ほくほくです。'], x: ['脱帽です！ 読書の達人ですね。', 'こんなに読めるなんて、感動です！', '今日は、読書デーですね。すばらしい！'] };
+    function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
+    function praiseFor(m) { return pick(m < 5 ? PR.s : (m < 15 ? PR.m : (m < 30 ? PR.l : PR.x))); }
+    function rankOf(p, th) { return p >= th[1] ? 3 : (p >= th[0] ? 2 : 1); }
+    var btLv = 0, btSel = $('btWork'), btLog = load('kesera-bk-log', []), btRun = load('kesera-bk-run', null), btT = null;
+    function ymd(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+    window.bkPraise = function (t) { var el = $('btPraise'); el.hidden = false; el.textContent = t; };
+    function fillSel() { btSel.innerHTML = ''; var o0 = document.createElement('option'); o0.value = ''; o0.textContent = '（作品をえらぶ／なにも決めない）'; btSel.appendChild(o0); W.forEach(function (w) { var o = document.createElement('option'); o.value = w[0]; o.textContent = w[0] + '（' + w[1] + '）'; btSel.appendChild(o); }); }
+    function lvDraw() { var el = $('btLv'); el.innerHTML = ''; [1, 2, 3].forEach(function (n) { var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = LVN[n]; b.setAttribute('aria-pressed', String(btLv === n)); b.addEventListener('click', function () { btLv = n; lvDraw(); }); el.appendChild(b); }); }
+    btSel.addEventListener('change', function () { var w = W.filter(function (x) { return x[0] === btSel.value; })[0]; if (w) { btLv = w[3]; lvDraw(); } });
+    function clock() { if (!btRun) { $('btClock').textContent = '00:00'; return; } var s = Math.max(0, Math.floor((Date.now() - btRun.t0) / 1000)); $('btClock').textContent = pad(Math.floor(s / 60)) + ':' + pad(s % 60); }
+    function btUi() { $('btStart').hidden = !!btRun; $('btStop').hidden = !btRun; if (btRun) { if (!btT) btT = setInterval(clock, 1000); } else if (btT) { clearInterval(btT); btT = null; } clock(); }
+    function summary() {
+      var now0 = new Date(), t = ymd(now0), day = {}, wk = 0, wp = 0, tm = 0; var wkStart = new Date(now0.getFullYear(), now0.getMonth(), now0.getDate() - 6);
+      btLog.forEach(function (r) { day[r.d] = (day[r.d] || 0) + r.min; tm += r.min; var dd = new Date(r.d.replace(/-/g, '/')); if (dd >= wkStart) { wk += r.min; wp += r.pt; } });
+      var streak = 0, c = new Date(now0.getFullYear(), now0.getMonth(), now0.getDate()); if (!day[ymd(c)]) c.setDate(c.getDate() - 1); while (day[ymd(c)]) { streak++; c.setDate(c.getDate() - 1); }
+      var rk = rankOf(wp, [60, 180]), next = rk === 1 ? 60 - wp : (rk === 2 ? 180 - wp : 0);
+      $('btSum').innerHTML = ''; function line(x) { var d = document.createElement('div'); d.textContent = x; $('btSum').appendChild(d); }
+      line('📖 きょうの読書：' + (day[t] || 0) + '分　／　この7日間：' + wk + '分　／　これまでの合計：' + tm + '分');
+      line('🔥 つづけて読んだ日：' + streak + '日');
+      line('🧠 いまの脳の活性化：' + LVN[rk] + '（この7日間 ' + Math.round(wp) + 'ポイント' + (next > 0 ? '。つぎの「' + LVN[rk + 1] + '」まで あと ' + Math.round(next) + 'ポイント' : '。最高の、上級です！') + '）');
+    }
+    $('btStart').addEventListener('click', function () { if (!btLv) { btLv = 1; lvDraw(); } btRun = { t0: Date.now(), w: btSel.value, lv: btLv }; save('kesera-bk-run', btRun); $('btPraise').hidden = true; $('btRate').style.display = 'none'; bkPraise('読みはじめましたね。ゆっくり、楽しんでください。'); btUi(); });
+    $('btStop').addEventListener('click', function () {
+      if (!btRun) return; var min = Math.max(1, Math.round((Date.now() - btRun.t0) / 60000)), pt = min * LVW[btRun.lv], lv = btRun.lv, w = btRun.w;
+      var ses = rankOf(pt, [15, 45]); btLog.push({ d: ymd(new Date()), min: min, w: w, lv: lv, pt: pt, st: 0 }); btLog = btLog.slice(-200); save('kesera-bk-log', btLog); btRun = null; save('kesera-bk-run', null); btUi(); cmpDraw();
+      bkPraise('🎉 ' + min + '分、読みました！　' + praiseFor(min) + '　この読書の脳の活性化：' + LVN[ses] + '（' + LVN[lv] + 'の読みごたえ × ' + min + '分）');
+      var rt = $('btRate'); rt.style.display = 'flex'; starsDraw2($('btStars'), 0, function (n) { btLog[btLog.length - 1].st = n; save('kesera-bk-log', btLog); starsDraw2($('btStars'), n, arguments.callee); }); summary();
+    });
+    function starsDraw2(el, val, on) { el.innerHTML = ''; for (var i = 1; i <= 5; i++) (function (n) { var b = document.createElement('button'); b.type = 'button'; b.className = n <= val ? 'on' : ''; b.textContent = n <= val ? '★' : '☆'; b.setAttribute('aria-label', n + 'つ星'); b.addEventListener('click', function () { on(n); }); el.appendChild(b); })(i); }
+
+    /* 世代とくらべる */
+    var AGES = ['10代', '20代', '30代', '40代', '50代', '60代', '70代以上'], cmp = load('kesera-bk-cmp', { a: '60代', r: '' });
+    function cmpDraw() {
+      var el = $('btAge'); el.innerHTML = ''; AGES.forEach(function (a) { var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = a; b.setAttribute('aria-pressed', String(cmp.a === a)); b.addEventListener('click', function () { cmp.a = a; save('kesera-bk-cmp', cmp); cmpDraw(); }); el.appendChild(b); });
+      $('btRef').value = cmp.r === '' ? '' : cmp.r;
+      var wkStart = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() - 6), tot = 0; btLog.forEach(function (r) { if (new Date(r.d.replace(/-/g, '/')) >= wkStart) tot += r.min; });
+      var avg = Math.round(tot / 7 * 10) / 10, out = $('btCmpOut'), ref = Number(cmp.r);
+      if (!cmp.r || !(ref > 0)) { out.textContent = 'あなたの7日間の平均：1日 ' + avg + '分。　' + cmp.a + 'の平均を入れると、くらべられます。'; return; }
+      var pct = Math.round(avg / ref * 100);
+      out.textContent = 'あなた：1日 ' + avg + '分　／　' + cmp.a + 'の平均：' + ref + '分　→　' + pct + '%　' + (pct >= 100 ? '🎉 平均を、こえています！ すばらしい！' : (pct >= 50 ? '👍 あと少し。1日あと ' + Math.max(1, Math.round(ref - avg)) + '分で、並びます。' : '🌱 まずは、1日5分から。始めたことが、大きな一歩です。'));
+    }
+    $('btRef').addEventListener('input', function () { cmp.r = this.value; save('kesera-bk-cmp', cmp); cmpDraw(); });
+    fillSel(); lvDraw(); btUi(); summary(); cmpDraw();
     render();
   })();
 
