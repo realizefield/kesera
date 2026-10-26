@@ -588,6 +588,7 @@ button[aria-pressed="true"] { font-weight:700; }
         <button class="pgt" type="button" data-go="town"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 44S10 30 10 20a14 14 0 0128 0c0 10-14 24-14 24z"/><circle cx="24" cy="20" r="5"/></svg><span>まちの発見</span></button>
         <button class="pgt" type="button" data-go="up"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 42V10M12 22l12-12 12 12"/><path d="M10 42h28"/></svg><span>1mm違う自分へ</span></button>
         <button class="pgt" type="button" data-go="mania"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6l5 11 12 1-9 8 3 12-11-7-11 7 3-12-9-8 12-1z"/></svg><span>マニアージュ</span></button>
+        <button class="pgt" type="button" data-go="laugh"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="18"/><path d="M14 20c2-3 6-3 8 0M26 20c2-3 6-3 8 0"/><path d="M13 28h22c0 7-5 11-11 11s-11-4-11-11z"/></svg><span>わらって すっからかん</span></button>
         <button class="pgt" type="button" data-go="flower"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="9" r="5"/><circle cx="34" cy="17" r="5"/><circle cx="30" cy="28" r="5"/><circle cx="18" cy="28" r="5"/><circle cx="14" cy="17" r="5"/><circle cx="24" cy="20" r="3"/><path d="M24 33v11"/></svg><span>花の見どころ</span></button>
         <button class="pgt" type="button" data-go="learn"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 12c-4-3-10-4-16-3v27c6-1 12 0 16 3 4-3 10-4 16-3V9c-6-1-12 0-16 3zM24 12v27"/></svg><span>学ぶ</span></button>
         <button class="pgt" type="button" data-go="move"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="30" cy="9" r="4"/><path d="M28 15l-6 11 8 6-3 11M22 26l-8 2M26 20l10 2M22 26l-6 14"/></svg><span>動く</span></button>
@@ -871,6 +872,19 @@ button[aria-pressed="true"] { font-weight:700; }
     <div class="notice"><b style="font-size:1.15rem">マニアージュへようこそ。</b><br>あなたの本当にやりたいことが、みつかるとよいですね。人の目は、気にしません。「好き」は、それだけで、じゅうぶんです。</div>
     <div class="card"><b>あなたの「好き」を、えらんでください</b><div class="fl-chips" id="mnChips" role="group" aria-label="マニアの種類"></div></div>
     <div id="mnBody" style="display:flex;flex-direction:column;gap:10px"></div>
+  </section>
+
+  <section class="view" id="v-laugh" hidden aria-label="わらってわらって すっからかん">
+    <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
+    <h2>😂 わらって わらって すっからかん</h2>
+    <p class="muted">声を出して笑うと、気持ちが、すっと軽くなります。心のもやもやを、笑いで、空っぽにしましょう。</p>
+    <div class="card" style="gap:8px"><b>きょう笑った回数</b><div class="up-big" id="lgCount" style="padding:4px">0</div>
+      <button class="btn primary" id="lgTap" type="button" style="min-height:64px;font-size:1.3rem">😂 笑った！</button>
+      <p class="fl-sub" id="lgMsg" role="status" style="margin:0"></p></div>
+    <h3 style="margin:6px 0 0">🎬 YouTube お笑い おすすめ10選</h3>
+    <p class="fl-sub" style="margin:0">押すと、YouTubeで検索します。気に入った動画を、見つけてください。</p>
+    <div id="lgList" style="display:flex;flex-direction:column;gap:8px"></div>
+    <p class="fl-sub">笑いは、無理をしないのがいちばんです。体調がすぐれないときは、休んでください。個々の動画は、日々入れかわるため、検索の形で、ご案内しています。</p>
   </section>
 
   <section class="view" id="v-flower" hidden aria-label="花の見どころ">
@@ -1986,7 +2000,7 @@ button[aria-pressed="true"] { font-weight:700; }
   });
 
   /* 画面の切り替え */
-  var views = ['up', 'mania', 'town', 'book', 'flower', 'settings', 'home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask', 'dress'];
+  var views = ['laugh', 'up', 'mania', 'town', 'book', 'flower', 'settings', 'home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask', 'dress'];
   var navView = 'home', navDepth = 0;
   function show(v, fromPop) {
     if (v !== 'talk' && typeof chatOn !== 'undefined' && chatOn) chatStop();
@@ -4172,6 +4186,7 @@ button[aria-pressed="true"] { font-weight:700; }
     matsuri: { n: '近くのお祭りを調べる', g: 'people', e: 2, tn: 5, h: '近く行われる行事を、のぞく', w: '季節の行事は、気持ちを動かす、いちばんの近道です。' },
     marche: { n: 'マルシェ・朝市をのぞく', g: 'people', e: 1, tn: 9, h: '地元の手づくりのお店を、歩く', w: '人の声と、季節の食べものに、元気をもらえます。' },
     concert: { n: '演奏会・コンサート・ライブを探す', g: 'ear', e: 1, tn: 10, h: '生の音を、聴きに行く', w: '生の音は、思い出を、やさしく呼びさまします。' },
+    laugh:  { n: 'わらって すっからかん', g: 'ear', e: 1, h: 'お笑い動画で、声を出して笑う', w: '笑うと、気持ちが軽くなります。落語・漫才・動物動画など、10の入口があります。' },
     library: { n: '図書館のイベントをのぞく', g: 'curious', e: 1, tn: 7, h: 'おはなし会や展示を、探す', w: '知らなかった世界の入口が、いちばん近くにあります。' },
     ask:    { n: '調べる', g: 'curious', e: 1, h: 'ふと気になったことを、聞いてみる', w: '「なぜだろう」は、知ることの入口です。ひとつ、声や文字で、聞いてみませんか。' },
     talk:   { n: 'お話する', g: 'people', e: 1, h: '誰かと、お話する', w: 'お話しすると、考えが整理されて、思いがけない言葉が出てきます。案内係やお友達と、少し。' },
@@ -4520,6 +4535,28 @@ button[aria-pressed="true"] { font-weight:700; }
       save('kesera-voice-civic-draft', { d: today, t: o.value });
     });
     var tc = $('tnCity'); if (tc) tc.addEventListener('input', function () { setTimeout(draw, 0); });
+    draw();
+  })();
+
+  /* ---------- わらって わらって すっからかん ---------- */
+  (function () {
+    var list = $('lgList'); if (!list) return;
+    var P = [
+      ['🎩 落語「時そば」', '落語入門の定番。くすっと、笑えます。', '落語 時そば'],
+      ['🎩 落語「寿限無」', '長い名前の、おなじみの噺。', '落語 寿限無'],
+      ['🎩 落語「まんじゅうこわい」', 'こわいものを言い合う、愉快な噺。', '落語 まんじゅうこわい'],
+      ['🎤 漫才の傑作', '昭和から現代まで、大笑いの漫才。', '漫才 傑作 爆笑'],
+      ['🎭 コントの名作', '何度見ても笑える、名作コント。', 'コント 名作 爆笑'],
+      ['🗣 方言・ご当地のお笑い', '熊本弁・九州弁など、お国ことばの笑い。', '方言 お笑い 九州 熊本弁'],
+      ['🐶 動物のおもしろ動画', '犬・猫・動物たちの、ほっこり笑い。', '動物 おもしろ ほっこり'],
+      ['👶 赤ちゃん・子どもの笑い', '見ているだけで、笑顔になれます。', '赤ちゃん 笑い声 かわいい'],
+      ['🎞 チャップリンの喜劇', 'せりふなしでも通じる、世界の名作喜劇。', 'チャップリン 喜劇 名作'],
+      ['🧘 笑いヨガ・笑いの体操', 'わけもなく笑う練習。健康にも、おすすめです。', '笑いヨガ 笑いの体操 シニア']
+    ];
+    P.forEach(function (x) { var c = document.createElement('div'); c.className = 'card'; c.style.gap = '4px'; var b = document.createElement('b'); b.textContent = x[0]; var p = document.createElement('span'); p.textContent = x[1]; var a = document.createElement('a'); a.className = 'btnlink'; a.target = '_blank'; a.rel = 'noopener'; a.textContent = '▶ YouTubeで探す'; a.href = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(x[2]); c.appendChild(b); c.appendChild(p); c.appendChild(a); list.appendChild(c); });
+    function get() { var l = load('kesera-laugh', {}); return l && typeof l === 'object' ? l : {}; }
+    function draw() { var l = get(), n = l[today] || 0, days = Object.keys(l).length; $('lgCount').textContent = n; $('lgMsg').textContent = n ? ('笑うほど、気持ちが軽くなります。これまでに ' + days + ' 日、笑いました。') : 'ひとつ動画を見て、笑ったら、ボタンを押してください。'; }
+    $('lgTap').addEventListener('click', function () { var l = get(); l[today] = (l[today] || 0) + 1; save('kesera-laugh', l); draw(); });
     draw();
   })();
   renderWxIcon();
