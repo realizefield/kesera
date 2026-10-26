@@ -392,6 +392,7 @@ button[aria-pressed="true"] { font-weight:700; }
 .odd-q input { width:28px; height:28px; flex:none; margin-top:2px; }
 .bk-d{border:2px solid var(--line,#d9c9cf);border-radius:12px;background:var(--surface,#fff);overflow:hidden}.bk-d>summary{cursor:pointer;padding:14px;font-weight:700;font-size:1.1rem;min-height:52px;display:flex;align-items:center;gap:8px}.bk-d[open]>summary{background:#fbeff3}.bk-w{padding:10px 14px;border-top:1px solid #0001;display:flex;flex-direction:column;gap:4px}.bk-w b{font-size:1.05rem}.bk-t{display:inline-block;font-size:.8rem;border-radius:999px;padding:1px 9px;background:#eee;margin-left:6px}.bk-w a{align-self:flex-start;min-height:44px;display:inline-flex;align-items:center}
 .up-d{border:2px solid var(--line,#d9c9cf);border-radius:12px;background:var(--surface,#fff);overflow:hidden}.up-d>summary{cursor:pointer;padding:14px;font-weight:700;font-size:1.1rem;min-height:52px;display:flex;align-items:center}.up-d[open]>summary{background:#fbeff3}.up-c{padding:12px 14px;display:flex;flex-direction:column;gap:10px;border-top:1px solid #0001}.up-c ol,.up-c ul{margin:0;padding-left:1.3em;line-height:1.8}.up-big{font-size:2rem;font-weight:700;text-align:center;letter-spacing:.2em;padding:10px}.up-c input{min-height:52px;font-size:1.2rem;width:100%;box-sizing:border-box}.ml-i{display:flex;gap:8px;align-items:center;border:1px solid #0002;border-radius:10px;padding:6px 10px;min-height:52px}.ml-i.done span{text-decoration:line-through;opacity:.55}.ml-i span{flex:1;font-size:1.1rem}
+#vcCard textarea,#vcCard input{width:100%;box-sizing:border-box;font-size:1.05rem;min-height:52px;font-family:inherit}
 .sos-row{display:flex;gap:8px;align-items:stretch}.sos-row .odd-big{flex:1;width:auto}.sos-mini{flex:0 0 auto;min-width:84px;min-height:52px;border:0;border-radius:12px;background:#fff;color:#b3261e;border:3px solid #b3261e;font-size:1.3rem;font-weight:700;line-height:1.1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}.sos-mini small{font-size:.78rem}#sosDlg #safeCard{border:0!important;margin:0;padding:0;box-shadow:none}
 .odd-big { width:100%; min-height:76px; font-size:1.35rem; font-weight:700; border-radius:14px; border:3px solid #b3261e; background:#b3261e; color:#fff; box-shadow:0 3px 12px #0003; cursor:pointer; }
 .odd-res { border-radius:12px; padding:14px; font-size:1.1rem; line-height:1.7; }
@@ -837,6 +838,22 @@ button[aria-pressed="true"] { font-weight:700; }
       <input id="tnCity" type="text" placeholder="例：熊本市、菊池市（空だと「いまいる場所の近く」）" style="min-height:52px;font-size:1.1rem;width:100%;box-sizing:border-box">
       <p class="fl-sub" id="tnNow"></p></div>
     <div id="tnList" style="display:flex;flex-direction:column;gap:10px"></div>
+    <div id="vcCard" class="card" style="gap:10px">
+      <h2 style="margin:0">📣 町や市・県に「モノ申す！」</h2>
+      <p class="muted" style="margin:0">困っていること、こうなったらいいなと思うことを、きちんと伝わる文章にします。送る先は、あなたが選びます。</p>
+      <b>① どこに伝えますか？</b><div class="fl-chips" id="vcTo" role="group" aria-label="宛先"></div>
+      <b>② 何について？</b><div class="fl-chips" id="vcCat" role="group" aria-label="分野"></div>
+      <b>③ いつ・どこで？</b><input id="vcWhen" type="text" placeholder="例：先週から、〇〇町の交差点で">
+      <b>④ 困っていること（事実）</b><textarea id="vcFact" rows="3" placeholder="例：信号がなく、歩いて渡るのが危ないです"></textarea>
+      <b>⑤ お願いしたいこと</b><textarea id="vcAsk" rows="3" placeholder="例：信号か、横断歩道を、つけてください"></textarea>
+      <b>⑥ お名前（書かなくても大丈夫です）</b><input id="vcName" type="text" placeholder="例：〇〇町在住の、野田">
+      <button class="btn primary" id="vcMake" type="button" style="min-height:52px">✍ 文章にする</button>
+      <textarea id="vcOut" rows="10" aria-label="できた文章" style="display:none"></textarea>
+      <div class="row" id="vcAct" style="display:none"></div>
+      <div class="row" id="vcLinks"></div>
+      <p class="fl-sub" style="margin:0">伝わるコツ：①事実と、お願いを、分ける ②きつい言葉は使わない ③返事がほしいときだけ、連絡先を書く。住所・電話番号・口座などは、必要なときだけにしましょう。</p>
+    </div>
+
     <p class="fl-sub">開催日・時間・場所は、リンク先の最新の情報でご確認ください。ケセラの中には、行事の日程は載せていません（古い情報を、お伝えしないためです）。</p>
   </section>
 
@@ -4465,6 +4482,41 @@ button[aria-pressed="true"] { font-weight:700; }
     }
     ['v-up', 'v-mania'].forEach(function (id) { var s = document.getElementById(id), h2 = s && s.querySelector('h2'); if (h2) h2.insertAdjacentElement('afterend', note()); });
     var cond = document.getElementById('inCond'); if (cond) cond.parentNode.insertBefore(note(), cond.nextSibling);
+  })();
+
+  /* ---------- 町や市・県に「モノ申す！」 ---------- */
+  (function () {
+    var card = $('vcCard'); if (!card) return;
+    var st = load('kesera-voice-civic', { to: 0, cat: 0 });
+    var TO = ['町・市', '県', '国（省庁・議員）'], CAT = ['道路・交通', '福祉・介護', '防災・安全', 'ごみ・環境', '公園・施設', '子ども・教育', 'その他'];
+    function G(q) { return 'https://www.google.com/search?q=' + encodeURIComponent(q); }
+    function chips(id, arr, key) { var el = $(id); el.innerHTML = ''; arr.forEach(function (t, i) { var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = t; b.setAttribute('aria-pressed', String(st[key] === i)); b.addEventListener('click', function () { st[key] = i; save('kesera-voice-civic', st); draw(); }); el.appendChild(b); }); }
+    function place() { var c = (load('kesera-city', '') || '').trim(), p = (typeof prefName === 'function' && prefName()) || ''; return [c, p]; }
+    function target() { var pl = place(); return st.to === 0 ? (pl[0] || 'お住まいの市町') : (st.to === 1 ? (pl[1] || 'お住まいの県') : '国'); }
+    function draw() {
+      chips('vcTo', TO, 'to'); chips('vcCat', CAT, 'cat');
+      var t = target(), r = $('vcLinks'); r.innerHTML = '';
+      var L = st.to === 0 ? [[t + 'の意見・要望の窓口', G(t + ' 市民の声 意見 要望 提案 窓口')], [t + 'の広報・お知らせ', G(t + ' 広報 お知らせ')], ['議会への請願・陳情', G(t + ' 議会 請願 陳情 方法')]] : (st.to === 1 ? [[t + 'の意見・提案の窓口', G(t + ' 県民の声 意見 提案 窓口')], ['県議会への請願・陳情', G(t + ' 県議会 請願 陳情 方法')]] : [['首相官邸へのご意見', G('首相官邸 ご意見 送信')], ['国会議員への連絡', G('国会議員 ご意見 連絡 方法')]]);
+      L.forEach(function (x) { var a = document.createElement('a'); a.className = 'btnlink'; a.target = '_blank'; a.rel = 'noopener'; a.textContent = x[0]; a.href = x[1]; r.appendChild(a); });
+    }
+    function build() {
+      var t = target(), w = $('vcWhen').value.trim(), f = $('vcFact').value.trim(), a = $('vcAsk').value.trim(), n = $('vcName').value.trim();
+      var lines = [t + (st.to === 2 ? '　ご担当者さま' : '　ご担当者さま'), '', 'はじめまして。' + (n ? n + 'と申します。' : '住民のひとりです。'), CAT[st.cat] + 'について、お願いがあり、ご連絡いたしました。', ''];
+      if (w) lines.push('【いつ・どこで】', w, '');
+      if (f) lines.push('【困っていること】', f, '');
+      if (a) lines.push('【お願いしたいこと】', a, '');
+      lines.push('お忙しいところ恐れ入りますが、ご検討くださいますよう、お願い申し上げます。');
+      return lines.join('\n');
+    }
+    $('vcMake').addEventListener('click', function () {
+      var o = $('vcOut'), act = $('vcAct'); o.style.display = 'block'; o.value = build(); act.style.display = 'flex'; act.innerHTML = '';
+      var cp = document.createElement('button'); cp.type = 'button'; cp.className = 'btn primary'; cp.textContent = '📋 コピーする'; cp.addEventListener('click', function () { try { navigator.clipboard.writeText(o.value).then(function () { cp.textContent = '✔ コピーしました'; }, function () { o.select(); cp.textContent = '長押しで、コピーしてください'; }); } catch (e) { o.select(); cp.textContent = '長押しで、コピーしてください'; } });
+      var ml = document.createElement('a'); ml.className = 'btnlink'; ml.textContent = '✉ メールで送る'; ml.href = 'mailto:?subject=' + encodeURIComponent(target() + 'へのご意見・ご要望（' + CAT[st.cat] + '）') + '&body=' + encodeURIComponent(o.value);
+      act.appendChild(cp); act.appendChild(ml); o.addEventListener('input', function () { ml.href = 'mailto:?subject=' + encodeURIComponent(target() + 'へのご意見・ご要望（' + CAT[st.cat] + '）') + '&body=' + encodeURIComponent(o.value); });
+      save('kesera-voice-civic-draft', { d: today, t: o.value });
+    });
+    var tc = $('tnCity'); if (tc) tc.addEventListener('input', function () { setTimeout(draw, 0); });
+    draw();
   })();
   renderWxIcon();
   renderSun(); updateNews();
