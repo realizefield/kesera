@@ -593,6 +593,7 @@ button[aria-pressed="true"] { font-weight:700; }
         <button class="pgt" type="button" data-go="laugh"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="18"/><path d="M14 20c2-3 6-3 8 0M26 20c2-3 6-3 8 0"/><path d="M13 28h22c0 7-5 11-11 11s-11-4-11-11z"/></svg><span>笑ってすっきり！</span></button>
         <button class="pgt" type="button" data-go="album"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="12" width="38" height="28" rx="4"/><circle cx="24" cy="26" r="8"/><path d="M16 12l3-5h10l3 5"/></svg><span>思い出の記録</span></button>
         <button class="pgt" type="button" data-go="dajare"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10h36v22H24l-8 8v-8H6z"/><path d="M15 19h18M15 25h10"/></svg><span>ダジャレバトル</span></button>
+        <button class="pgt" type="button" data-go="haiku"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6h24v36H12z"/><path d="M18 14h12M18 22h12M18 30h8"/></svg><span>俳句・短歌日誌</span></button>
         <button class="pgt" type="button" data-go="flower"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="9" r="5"/><circle cx="34" cy="17" r="5"/><circle cx="30" cy="28" r="5"/><circle cx="18" cy="28" r="5"/><circle cx="14" cy="17" r="5"/><circle cx="24" cy="20" r="3"/><path d="M24 33v11"/></svg><span>花の見どころ</span></button>
         <button class="pgt" type="button" data-go="learn"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 12c-4-3-10-4-16-3v27c6-1 12 0 16 3 4-3 10-4 16-3V9c-6-1-12 0-16 3zM24 12v27"/></svg><span>学ぶ</span></button>
         <button class="pgt" type="button" data-go="move"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="30" cy="9" r="4"/><path d="M28 15l-6 11 8 6-3 11M22 26l-8 2M26 20l10 2M22 26l-6 14"/></svg><span>動く</span></button>
@@ -969,6 +970,38 @@ button[aria-pressed="true"] { font-weight:700; }
       <div class="row" id="shAct" style="display:none"></div>
       <p class="fl-sub" style="margin:0">保険証・お薬は、持ち物の確認です。番号などは、書かなくて大丈夫です。体調がいちばん。いつもと違うときは、予定を、やめてかまいません。</p></div></details>
     <p class="fl-sub">写真・動画は、この端末のなかだけに、保存されます。ブラウザの「サイトデータ」を消すと、消えてしまうので、大切な写真は、携帯のアルバムにも、残してください。動画は、20MBまでです。</p>
+  </section>
+
+  <section class="view" id="v-haiku" hidden aria-label="あなたの俳句・短歌 毎日の感動記録">
+    <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
+    <h2>🌸 あなたの俳句・短歌　毎日の感動記録</h2>
+    <p class="muted">心が動いた一瞬を、ことばにして残す。それが、あなたの「歴史に残る記憶日誌」になります。</p>
+    <div class="card" id="hkRank" style="gap:6px;text-align:center"><b>あなたの番付</b><div class="up-big" id="hkRankName" style="padding:4px">序ノ口</div><span id="hkRankPt" style="line-height:1.7"></span><span class="fl-sub" id="hkRankPct" style="margin:0"></span></div>
+    <details class="up-d" open><summary>📖 俳句・短歌とは</summary><div class="up-c" style="line-height:1.9">
+      <p><b>俳句</b>は、五・七・五の十七音。季節のことば（季語）を入れるのが、ならわしです。江戸時代に芭蕉・蕪村・一茶、明治に正岡子規が、大きく育てました。</p>
+      <p><b>短歌</b>は、五・七・五・七・七の三十一音。季語は、いりません。万葉集から千三百年以上、人の思いを、うたってきました。</p>
+      <p><b>音（おん）の数え方</b>：「ゃ・ゅ・ょ」や小さい「ぁぃぅぇぉ」は、数えません（きょう＝2音）。「っ」「ん」「ー」は、1音です（がっこう＝4音）。</p>
+      <p><b>切れ字</b>：「や」「かな」「けり」は、句に余韻をつくる、ことばです。</p>
+      <p>上手・下手よりも、「何に心が動いたか」が、いちばん大切です。</p></div></details>
+    <details class="up-d"><summary>🎐 代表作の解釈鑑賞</summary><div class="up-c" id="hkClassics" style="display:flex;flex-direction:column;gap:8px"></div></details>
+    <div class="card" style="gap:8px"><b style="font-size:1.15rem">✏ 詠んで、記録する</b>
+      <div id="hkSteps" class="fl-sub" style="margin:0;line-height:1.9"></div>
+      <label for="hkMode"><b>練習ステップ／自由に詠む</b></label>
+      <select id="hkMode" style="min-height:52px;font-size:1.1rem;width:100%"></select>
+      <p id="hkTheme" class="fl-sub" style="margin:0;line-height:1.8"></p>
+      <div id="hkParts" style="display:flex;flex-direction:column;gap:6px"></div>
+      <label for="hkYomi" class="fl-sub" style="margin:0">ひらがなの読み（漢字を使ったときだけ。五・七・五の切れ目に、空白を入れます）</label>
+      <input id="hkYomi" type="text" placeholder="例：ふるいけや かわずとびこむ みずのおと" style="min-height:52px;font-size:1.1rem;width:100%;box-sizing:border-box">
+      <label for="hkMemo"><b>感動メモ</b>（何に、心が動きましたか）</label>
+      <textarea id="hkMemo" rows="2" placeholder="例：孫と歩いた坂道の、夕やけがきれいだった" style="width:100%;box-sizing:border-box;font-size:1.1rem;font-family:inherit"></textarea>
+      <label for="hkDate"><b>日付</b></label>
+      <input id="hkDate" type="date" style="min-height:52px;font-size:1.1rem">
+      <button class="btn primary" id="hkSave" type="button" style="min-height:60px;font-size:1.2rem">🌸 記録して、講評を見る</button>
+      <div id="hkRes" role="status" style="display:none;flex-direction:column;gap:6px;line-height:1.8"></div></div>
+    <div class="card" id="hkGrad" style="display:none;gap:6px;border:3px solid var(--accent)"></div>
+    <details class="up-d"><summary>💡 おすすめ模範例（こんなのどうです？）</summary><div class="up-c" style="display:flex;flex-direction:column;gap:6px"><p class="fl-sub" style="margin:0">ケセラが作った例です。まねしながら、自分のことばで、詠んでみましょう。</p><div id="hkEx" style="line-height:1.9;font-size:1.1rem"></div><button class="btn" id="hkExNext" type="button" style="min-height:52px">🔄 ほかの例を見る</button></div></details>
+    <details class="up-d"><summary>🏅 番付と、賞のしくみ</summary><div class="up-c" style="line-height:1.8"><p>作品の点数は、きまりごと（音数・季語・切れ字・感覚のことば・感動メモ）のチェックです。作品の良さを決めるものでは、ありません。</p><p id="hkAwardList"></p><div id="hkTable"></div><p class="fl-sub">％は、ケセラの中での「目安（設計上の割合）」です。実際の歌人の統計では、ありません。</p></div></details>
+    <div class="card" style="gap:6px"><b style="font-size:1.15rem">📔 歴史に残る記憶日誌</b><div id="hkLog" style="display:flex;flex-direction:column;gap:8px"></div></div>
   </section>
 
   <section class="view" id="v-dajare" hidden aria-label="ダジャレバトル">
@@ -2114,7 +2147,7 @@ button[aria-pressed="true"] { font-weight:700; }
   });
 
   /* 画面の切り替え */
-  var views = ['dajare', 'album', 'laugh', 'up', 'mania', 'town', 'book', 'flower', 'settings', 'home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask', 'dress'];
+  var views = ['haiku', 'dajare', 'album', 'laugh', 'up', 'mania', 'town', 'book', 'flower', 'settings', 'home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask', 'dress'];
   var navView = 'home', navDepth = 0;
   function show(v, fromPop) {
     if (v !== 'talk' && typeof chatOn !== 'undefined' && chatOn) chatStop();
@@ -4959,6 +4992,140 @@ button[aria-pressed="true"] { font-weight:700; }
       var tb = E('button', 'btn primary', '✏ このことばで、作ってみる'); tb.type = 'button'; tb.addEventListener('click', function () { var i = $('djText'); i.placeholder = '「' + w + '」を入れて、作ってみましょう'; i.focus(); try { i.scrollIntoView({ block: 'center' }); } catch (e) {} }); out.appendChild(tb);
     });
     $('djHint').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); go.click(); } });
+  })();
+  /* ---------- 俳句・短歌 感動記録 ---------- */
+  (function () {
+    if (!$('hkSave')) return;
+    var KEY = 'kesera-hk', st = load(KEY, { pts: 0, steps: {}, grad: '', recs: [] });
+    if (!st.steps) st.steps = {}; if (!st.recs) st.recs = [];
+    var rd = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var RANKS = [['序ノ口', 0, '100'], ['序二段', 10, '80'], ['三段目', 25, '60'], ['幕下', 45, '40'], ['十両', 70, '25'], ['前頭', 100, '12'], ['小結', 140, '6'], ['関脇', 190, '3'], ['大関', 250, '1'], ['横綱', 330, '0.3']];
+    var AW = [['特選', 88], ['入賞', 75], ['プチ入賞', 65], ['奨励賞', 55], ['佳作', 40], ['参加賞', 0]];
+    function rankOf(p) { var r = 0; RANKS.forEach(function (x, i) { if (p >= x[1]) r = i; }); return r; }
+    function awardOf(s) { for (var i = 0; i < AW.length; i++) if (s >= AW[i][1]) return AW[i][0]; return '参加賞'; }
+    function E(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; }
+    function kc(s) { var t = s.replace(/[\s　、。,.!！?？・「」『』（）()〜~…\/／]/g, '').replace(/[ァ-ヶ]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 96); }), n = 0; for (var i = 0; i < t.length; i++) if (!/[ゃゅょぁぃぅぇぉゎ]/.test(t[i])) n++; return n; }
+    function isKana(s) { return /^[ぁ-ゟァ-ヺー\s　]*$/.test(s); }
+    function isoToday() { var d = new Date(); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+    var KIGO = { '春': ['春', '桜', '梅', '菜の花', '蝶', '朧', '雛', '花見', 'つくし', '蛙', 'かわず', '燕', 'つばめ', '霞', 'さくら', 'うめ'], '夏': ['夏', '蝉', 'せみ', '蛍', 'ほたる', '風鈴', '朝顔', 'あさがお', '向日葵', 'ひまわり', '麦茶', '入道雲', '金魚', 'きんぎょ', '涼し', 'すずし', '新緑', '紫陽花', 'あじさい', '花火', 'はなび'], '秋': ['秋', 'あき', '柿', 'かき', '月', 'つき', '栗', 'くり', 'コスモス', '萩', '紅葉', 'もみじ', 'とんぼ', '蜻蛉', '新米', '彼岸花', '鈴虫', 'すすき', '芒', '秋風', '稲'], '冬': ['冬', 'ふゆ', '雪', 'ゆき', '霜', '炬燵', 'こたつ', '蜜柑', 'みかん', '寒', '焚火', 'たきび', '鍋', 'なべ', '冬至', '柚子', 'ゆず', '木枯', 'こがらし', '水仙'] };
+    function findKigo(t) { var r = ''; Object.keys(KIGO).forEach(function (k) { KIGO[k].forEach(function (w) { if (!r && t.indexOf(w) >= 0) r = w; }); }); return r; }
+    function seasonNow() { var m = new Date().getMonth() + 1; return m >= 3 && m <= 5 ? '春' : m >= 6 && m <= 8 ? '夏' : m >= 9 && m <= 11 ? '秋' : '冬'; }
+    var SENSE = /[赤青白黒黄緑紅紫金銀色光影音声風香匂雨雲空波星月日陽]|あか|あお|しろ|くろ|おと|こえ|かぜ|かおり|ひかり|あたた|つめた|あま|にお/;
+    var EMO = /さび|うれ|なつか|いと|こひ|こい|かな|ありがた|あたたか|やさし|たのし|ふる|おもう|思/;
+    var STEPS = [
+      { id: 's1', name: '① ゆびおり5音', spec: [5], theme: 'いま目に見えるものを、5音のひとことで。指を折って数えます。（例：まどのそら）', ok: function (r) { return r.dev === 0; } },
+      { id: 's2', name: '② 五・七・五にする', spec: [5, 7, 5], theme: 'きょうの一日を、五・七・五に。1音ずれても、字余り・字足らずとして、合格です。', ok: function (r) { return r.maxd <= 1; } },
+      { id: 's3', name: '③ 季語をいれる', spec: [5, 7, 5], theme: '季節のことばを、ひとつ入れて、五・七・五に。', ok: function (r) { return r.maxd <= 1 && r.kigo; } },
+      { id: 's4', name: '④ 切れ字をつかう', spec: [5, 7, 5], theme: '句の終わりに「や」「かな」「けり」のどれかをつけて、余韻を。', ok: function (r) { return r.maxd <= 1 && r.kire; } },
+      { id: 's5', name: '⑤ 感動の一瞬を詠む', spec: [5, 7, 5], theme: '色・音・香り・手ざわりのどれかを入れて、心が動いた一瞬を。感動メモも、書きましょう。', ok: function (r) { return r.maxd <= 1 && r.sense && r.memo >= 8; } },
+      { id: 's6', name: '⑥ 短歌 五・七・五・七・七', spec: [5, 7, 5, 7, 7], theme: '気持ちを、三十一音で。季語は、いりません。', ok: function (r) { return r.maxd <= 1; } },
+      { id: 'fh', name: '自由に詠む（俳句）', spec: [5, 7, 5], theme: '自由に、俳句を詠みましょう。', ok: null },
+      { id: 'ft', name: '自由に詠む（短歌）', spec: [5, 7, 5, 7, 7], theme: '自由に、短歌を詠みましょう。', ok: null }
+    ];
+    var LAB3 = ['上五（5音）', '中七（7音）', '下五（5音）'], LAB5 = ['初句（5音）', '二句（7音）', '三句（5音）', '四句（7音）', '結句（7音）'];
+    function step() { var v = $('hkMode').value, r = STEPS[7]; STEPS.forEach(function (s) { if (s.id === v) r = s; }); return r; }
+    function labels(sp) { return sp.length === 1 ? ['5音のひとこと'] : sp.length === 3 ? LAB3 : LAB5; }
+    function buildMode() {
+      var m = $('hkMode'); m.innerHTML = ''; var first = '';
+      STEPS.forEach(function (s) { var o = E('option', '', (st.steps[s.id] ? '✔ ' : '') + s.name); o.value = s.id; m.appendChild(o); if (!first && s.ok && !st.steps[s.id]) first = s.id; });
+      m.value = first || 'fh'; buildParts();
+      var c = $('hkSteps'); var n = 0; STEPS.forEach(function (s) { if (s.ok && st.steps[s.id]) n++; }); c.textContent = 'ステップ：' + n + ' / 6 クリア' + (st.grad ? '　🎓 卒業ずみ' : '　（6つクリアで、卒業賞）');
+    }
+    function buildParts() {
+      var s = step(), box = $('hkParts'); box.innerHTML = ''; $('hkTheme').textContent = 'お題：' + s.theme;
+      labels(s.spec).forEach(function (l, i) { var w = E('div'); w.style.cssText = 'display:flex;flex-direction:column;gap:2px'; var lb = E('label', 'fl-sub', l); lb.style.margin = '0'; lb.htmlFor = 'hkP' + i; var inp = E('input'); inp.type = 'text'; inp.id = 'hkP' + i; inp.style.cssText = 'min-height:52px;font-size:1.2rem;width:100%;box-sizing:border-box'; w.appendChild(lb); w.appendChild(inp); box.appendChild(w); });
+    }
+    $('hkMode').addEventListener('change', function () { buildParts(); $('hkRes').style.display = 'none'; });
+    /* 花吹雪 */
+    (function () { var cs = document.createElement('style'); cs.textContent = '@keyframes hkFall{0%{transform:translate(0,-10vh) rotate(0)}100%{transform:translate(var(--dx,30px),110vh) rotate(540deg)}}'; document.head.appendChild(cs); })();
+    function petals(idx) {
+      if (rd) return; var pool = ['🌸']; if (idx >= 3) pool.push('🌷'); if (idx >= 6) pool.push('🌺'); if (idx >= 9) pool.push('✨', '🎊');
+      var n = 10 + idx * 12, box = document.createElement('div'); box.setAttribute('aria-hidden', 'true'); box.style.cssText = 'position:fixed;left:0;top:0;right:0;bottom:0;pointer-events:none;overflow:hidden;z-index:9999';
+      for (var i = 0; i < n; i++) { var s = document.createElement('span'); s.textContent = pool[i % pool.length]; s.style.cssText = 'position:absolute;top:0;left:' + Math.floor(Math.random() * 100) + '%;font-size:' + (18 + Math.floor(Math.random() * 18)) + 'px;--dx:' + (Math.floor(Math.random() * 120) - 60) + 'px;animation:hkFall ' + (2.5 + Math.random() * 2.5).toFixed(1) + 's ease-in ' + (Math.random() * 1.5).toFixed(1) + 's forwards;opacity:.95'; box.appendChild(s); }
+      document.body.appendChild(box); setTimeout(function () { if (box.parentNode) box.parentNode.removeChild(box); }, 7000);
+    }
+    function evaluate(sp, parts, counts, memo, yomi) {
+      var dev = 0, maxd = 0; counts.forEach(function (c, i) { var d = Math.abs(c - sp[i]); dev += d; if (d > maxd) maxd = d; });
+      var text = parts.join('') + yomi, kigo = findKigo(text), kire = parts.some(function (p) { return /(や|かな|けり)$/.test(p.trim()); }), sense = SENSE.test(text), emo = EMO.test(text), mm = memo.trim().length;
+      var good = [], adv = [], sc = 0, lb = labels(sp);
+      var onsu = dev === 0 ? 40 : dev === 1 ? 30 : dev === 2 ? 20 : 10; sc += onsu;
+      if (dev === 0) good.push('✔ 音数がぴったりです（+40）'); else { good.push('△ 音数は、少しずれています（+' + onsu + '）'); counts.forEach(function (c, i) { if (c !== sp[i]) adv.push(lb[i] + 'が ' + c + '音です。' + (c > sp[i] ? 'ことばを、ひとつ短くしてみましょう。' : 'ことばを、ひとつ足してみましょう。') + '（字余り・字足らずも、味わいです）'); }); }
+      if (sp.length === 3) {
+        if (kigo) { sc += 20; good.push('✔ 季語「' + kigo + '」があります（+20）'); } else adv.push('季語がありません。いまの季節（' + seasonNow() + '）なら、「' + KIGO[seasonNow()].slice(0, 5).join('・') + '」などが使えます。');
+        if (kire) { sc += 15; good.push('✔ 切れ字があります（+15）'); } else adv.push('句の終わりに「や」「かな」「けり」を、ひとつ入れると、余韻が出ます。');
+      } else if (sp.length === 5) {
+        if (parts.every(function (p) { return p.trim(); })) { sc += 15; good.push('✔ 五句、そろっています（+15）'); }
+        if (emo) { sc += 20; good.push('✔ 気持ちのことばが、あります（+20）'); } else adv.push('「さびしい・うれしい・なつかしい・ありがたい」など、気持ちのことばを、ひとつ入れてみましょう。');
+      }
+      if (sp.length > 1) { if (sense) { sc += 15; good.push('✔ 色・音・光など、感覚のことばがあります（+15）'); } else adv.push('色・音・香り・手ざわりのことばを、ひとつ入れると、情景が浮かびます。'); }
+      if (mm >= 8) { sc += 10; good.push('✔ 感動メモがあります（+10）'); } else adv.push('「何に心が動いたか」を、感動メモに一言、書いてみましょう。');
+      if (sp.length === 1) sc = dev === 0 ? 100 : 50;
+      if (sc > 100) sc = 100;
+      return { dev: dev, maxd: maxd, kigo: kigo, kire: kire, sense: sense, memo: mm, score: sc, good: good, adv: adv };
+    }
+    function say(msg) { var r = $('hkRes'); r.style.display = 'flex'; r.innerHTML = ''; r.appendChild(E('span', '', msg)); }
+    $('hkSave').addEventListener('click', function () {
+      var s = step(), sp = s.spec, parts = [], i;
+      for (i = 0; i < sp.length; i++) parts.push($('hkP' + i).value.trim());
+      if (parts.some(function (p) { return !p; })) { say('すべての欄に、ことばを入れてください。'); return; }
+      var yomi = $('hkYomi').value.trim(), counts = [];
+      if (yomi) { var seg = yomi.split(/[\s　\/／]+/).filter(Boolean); if (seg.length !== sp.length) { say('読みは、' + sp.length + 'つに分けて、空白で区切ってください。（いま ' + seg.length + 'つ）'); return; } counts = seg.map(kc); }
+      else { if (!parts.every(isKana)) { say('漢字があるときは、ひらがなの読みも入れてください。音数をかぞえるためです。'); return; } counts = parts.map(kc); }
+      var memo = $('hkMemo').value, r = evaluate(sp, parts, counts, memo, yomi), aw = awardOf(r.score), date = $('hkDate').value || isoToday();
+      var before = rankOf(st.pts), gain = Math.round(r.score / 10), firstToday = !st.recs.some(function (x) { return x.date === date; }); if (firstToday) gain += 3;
+      var passed = s.ok && s.ok(r), newPass = passed && !st.steps[s.id]; if (newPass) { st.steps[s.id] = true; gain += 5; }
+      st.recs.push({ id: Date.now(), date: date, parts: parts, yomi: yomi, memo: memo.trim(), score: r.score, aw: aw, step: s.id }); st.pts += gain;
+      var grad = false; if (!st.grad && STEPS.every(function (x) { return !x.ok || st.steps[x.id]; })) { st.grad = date; st.pts += 20; grad = true; }
+      save(KEY, st);
+      var out = $('hkRes'); out.style.display = 'flex'; out.innerHTML = '';
+      var h = E('div', 'up-big', r.score + '点　' + aw); h.style.textAlign = 'center'; out.appendChild(h);
+      if (s.ok) out.appendChild(E('b', '', passed ? '🎉 このステップ「' + s.name + '」は、クリアです！' : 'このステップは、あと一歩です。下のアドバイスを、見てください。'));
+      r.good.forEach(function (t) { out.appendChild(E('span', '', t)); });
+      if (r.adv.length) { out.appendChild(E('b', '', '💡 アドバイス')); r.adv.forEach(function (t) { out.appendChild(E('span', '', '・' + t)); }); }
+      out.appendChild(E('span', 'fl-sub', '＋' + gain + 'ポイント（合計 ' + st.pts + '）。点数は、きまりごとのチェックです。作品の価値を決めるものでは、ありません。'));
+      var after = rankOf(st.pts);
+      if (after > before) { out.appendChild(E('b', '', '🎉 番付アップ！　' + RANKS[before][0] + ' → ' + RANKS[after][0])); petals(after); }
+      else if (r.score >= 65 || newPass) petals(Math.min(after, 3));
+      if (grad) petals(Math.max(after, 5));
+      $('hkYomi').value = ''; $('hkMemo').value = ''; for (i = 0; i < sp.length; i++) $('hkP' + i).value = '';
+      buildMode(); renderAll();
+    });
+    /* 代表作 */
+    var CL = [
+      ['古池や蛙飛びこむ水の音', 'ふるいけや かわずとびこむ みずのおと', '松尾芭蕉', '俳句', '静かな古い池に、蛙が飛びこんだ「ぽちゃん」という水の音。音がしたあとに、また静けさがもどってきます。音を書くことで、かえって静けさが深く感じられる句です。', '身のまわりの小さな音も、詠む材料になります。'],
+      ['閑さや岩にしみ入る蝉の声', 'しずかさや いわにしみいる せみのこえ', '松尾芭蕉', '俳句', '山寺（立石寺）で詠まれたとされる句。蝉の声が岩にしみこむように聞こえ、まわりの静けさが、いっそう際立ちます。鳴き声があるのに「静か」と感じる、ふしぎさが魅力です。', '音が多いほど、心の静けさが際立つことがあります。'],
+      ['菜の花や月は東に日は西に', 'なのはなや つきはひがしに ひはにしに', '与謝蕪村', '俳句', '見わたすかぎりの菜の花畑。東には月がのぼり、西には夕日がしずむ。黄色と、茜色と、淡い月。絵のように大きな景色が、十七音に収まっています。', '色を入れると、景色が目に浮かびます。'],
+      ['やせ蛙負けるな一茶これにあり', 'やせがえる まけるないっさ これにあり', '小林一茶', '俳句', '蛙どうしの勝負を見て、やせた蛙に「負けるな、私がついているぞ」と声援を送る句。弱いものへのやさしさと、ユーモアがあります。', '自分の気持ちを、そのまま呼びかけてもよいのです。'],
+      ['柿くへば鐘が鳴るなり法隆寺', 'かきくえば かねがなるなり ほうりゅうじ', '正岡子規', '俳句', '柿をかじった、その瞬間に、法隆寺の鐘が鳴りました。味と、音と、古い都の秋。ふたつの出来事が、ひとつの時間に重なります。', '「そのとき、同時に」を書くと、一瞬が生きます。'],
+      ['田子の浦にうち出でてみれば白妙の富士の高嶺に雪は降りつつ', 'たごのうらに うちいでてみれば しろたえの ふじのたかねに ゆきはふりつつ', '山部赤人', '短歌', '百人一首に採られた形です。田子の浦の浜に出てみると、真っ白な富士の頂に、雪が降りつづけている。広い景色を、のびやかにうたいます。', '見たままを素直に書くのも、立派な短歌です。'],
+      ['花の色は移りにけりないたづらに我が身世にふるながめせしまに', 'はなのいろは うつりにけりな いたずらに わがみよにふる ながめせしまに', '小野小町', '短歌', '桜の花の色が、むなしくあせてしまった。長雨をながめ、物思いにふけるうちに。花の衰えに、自分が年を重ねていく思いを重ねています。「ふる」は「降る」と「経る」、「ながめ」は「長雨」と「眺め」を重ねたことばです。', '自然の移ろいに、自分の人生を重ねてみましょう。'],
+      ['東海の小島の磯の白砂にわれ泣きぬれて蟹とたはむる', 'とうかいの こじまのいその しらすなに われなきぬれて かにとたわむる', '石川啄木', '短歌', '歌集『一握の砂』の冒頭の歌。大きな海から、小さな島、白い砂、そして一匹の蟹へと、視点がだんだん小さくなり、最後に「われ」にたどりつきます。', '大きな景色から小さなものへ、視点を動かす工夫です。'],
+      ['清水へ祇園をよぎる桜月夜こよひ逢ふ人みなうつくしき', 'きよみずへ ぎおんをよぎる さくらづきよ こよいあうひと みなうつくしき', '与謝野晶子', '短歌', '桜が咲く月夜に、清水寺へ向かう道すがら。今夜すれちがう人が、みんな美しく見える。春の夜の高まる気持ちが、人の姿に映っています。', '自分の気持ちが、まわりの景色を変えて見せることがあります。'],
+      ['白鳥は哀しからずや空の青海のあをにも染まずただよふ', 'しらとりは かなしからずや そらのあお うみのあおにも そまずただよう', '若山牧水', '短歌', '空の青にも、海の青にも染まらずに、ただよう白い鳥。「哀しからずや」という問いかけが、ひとりでいる孤独と、ゆずれない自分らしさを感じさせます。', '色の対比（青と白）と、問いかけが、余韻を生みます。']
+    ];
+    var cl = $('hkClassics');
+    CL.forEach(function (c) { var d = E('details', 'up-d'); var sm = E('summary', '', c[0].length > 22 ? c[0].slice(0, 20) + '…（' + c[2] + '）' : c[0] + '（' + c[2] + '）'); d.appendChild(sm); var b = E('div', 'up-c'); b.style.lineHeight = '1.9'; b.appendChild(E('b', '', c[0])); b.appendChild(E('div', 'fl-sub', '読み：' + c[1] + '　［' + c[3] + '］')); b.appendChild(E('p', '', '鑑賞：' + c[4])); b.appendChild(E('p', '', '🌸 まなべること：' + c[5])); var bt = E('button', 'btn', '✏ これをヒントに、詠んでみる'); bt.type = 'button'; bt.addEventListener('click', function () { $('hkMode').value = c[3] === '俳句' ? 'fh' : 'ft'; buildParts(); var f = $('hkP0'); if (f) { f.focus(); try { f.scrollIntoView({ block: 'center' }); } catch (e) {} } }); b.appendChild(bt); d.appendChild(b); cl.appendChild(d); });
+    /* 模範例（ケセラ作） */
+    var EX = [['秋晴れや 孫の手をひく 坂の道', 'あきばれや まごのてをひく さかのみち', '俳句'], ['湯上がりの 秋の夕空 星ひとつ', 'ゆあがりの あきのゆうぞら ほしひとつ', '俳句'], ['柿ひとつ 分けてくれたる 隣人や', 'かきひとつ わけてくれたる りんじんや', '俳句'], ['春風や 駅までの道 ゆっくりと', 'はるかぜや えきまでのみち ゆっくりと', '俳句'], ['夕暮れの 縁側に座し 茶をすすり 今日も無事なり ありがたきかな', 'ゆうぐれの えんがわにざし ちゃをすすり きょうもぶじなり ありがたきかな', '短歌'], ['ふるさとの 山のかたちを 思い出す 歩きはじめた 朝のしずけさ', 'ふるさとの やまのかたちを おもいだす あるきはじめた あさのしずけさ', '短歌']], exi = new Date().getDate() % EX.length;
+    function showEx() { var x = EX[exi], b = $('hkEx'); b.innerHTML = ''; b.appendChild(E('b', '', '「' + x[0] + '」')); b.appendChild(E('div', 'fl-sub', x[2] + '　読み：' + x[1] + '　（ケセラの作例）')); }
+    $('hkExNext').addEventListener('click', function () { exi = (exi + 1) % EX.length; showEx(); });
+    /* 番付・日誌 */
+    function renderAll() {
+      var ix = rankOf(st.pts), nx = RANKS[ix + 1];
+      $('hkRankName').textContent = RANKS[ix][0]; $('hkRankPt').textContent = st.pts + 'ポイント' + (nx ? '　（次の「' + nx[0] + '」まで、あと ' + (nx[1] - st.pts) + 'ポイント）' : '　（最高位です！）');
+      $('hkRankPct').textContent = '目安：この番付は、続けている方のうち、上位およそ ' + RANKS[ix][2] + '％をめざす設計です（ケセラ内の目安。実際の歌人の統計ではありません）';
+      var tb = $('hkTable'); tb.innerHTML = ''; var ul = E('ul'); ul.style.cssText = 'margin:0;padding-left:1.3em'; RANKS.forEach(function (r, i) { ul.appendChild(E('li', '', r[0] + '：' + r[1] + 'ポイント〜　目安 上位' + r[2] + '％' + (i === ix ? '　←いまここ' : ''))); }); tb.appendChild(ul);
+      $('hkAwardList').textContent = '作品の賞：' + AW.slice().reverse().map(function (a) { return a[0] + '（' + a[1] + '点〜）'; }).join('、') + '。ランクが上がるたびに、花吹雪が、豪華になります。';
+      var g = $('hkGrad'); if (st.grad) {
+        g.style.display = 'flex'; g.innerHTML = ''; g.appendChild(E('b', '', '🎓 ケセラ歌人　卒業賞（' + st.grad + '）')); var best = null, kg = {}; st.recs.forEach(function (x) { if (!best || x.score > best.score) best = x; (x.parts.join('') + x.yomi); });
+        g.appendChild(E('span', '', '講評：ここまでに ' + st.recs.length + ' 首を、記録しました。' + (best ? 'いちばん高い得点は、「' + best.parts.join(' ') + '」（' + best.score + '点・' + best.aw + '）。' : '') + '音を数え、季語をえらび、切れ字を使い、感覚のことばで、心が動いた一瞬を、ことばにする。この流れを身につけました。これからは、点数よりも「何に心が動いたか」を、大切に。毎日ひとつ、感動を残してください。それが、あなたの歴史になります。'));
+      } else g.style.display = 'none';
+      var lg = $('hkLog'); lg.innerHTML = ''; var rs = st.recs.slice().sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : b.id - a.id; });
+      if (!rs.length) lg.appendChild(E('span', 'fl-sub', 'まだ記録がありません。最初の一首を、詠んでみましょう。'));
+      rs.forEach(function (x) { var c = E('div', 'card'); c.style.gap = '4px'; c.appendChild(E('b', '', x.date + '　' + x.aw + '（' + x.score + '点）')); c.appendChild(E('span', '', x.parts.join('　'))); if (x.memo) c.appendChild(E('span', 'fl-sub', '感動メモ：' + x.memo)); var row = E('div', 'row'); var sh = E('a', 'btnlink', '📤 LINEで送る'); sh.target = '_blank'; sh.rel = 'noopener'; sh.href = 'https://line.me/R/msg/text/?' + encodeURIComponent('「' + x.parts.join(' ') + '」\n' + x.date + '　感動の記録（ケセラ）'); row.appendChild(sh); var del = E('button', 'btn', '🗑 消す'); del.type = 'button'; del.addEventListener('click', function () { if (del.getAttribute('data-c') !== '1') { del.setAttribute('data-c', '1'); del.textContent = 'もう一度おすと、消えます'; return; } st.recs = st.recs.filter(function (y) { return y.id !== x.id; }); save(KEY, st); renderAll(); }); row.appendChild(del); c.appendChild(row); lg.appendChild(c); });
+    }
+    $('hkDate').value = isoToday(); buildMode(); showEx(); renderAll();
+    window.__hkKc = kc;
   })();
   renderWxIcon();
   renderSun(); updateNews();
