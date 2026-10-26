@@ -560,6 +560,11 @@ button[aria-pressed="true"] { font-weight:700; }
         <div class="row"><button class="btn primary" id="inGo" type="button" style="min-height:52px"></button><button class="btn" id="inNext" type="button" style="min-height:52px">ちがうのを見る</button></div>
       </div>
       <div id="inAlt" class="fl-btns"></div>
+      <div class="notice" style="display:flex;flex-direction:column;gap:8px"><b id="inQ"></b>
+        <input id="inWish" type="text" placeholder="思いついたことを、ひとこと" style="min-height:52px;font-size:1.1rem;width:100%;box-sizing:border-box">
+        <div class="row"><button class="btn primary" id="inSave" type="button" style="min-height:52px">💾 しまっておく</button></div>
+        <ul id="inWishes" style="margin:0;padding-left:1.2em"></ul>
+        <p class="fl-sub" style="margin:0">「自分のしたいこと」は、この端末の中だけに、残ります。</p></div>
     </div>
 
     <div class="card" id="pgMenu">
@@ -4124,7 +4129,12 @@ button[aria-pressed="true"] { font-weight:700; }
     travel: { n: '旅する（バーチャル旅）', g: 'place', e: 1, h: '行ったつもりで、旅に出る', w: 'いつもの場所を離れて、景色を想像すると、気持ちが広がります。画面の中の、小さな旅へ。' },
     make:   { n: '作る・飾る', g: 'hands', e: 2, h: 'ごはんや花を、10分で整える', w: '作って、ととのえる時間は、心がおちつきます。10分ごはんや、花の飾り方を、のぞいてみませんか。' },
     music:  { n: '聴く・観る', g: 'ear', e: 1, h: '耳と目で、ゆったり楽しむ', w: '思い出の歌や景色は、記憶をやさしく呼びおこして、気持ちをゆるめます。' },
-    sleep:  { n: '眠る（自然音）', g: 'ear', e: 1, h: '自然の音で、ゆっくり休む', w: '一日の終わりは、自然の音で、頭を休めましょう。休んだあとに、よいひらめきが来ます。' },
+    shrine: { n: '近くの神社の由来を知る', g: 'place', e: 2, tn: 0, h: '歩いて行ける神社の、ご由緒を調べる', w: 'いつも通る場所に、知らない物語があるかもしれません。' },
+    school: { n: '学校の由来と、有名人の母校', g: 'curious', e: 1, tn: 2, h: 'まちの学校の歴史と、卒業生をのぞく', w: 'あの人が通った学校が、すぐそばにあるかもしれません。' },
+    shop:   { n: '評判のいいお店に行ってみる', g: 'place', e: 2, tn: 3, h: 'コーヒー店や手作りのお店を探す', w: 'いつもと違う道を歩くと、いつもと違う自分に会えます。' },
+    kominkan: { n: '公民館のイベントをのぞく', g: 'people', e: 1, tn: 4, h: '講座や教室を、ひとつ探す', w: 'やってみたいことは、人と出会う場所に、ころがっています。' },
+    matsuri: { n: '近くのお祭りを調べる', g: 'people', e: 2, tn: 5, h: '近く行われる行事を、のぞく', w: '季節の行事は、気持ちを動かす、いちばんの近道です。' },
+    library: { n: '図書館のイベントをのぞく', g: 'curious', e: 1, tn: 7, h: 'おはなし会や展示を、探す', w: '知らなかった世界の入口が、いちばん近くにあります。' },
     ask:    { n: '調べる', g: 'curious', e: 1, h: 'ふと気になったことを、聞いてみる', w: '「なぜだろう」は、知ることの入口です。ひとつ、声や文字で、聞いてみませんか。' },
     talk:   { n: 'お話する', g: 'people', e: 1, h: '誰かと、お話する', w: 'お話しすると、考えが整理されて、思いがけない言葉が出てきます。案内係やお友達と、少し。' },
     flower: { n: '花の見どころ', g: 'place', e: 2, h: '季節の花に、会いに行く計画', w: 'これから行く場所を考えるだけでも、わくわくします。いま見ごろ・もうすぐ見ごろの花を、見てみませんか。' },
@@ -4147,12 +4157,19 @@ button[aria-pressed="true"] { font-weight:700; }
       if (cond === 'tired') { sc += c.e === 1 ? 1.5 : (c.e === 3 ? -3 : -0.5); if (c.e === 1) why.push('tired'); }
       if (cond === 'good' && c.e >= 2) { sc += 1; why.push('good'); }
       if (st !== null && st < 2500 && cond !== 'tired' && (k === 'move' || k === 'flower')) { sc += 1.2; why.push('steps'); }
-      if (h >= 20 || h < 5) { if (k === 'sleep') sc += 3; if (c.e === 3) sc -= 3; if (k === 'music') sc += 1; } else if (k === 'sleep') sc -= 3;
+      if (h >= 20 || h < 5) { if (c.e === 3) sc -= 3; }
+      if (c.tn !== undefined) sc += 0.6;
       if (rain && (k === 'flower' || k === 'travel' && false)) sc -= 2;
       if (rain && (k === 'learn' || k === 'music' || k === 'make')) sc += 1;
       return { k: k, sc: sc, why: why, top: top, st: st, cond: cond };
     }).sort(function (a, b) { return b.sc - a.sc; });
     return res;
+  }
+  function inOpen(k) { var c = IN_C[k]; if (c && c.tn !== undefined) { show('town'); setTimeout(function () { try { var el = $('tnList').children[c.tn]; el.scrollIntoView({ block: 'center' }); el.style.outline = '3px solid var(--accent)'; } catch (e) {} }, 150); } else show(k); }
+  var IN_Q = ['子どものころ、夢中になったことは？', 'もし1日自由なら、どこで何をしますか？', 'いつか、やってみたいと思ったことは？', '最近、ちょっと気になったものは？', 'まだ人に言っていない、したいことは？', '誰かに教えられるとしたら、何を教えますか？'];
+  function inVoice() {
+    var q = IN_Q[doy(now) % IN_Q.length], list = load('kesera-wishes', []); $('inQ').textContent = '🗣 自分の声を聴く：' + q;
+    var ul = $('inWishes'); ul.innerHTML = list.slice(-3).reverse().map(function (x) { return '<li>' + String(x.t).replace(/[<>&]/g, '') + '</li>'; }).join('');
   }
   function inRender() {
     var cc = [['good', '元気'], ['ok', 'ふつう'], ['tired', 'ちょっと疲れた']], cur = inCond(), el = $('inCond'); el.innerHTML = '';
@@ -4164,10 +4181,12 @@ button[aria-pressed="true"] { font-weight:700; }
     var lead = r.why.indexOf('adj') >= 0 ? 'いつもの「' + IN_G[r.top] + '」から、ひとつ隣へ。' : (r.why.indexOf('tired') >= 0 ? 'お疲れのようですから、ゆったりしたものを。' : (r.why.indexOf('steps') >= 0 ? '最近の歩数が少なめなので、少しだけ動くことを。' : (r.cond === 'good' ? 'お元気なので、少し新しいことに。' : 'まだ触れていないところへ。')));
     var city = (r.k === 'travel' && pn) ? pn + 'を、画面の中で歩いてみるのも、おすすめです。' : (r.k === 'flower' && pn ? pn + 'の近くの見ごろも、のっています。' : '');
     $('inWhy').textContent = lead + c.h + '。' + c.w + city;
-    var go = $('inGo'); go.textContent = '👉 ひらいてみる'; go.onclick = function () { show(r.k); };
+    var go = $('inGo'); go.textContent = '👉 ひらいてみる'; go.onclick = function () { inOpen(r.k); };
+    inVoice();
     $('inNext').onclick = function () { save('kesera-inspire-seed', (Number(load('kesera-inspire-seed', 0)) || 0) + 1); inRender(); };
-    var alt = $('inAlt'); alt.innerHTML = ''; res.slice(1, 3).forEach(function (x) { var b = document.createElement('button'); b.type = 'button'; b.className = 'btn'; b.textContent = 'ほかに：' + IN_C[x.k].n; b.addEventListener('click', function () { show(x.k); }); alt.appendChild(b); });
+    var alt = $('inAlt'); alt.innerHTML = ''; res.slice(1, 3).forEach(function (x) { var b = document.createElement('button'); b.type = 'button'; b.className = 'btn'; b.textContent = 'ほかに：' + IN_C[x.k].n; b.addEventListener('click', function () { inOpen(x.k); }); alt.appendChild(b); });
   }
+  $('inSave').addEventListener('click', function () { var v = ($('inWish').value || '').trim(); if (!v) return; var l = load('kesera-wishes', []); l.push({ d: today, t: v }); save('kesera-wishes', l.slice(-30)); $('inWish').value = ''; inVoice(); });
   inRender();
 
   /* ---------- 近くのお店：歩ける範囲・気分転換 ---------- */
