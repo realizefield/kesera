@@ -979,6 +979,10 @@ button[aria-pressed="true"] { font-weight:700; }
       <b>🎲 きょうのお題</b>
       <div class="notice" id="djToday" style="line-height:1.8"></div>
       <button class="btn primary" id="djTry" type="button" style="min-height:52px">✏ このお題で、作ってみる</button>
+      <b>💡 ヒントをもらう</b>
+      <input id="djHint" type="text" maxlength="12" placeholder="ことばを、ひとつ（例：かさ、猫）" style="min-height:52px;font-size:1.1rem;width:100%;box-sizing:border-box">
+      <button class="btn" id="djHintGo" type="button" style="min-height:52px">💡 作り方ヒントを見る</button>
+      <div id="djHintOut" role="status" style="display:flex;flex-direction:column;gap:6px;line-height:1.8"></div>
       <p class="fl-sub" style="margin:0">うまく作れなくても、大丈夫。「ことばで遊ぶ」ことが、いちばんの目的です。</p></div></details>
     <div class="card" style="gap:8px"><b>① レベルをえらぶ</b><div class="fl-chips" id="djLv" role="group" aria-label="レベル"></div>
       <p class="fl-sub" id="djLvNote" style="margin:0"></p></div>
@@ -4920,6 +4924,35 @@ button[aria-pressed="true"] { font-weight:700; }
     var T = [['かさ', '傘・貸さ・笠・かさばる'], ['いす', '椅子・行す・いすず'], ['ねこ', '猫・寝こ・ねこそぎ'], ['たい', '鯛・〜たい・退く'], ['かき', '柿・牡蠣・書き・火気'], ['はし', '橋・箸・端・走し'], ['あめ', '雨・飴・天'], ['くつ', '靴・苦痛・くつろぐ'], ['しろ', '城・白・知ろう'], ['きく', '菊・聞く・効く'], ['なす', '茄子・成す・なすべき'], ['かみ', '紙・髪・神・噛み'], ['ふね', '船・舟・不値'], ['もも', '桃・腿・百'], ['たこ', '蛸・凧・多湖']], ti = doy(now) % T.length;
     box.textContent = '「' + T[ti][0] + '」　ヒント：' + T[ti][1];
     $('djTry').addEventListener('click', function () { var i = $('djText'); i.placeholder = '「' + T[ti][0] + '」を入れて、作ってみましょう'; i.focus(); try { i.scrollIntoView({ block: 'center' }); } catch (e) {} });
+  })();
+
+  /* ---------- ダジャレの作り方ヒント ---------- */
+  (function () {
+    var go = $('djHintGo'); if (!go) return;
+    var D = [['かさ', '傘・貸さ・笠・かさばる'], ['いす', '椅子・いーっす'], ['ねこ', '猫・寝こ・根こそぎ'], ['いか', 'イカ・行か・いかが'], ['かき', '柿・牡蠣・書き・火気'], ['はし', '橋・箸・端・走る'], ['あめ', '雨・飴・天'], ['くつ', '靴・苦痛・くつろぐ'], ['しろ', '城・白・知ろう'], ['きく', '菊・聞く・効く'], ['なす', '茄子・成す・なすがまま'], ['かみ', '紙・髪・神・噛み'], ['ふね', '船・舟'], ['もも', '桃・腿・百'], ['たこ', '蛸・凧'], ['こめ', '米・込め・込める'], ['うみ', '海・産み・膿'], ['はな', '花・鼻・話'], ['くも', '雲・蜘蛛'], ['かわ', '川・皮・革・かわいい'], ['いし', '石・意志・医師'], ['さけ', '酒・鮭・避け'], ['たけ', '竹・丈・岳'], ['ゆき', '雪・行き・勇気'], ['さる', '猿・去る'], ['とり', '鳥・取り'], ['くま', '熊・隈'], ['しか', '鹿・しかし・しか（だけ）'], ['ごま', '胡麻・ごまかす'], ['ばら', '薔薇・ばらばら'], ['まつ', '松・待つ'], ['あき', '秋・飽き・空き'], ['いと', '糸・意図'], ['かぎ', '鍵・限る'], ['たま', '玉・球・魂'], ['はる', '春・張る・貼る'], ['なし', '梨・無し'], ['もち', '餅・持ち'], ['さかな', '魚・肴'], ['ふとん', '布団・ふっとんだ・ふとんじゃない']];
+    function find(w) { var r = null; D.forEach(function (d) { if (!r && (d[0] === w || d[1].split('・').indexOf(w) >= 0)) r = d; }); if (!r) D.forEach(function (d) { if (!r && d[1].indexOf(w) >= 0) r = d; }); return r; }
+    function E(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; }
+    go.addEventListener('click', function () {
+      var w = $('djHint').value.trim(), out = $('djHintOut'); out.innerHTML = '';
+      if (!w) { out.appendChild(E('span', 'fl-sub', 'ことばを、ひとつ入れてください。例：かさ、猫、いか')); return; }
+      var d = find(w), cand = d ? d[1].split('・') : [], key = d ? d[0] : w;
+      out.appendChild(E('b', '', '「' + w + '」のヒント'));
+      if (d) { out.appendChild(E('span', '', '① 同じ音・似た音のことば：' + d[1].replace(/・/g, '、')));
+        var a = cand[0], b = cand[1] || cand[0];
+        out.appendChild(E('span', '', '② つなぎ方の型（あてはめてみましょう）'));
+        var ul = E('ul'); ul.style.cssText = 'margin:0;padding-left:1.3em'; [key + 'と言えば、' + b, key + 'は、' + b, key + 'が、' + b + 'した', b + 'したら、' + key + 'だった'].forEach(function (t) { ul.appendChild(E('li', '', t)); }); out.appendChild(ul);
+        out.appendChild(E('span', 'fl-sub', 'この形のまま、ことばを足したり、入れかえたりして、自分の言い方に、してみましょう。'));
+      } else {
+        out.appendChild(E('span', '', 'このことばは、まだ、ヒント帳にありません。つぎの手順で、さがしてみましょう。'));
+        var ol = E('ol'); ol.style.cssText = 'margin:0;padding-left:1.3em'; ['ことばを、ひらがなで書く（例：' + key + '）', '1文字、変えたり、延ばしたりして、似た音を探す', '見つけたことばと、つなげて、ひとつの文にする', '声に出して、笑えたら、成功！'].forEach(function (t) { ol.appendChild(E('li', '', t)); }); out.appendChild(ol);
+      }
+      out.appendChild(E('b', '', '③ 発想のコツ'));
+      var tp = E('ul'); tp.style.cssText = 'margin:0;padding-left:1.3em'; ['ことばの中に、ほかのことばが「かくれて」いないか、探す（例：いか → いかが）', '漢字ではなく、音（ひらがな）で、考える', '頭の文字や、おしりの文字を、ひとつ変えてみる', 'あたりまえの文に、ひとつだけ、同じ音のことばを、まぎれこませる'].forEach(function (t) { tp.appendChild(E('li', '', t)); }); out.appendChild(tp);
+      var r = E('div', 'row'); var a1 = E('a', 'btnlink', '🔍 「' + w + '」の同音ことばを探す'); a1.target = '_blank'; a1.rel = 'noopener'; a1.href = 'https://www.google.com/search?q=' + encodeURIComponent(w + ' 同音異義語'); r.appendChild(a1);
+      var a2 = E('a', 'btnlink', '😄 「' + w + '」のダジャレ例を見る'); a2.target = '_blank'; a2.rel = 'noopener'; a2.href = 'https://www.google.com/search?q=' + encodeURIComponent(w + ' ダジャレ'); r.appendChild(a2); out.appendChild(r);
+      var tb = E('button', 'btn primary', '✏ このことばで、作ってみる'); tb.type = 'button'; tb.addEventListener('click', function () { var i = $('djText'); i.placeholder = '「' + w + '」を入れて、作ってみましょう'; i.focus(); try { i.scrollIntoView({ block: 'center' }); } catch (e) {} }); out.appendChild(tb);
+    });
+    $('djHint').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); go.click(); } });
   })();
   renderWxIcon();
   renderSun(); updateNews();
