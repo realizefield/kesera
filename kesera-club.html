@@ -919,6 +919,10 @@ button[aria-pressed="true"] { font-weight:700; }
       <button class="btn primary" id="lgTap" type="button" style="min-height:64px;font-size:1.3rem">😂 笑った！</button>
       <p class="fl-sub" id="lgMsg" role="status" style="margin:0"></p></div>
     <div class="notice" id="lgEga" style="display:flex;flex-direction:column;gap:6px;border:3px solid var(--accent);text-align:center"><b style="font-size:1.4rem">🔥 エガちゃん</b><span style="line-height:1.7">全力で、体を張って、笑わせてくれる。元気がほしい日は、「エガちゃんねる」へ。</span><a class="btnlink" id="lgEgaLink" target="_blank" rel="noopener" style="align-self:center;min-height:56px;font-size:1.15rem" href="https://www.youtube.com/results?search_query=%E3%82%A8%E3%82%AC%E3%81%A1%E3%82%83%E3%82%93%E3%81%AD%E3%82%8B">▶ エガちゃんねるを見る（YouTube）</a></div>
+    <div class="card" id="lgDj" style="gap:8px"><b style="font-size:1.15rem">😆 ダジャレで、笑って脳トレ</b>
+      <p class="fl-sub" style="margin:0">ダジャレを作って、みんなで笑いあいましょう。はじめての方は「ススメ」から。</p>
+      <button class="btn" id="lgDjSusume" type="button" style="min-height:56px;font-size:1.1rem">📖 ダジャレのススメ（作り方ヒント）</button>
+      <button class="btn primary" data-go="dajare" type="button" style="min-height:56px;font-size:1.1rem">😆 ダジャレバトルへ</button></div>
     <div class="card" id="lgLet" style="gap:8px"><b style="font-size:1.15rem">🌬 わらってスッキリ　5秒で、手ばなす</b>
       <p class="fl-sub" style="margin:0">怒りたいこと、いやだなと思うことを、ここに書いてください。書いた文字は、5秒で、消えます。どこにも、保存されません。</p>
       <textarea id="lgLetTx" rows="3" placeholder="例：さっきの、あの言い方が、いやだった" style="width:100%;box-sizing:border-box;font-size:1.1rem;font-family:inherit"></textarea>
@@ -971,6 +975,7 @@ button[aria-pressed="true"] { font-weight:700; }
     <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
     <h2>😆 ダジャレバトル</h2>
     <p class="muted">ダジャレを作って、投稿して、「共感」を集めましょう。共感の多い順に、ランキングされます。</p>
+    <div class="row"><button class="btn" data-go="laugh" type="button">😂 笑ってすっきりへ</button></div>
     <details class="up-d" id="djSusume" open><summary>📖 ダジャレのススメ</summary><div class="up-c">
       <b>なぜ、ダジャレ？</b>
       <ul><li>声に出して、笑うと、気持ちが軽くなります。</li><li>音の似たことばを探すのは、頭の体操になります。</li><li>ひとこと添えるだけで、会話が、はずみます。お孫さんとも、盛り上がれます。</li></ul>
@@ -4926,6 +4931,7 @@ button[aria-pressed="true"] { font-weight:700; }
     $('djTry').addEventListener('click', function () { var i = $('djText'); i.placeholder = '「' + T[ti][0] + '」を入れて、作ってみましょう'; i.focus(); try { i.scrollIntoView({ block: 'center' }); } catch (e) {} });
   })();
 
+  (function () { var b = $('lgDjSusume'); if (!b) return; b.addEventListener('click', function () { show('dajare'); var d = $('djSusume'); if (d) { d.open = true; try { d.scrollIntoView({ block: 'start' }); } catch (e) {} } }); })();
   /* ---------- ダジャレの作り方ヒント ---------- */
   (function () {
     var go = $('djHintGo'); if (!go) return;
