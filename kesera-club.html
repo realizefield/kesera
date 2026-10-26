@@ -594,6 +594,7 @@ button[aria-pressed="true"] { font-weight:700; }
         <button class="pgt" type="button" data-go="album"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="12" width="38" height="28" rx="4"/><circle cx="24" cy="26" r="8"/><path d="M16 12l3-5h10l3 5"/></svg><span>思い出の記録</span></button>
         <button class="pgt" type="button" data-go="dajare"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10h36v22H24l-8 8v-8H6z"/><path d="M15 19h18M15 25h10"/></svg><span>ダジャレバトル</span></button>
         <button class="pgt" type="button" data-go="haiku"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6h24v36H12z"/><path d="M18 14h12M18 22h12M18 30h8"/></svg><span>俳句・短歌日誌</span></button>
+        <button class="pgt" type="button" data-go="yakata"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22L24 7l20 15"/><path d="M9 20v20h30V20"/><path d="M24 36c-5-3-7-6-7-9a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 3-2 6-7 9z"/></svg><span>自然治癒力の館</span></button>
         <button class="pgt" type="button" data-go="flower"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="9" r="5"/><circle cx="34" cy="17" r="5"/><circle cx="30" cy="28" r="5"/><circle cx="18" cy="28" r="5"/><circle cx="14" cy="17" r="5"/><circle cx="24" cy="20" r="3"/><path d="M24 33v11"/></svg><span>花の見どころ</span></button>
         <button class="pgt" type="button" data-go="learn"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 12c-4-3-10-4-16-3v27c6-1 12 0 16 3 4-3 10-4 16-3V9c-6-1-12 0-16 3zM24 12v27"/></svg><span>学ぶ</span></button>
         <button class="pgt" type="button" data-go="move"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="30" cy="9" r="4"/><path d="M28 15l-6 11 8 6-3 11M22 26l-8 2M26 20l10 2M22 26l-6 14"/></svg><span>動く</span></button>
@@ -1010,6 +1011,19 @@ button[aria-pressed="true"] { font-weight:700; }
     <div class="notice" style="display:flex;flex-direction:column;gap:6px;border:3px solid var(--accent)"><b style="font-size:1.2rem">エンターテインメント・人生のスパイス・生きがいクラブ</b><span style="line-height:1.8">あなたの「好き」で、毎日にスパイスを。部は、4つです。さらに、「おしゃれ倶楽部」もあります。気軽に入って、気軽にやめて、かまいません。</span></div>
     <div id="clubBody" style="display:flex;flex-direction:column;gap:12px"></div>
     <p class="fl-sub" style="line-height:1.8">どの部でも、あくまで体調優先です。調子がよくないときは、お休みしてください。</p>
+  </section>
+
+  <section class="view" id="v-yakata" hidden aria-label="自然治癒力の館">
+    <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
+    <h2>🏡 自然治癒力の館</h2>
+    <div class="notice" style="display:flex;flex-direction:column;gap:6px;border:3px solid var(--accent)"><b style="font-size:1.15rem">からだに、もともと備わっている「回復する力」を、ささえる館です。</b><span style="line-height:1.8">眠る・食べる・動く・笑う・呼吸する・日の光をあびる。毎日の小さな習慣が、からだの土台になります。</span></div>
+    <div class="notice" style="line-height:1.8;border-color:#b3261e"><b>⚠ だいじなお願い</b><br>この館は、病気をなおすものではありません。お医者さんや薬の代わりにもなりません。痛みが強い・熱がある・息が苦しい・胸が痛い・しびれる・ようすがいつもと違うときは、がまんせず、すぐ医療機関へ。あくまで体調優先、いのち優先です。</div>
+    <div class="card" style="gap:8px"><b style="font-size:1.15rem">✅ きょうの「回復力」チェック</b><p class="fl-sub" style="margin:0">できたものに、チェックを入れましょう。ぜんぶでなくて、大丈夫です。</p>
+      <div id="ykList" style="display:flex;flex-direction:column;gap:6px"></div><p id="ykMsg" role="status" style="margin:0;line-height:1.8;font-weight:700"></p><span class="fl-sub" id="ykStreak" style="margin:0"></span></div>
+    <div class="card" style="gap:8px"><b style="font-size:1.15rem">🌬 ゆっくり呼吸の部屋</b><p class="fl-sub" style="margin:0;line-height:1.8">4秒で、鼻から吸って、6秒で、口からゆっくり吐きます。5回くり返します。苦しくなったら、すぐやめて、ふつうの呼吸にもどしてください。</p>
+      <div id="ykBreath" aria-live="polite" style="text-align:center;font-size:1.6rem;font-weight:800;min-height:3em;display:flex;align-items:center;justify-content:center"></div>
+      <button class="btn primary" id="ykBStart" type="button" style="min-height:56px;font-size:1.15rem">🌬 はじめる</button></div>
+    <div id="ykRooms" style="display:flex;flex-direction:column;gap:8px"></div>
   </section>
 
   <section class="view" id="v-dajare" hidden aria-label="ダジャレバトル">
@@ -2155,7 +2169,7 @@ button[aria-pressed="true"] { font-weight:700; }
   });
 
   /* 画面の切り替え */
-  var views = ['club', 'haiku', 'dajare', 'album', 'laugh', 'up', 'mania', 'town', 'book', 'flower', 'settings', 'home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask', 'dress'];
+  var views = ['yakata', 'club', 'haiku', 'dajare', 'album', 'laugh', 'up', 'mania', 'town', 'book', 'flower', 'settings', 'home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask', 'dress'];
   var navView = 'home', navDepth = 0;
   function show(v, fromPop) {
     if (v !== 'talk' && typeof chatOn !== 'undefined' && chatOn) chatStop();
@@ -4245,6 +4259,38 @@ button[aria-pressed="true"] { font-weight:700; }
     });
     var cat = document.querySelector('.pgcat');
     if (cat) { var b = document.createElement('button'); b.type = 'button'; b.className = 'pgc'; b.setAttribute('data-go', 'club'); b.style.cssText = 'grid-column:1/-1;min-height:96px;flex-direction:row;gap:14px'; b.innerHTML = '<span style="font-size:2.2rem" aria-hidden="true">🎭</span><span style="font-size:1.25rem">ケセラ部<br><small style="font-weight:600">人生のスパイス・生きがいクラブ</small></span>'; cat.insertBefore(b, cat.firstChild); }
+  })();
+
+  /* ---------- 自然治癒力の館 ---------- */
+  (function () {
+    var L = $('ykList'); if (!L) return;
+    var KEY = 'kesera-yk', st = load(KEY, { days: {} });
+    var H = ['☀ 朝の光を、あびた', '💧 水やお茶を、こまめに飲んだ', '🚶 少し歩いた・体を動かした', '😂 声を出して、笑った', '🍚 ゆっくり、よく噛んで食べた', '🌬 ゆっくり呼吸をした', '🛏 早めに、体を休めた'];
+    function E(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; }
+    function render() {
+      var d = st.days[today] || []; L.innerHTML = '';
+      H.forEach(function (h, i) { var lb = E('label'); lb.style.cssText = 'display:flex;align-items:center;gap:10px;min-height:52px;font-size:1.1rem;border:2px solid var(--accent);border-radius:12px;padding:6px 12px'; var cb = E('input'); cb.type = 'checkbox'; cb.style.cssText = 'width:26px;height:26px'; cb.checked = d.indexOf(i) >= 0; cb.addEventListener('change', function () { var a = st.days[today] || []; var k = a.indexOf(i); if (cb.checked && k < 0) a.push(i); if (!cb.checked && k >= 0) a.splice(k, 1); st.days[today] = a; save(KEY, st); render(); }); lb.appendChild(cb); lb.appendChild(E('span', '', h)); L.appendChild(lb); });
+      var n = d.length; $('ykMsg').textContent = n === 0 ? '' : n >= 5 ? '🌸 ' + n + '個。からだの土台が、しっかり整っています。すばらしいです。' : '👍 ' + n + '個できました。ひとつでも、立派です。';
+      var s = 0, t = new Date(); for (var k = 0; k < 365; k++) { var x = new Date(t.getFullYear(), t.getMonth(), t.getDate() - k), key = x.getFullYear() + '-' + pad(x.getMonth() + 1) + '-' + pad(x.getDate()); if ((st.days[key] || []).length) s++; else if (k > 0) break; else continue; }
+      $('ykStreak').textContent = s ? '記録がつづいている日数：' + s + '日（この端末の中だけの記録です）' : '';
+    }
+    render();
+    /* 呼吸 */
+    var bt = null, rd = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function stopB(msg) { if (bt) { clearTimeout(bt); bt = null; } $('ykBStart').textContent = '🌬 はじめる'; if (msg) $('ykBreath').textContent = msg; }
+    $('ykBStart').addEventListener('click', function () {
+      if (bt) { stopB('おつかれさまでした。ふつうの呼吸で、大丈夫です。'); return; }
+      var n = 0, inh = true, box = $('ykBreath'); $('ykBStart').textContent = '■ とめる';
+      (function tick() {
+        if (n >= 5) { stopB('🌸 5回できました。おつかれさまです。'); var a = st.days[today] || []; if (a.indexOf(5) < 0) { a.push(5); st.days[today] = a; save(KEY, st); render(); } return; }
+        box.textContent = inh ? '吸って…（' + (n + 1) + '回め）' : '吐いて…ゆっくり'; box.style.transform = rd ? '' : inh ? 'scale(1.15)' : 'scale(0.9)'; box.style.transition = rd ? '' : 'transform ' + (inh ? 4 : 6) + 's ease-in-out';
+        var ms = inh ? 4000 : 6000; if (!inh) n++; inh = !inh; bt = setTimeout(tick, ms);
+      })();
+    });
+    /* 部屋 */
+    var R = [['🛏 眠りの部屋', '眠れない夜に・自然音', 'sleep'], ['🍚 食の部屋', '四毒抜きレシピ帳', 'href:yodoku-recipes.html?from=kesera'], ['💪 動きの部屋', 'プチ筋トレ', 'move'], ['🧠 整えの部屋', '脳ジム・目トレ・バランス', 'up'], ['😂 笑いの部屋', '全部忘れて笑って、心のリセット', 'laugh'], ['🌼 自然の部屋', '花のお散歩・自然にふれる', 'flower'], ['🌾 土の部屋', '家庭菜園・自然農法', 'farm']];
+    var rm = $('ykRooms'); rm.appendChild(E('b', '', '🚪 館の、お部屋'));
+    R.forEach(function (r) { var b = E('button', 'btn', r[0] + '　' + r[1]); b.type = 'button'; b.style.cssText = 'min-height:56px;font-size:1.05rem;text-align:left'; if (r[2].indexOf('href:') === 0) b.addEventListener('click', function () { window.location.href = r[2].slice(5); }); else b.setAttribute('data-go', r[2]); rm.appendChild(b); });
   })();
 
   /* ---------- もしもの時：コンパクトボタン＋ポップ ---------- */
