@@ -429,6 +429,20 @@ button[aria-pressed="true"] { font-weight:700; }
 .pgt span { font-size:.98rem; color:var(--fg); line-height:1.25; text-align:center; }
 .pgt.red { color:#b3261e; border-color:#e8b9b5; }
 @media (min-width:640px) { .pgg { grid-template-columns:repeat(4,1fr); } }
+.fl-chips { display:flex; flex-wrap:wrap; gap:8px; }
+.fl-card { border:1.5px solid var(--line); border-radius:14px; padding:14px; background:var(--surface); display:flex; flex-direction:column; gap:8px; }
+.fl-card.now { border-color:var(--accent); border-width:2.5px; }
+.fl-head { display:flex; gap:12px; align-items:center; }
+.fl-ic { width:54px; height:54px; flex:none; border-radius:50%; background:var(--accent-soft); display:flex; align-items:center; justify-content:center; }
+.fl-ic svg { width:44px; height:44px; }
+.fl-title { font-size:1.2rem; font-weight:800; margin:0; line-height:1.3; }
+.fl-sub { font-size:.9rem; color:var(--muted); margin:0; }
+.fl-badge { display:inline-block; font-size:.8rem; font-weight:700; padding:2px 10px; border-radius:999px; background:var(--accent); color:var(--accent-ink); margin-left:6px; vertical-align:middle; }
+.fl-badge.soon { background:var(--warn-soft); color:var(--warn); }
+.fl-row { margin:0; line-height:1.65; font-size:1.02rem; }
+.fl-row b { color:var(--accent); }
+.fl-btns { display:flex; flex-wrap:wrap; gap:8px; }
+.hana-dot { display:inline-block; width:18px; height:18px; border-radius:50%; vertical-align:-3px; margin-right:6px; border:1.5px solid var(--line); }
 .float-home { position:fixed; top:10px; right:10px; z-index:60; min-height:46px; padding:8px 16px; border-radius:999px; border:2px solid var(--accent); background:var(--surface); color:var(--accent); font-weight:700; font-size:1rem; box-shadow:0 3px 12px #0003; }
 .float-home[hidden] { display:none; }
 </style></head><body>
@@ -477,12 +491,12 @@ button[aria-pressed="true"] { font-weight:700; }
         <button class="pgt" type="button" data-scroll=".news-card"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="8" width="36" height="32" rx="3"/><path d="M12 16h14M12 22h24M12 28h24M12 34h14"/><rect x="30" y="12" width="8" height="6" fill="currentColor"/></svg><span>ニュース</span></button>
         <button class="pgt" type="button" data-click="#tripOpen"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="6" width="28" height="28" rx="6"/><rect x="14" y="12" width="20" height="10" rx="2"/><circle cx="17" cy="28" r="2" fill="currentColor"/><circle cx="31" cy="28" r="2" fill="currentColor"/><path d="M16 34l-4 8M32 34l4 8"/></svg><span>お出かけ</span></button>
         <button class="pgt" type="button" data-scroll="#transCard"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="17"/><path d="M24 13v11l7 5"/></svg><span>運行情報</span></button>
-        <button class="pgt" type="button" data-scroll="#schoolCard"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 20L24 8l18 12M10 20v20h28V20"/><rect x="20" y="28" width="8" height="12"/><path d="M24 8V4"/></svg><span>休校の目安</span></button>
         <button class="pgt" type="button" data-scroll="#nearCard"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18l4-10h28l4 10M6 18c0 3 3 4 6 4s6-1 6-4c0 3 3 4 6 4s6-1 6-4c0 3 3 4 6 4s6-1 6-4M10 22v18h28V22"/><rect x="20" y="30" width="8" height="10"/></svg><span>近くのお店</span></button>
         <button class="pgt" type="button" data-go="ask"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="21" cy="21" r="11"/><path d="M30 30l12 12"/></svg><span>調べる</span></button>
       </div>
       <p class="pgh">楽しむ・学ぶ</p>
       <div class="pgg">
+                <button class="pgt" type="button" data-go="flower"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="9" r="5"/><circle cx="34" cy="17" r="5"/><circle cx="30" cy="28" r="5"/><circle cx="18" cy="28" r="5"/><circle cx="14" cy="17" r="5"/><circle cx="24" cy="20" r="3"/><path d="M24 33v11"/></svg><span>花の見どころ</span></button>
         <button class="pgt" type="button" data-go="learn"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 12c-4-3-10-4-16-3v27c6-1 12 0 16 3 4-3 10-4 16-3V9c-6-1-12 0-16 3zM24 12v27"/></svg><span>学ぶ</span></button>
         <button class="pgt" type="button" data-go="move"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="30" cy="9" r="4"/><path d="M28 15l-6 11 8 6-3 11M22 26l-8 2M26 20l10 2M22 26l-6 14"/></svg><span>動く</span></button>
         <button class="pgt" type="button" data-go="travel"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="16" width="32" height="24" rx="4"/><path d="M18 16v-5h12v5M8 26h32"/></svg><span>旅する</span></button>
@@ -506,6 +520,7 @@ button[aria-pressed="true"] { font-weight:700; }
       <div class="wx-row"><div class="wx-icon" id="wxIcon" aria-hidden="false"></div><p id="wx"></p></div>
       <p id="wxWords" style="font-weight:700;font-size:1.12rem;margin:8px 0 4px"></p>
       <p id="tyLine" style="margin:6px 0;font-weight:700;font-size:1.1rem" hidden></p>
+      <p id="flLine" style="margin:4px 0 8px;font-weight:700" hidden></p>
       <p id="wxSun" style="margin:4px 0 8px;font-weight:700"></p>
       <div class="wx-next" id="wxNext" hidden>
         <div class="wx-next-row" id="wxNightRow"><div class="wx-mini" id="wxNightIcon" aria-hidden="true"></div><p id="wxNight"></p></div>
@@ -539,6 +554,23 @@ button[aria-pressed="true"] { font-weight:700; }
       </details>
     </div>
 
+
+    <div class="card" id="hanaCard">
+      <h2>🌼 今日の花言葉・ラッキー</h2>
+      <div class="fl-head"><div class="fl-ic" id="hanaIc"></div><div><p class="fl-title" id="hanaName"></p><p class="fl-sub" id="hanaWord"></p></div></div>
+      <p class="fl-row"><b>ラッキーカラー</b>　<span class="hana-dot" id="hanaDot"></span><span id="hanaColor"></span></p>
+      <p class="fl-row"><b>ラッキーアイテム</b>　<span id="hanaItem"></span></p>
+      <p class="muted">花言葉は、いくつかの説があります。ラッキーは、毎日をたのしむための、遊びです。</p>
+    </div>
+
+    <div class="card" id="uranaiCard">
+      <h2>🔮 今日の明るい占い</h2>
+      <p class="fl-row" style="font-size:1.25rem"><b style="font-size:1.4rem">今日は【OK】</b>　よい一日です。</p>
+      <p class="fl-row"><b>✨ いいこと</b>　<span id="urGood"></span></p>
+      <p class="fl-row"><b>⚠ ちょっと注意</b>　<span id="urCau"></span></p>
+      <div class="notice"><b>🌱 これは、何のチャンスだろう？（魂トレーニング）</b><br><span id="urOpp"></span><br><span id="urTrain"></span></div>
+      <p class="muted">楽しむための、遊びの占いです。注意は「気づきの合図」。よいことも、気をつけることも、あなたを育てる、チャンスとして受け取ります。</p>
+    </div>
 
     <div class="card" id="safeCard" style="border:3px solid var(--accent)">
       <h2>🆘 もしものとき、迷わずここへ</h2>
@@ -579,13 +611,6 @@ button[aria-pressed="true"] { font-weight:700; }
         <a class="btnlink" href="https://www.kumamoto-airport.co.jp/" target="_blank" rel="noopener">✈ 熊本空港</a>
       </div>
       <p class="muted">お使いのバス・電車の会社の公式ページでも、確認してください。</p>
-    </div>
-
-    <div class="card" id="schoolCard">
-      <h2>🏫 学校の臨時休校の目安</h2>
-      <p id="schoolLine" style="font-weight:700;font-size:1.1rem;margin:0">確認しています…</p>
-      <p class="muted">学校ごとの臨時休校は、全国をまとめて見られる公式の情報がありません。ここの表示は、警報などから見た「目安」です。実際の休校は、お子さんやお孫さんの学校、市町村の教育委員会のお知らせ（メール配信・ホームページ）で、必ず確かめてください。</p>
-      <div class="row"><a class="btnlink" id="schoolSearch" href="https://news.yahoo.co.jp/search?p=%E8%87%A8%E6%99%82%E4%BC%91%E6%A0%A1&amp;ei=UTF-8" target="_blank" rel="noopener">🏫 臨時休校のニュースを探す</a></div>
     </div>
 
     <div class="card" id="nearCard">
@@ -751,6 +776,18 @@ button[aria-pressed="true"] { font-weight:700; }
     <div class="card" id="setBasic"><h3>見た目・声</h3><div class="row" id="setBasicRow"></div><div id="setBasicNote"></div><div id="setVoice"></div></div>
     <div class="card" id="setProfile"><h3>お名前・お住まい</h3><div id="setProfileBody"></div></div>
     <div id="setCards"></div>
+  </section>
+
+  <!-- 花の見どころ -->
+  <section class="view" id="v-flower" hidden aria-label="花の見どころ">
+    <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
+    <h2>🌸 花の見どころ</h2>
+    <p class="muted">季節の花の名所を、時期とお住まいからの近さで、ご紹介します。みごろは、その年の気温で前後します。出かける前に、公式の情報で、確かめてください。</p>
+    <div class="card"><b>時期</b><div class="fl-chips" id="flWhen" role="group" aria-label="時期"></div>
+    <b>地域</b><div class="fl-chips" id="flWhere" role="group" aria-label="地域"></div></div>
+    <p class="msg" id="flMsg" role="status"></p>
+    <div id="flList" style="display:flex;flex-direction:column;gap:12px"></div>
+    <p class="muted">写真は、「写真を見る」のボタンで、検索の画面が開きます。お持ちの写真があれば、ケセラに入れることもできます。</p>
   </section>
 
   <!-- 学ぶ -->
@@ -1855,7 +1892,7 @@ button[aria-pressed="true"] { font-weight:700; }
   });
 
   /* 画面の切り替え */
-  var views = ['settings', 'home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask', 'dress'];
+  var views = ['flower', 'settings', 'home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask', 'dress'];
   var navView = 'home', navDepth = 0;
   function show(v, fromPop) {
     if (v !== 'talk' && typeof chatOn !== 'undefined' && chatOn) chatStop();
@@ -3137,6 +3174,7 @@ button[aria-pressed="true"] { font-weight:700; }
 
   /* ---------- 案内係（女性・AI） ---------- */
   var GUIDE = {
+    flower: 'ここは「花の見どころ」です。時期と地域をえらぶと、見ごろの花が出ます。「写真を見る」「行き方」のボタンも、使えます。',
     settings: 'ここは「設定」です。文字の大きさ、デザイン、声、お名前とお住まい、緊急連絡先、ご家族への見まもりを、ここで変えられます。終わったら、「ホームにもどる」を押してください。',
     home: 'こんにちは。ここがホームです。絵のボタンを押すと、その画面に進みます。文字が小さいときは、いちばん上の「⚙ 設定」の中の「文字を大きくする」を押してください。',
     learn: 'ここは「学ぶ」です。折り紙の図を見ながら、手順のとおりに折ってみましょう。終わったら、下のミニテストに答えてください。「ホームにもどる」で、いつでも最初の画面にもどれます。',
@@ -3637,15 +3675,7 @@ button[aria-pressed="true"] { font-weight:700; }
   var tyAlerts = [], wnAlerts = [];
 
   var wnSevere = '';
-  function schoolRender() {
-    var pn = prefName() || 'お住まいの県', el = $('schoolLine'); if (!el) return;
-    var ty = tyAlerts.length ? '台風が近づいています。' : '';
-    if (wnSevere) el.textContent = '⚠ ' + pn + 'に、' + wnSevere + 'が出ています。' + ty + '学校が臨時休校になっている地域があるかもしれません（目安です）。';
-    else if (ty) el.textContent = ty + '台風の接近で、学校が臨時休校になることがあります。学校や教育委員会のお知らせを、確かめてください。';
-    else el.textContent = 'いまのところ、休校の目安になる警報は、出ていません。';
-    $('schoolSearch').href = 'https://news.yahoo.co.jp/search?p=' + encodeURIComponent('臨時休校 ' + (prefName() || '')) + '&ei=UTF-8';
-  }
-  function setLive() { liveAlerts = tyAlerts.concat(wnAlerts); renderAlerts(); schoolRender(); }
+  function setLive() { liveAlerts = tyAlerts.concat(wnAlerts); renderAlerts(); }
   function nowLabel(s) { var m = /(\d{4})-(\d\d)-(\d\d)T(\d\d):(\d\d)/.exec(s || ''); return m ? (+m[2]) + '月' + (+m[3]) + '日' + (+m[4]) + '時ごろ' : ''; }
   function loadTyphoon() {
     var ll = PREF_LL[$('wxPref').value]; if (!ll) return;
@@ -3825,6 +3855,83 @@ button[aria-pressed="true"] { font-weight:700; }
     if (sc) t.addEventListener('click', function () { var e = document.querySelector(sc); if (e) { try { e.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (x) { e.scrollIntoView(); } } });
     if (ck) t.addEventListener('click', function () { var e = document.querySelector(ck); if (e) e.click(); });
   });
+
+  /* ---------- 花の見どころ ---------- */
+  var FL = [["kumajo", "桜（ソメイヨシノ）", "熊本城", "熊本県", 32.806, 130.706, [3, 2, 4, 0], "#f4a6bd", "花", "お城の石垣と天守閣を背に、桜が広がります。復旧が進む熊本城を、花と一緒に見られます。", "桜の馬場 城彩苑のまわり、行幸坂、二の丸広場", "熊本市電「熊本城・市役所前」電停から歩いて約5分。", 1], ["senzui", "ミヤマキリシマ", "仙酔峡（阿蘇）", "熊本県", 32.88, 131.07, [5, 2, 6, 0], "#d6336c", "花", "九州の山に咲く、小さなつつじです。阿蘇の山の斜面が、ピンク色にそまります。", "仙酔峡の遊歩道", "阿蘇駅から車で約20〜30分。バスは少ないので、事前に確認してください。", 1], ["takamori", "桜", "高森峠千本桜", "熊本県", 32.82, 131.12, [4, 0, 4, 1], "#f4a6bd", "花", "山の斜面に桜が連なり、阿蘇の山なみと一緒に見られます。", "高森峠の展望所", "熊本市内から車で約1時間半（目安）。", 1], ["dazaifu", "梅", "太宰府天満宮", "福岡県", 33.52, 130.53, [2, 0, 3, 0], "#e8688a", "花", "学問の神様の境内に、たくさんの梅が咲きます。「飛梅」でも知られています。", "本殿の前、梅林", "西鉄「太宰府駅」から歩いて約5分。", 1], ["umi", "ネモフィラ", "国営海の中道海浜公園", "福岡県", 33.66, 130.35, [4, 0, 4, 1], "#6aa8e8", "花", "青い小さな花が、丘いちめんに広がります。海もすぐそばです。", "みなと丘の花畑", "JR香椎線「海ノ中道駅」から歩いてすぐ。", 1], ["hdb", "チューリップ", "ハウステンボス", "長崎県", 33.08, 129.79, [3, 2, 4, 0], "#e8505b", "花", "色とりどりのチューリップが、街並みの中に咲きます。", "園内の花の広場", "JR「ハウステンボス駅」から歩いて行けます。", 1], ["ikeda", "菜の花", "池田湖（指宿）", "鹿児島県", 31.23, 130.57, [1, 0, 3, 0], "#f2c40f", "花", "冬の間に、湖のそばが黄色い菜の花でいっぱいになります。", "池田湖畔の菜の花畑", "JR「指宿駅」から車で約30分（目安）。", 1], ["yaedake", "ヒカンザクラ（寒緋桜）", "本部八重岳（沖縄）", "沖縄県", 26.65, 127.9, [1, 1, 2, 0], "#c2185b", "花", "日本でいちばん早い桜です。濃いピンク色で、うつむくように咲きます。", "八重岳の桜の森", "那覇空港から車で約2時間（目安）。", 1], ["kairaku", "梅", "偕楽園", "茨城県", 36.37, 140.45, [2, 1, 3, 2], "#e8688a", "花", "日本三名園のひとつ。約100種、3,000本ほどの梅が咲くとされています。", "梅林、好文亭のまわり", "JR常磐線「水戸駅」から歩いて約15分（梅まつりの期間は臨時駅あり）。", 0], ["kawazu", "河津桜", "河津町（静岡）", "静岡県", 34.74, 138.99, [2, 0, 3, 0], "#f06292", "花", "2月から咲く、濃いピンクの早咲きの桜です。菜の花とも、一緒に見られます。", "河津川ぞいの桜並木", "伊豆急行「河津駅」から歩いてすぐ。", 0], ["hirosaki", "桜（ソメイヨシノ）", "弘前公園", "青森県", 40.608, 140.464, [4, 2, 5, 0], "#f4a6bd", "花", "お堀の水面を、花びらがおおう「花いかだ」でも有名です。", "外濠の桜並木、天守のまわり", "JR「弘前駅」からバスで約15分。", 0], ["yoshino", "桜（山桜）", "吉野山", "奈良県", 34.36, 135.86, [4, 0, 4, 1], "#f4a6bd", "山ぜんたいが桜で、下から上へと、順番に咲きのぼります。", "下千本から上千本まで", "近鉄吉野線「吉野駅」からロープウェイや徒歩で。", 0], ["takato", "タカトオコヒガンザクラ", "高遠城址公園", "長野県", 35.83, 138.06, [4, 0, 4, 1], "#e8688a", "花", "少し赤みのある、小ぶりな桜で、公園いっぱいに咲きます。", "問屋門から本丸のまわり", "JR「伊那市駅」からバスで約30分。", 0], ["tetsugaku", "桜", "哲学の道（京都）", "京都府", 35.02, 135.795, [4, 0, 4, 0], "#f4a6bd", "花", "疏水（そすい）ぞいの小道を、桜のトンネルを見ながら歩けます。", "哲学の道の疏水ぞい", "京都市バス「銀閣寺道」から歩いてすぐ。", 0], ["hitachi", "ネモフィラ", "国営ひたち海浜公園", "茨城県", 36.4, 140.59, [4, 2, 5, 0], "#6aa8e8", "花", "丘のうえを、青い花がうめつくします。", "みはらしの丘", "JR「勝田駅」からバスで約15分。", 0], ["tonami", "チューリップ", "砺波チューリップ公園", "富山県", 36.65, 136.96, [4, 2, 5, 0], "#e8505b", "花", "たくさんの品種のチューリップが、広い花畑に咲きます。", "花壇のまわり、展望台", "JR「砺波駅」から歩いて約15分。", 0], ["hitsuji", "芝桜", "羊山公園", "埼玉県", 35.98, 139.08, [4, 1, 5, 0], "#e87ab8", "花", "丘いちめんに、ピンクや白のじゅうたんが広がります。", "芝桜の丘", "西武秩父駅から歩いて約20分。", 0], ["ashikaga", "藤", "あしかがフラワーパーク", "栃木県", 36.32, 139.52, [4, 2, 5, 1], "#9b7fd1", "花", "大藤棚とよばれる、とても大きな藤がみどころです。", "大藤棚", "JR両毛線「あしかがフラワーパーク駅」から歩いてすぐ。", 0], ["meigetsu", "あじさい", "明月院（鎌倉）", "神奈川県", 35.34, 139.55, [6, 0, 6, 2], "#4f8fd6", "花", "青いあじさいが、参道をうめつくし、「あじさい寺」とよばれます。", "参道、本堂の裏庭", "JR「北鎌倉駅」から歩いて約10分。", 0], ["kodai", "蓮（はす）", "古代蓮の里（行田）", "埼玉県", 36.12, 139.48, [6, 2, 7, 1], "#f48fb1", "花", "朝早くに、大きな蓮の花がひらきます。", "蓮の池、展望タワー", "JR「行田駅」「吹上駅」などからバスで。", 0], ["furano", "ラベンダー", "ファーム富田（富良野）", "北海道", 43.42, 142.43, [7, 0, 7, 2], "#8e6bbf", "花", "紫色の畑がどこまでも続き、あまい香りがします。", "ラベンダー畑", "JR「中富良野駅」から歩いて約25分。", 0], ["hokuryu", "ひまわり", "北竜町ひまわりの里", "北海道", 43.73, 141.88, [7, 2, 8, 1], "#f5b800", "花", "たくさんのひまわりが、いっせいに太陽のほうを向いています。", "ひまわりの丘", "札幌から車で約1時間半（目安）。", 0], ["kinchaku", "彼岸花（曼珠沙華）", "巾着田（日高）", "埼玉県", 35.88, 139.33, [9, 1, 9, 2], "#d32f2f", "花", "川に囲まれた野原に、赤い彼岸花が、ひろがります。", "巾着田の花畑", "西武池袋線「高麗駅」から歩いて約10分。", 0], ["showa", "コスモス", "国営昭和記念公園", "東京都", 35.71, 139.4, [9, 2, 10, 1], "#ec6fa3", "花", "やさしい風に、ゆれるコスモスの花畑が見られます。", "花の丘", "JR「西立川駅」から歩いてすぐ。", 0], ["tofuku", "紅葉（もみじ）", "東福寺（京都）", "京都府", 34.977, 135.774, [11, 1, 12, 0], "#d9480f", "紅葉", "谷をまたぐ橋の上から、紅葉の海を見わたせます。", "通天橋", "JR・京阪「東福寺駅」から歩いて約10分。", 0], ["awaji", "水仙", "立川水仙郷（淡路島）", "兵庫県", 34.24, 134.94, [12, 2, 1, 2], "#f2c40f", "花", "海のそばの斜面に、水仙が咲き、よい香りがします。", "水仙郷の斜面", "洲本バスセンターからバスで。", 0]];
+  var FL_K = ['', '', '', '', '', '', '', '', '', '', '', ''];
+  var flWhen = 'now', flWhere = 'near';
+  function flLabel(r) { var P = ['上旬', '中旬', '下旬']; return r[0] + '月' + P[r[1]] + '〜' + (r[2] === r[0] ? '' : r[2] + '月') + P[r[3]]; }
+  function flCur() { var d = new Date(), p = d.getDate() <= 10 ? 0 : (d.getDate() <= 20 ? 1 : 2); return d.getMonth() + 1 + p / 3 + 0.05; }
+  function flState(r) {
+    var S = r[0] + r[1] / 3, E = r[2] + (r[3] + 1) / 3, c = flCur();
+    if (E < S) E += 12;
+    var c2 = c < S ? c + 12 : c;
+    if (c >= S && c <= E || c2 >= S && c2 <= E) return 'now';
+    var d = S - c; if (d < 0) d += 12;
+    return d <= 1.7 ? 'soon' : 'later';
+  }
+  function flSvg(col) { return '<svg viewBox="0 0 48 48" aria-hidden="true"><g fill="' + col + '"><circle cx="24" cy="12" r="8"/><circle cx="36" cy="21" r="8"/><circle cx="31" cy="35" r="8"/><circle cx="17" cy="35" r="8"/><circle cx="12" cy="21" r="8"/></g><circle cx="24" cy="24" r="6" fill="#f6c945"/></svg>'; }
+  function flDist(f) { var ll = PREF_LL[$('wxPref').value]; return ll ? Math.round(haversine(ll[0], ll[1], f[4], f[5]) / 10) * 10 : null; }
+  function flData() {
+    var arr = FL.map(function (f) { return { f: f, st: flState(f[6]), d: flDist(f) }; });
+    if (flWhen === 'now') arr = arr.filter(function (x) { return x.st === 'now'; });
+    else if (flWhen === 'soon') arr = arr.filter(function (x) { return x.st === 'soon'; });
+    if (flWhere === 'kyushu') arr = arr.filter(function (x) { return x.f[12] === 1; });
+    arr.sort(function (a, b) { return flWhere === 'near' || flWhere === 'kyushu' ? (a.d || 0) - (b.d || 0) : (a.st === 'now' ? 0 : 1) - (b.st === 'now' ? 0 : 1) || (a.d || 0) - (b.d || 0); });
+    return arr;
+  }
+  function flChips(id, items, cur, fn) {
+    var el = $(id); el.innerHTML = '';
+    items.forEach(function (it) { var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = it[1]; b.setAttribute('aria-pressed', String(it[0] === cur)); b.addEventListener('click', function () { fn(it[0]); }); el.appendChild(b); });
+  }
+  function flRender() {
+    flChips('flWhen', [['now', 'いま見ごろ'], ['soon', 'もうすぐ'], ['all', 'ぜんぶ']], flWhen, function (v) { flWhen = v; flRender(); });
+    flChips('flWhere', [['near', 'お住まいに近い順'], ['kyushu', '九州・沖縄'], ['all', '全国']], flWhere, function (v) { flWhere = v; flRender(); });
+    var arr = flData(), box = $('flList'); box.innerHTML = '';
+    $('flMsg').textContent = arr.length ? arr.length + 'か所が見つかりました。' : 'この条件では、いま見つかりません。「ぜんぶ」や「全国」を、押してみてください。';
+    arr.forEach(function (x) {
+      var f = x.f, c = document.createElement('div'); c.className = 'fl-card' + (x.st === 'now' ? ' now' : '');
+      var q = encodeURIComponent(f[2] + ' ' + f[1].replace(/（.*）/, ''));
+      c.innerHTML = '<div class="fl-head"><div class="fl-ic">' + flSvg(f[7]) + '</div><div><p class="fl-title"></p><p class="fl-sub"></p></div></div>' +
+        '<p class="fl-row"><b>みごろ</b>　<span class="a"></span></p><p class="fl-row"><b>ここが特徴</b>　<span class="b"></span></p><p class="fl-row"><b>おすすめの鑑賞地</b>　<span class="c"></span></p><p class="fl-row"><b>アクセス</b>　<span class="d"></span></p><div class="fl-btns"></div>';
+      var t = c.querySelector('.fl-title'); t.textContent = f[1] + '　' + f[2];
+      var bd = document.createElement('span'); bd.className = 'fl-badge' + (x.st === 'soon' ? ' soon' : ''); bd.textContent = x.st === 'now' ? 'いま見ごろ' : (x.st === 'soon' ? 'もうすぐ' : ''); if (x.st !== 'later') t.appendChild(bd);
+      c.querySelector('.fl-sub').textContent = f[3] + (x.d !== null ? '　お住まいから約' + x.d + 'km' : '');
+      c.querySelector('.a').textContent = flLabel(f[6]); c.querySelector('.b').textContent = f[9]; c.querySelector('.c').textContent = f[10]; c.querySelector('.d').textContent = f[11];
+      var bt = c.querySelector('.fl-btns');
+      [['📷 写真を見る', 'https://www.google.com/search?tbm=isch&q=' + q], ['🧭 行き方（Googleマップ）', 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(f[2]) + '&travelmode=transit'], ['🔎 公式の情報を探す', 'https://www.google.com/search?q=' + encodeURIComponent(f[2] + ' 開花状況 見ごろ')]].forEach(function (z) {
+        var a = document.createElement('a'); a.className = 'btnlink'; a.href = z[1]; a.target = '_blank'; a.rel = 'noopener'; a.textContent = z[0]; bt.appendChild(a);
+      });
+      box.appendChild(c);
+    });
+  }
+  function flHome() {
+    var arr = FL.map(function (f) { return { f: f, st: flState(f[6]), d: flDist(f) }; }).filter(function (x) { return x.st === 'now'; }).sort(function (a, b) { return (a.d || 0) - (b.d || 0); });
+    var el = $('flLine'); if (!el) return;
+    var lead = '🌸 いま見ごろ：';
+    if (!arr.length) { arr = FL.map(function (f) { return { f: f, st: flState(f[6]), d: flDist(f) }; }).filter(function (x) { return x.st === 'soon'; }).sort(function (a, b) { return (a.d || 0) - (b.d || 0); }); lead = '🌸 もうすぐ見ごろ：'; }
+    if (!arr.length) { el.hidden = true; return; }
+    el.hidden = false; el.textContent = lead + arr.slice(0, 2).map(function (x) { return x.f[1].replace(/（.*）/, '') + '（' + x.f[2] + (x.d !== null ? '、約' + x.d + 'km' : '') + '）'; }).join('、');
+  }
+  if (!flData().length) flWhen = 'soon';
+  flRender(); flHome();
+  $('wxPref').addEventListener('change', function () { flRender(); flHome(); });
+
+  /* ---------- 今日の花言葉・ラッキー ---------- */
+  (function () {
+    var HK = [["桜", "精神の美しさ、優美な女性", "#f4a6bd"], ["梅", "気高さ、忠実", "#e8688a"], ["菜の花", "明るい愛、快活", "#f2c40f"], ["チューリップ（赤）", "愛の告白、思いやり", "#e8505b"], ["スミレ", "謙虚、誠実", "#7e57c2"], ["ミモザ", "友情、感謝", "#f5c518"], ["藤", "やさしさ、歓迎", "#9b7fd1"], ["バラ（赤）", "愛情、情熱", "#c62828"], ["カーネーション", "感謝、深い愛情", "#ec6fa3"], ["あじさい", "家族のだんらん、辛抱づよい愛情", "#4f8fd6"], ["ひまわり", "あなただけを見つめる、あこがれ", "#f5b800"], ["ラベンダー", "あなたを待っています、沈黙", "#8e6bbf"], ["朝顔", "かたい絆、愛情のきずな", "#5c6bc0"], ["コスモス", "調和、謙虚", "#ec6fa3"], ["彼岸花", "また会う日を楽しみに、情熱", "#d32f2f"], ["菊", "高貴、高潔", "#f2d544"], ["金木犀", "謙虚、気高い人", "#f59f00"], ["もみじ", "大切な思い出", "#d9480f"], ["椿", "控えめな素晴らしさ、誇り", "#c62828"], ["蓮（はす）", "清らかな心、神聖", "#f48fb1"], ["白いゆり", "純粋、威厳", "#eceff1"], ["ガーベラ", "希望、前向き", "#ff7043"], ["マーガレット", "真実の愛、信頼", "#f5f5f5"], ["つつじ", "慎み、節度のある", "#d6336c"], ["牡丹", "風格、誠実", "#e91e63"], ["芍薬", "はじらい、はにかみ", "#f06292"], ["桔梗", "変わらぬ愛、誠実", "#5c6bc0"], ["撫子", "純愛、大胆", "#ec6fa3"], ["山茶花", "ひたむき", "#d6336c"], ["福寿草", "幸せを招く、永久の幸福", "#f2c40f"], ["クローバー", "幸運、約束", "#43a047"], ["スイートピー", "やさしい思い出、門出", "#f48fb1"], ["リンドウ", "誠実、正義感", "#3f51b5"], ["南天", "福をなす、よい家庭", "#c62828"], ["すずらん", "幸福がもどる、純粋", "#cfd8dc"], ["ネモフィラ", "可憐、どこでも成功", "#6aa8e8"], ["芝桜", "合意、一致", "#e87ab8"]], LC = [["赤", "元気とやる気が、わいてきます", "#d32f2f"], ["桃色", "やさしい気持ちに、なれます", "#f06292"], ["黄色", "明るく、ほがらかな一日に", "#f5b800"], ["緑", "心が、おちつきます", "#43a047"], ["水色", "すっきり、さわやかに", "#4fc3f7"], ["青", "おだやかに、集中できます", "#1e88e5"], ["紫", "ゆったり、上品な気分に", "#8e6bbf"], ["白", "気持ちを、新しくします", "#eceff1"], ["橙（だいだい）", "人との会話が、はずみます", "#fb8c00"], ["茶色", "安心感に、つつまれます", "#8d6e63"], ["金色", "ちょっと、ぜいたくな気分に", "#d4a017"], ["ベージュ", "なごやかな時間に", "#d7c4a3"]], LI = ["ハンカチ", "小さなメモ帳", "ハーブティー", "お気に入りの靴下", "書きやすいペン", "帽子", "花の写真", "みかん", "あたたかい手袋", "ひざかけ", "歩数計", "香りのよい石けん", "ノート", "スカーフ", "ミニタオル", "お気に入りのお茶碗", "のど飴", "水筒", "ストール", "季節の果物"];
+    var d = new Date(), doy = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 86400000), k = HK[(doy + d.getFullYear()) % HK.length], c = LC[(doy * 5 + 3) % LC.length], it = LI[(doy * 7 + 3) % LI.length];
+    $('hanaIc').innerHTML = flSvg(k[2]); $('hanaName').textContent = k[0]; $('hanaWord').textContent = '花言葉：' + k[1];
+    $('hanaDot').style.background = c[2]; $('hanaColor').textContent = c[0] + '（' + c[1] + '）'; $('hanaItem').textContent = it;
+  })();
+
+  /* ---------- 今日の明るい占い ---------- */
+  (function () {
+    var G = ["人との出会いに、めぐまれる日", "うれしい連絡が、届きそうな日", "ひらめきが、さえる日", "体が軽く、よく動ける日", "笑顔が、まわりによく届く日", "小さな発見が、ある日", "身のまわりを整えると、気持ちが晴れる日", "ごはんが、おいしく感じる日", "行きたかった所と、ご縁がある日", "なつかしい人を、思い出す日", "学んだことが、身につく日", "感謝されやすい日"], C = [["つい、言いすぎてしまうかも", "人の話を、最後まで聞く力を、きたえるチャンス", "相手の話に、うなずきを3回ふやしてみましょう。"], ["あわてやすい日です", "ひと呼吸おく力を、きたえるチャンス", "動く前に、ゆっくり深呼吸を3回。"], ["忘れ物に、気をつけて", "段取りの力を、きたえるチャンス", "出かける前に、持ち物を指さして、声に出して確認。"], ["気が散りやすい日です", "集中する力を、きたえるチャンス", "ひとつのことを、10分だけ、ていねいに。"], ["疲れが出やすい日です", "上手に休む力を、きたえるチャンス", "10分だけ、目を閉じて、体をゆるめましょう。"], ["お誘いを、断りにくいかも", "自分の気持ちを、大切にする力を、きたえるチャンス", "「ありがとう。今日は、ゆっくりします」と言う練習を。"], ["お金を、使いすぎやすい日です", "「これで足りている」と知る力を、きたえるチャンス", "買う前に、ひと晩おいて、考えてみましょう。"], ["思うようにいかないことが、あるかも", "やわらかい心を、きたえるチャンス", "「まあ、いいか」を、声に出して言ってみましょう。"], ["人の言葉が、気になる日です", "受け流す力を、きたえるチャンス", "気になる言葉を、紙に書いて、折って、すてましょう。"], ["急がされる話が、出てくるかも", "落ち着いて見きわめる力を、きたえるチャンス", "急がされたら、いったん、待つ。だれかに、相談してから決めましょう。"], ["昔のことが、頭に浮かぶ日です", "感謝の気持ちを、育てるチャンス", "「ありがとう」を、3つ、思い浮かべてみましょう。"], ["うっかりが、出やすい日です", "メモの力を、きたえるチャンス", "ケセラの「うっかりメモ」に、一言、入れておきましょう。"]];
+    var d = new Date(), doy = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 86400000), pr = loadProf(), bm = (pr && pr.bm) ? Number(pr.bm) : 0;
+    var g = G[(doy * 5 + bm + d.getFullYear()) % G.length], c = C[(doy * 7 + bm * 3) % C.length];
+    $('urGood').textContent = g; $('urCau').textContent = c[0]; $('urOpp').textContent = c[1] + '。'; $('urTrain').textContent = '練習：' + c[2];
+  })();
   renderWxIcon();
   renderSun(); updateNews();
   loadWeather();
