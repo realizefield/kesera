@@ -4365,6 +4365,47 @@ button[aria-pressed="true"] { font-weight:700; }
       ['🏛 文化遺産めぐり', '世界遺産・国宝・重要文化財。歴史に、ふれる旅。', ['近くの、国の文化財を、調べる', '見学できる日と時間を、確かめる', 'ガイドや、資料館も、のぞく'], [['世界遺産・文化遺産', 'G', '世界遺産 文化遺産 日本 一覧'], ['国宝・重要文化財', 'G', '国宝 重要文化財 近く 見学'], ['文化財の動画', 'Y', '世界遺産 日本 ドキュメンタリー']]],
       ['🎬 映画', '名作を、じっくり。映画館へ行く楽しみも。', ['今、上映中の映画を、調べる', '昔の名作を、ひとつ、見直す', '見たあと、ひとこと、感想を書く'], [['上映中の映画', 'G', '映画 上映中 近く'], ['近くの映画館', 'M', '映画館'], ['名作映画', 'G', '名作映画 おすすめ シニア']]]
     ];
+
+    function onsenCard(bd) {
+      var st = load('kesera-onsen', { mode: 1, tr: 0, km: 10, n: 1 }), c = E('div', 'card'); c.style.gap = '10px';
+      c.appendChild(E('b', '', '💴 温泉プラン：費用の目安'));
+      c.appendChild(E('p', 'fl-sub', '下の数字は、ざっくりした目安です。温泉・タクシー会社・地域で変わります。出かける前に、必ず、見積りをとってください。'));
+      var g1 = E('div', 'fl-chips'), g2 = E('div', 'fl-chips'), g3 = E('div', 'fl-chips'), out = E('div', 'notice'); out.setAttribute('role', 'status');
+      var MODES = ['ちょこっと立ち寄り（1時間）', '日帰り（入浴＋食事）', '1泊'], TRS = ['自分で運転・家族の送迎', '電車・バス', '福祉タクシー（要）'];
+      var km = E('input'); km.type = 'number'; km.inputMode = 'numeric'; km.min = 1; km.max = 300; km.value = st.km; km.style.cssText = 'min-height:52px;font-size:1.2rem;width:100%;box-sizing:border-box';
+      function chipsOf(el, arr, key) { el.innerHTML = ''; arr.forEach(function (t, i) { var b = E('button', 'chip', t); b.type = 'button'; b.setAttribute('aria-pressed', String(st[key] === i + (key === 'n' ? 1 : 0))); b.addEventListener('click', function () { st[key] = i + (key === 'n' ? 1 : 0); save('kesera-onsen', st); draw(); }); el.appendChild(b); }); }
+      function yen(x) { return (Math.round(x / 100) * 100).toLocaleString('ja-JP') + '円'; }
+      function draw() {
+        chipsOf(g1, MODES, 'mode'); chipsOf(g2, TRS, 'tr'); chipsOf(g3, ['1人', '2人', '3人', '4人'], 'n');
+        var d = Math.max(1, Number(km.value) || 1), n = st.n, lo = 0, hi = 0, rows = [], a, b;
+        st.km = d; save('kesera-onsen', st);
+        var ad = [[500, 1000], [1800, 3500], [8000, 20000]][st.mode], nm = ['入浴料', '入浴料＋食事', '宿泊（1泊2食）'][st.mode];
+        rows.push([nm + '（' + n + '人分）', ad[0] * n, ad[1] * n]);
+        if (st.tr === 0) { a = d * 2 * 10; b = d * 2 * 20; rows.push(['ガソリン・駐車（往復' + d * 2 + 'km）', a, b]); }
+        else if (st.tr === 1) { a = d * 2 * 20 * n; b = d * 2 * 40 * n; rows.push(['電車・バス運賃（往復・' + n + '人分）', a, b]); }
+        else {
+          a = d * 2 * 300; b = d * 2 * 450; rows.push(['福祉タクシー運賃（往復' + d * 2 + 'km）', a, b]);
+          rows.push(['介助料・車いす等の加算', 1000, 4000]);
+          if (st.mode < 2) rows.push(['待機料（お店で待ってもらう場合：' + (st.mode ? '約3時間' : '約1時間') + '）', st.mode ? 3000 : 1000, st.mode ? 6000 : 2000]);
+        }
+        out.innerHTML = '';
+        rows.forEach(function (r) { lo += r[1]; hi += r[2]; out.appendChild(E('div', '', '・' + r[0] + '：' + yen(r[1]) + ' 〜 ' + yen(r[2]))); });
+        var t = E('b', '', '合計の目安：約 ' + yen(lo) + ' 〜 ' + yen(hi)); t.style.cssText = 'display:block;font-size:1.2rem;margin-top:6px'; out.appendChild(t);
+      }
+      c.appendChild(E('b', '', '① どんな温泉？')); c.appendChild(g1);
+      c.appendChild(E('b', '', '② 行き方')); c.appendChild(g2);
+      c.appendChild(E('b', '', '③ 人数')); c.appendChild(g3);
+      c.appendChild(E('b', '', '④ 片道の距離（km）')); c.appendChild(km); km.addEventListener('input', draw);
+      c.appendChild(out);
+      var tip = E('div', 'notice'); tip.appendChild(E('b', '', '福祉タクシーが「要る」目安'));
+      var ul = E('ul'); ul.style.cssText = 'margin:0;padding-left:1.3em;line-height:1.8';
+      ['車いす・歩行器を使う、または、杖でも、乗り降りが不安', '一人で、階段・段差を、のぼりおりするのが、むずかしい', '付き添いの方が、運転できない、または、いない'].forEach(function (x) { ul.appendChild(E('li', '', x)); });
+      tip.appendChild(ul); tip.appendChild(E('p', 'fl-sub', '一つも当てはまらなければ、「不要」でも大丈夫なことが多いです。福祉タクシーは、予約制です。温泉の脱衣所・浴室の段差や、介助の可否も、先に問い合わせると、安心です。入浴の介助は、運賃とは別です。'));
+      tip.appendChild(E('p', 'fl-sub', '湯あたり対策：長湯・熱い湯・食後すぐ・飲酒後は、避けましょう。血圧・心臓の持病のある方は、先に、お医者さんへ。'));
+      c.appendChild(tip);
+      c.appendChild(linkRow([['福祉タクシーを探す', M('福祉タクシー 介護タクシー ' + cityNow())], ['料金の目安を調べる', G('福祉タクシー 料金 ' + (cityNow() || '近く') + ' 温泉')]]));
+      bd.appendChild(c); draw();
+    }
     var cur = load('kesera-mania-sel', 0), mnote = load('kesera-mania-note', {});
     function mnRender() {
       var ch = $('mnChips'); ch.innerHTML = '';
@@ -4377,7 +4418,7 @@ button[aria-pressed="true"] { font-weight:700; }
       var arr = mnote[m[0]] || []; arr.slice(-5).reverse().forEach(function (x) { ul.appendChild(E('li', '', x.t)); });
       sv.addEventListener('click', function () { var v = inp.value.trim(); if (!v) return; (mnote[m[0]] = mnote[m[0]] || []).push({ d: today, t: v }); mnote[m[0]] = mnote[m[0]].slice(-30); save('kesera-mania-note', mnote); mnRender(); });
       var add = E('button', 'btn', '📝 「きょうしたいことリスト」に入れる'); add.type = 'button'; add.addEventListener('click', function () { var mm = ml(); mm.items.push({ t: m[2][0], done: false }); save('kesera-mylist', mm); add.textContent = '✔ 入れました'; });
-      c2.appendChild(inp); c2.appendChild(sv); c2.appendChild(ul); c2.appendChild(add); bd.appendChild(c2);
+      c2.appendChild(inp); c2.appendChild(sv); c2.appendChild(ul); c2.appendChild(add); bd.appendChild(c2); if (m[0].indexOf('♨') === 0) onsenCard(bd);
     }
     mnRender();
   })();
