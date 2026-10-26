@@ -396,6 +396,23 @@ button[aria-pressed="true"] { font-weight:700; }
 .odd-res.ok { border:2px solid var(--line); background:var(--surface); }
 .readbar { display:flex; flex-wrap:wrap; gap:8px; margin:0 0 8px; }
 .readbar .btn { min-height:48px; font-size:1.02rem; }
+/* ---- コンパクトなヘッダー ---- */
+.wrap { gap:14px; }
+.site-tagline { margin:2px 0 0; font-size:.8rem; font-weight:500; letter-spacing:.14em; text-align:left; opacity:.85; }
+.top { flex-wrap:nowrap; gap:8px; padding-right:0; align-items:center; }
+.top .brand-note { font-size:.85rem; letter-spacing:.04em; white-space:nowrap; }
+.top .brand-note .tag { font-size:.62rem; padding:1px 6px; margin-left:4px; }
+.header-tools { flex-wrap:nowrap; gap:6px; margin-left:auto; width:auto !important; }
+.header-tools .btn { min-height:40px !important; padding:4px 11px !important; border-radius:999px; font-size:.86rem !important; font-weight:600; white-space:nowrap; flex:0 0 auto !important; border-width:1.5px; box-shadow:none; }
+.header-tools .loc-btn { background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+.location-bar { display:none !important; }
+.appearance-note { display:none; }
+#v-home .welcome { display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:8px 16px; border-radius:12px; border:1px solid var(--line); border-left:5px solid var(--accent); }
+#v-home .welcome::after { content:none !important; }
+#v-home .welcome .logo-h1 img { width:128px; }
+#v-home .welcome p { margin:0 !important; font-size:.85rem !important; }
+.odd-big { min-height:52px; font-size:1.08rem; border-width:0; border-radius:12px; background:linear-gradient(135deg,#b3261e,#8f1b15); box-shadow:0 2px 8px #b3261e44; letter-spacing:.03em; }
+@media (max-width:420px) { .top .brand-note { font-size:.75rem; } .top .brand-note .tag { display:none; } .header-tools .btn { padding:4px 9px !important; font-size:.82rem !important; } }
 .float-home { position:fixed; top:10px; right:10px; z-index:60; min-height:46px; padding:8px 16px; border-radius:999px; border:2px solid var(--accent); background:var(--surface); color:var(--accent); font-weight:700; font-size:1rem; box-shadow:0 3px 12px #0003; }
 .float-home[hidden] { display:none; }
 </style></head><body>
@@ -3740,6 +3757,16 @@ button[aria-pressed="true"] { font-weight:700; }
   $('gspeak').textContent = '🔊 声で聞く';
   $('gspeak').addEventListener('click', function () { readAloud(screenText()); });
   (function () { var r = document.createElement('button'); r.className = 'btn small'; r.id = 'grepeat'; r.type = 'button'; r.textContent = '↻ もう一度聞く'; r.addEventListener('click', function () { readAloud(lastRead || screenText()); }); $('gspeak').insertAdjacentElement('afterend', r); })();
+
+  /* ---------- ヘッダーをコンパクトに ---------- */
+  (function () {
+    var tools = document.querySelector('.header-tools'), loc = $('locationBtn'), trip = $('tripOpen'), st = $('settingsBtn');
+    if (!tools) return;
+    if (trip) { trip.textContent = '🚃 お出かけ'; trip.setAttribute('aria-label', '歩く・電車・バス・タクシー'); }
+    if (loc) { loc.className = 'btn loc-btn'; loc.innerHTML = '◎ 現在地'; loc.setAttribute('aria-label', 'Googleマップで現在地を見る'); tools.insertBefore(loc, st || null); }
+    if (st) st.textContent = '⚙ 設定';
+    var oddb = $('oddBtn'); if (oddb) oddb.textContent = '🤔 おかしい？と思ったら、ここを押す';
+  })();
   renderWxIcon();
   renderSun(); updateNews();
   loadWeather();
