@@ -4355,7 +4355,7 @@ button[aria-pressed="true"] { font-weight:700; }
       ['⛺ キャンプマニア', '火を囲み、星を見る。まずは日帰りのデイキャンプから。', ['近くのキャンプ場・公園を、調べる', 'いすとお茶だけの、デイキャンプから', '天気と日没の時刻を、必ず確かめる'], [['キャンプ場', 'M', 'キャンプ場'], ['デイキャンプ入門', 'Y', 'デイキャンプ 初心者'], ['道具の選び方', 'G', 'キャンプ 道具 初心者 シニア']]],
       ['⛰ 日帰り登山', '低い山から、ゆっくり。頂上より、景色を味わう。', ['標高の低い山を、ひとつ選ぶ', '天気・日の入り・登山口の駐車場を、調べる', '飲み物と、雨具と、ライトを、必ず持つ'], [['近くの低山', 'G', '日帰り登山 初心者 低山 九州'], ['登山口・山の地図', 'M', '登山口'], ['登山の安全', 'G', '登山 安全 初心者 登山届']]],
       ['🌸 季節スポットめぐり', '花・紅葉・雪景色。季節ごとの、いちばんいい場所へ。', ['いま見ごろの場所を、ひとつ決める', '時期は、出かける前に、公式で確かめる', 'ついでに、お店や温泉にも寄る'], [['花の見どころ（ケセラ）', 'GO', 'flower'], ['紅葉の名所', 'G', '紅葉 名所 今年 見ごろ'], ['イルミネーション', 'G', 'イルミネーション 今年 近く']]],
-      ['♨ 温泉めぐり', '湯につかる。日帰り入浴から、湯めぐりまで。', ['日帰り入浴ができる温泉を、探す', '営業時間と、入浴料を、確かめる', '湯あがりの、楽しみも決める'], [['近くの温泉', 'M', '日帰り温泉'], ['湯めぐり', 'G', '温泉 湯めぐり 九州 日帰り'], ['温泉の入り方', 'G', '温泉 入浴 注意 高齢者']]],
+      ['♨ 温泉巡り（思い出の貯金）', '湯につかる。日帰り入浴から、湯めぐりまで。', ['日帰り入浴ができる温泉を、探す', '営業時間と、入浴料を、確かめる', '湯あがりの、楽しみも決める'], [['近くの温泉', 'M', '日帰り温泉'], ['湯めぐり', 'G', '温泉 湯めぐり 九州 日帰り'], ['温泉の入り方', 'G', '温泉 入浴 注意 高齢者']]],
       ['🏞 景観ランキングめぐり', '「絶景」と言われる場所を、ランキングから選びます。', ['ランキングから、行ってみたい場所をひとつ', '季節と時刻を、調べる（朝夕が、きれい）', '地図で、行きかたを確かめる'], [['絶景ランキング', 'G', '絶景 ランキング 国内 日帰り'], ['日本の絶景 動画', 'Y', '日本の絶景 空撮'], ['近くの展望所', 'M', '展望所 絶景']]],
       ['🔮 パワースポットめぐり', '気持ちが切りかわる、静かな場所へ。', ['近くの神社・巨木・滝を、探す', '静かな時間帯に、ゆっくり歩く', 'お願いごとより、「ありがとう」を、ひとつ'], [['近くのパワースポット', 'G', 'パワースポット 近く'], ['地図で、神社・滝', 'M', '神社 滝 巨木'], ['ご由緒を調べる', 'G', 'パワースポット 由来 神社']]],
       ['🙏 おかげ参りめぐり', '古くからの参拝の旅。御朱印や、ご由緒も楽しみに。', ['まず、近くの、大きな神社に、お参りする', '御朱印帳を、一冊用意する', 'ご由緒を、お参りの前に、少し調べる'], [['おかげ参り・伊勢参り', 'G', 'おかげ参り 伊勢神宮 歴史'], ['近くの神社', 'M', '神社'], ['御朱印めぐり', 'G', '御朱印 めぐり 九州']]],
@@ -4406,6 +4406,18 @@ button[aria-pressed="true"] { font-weight:700; }
       c.appendChild(linkRow([['福祉タクシーを探す', M('福祉タクシー 介護タクシー ' + cityNow())], ['料金の目安を調べる', G('福祉タクシー 料金 ' + (cityNow() || '近く') + ' 温泉')]]));
       bd.appendChild(c); draw();
     }
+
+    function onsenLog(bd) {
+      var c = E('div', 'card'); c.style.gap = '8px';
+      c.appendChild(E('b', '', '🪙 思い出の貯金（入った温泉を、ためていきます）'));
+      var sum = E('p', 'fl-sub'); sum.setAttribute('role', 'status');
+      var nm = E('input'), mm = E('input'), yn = E('input'), sv = E('button', 'btn primary', '💾 思い出を、貯金する'), ul = E('ul');
+      nm.type = mm.type = 'text'; nm.placeholder = '温泉の名前'; mm.placeholder = 'ひとこと（お湯、景色、いっしょに行った人）'; yn.type = 'number'; yn.inputMode = 'numeric'; yn.placeholder = 'かかった費用（円・なくても大丈夫）';
+      [nm, mm, yn].forEach(function (e) { e.style.cssText = 'min-height:52px;font-size:1.1rem;width:100%;box-sizing:border-box'; }); sv.type = 'button'; sv.style.minHeight = '52px'; ul.style.cssText = 'margin:0;padding-left:1.3em;line-height:1.8';
+      function draw() { var l = load('kesera-onsen-log', []), tot = 0; l.forEach(function (x) { tot += Number(x.y) || 0; }); sum.textContent = l.length ? ('思い出が ' + l.length + ' 個、たまりました。' + (tot ? '（かかった費用の合計：' + tot.toLocaleString('ja-JP') + '円）' : '')) : 'まだ、貯金はゼロです。最初の1湯を、お待ちしています。'; ul.innerHTML = ''; l.slice(-6).reverse().forEach(function (x) { ul.appendChild(E('li', '', x.d + '　♨ ' + x.n + (x.m ? '　「' + x.m + '」' : '') + (x.y ? '　' + Number(x.y).toLocaleString('ja-JP') + '円' : ''))); }); }
+      sv.addEventListener('click', function () { var n = nm.value.trim(); if (!n) { sum.textContent = '温泉の名前を、入れてください。'; return; } var l = load('kesera-onsen-log', []); l.push({ d: today, n: n, m: mm.value.trim(), y: Number(yn.value) || 0 }); save('kesera-onsen-log', l.slice(-200)); nm.value = mm.value = yn.value = ''; draw(); });
+      c.appendChild(nm); c.appendChild(mm); c.appendChild(yn); c.appendChild(sv); c.appendChild(sum); c.appendChild(ul); bd.appendChild(c); draw();
+    }
     var cur = load('kesera-mania-sel', 0), mnote = load('kesera-mania-note', {});
     function mnRender() {
       var ch = $('mnChips'); ch.innerHTML = '';
@@ -4418,7 +4430,7 @@ button[aria-pressed="true"] { font-weight:700; }
       var arr = mnote[m[0]] || []; arr.slice(-5).reverse().forEach(function (x) { ul.appendChild(E('li', '', x.t)); });
       sv.addEventListener('click', function () { var v = inp.value.trim(); if (!v) return; (mnote[m[0]] = mnote[m[0]] || []).push({ d: today, t: v }); mnote[m[0]] = mnote[m[0]].slice(-30); save('kesera-mania-note', mnote); mnRender(); });
       var add = E('button', 'btn', '📝 「きょうしたいことリスト」に入れる'); add.type = 'button'; add.addEventListener('click', function () { var mm = ml(); mm.items.push({ t: m[2][0], done: false }); save('kesera-mylist', mm); add.textContent = '✔ 入れました'; });
-      c2.appendChild(inp); c2.appendChild(sv); c2.appendChild(ul); c2.appendChild(add); bd.appendChild(c2); if (m[0].indexOf('♨') === 0) onsenCard(bd);
+      c2.appendChild(inp); c2.appendChild(sv); c2.appendChild(ul); c2.appendChild(add); bd.appendChild(c2); if (m[0].indexOf('♨') === 0) { onsenCard(bd); onsenLog(bd); }
     }
     mnRender();
   })();
