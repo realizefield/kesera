@@ -390,6 +390,7 @@ button[aria-pressed="true"] { font-weight:700; }
 @media (min-width:560px) { .safe-grid { grid-template-columns:1fr 1fr; } }
 .odd-q { display:flex; gap:12px; align-items:flex-start; border:1.5px solid var(--line); border-radius:10px; padding:12px; font-size:1.08rem; line-height:1.5; background:var(--surface); }
 .odd-q input { width:28px; height:28px; flex:none; margin-top:2px; }
+.bk-d{border:2px solid var(--line,#d9c9cf);border-radius:12px;background:var(--surface,#fff);overflow:hidden}.bk-d>summary{cursor:pointer;padding:14px;font-weight:700;font-size:1.1rem;min-height:52px;display:flex;align-items:center;gap:8px}.bk-d[open]>summary{background:#fbeff3}.bk-w{padding:10px 14px;border-top:1px solid #0001;display:flex;flex-direction:column;gap:4px}.bk-w b{font-size:1.05rem}.bk-t{display:inline-block;font-size:.8rem;border-radius:999px;padding:1px 9px;background:#eee;margin-left:6px}.bk-w a{align-self:flex-start;min-height:44px;display:inline-flex;align-items:center}
 .sos-row{display:flex;gap:8px;align-items:stretch}.sos-row .odd-big{flex:1;width:auto}.sos-mini{flex:0 0 auto;min-width:84px;min-height:52px;border:0;border-radius:12px;background:#fff;color:#b3261e;border:3px solid #b3261e;font-size:1.3rem;font-weight:700;line-height:1.1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}.sos-mini small{font-size:.78rem}#sosDlg #safeCard{border:0!important;margin:0;padding:0;box-shadow:none}
 .odd-big { width:100%; min-height:76px; font-size:1.35rem; font-weight:700; border-radius:14px; border:3px solid #b3261e; background:#b3261e; color:#fff; box-shadow:0 3px 12px #0003; cursor:pointer; }
 .odd-res { border-radius:12px; padding:14px; font-size:1.1rem; line-height:1.7; }
@@ -576,7 +577,8 @@ button[aria-pressed="true"] { font-weight:700; }
       </div>
       <p class="pgh">楽しむ・学ぶ</p>
       <div class="pgg">
-                <button class="pgt" type="button" data-go="flower"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="9" r="5"/><circle cx="34" cy="17" r="5"/><circle cx="30" cy="28" r="5"/><circle cx="18" cy="28" r="5"/><circle cx="14" cy="17" r="5"/><circle cx="24" cy="20" r="3"/><path d="M24 33v11"/></svg><span>花の見どころ</span></button>
+                <button class="pgt" type="button" data-go="book"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 12c-5-4-12-4-18-2v28c6-2 13-2 18 2 5-4 12-4 18-2V10c-6-2-13-2-18 2z"/><path d="M24 12v28"/></svg><span>青空文学</span></button>
+        <button class="pgt" type="button" data-go="flower"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="9" r="5"/><circle cx="34" cy="17" r="5"/><circle cx="30" cy="28" r="5"/><circle cx="18" cy="28" r="5"/><circle cx="14" cy="17" r="5"/><circle cx="24" cy="20" r="3"/><path d="M24 33v11"/></svg><span>花の見どころ</span></button>
         <button class="pgt" type="button" data-go="learn"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 12c-4-3-10-4-16-3v27c6-1 12 0 16 3 4-3 10-4 16-3V9c-6-1-12 0-16 3zM24 12v27"/></svg><span>学ぶ</span></button>
         <button class="pgt" type="button" data-go="move"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="30" cy="9" r="4"/><path d="M28 15l-6 11 8 6-3 11M22 26l-8 2M26 20l10 2M22 26l-6 14"/></svg><span>動く</span></button>
         <button class="pgt" type="button" data-go="travel"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="16" width="32" height="24" rx="4"/><path d="M18 16v-5h12v5M8 26h32"/></svg><span>旅する</span></button>
@@ -802,6 +804,17 @@ button[aria-pressed="true"] { font-weight:700; }
   </section>
 
   <!-- 花の見どころ -->
+  <section class="view" id="v-book" hidden aria-label="青空文学">
+    <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
+    <h2>📖 青空文学</h2>
+    <p class="muted">著作権が切れて、だれでも無料で読める、日本の名作です。まず「読む力」を選び、つぎに、気分のジャンルを開いてください。</p>
+    <div class="card"><b>① どのくらい読みますか？</b><div class="fl-chips" id="bkLevel" role="group" aria-label="レベル"></div>
+    <b>② 好きな作家は？</b><div class="fl-chips" id="bkAuth" role="group" aria-label="作家"></div></div>
+    <p class="fl-sub" id="bkMsg" role="status"></p>
+    <div id="bkList" style="display:flex;flex-direction:column;gap:8px"></div>
+    <p class="fl-sub">作品は、青空文庫（aozora.gr.jp）で、無料で読めます。「青空文庫で探す」を押すと、検索の画面が開きます。</p>
+  </section>
+
   <section class="view" id="v-flower" hidden aria-label="花の見どころ">
     <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
     <h2>🌸 花の見どころ</h2>
@@ -1915,7 +1928,7 @@ button[aria-pressed="true"] { font-weight:700; }
   });
 
   /* 画面の切り替え */
-  var views = ['flower', 'settings', 'home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask', 'dress'];
+  var views = ['book', 'flower', 'settings', 'home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask', 'dress'];
   var navView = 'home', navDepth = 0;
   function show(v, fromPop) {
     if (v !== 'talk' && typeof chatOn !== 'undefined' && chatOn) chatStop();
@@ -3995,6 +4008,91 @@ button[aria-pressed="true"] { font-weight:700; }
     d.appendChild(c); d.appendChild(cl); document.body.appendChild(d);
     $('sosMini').addEventListener('click', function () { if (!d.open) d.showModal(); });
     d.addEventListener('click', function (e) { if (e.target === d) d.close(); });
+  })();
+
+  /* ---------- 青空文学 ---------- */
+  (function () {
+    var LV = { 1: '初心者', 2: '中級者', 3: 'マニア' };
+    var GN = [['chief', '🎓 図書館長のおすすめ'], ['love', '💗 ちょっと恋愛'], ['fun', '😄 おもしろい展開'], ['twist', '😲 まさかの展開'], ['warm', '☕ ほっこりする'], ['wakaru', '🤝 わかるわー（世代同調）'], ['jun', '📚 純文学'], ['world', '🌏 異文化体験'], ['essay', '✏️ エッセー'], ['other', '✨ その他']];
+    var W = [
+      ['蜘蛛の糸', '芥川龍之介', 'twist', 1, '短くて、最後に、ハッとします。'],
+      ['杜子春', '芥川龍之介', 'fun', 1, '仙人と、ふしぎな修行をめぐる物語。'],
+      ['羅生門', '芥川龍之介', 'twist jun', 2, '荒れた京の都で、ひとりの下人が、ある決断をします。'],
+      ['藪の中', '芥川龍之介', 'twist', 3, 'ひとつの事件が、語る人ごとに、ちがって見えてきます。'],
+      ['注文の多い料理店', '宮沢賢治', 'twist fun', 1, '山奥の西洋料理店。注文の意味に気づくと、ドキリ。'],
+      ['セロ弾きのゴーシュ', '宮沢賢治', 'warm', 1, '下手なセロ弾きと、夜ごとたずねてくる動物たち。'],
+      ['雪渡り', '宮沢賢治', 'warm', 1, '雪の野原で、子どもと狐が、仲よくなる物語。'],
+      ['やまなし', '宮沢賢治', 'jun', 2, '谷川の底の、蟹の親子の世界。音と色を味わいます。'],
+      ['銀河鉄道の夜', '宮沢賢治', 'jun', 2, '銀河を走る汽車の、ふしぎな旅。'],
+      ['ごんぎつね', '新美南吉', 'warm', 1, 'いたずら狐と兵十。切なくも、心にのこります。'],
+      ['手袋を買いに', '新美南吉', 'warm', 1, '子狐の、はじめてのお買いもの。'],
+      ['坊っちゃん', '夏目漱石', 'fun wakaru', 1, 'まっすぐな江戸っ子の先生が、松山で大騒ぎ。'],
+      ['吾輩は猫である', '夏目漱石', 'fun', 2, '猫の目で見た、人間たちのおかしさ。'],
+      ['夢十夜', '夏目漱石', 'twist jun', 2, '「こんな夢を見た」で始まる、十の不思議な夢。'],
+      ['三四郎', '夏目漱石', 'love', 2, '上京した青年の、ほのかな恋と迷い。'],
+      ['こころ', '夏目漱石', 'love jun', 2, '「先生」と「私」。人の心の、深いところ。'],
+      ['硝子戸の中', '夏目漱石', 'essay', 2, '書斎から見える日々を、しずかにつづる随筆。'],
+      ['走れメロス', '太宰治', 'fun', 1, '友との約束のために、メロスが走ります。'],
+      ['女生徒', '太宰治', 'wakaru', 2, 'ある少女の、一日の心の動き。'],
+      ['津軽', '太宰治', 'essay', 2, 'ふるさと津軽をたずねる、旅の記。'],
+      ['斜陽', '太宰治', 'jun', 3, '戦後に没落していく、貴族の家族の物語。'],
+      ['山月記', '中島敦', 'jun twist', 2, '才能をもてあました男が、虎になってしまいます。'],
+      ['舞姫', '森鷗外', 'love world', 2, 'ドイツに留学した青年と、踊り子の恋。文語調です。'],
+      ['高瀬舟', '森鷗外', 'jun', 2, '罪人を乗せた舟の上の、静かな問いかけ。'],
+      ['たけくらべ', '樋口一葉', 'love jun', 3, '吉原のそばで育つ、子どもたちの淡い恋。文語調で、慣れが要ります。'],
+      ['伊豆の踊子', '川端康成', 'love jun', 2, '旅の青年と、旅芸人の少女。'],
+      ['檸檬', '梶井基次郎', 'jun', 2, '一個のレモンが、憂うつな気持ちを変えます。'],
+      ['二銭銅貨', '江戸川乱歩', 'fun twist', 2, '暗号を解くおもしろさ。乱歩のデビュー作です。'],
+      ['人間椅子', '江戸川乱歩', 'twist', 2, '届いた手紙に、ぞくり。'],
+      ['瓶詰地獄', '夢野久作', 'twist', 3, '海に流された、三つの瓶の手紙。'],
+      ['ドグラ・マグラ', '夢野久作', 'twist', 3, '「日本三大奇書」のひとつと言われる、長い怪作。'],
+      ['耳なし芳一', '小泉八雲', 'world', 1, '日本の怪談を、外から来た目で、語り直した一編（『怪談』所収）。'],
+      ['茶の本', '岡倉天心', 'world essay', 3, '英語で書かれ、茶を通して、東洋の美を世界に伝えた本。'],
+      ['阿房列車', '内田百閒', 'essay fun wakaru', 2, '用事がないのに、汽車に乗る、ぜいたくな旅。'],
+      ['柿の種', '寺田寅彦', 'essay', 2, '短い随筆と、ひとことの数々。'],
+      ['徒然草', '吉田兼好', 'essay wakaru', 2, '「あるある」の、七百年前の元祖です。'],
+      ['枕草子', '清少納言', 'essay wakaru', 2, '「春はあけぼの」。好きなもの、きらいなものを、書きつづります。'],
+      ['夫婦善哉', '織田作之助', 'wakaru love', 2, '大阪の、頼りない夫としっかり者の妻。'],
+      ['堕落論', '坂口安吾', 'essay jun', 3, '人は堕ちきって、はじめて救われる、という、挑戦的な評論。'],
+      ['一房の葡萄', '有島武郎', 'warm', 1, '子どものころの、小さな過ちと、先生のやさしさ。'],
+      ['二十四の瞳', '壺井栄', 'warm wakaru', 2, '小豆島の分教場の、女の先生と十二人の子ども。'],
+      ['風立ちぬ', '堀辰雄', 'love', 2, '高原の療養所での、ふたりの時間。'],
+      ['放浪記', '林芙美子', 'wakaru', 3, 'しなやかに、貧しさを生きぬく、女性の日記ふう小説。'],
+      ['半七捕物帳', '岡本綺堂', 'fun', 2, '江戸の岡っ引き、半七の事件簿。'],
+      ['高野聖', '泉鏡花', 'twist jun', 3, '山の中で出会った、ふしぎな女性の話。'],
+      ['一握の砂', '石川啄木', 'other wakaru', 1, '「はたらけど　はたらけど…」。短歌なので、1首ずつ読めます。'],
+      ['赤いろうそくと人魚', '小川未明', 'other', 1, '人魚の娘と、町の人々。悲しく、美しい童話。']
+    ];
+    var CHIEF = { 1: ['蜘蛛の糸', '手袋を買いに', '坊っちゃん'], 2: ['山月記', '夢十夜', '津軽'], 3: ['藪の中', 'ドグラ・マグラ', '茶の本'] };
+    var lv = 0, au = '';
+    var authors = []; W.forEach(function (w) { if (authors.indexOf(w[1]) < 0) authors.push(w[1]); });
+    function chips(id, list, cur, on) {
+      var el = $(id); el.innerHTML = '';
+      list.forEach(function (x) { var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = x[1]; b.setAttribute('aria-pressed', String(x[0] === cur)); b.addEventListener('click', function () { on(x[0]); }); el.appendChild(b); });
+    }
+    function card(w) {
+      var d = document.createElement('div'); d.className = 'bk-w';
+      var t = document.createElement('b'); t.textContent = w[0] + '　' + w[1]; var tag = document.createElement('span'); tag.className = 'bk-t'; tag.textContent = LV[w[3]]; t.appendChild(tag);
+      var p = document.createElement('span'); p.textContent = w[4];
+      var a = document.createElement('a'); a.className = 'btn'; a.target = '_blank'; a.rel = 'noopener'; a.textContent = '📖 青空文庫で探す';
+      a.href = 'https://www.google.com/search?q=' + encodeURIComponent('青空文庫 ' + w[0] + ' ' + w[1]);
+      d.appendChild(t); d.appendChild(p); d.appendChild(a); return d;
+    }
+    function render() {
+      chips('bkLevel', [[0, 'ぜんぶ'], [1, '初心者'], [2, '中級者'], [3, 'マニア']], lv, function (v) { lv = v; render(); });
+      chips('bkAuth', [['', '全員']].concat(authors.map(function (a) { return [a, a]; })), au, function (v) { au = v; render(); });
+      var box = $('bkList'); box.innerHTML = ''; var shown = 0;
+      GN.forEach(function (g) {
+        var list = [];
+        if (g[0] === 'chief') { var names = lv ? CHIEF[lv] : [].concat(CHIEF[1], CHIEF[2], CHIEF[3]); names.forEach(function (n) { W.forEach(function (w) { if (w[0] === n && (!au || w[1] === au)) list.push(w); }); }); }
+        else W.forEach(function (w) { if (w[2].split(' ').indexOf(g[0]) >= 0 && (!lv || w[3] === lv) && (!au || w[1] === au)) list.push(w); });
+        if (!list.length) return; shown++;
+        var d = document.createElement('details'); d.className = 'bk-d'; var s = document.createElement('summary'); s.textContent = g[1] + '（' + list.length + '）'; d.appendChild(s);
+        list.forEach(function (w) { d.appendChild(card(w)); }); box.appendChild(d);
+      });
+      $('bkMsg').textContent = shown ? 'ジャンルの名前を押すと、作品が開きます。' : 'この組み合わせの作品は、まだありません。作家を「全員」にしてみてください。';
+    }
+    render();
   })();
 
   /* ---------- ひらめきをあなたに（きょうのおすすめ） ---------- */
