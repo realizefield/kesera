@@ -841,6 +841,7 @@ button[aria-pressed="true"] { font-weight:700; }
     <div id="vcCard" class="card" style="gap:10px">
       <h2 style="margin:0">📣 町や市・県に「モノ申す！」</h2>
       <p class="muted" style="margin:0">困っていること、こうなったらいいなと思うことを、きちんと伝わる文章にします。送る先は、あなたが選びます。</p>
+      <div class="notice" id="vcDirect" style="display:flex;flex-direction:column;gap:8px"><b style="font-size:1.1rem">🚀 市長・県知事への直行便</b><span class="fl-sub">トップに直接届く、手紙・メールの窓口を探します。</span><div class="row" id="vcDirectRow"></div></div>
       <b>① どこに伝えますか？</b><div class="fl-chips" id="vcTo" role="group" aria-label="宛先"></div>
       <b>② 何について？</b><div class="fl-chips" id="vcCat" role="group" aria-label="分野"></div>
       <b>③ いつ・どこで？</b><input id="vcWhen" type="text" placeholder="例：先週から、〇〇町の交差点で">
@@ -4498,6 +4499,9 @@ button[aria-pressed="true"] { font-weight:700; }
       var t = target(), r = $('vcLinks'); r.innerHTML = '';
       var L = st.to === 0 ? [[t + 'の意見・要望の窓口', G(t + ' 市民の声 意見 要望 提案 窓口')], [t + 'の広報・お知らせ', G(t + ' 広報 お知らせ')], ['議会への請願・陳情', G(t + ' 議会 請願 陳情 方法')]] : (st.to === 1 ? [[t + 'の意見・提案の窓口', G(t + ' 県民の声 意見 提案 窓口')], ['県議会への請願・陳情', G(t + ' 県議会 請願 陳情 方法')]] : [['首相官邸へのご意見', G('首相官邸 ご意見 送信')], ['国会議員への連絡', G('国会議員 ご意見 連絡 方法')]]);
       L.forEach(function (x) { var a = document.createElement('a'); a.className = 'btnlink'; a.target = '_blank'; a.rel = 'noopener'; a.textContent = x[0]; a.href = x[1]; r.appendChild(a); });
+      var pl = place(), dr = $('vcDirectRow'); dr.innerHTML = '';
+      var city = pl[0] || 'お住まいの市町', pf = pl[1] || 'お住まいの県';
+      [[city + '長への手紙・メール', G(city + ' 市長への手紙 市長へのメール 町長への手紙 ご意見')], [pf + '知事への提言・メール', G(pf + ' 知事への提言 知事へのメール 知事への手紙')], ['市長・知事のメッセージ', G(city + ' 市長 町長 メッセージ ' + pf + ' 知事 メッセージ')]].forEach(function (x) { var a = document.createElement('a'); a.className = 'btnlink'; a.target = '_blank'; a.rel = 'noopener'; a.textContent = x[0]; a.href = x[1]; dr.appendChild(a); });
     }
     function build() {
       var t = target(), w = $('vcWhen').value.trim(), f = $('vcFact').value.trim(), a = $('vcAsk').value.trim(), n = $('vcName').value.trim();
