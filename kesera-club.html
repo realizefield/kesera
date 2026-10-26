@@ -589,6 +589,7 @@ button[aria-pressed="true"] { font-weight:700; }
         <button class="pgt" type="button" data-go="up"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 42V10M12 22l12-12 12 12"/><path d="M10 42h28"/></svg><span>1mm違う自分へ</span></button>
         <button class="pgt" type="button" data-go="mania"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6l5 11 12 1-9 8 3 12-11-7-11 7 3-12-9-8 12-1z"/></svg><span>マニアージュ</span></button>
         <button class="pgt" type="button" data-go="laugh"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="18"/><path d="M14 20c2-3 6-3 8 0M26 20c2-3 6-3 8 0"/><path d="M13 28h22c0 7-5 11-11 11s-11-4-11-11z"/></svg><span>笑ってすっきり！</span></button>
+        <button class="pgt" type="button" data-go="album"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="12" width="38" height="28" rx="4"/><circle cx="24" cy="26" r="8"/><path d="M16 12l3-5h10l3 5"/></svg><span>思い出の記録</span></button>
         <button class="pgt" type="button" data-go="flower"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="9" r="5"/><circle cx="34" cy="17" r="5"/><circle cx="30" cy="28" r="5"/><circle cx="18" cy="28" r="5"/><circle cx="14" cy="17" r="5"/><circle cx="24" cy="20" r="3"/><path d="M24 33v11"/></svg><span>花の見どころ</span></button>
         <button class="pgt" type="button" data-go="learn"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 12c-4-3-10-4-16-3v27c6-1 12 0 16 3 4-3 10-4 16-3V9c-6-1-12 0-16 3zM24 12v27"/></svg><span>学ぶ</span></button>
         <button class="pgt" type="button" data-go="move"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="30" cy="9" r="4"/><path d="M28 15l-6 11 8 6-3 11M22 26l-8 2M26 20l10 2M22 26l-6 14"/></svg><span>動く</span></button>
@@ -898,6 +899,35 @@ button[aria-pressed="true"] { font-weight:700; }
     <p class="fl-sub" style="margin:0">押すと、YouTubeで検索します。気に入った動画を、見つけてください。</p>
     <div id="lgList" style="display:flex;flex-direction:column;gap:8px"></div>
     <p class="fl-sub">笑いは、無理をしないのがいちばんです。体調がすぐれないときは、休んでください。個々の動画は、日々入れかわるため、検索の形で、ご案内しています。</p>
+  </section>
+
+  <section class="view" id="v-album" hidden aria-label="思い出の記録">
+    <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
+    <h2>📸 思い出の記録・しおり</h2>
+    <div class="notice"><b style="font-size:1.15rem">写真・動画・食事も、人生のエンターテインメント（思い出）です。</b><br>積極的に、記録しましょう。ちょっとの写真、ちょっとの一言で、じゅうぶんです。</div>
+    <div class="card" style="gap:8px"><b>① 何を残しますか？</b><div class="fl-chips" id="alType" role="group" aria-label="種類"></div>
+      <b>② 写真・動画（なくても大丈夫です）</b>
+      <input id="alFile" type="file" accept="image/*,video/*" style="min-height:52px;font-size:1rem;width:100%">
+      <img id="alPrev" alt="えらんだ写真" hidden style="max-width:100%;border-radius:10px">
+      <b>③ ひとこと</b><input id="alText" type="text" placeholder="例：孫と食べた、あつあつのたこ焼き" style="min-height:52px;font-size:1.1rem;width:100%;box-sizing:border-box">
+      <input id="alPlace" type="text" placeholder="場所（なくても大丈夫です）" style="min-height:52px;font-size:1.1rem;width:100%;box-sizing:border-box">
+      <b>💬 感想・コメント</b><textarea id="alComment" rows="2" placeholder="例：景色がきれいで、気持ちがよかった" style="width:100%;box-sizing:border-box;font-size:1.05rem;font-family:inherit"></textarea>
+      <b>📚 学んだこと</b><textarea id="alLearn" rows="2" placeholder="例：この神社は、江戸時代の創建だった" style="width:100%;box-sizing:border-box;font-size:1.05rem;font-family:inherit"></textarea>
+      <b>🌟 経験したこと</b><textarea id="alExp" rows="2" placeholder="例：はじめて、手びねりの陶芸をした" style="width:100%;box-sizing:border-box;font-size:1.05rem;font-family:inherit"></textarea>
+      <button class="btn primary" id="alSave" type="button" style="min-height:56px;font-size:1.15rem">💾 思い出に、しまう</button>
+      <p class="fl-sub" id="alMsg" role="status" style="margin:0"></p></div>
+    <b id="alSum"></b>
+    <div id="alList" style="display:flex;flex-direction:column;gap:10px"></div>
+    <details class="up-d" id="alShiori"><summary>🗒 旅のしおりを作る</summary><div class="up-c">
+      <input id="shTitle" type="text" placeholder="しおりの題（例：黒川温泉　日帰りの旅）">
+      <input id="shDate" type="date">
+      <textarea id="shPlan" rows="6" placeholder="予定（1行に1つ）&#10;例：8:30 自宅を出る&#10;10:00 温泉に着く&#10;12:00 お昼ごはん" style="width:100%;box-sizing:border-box;font-size:1.05rem;font-family:inherit"></textarea>
+      <textarea id="shItem" rows="2" placeholder="持ち物（例：タオル、お薬、保険証、カメラ）" style="width:100%;box-sizing:border-box;font-size:1.05rem;font-family:inherit"></textarea>
+      <button class="btn primary" id="shMake" type="button" style="min-height:52px">✍ しおりにする</button>
+      <textarea id="shOut" rows="10" aria-label="できたしおり" style="display:none;width:100%;box-sizing:border-box;font-size:1.05rem;font-family:inherit"></textarea>
+      <div class="row" id="shAct" style="display:none"></div>
+      <p class="fl-sub" style="margin:0">保険証・お薬は、持ち物の確認です。番号などは、書かなくて大丈夫です。体調がいちばん。いつもと違うときは、予定を、やめてかまいません。</p></div></details>
+    <p class="fl-sub">写真・動画は、この端末のなかだけに、保存されます。ブラウザの「サイトデータ」を消すと、消えてしまうので、大切な写真は、携帯のアルバムにも、残してください。動画は、20MBまでです。</p>
   </section>
 
   <section class="view" id="v-flower" hidden aria-label="花の見どころ">
@@ -2013,7 +2043,7 @@ button[aria-pressed="true"] { font-weight:700; }
   });
 
   /* 画面の切り替え */
-  var views = ['laugh', 'up', 'mania', 'town', 'book', 'flower', 'settings', 'home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask', 'dress'];
+  var views = ['album', 'laugh', 'up', 'mania', 'town', 'book', 'flower', 'settings', 'home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask', 'dress'];
   var navView = 'home', navDepth = 0;
   function show(v, fromPop) {
     if (v !== 'talk' && typeof chatOn !== 'undefined' && chatOn) chatStop();
@@ -4603,6 +4633,54 @@ button[aria-pressed="true"] { font-weight:700; }
       }, 1000);
     });
     sum();
+  })();
+
+  /* ---------- 思い出の記録（写真・動画・食事）＋旅のしおり ---------- */
+  (function () {
+    var list = $('alList'); if (!list) return;
+    var TY = ['🍽 食事', '📷 写真', '🎬 動画', '🚃 おでかけ'], cur = 0, file = null, db = null;
+    function open(cb) { if (db) return cb(db); try { var rq = indexedDB.open('kesera-album', 1); rq.onupgradeneeded = function () { rq.result.createObjectStore('m', { keyPath: 'id' }); }; rq.onsuccess = function () { db = rq.result; cb(db); }; rq.onerror = function () { cb(null); }; } catch (e) { cb(null); } }
+    function all(cb) { open(function (d) { if (!d) return cb([]); var r = d.transaction('m').objectStore('m').getAll(); r.onsuccess = function () { cb(r.result || []); }; r.onerror = function () { cb([]); }; }); }
+    function put(rec, cb) { open(function (d) { if (!d) return cb(false); var t = d.transaction('m', 'readwrite'); t.objectStore('m').put(rec); t.oncomplete = function () { cb(true); }; t.onerror = function () { cb(false); }; }); }
+    function del(id, cb) { open(function (d) { if (!d) return cb(); var t = d.transaction('m', 'readwrite'); t.objectStore('m').delete(id); t.oncomplete = cb; }); }
+    function shrink(f, cb) {
+      var img = new Image(), u = URL.createObjectURL(f);
+      img.onload = function () { var m = 960, k = Math.min(1, m / Math.max(img.width, img.height)), c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(u); c.toBlob(function (b) { cb(b || f); }, 'image/jpeg', 0.8); };
+      img.onerror = function () { URL.revokeObjectURL(u); cb(f); }; img.src = u;
+    }
+    function chips() { var el = $('alType'); el.innerHTML = ''; TY.forEach(function (t, i) { var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = t; b.setAttribute('aria-pressed', String(i === cur)); b.addEventListener('click', function () { cur = i; chips(); }); el.appendChild(b); }); }
+    function draw() {
+      all(function (a) {
+        a.sort(function (x, y) { return y.id - x.id; }); list.innerHTML = ''; $('alSum').textContent = a.length ? '思い出が ' + a.length + ' 個、たまっています。' : 'まだ、思い出はありません。最初の1枚を、しまってみましょう。';
+        a.forEach(function (r) {
+          var c = document.createElement('div'); c.className = 'card'; c.style.gap = '6px';
+          var h = document.createElement('b'); h.textContent = r.d + '　' + r.ty; c.appendChild(h);
+          if (r.blob) { var u = URL.createObjectURL(r.blob), el; if (/^video/.test(r.blob.type)) { el = document.createElement('video'); el.controls = true; el.playsInline = true; } else { el = document.createElement('img'); el.alt = r.t || '思い出の写真'; } el.src = u; el.style.cssText = 'max-width:100%;border-radius:10px'; c.appendChild(el); }
+          if (r.t) { var p = document.createElement('span'); p.style.fontSize = '1.1rem'; p.textContent = r.t; c.appendChild(p); }
+          if (r.pl) { var q = document.createElement('span'); q.className = 'fl-sub'; q.textContent = '📍 ' + r.pl; c.appendChild(q); }
+          [['💬 ', r.cm], ['📚 ', r.lr], ['🌟 ', r.ex]].forEach(function (z) { if (z[1]) { var zp = document.createElement('span'); zp.style.lineHeight = '1.7'; zp.textContent = z[0] + z[1]; c.appendChild(zp); } });
+          var x = document.createElement('button'); x.type = 'button'; x.className = 'btn'; x.textContent = '🗑 消す'; x.addEventListener('click', function () { if (confirm('この思い出を、消してもよいですか？')) del(r.id, draw); }); c.appendChild(x); list.appendChild(c);
+        });
+      });
+    }
+    $('alFile').addEventListener('change', function () { var f = this.files && this.files[0]; file = f || null; var pv = $('alPrev'); if (f && /^image/.test(f.type)) { pv.src = URL.createObjectURL(f); pv.hidden = false; } else pv.hidden = true; if (f && /^video/.test(f.type)) cur = 2; chips(); });
+    $('alSave').addEventListener('click', function () {
+      var t = $('alText').value.trim(), pl = $('alPlace').value.trim(), msg = $('alMsg'), cm = $('alComment').value.trim(), lr = $('alLearn').value.trim(), ex = $('alExp').value.trim();
+      if (!t && !file && !cm && !lr && !ex) { msg.textContent = '写真か、ひとことを、入れてください。'; return; }
+      function done(blob) { var d = new Date(); put({ id: Date.now(), d: d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(), ty: TY[cur], t: t, pl: pl, cm: cm, lr: lr, ex: ex, blob: blob || null }, function (ok) { msg.textContent = ok ? '✨ 思い出に、しまいました。' : 'しまえませんでした（この端末の保存が使えないようです）。'; if (ok) { $('alText').value = ''; $('alPlace').value = ''; $('alComment').value = ''; $('alLearn').value = ''; $('alExp').value = ''; $('alFile').value = ''; $('alPrev').hidden = true; file = null; draw(); } }); }
+      if (!file) return done(null);
+      if (/^video/.test(file.type)) { if (file.size > 20 * 1024 * 1024) { msg.textContent = '動画が大きすぎます（20MBまで）。携帯のアルバムに、残してください。'; return; } return done(file); }
+      shrink(file, done);
+    });
+    $('shMake').addEventListener('click', function () {
+      var t = $('shTitle').value.trim() || '旅のしおり', d = $('shDate').value, p = $('shPlan').value.trim(), it = $('shItem').value.trim(), o = $('shOut'), act = $('shAct');
+      var L = ['🗒 ' + t]; if (d) L.push('日にち：' + d.replace(/-/g, '/')); L.push(''); if (p) { L.push('【予定】'); p.split('\n').forEach(function (x) { if (x.trim()) L.push('・' + x.trim()); }); L.push(''); } if (it) { L.push('【持ち物】'); L.push(it); L.push(''); } L.push('体調がいちばん。いつもと違うときは、やめてかまいません。');
+      o.style.display = 'block'; o.value = L.join('\n'); act.style.display = 'flex'; act.innerHTML = '';
+      var cp = document.createElement('button'); cp.type = 'button'; cp.className = 'btn primary'; cp.textContent = '📋 コピーする'; cp.addEventListener('click', function () { try { navigator.clipboard.writeText(o.value).then(function () { cp.textContent = '✔ コピーしました'; }, function () { o.select(); }); } catch (e) { o.select(); } });
+      var ml = document.createElement('a'); ml.className = 'btnlink'; ml.textContent = '✉ ご家族に、メールで送る'; ml.href = 'mailto:?subject=' + encodeURIComponent(t) + '&body=' + encodeURIComponent(o.value);
+      act.appendChild(cp); act.appendChild(ml); save('kesera-shiori', { d: today, t: o.value });
+    });
+    chips(); draw();
   })();
   renderWxIcon();
   renderSun(); updateNews();
