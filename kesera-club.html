@@ -826,6 +826,13 @@ button[aria-pressed="true"] { font-weight:700; }
     <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
     <h2>📖 青空文学</h2>
     <p class="muted">著作権が切れて、だれでも無料で読める、日本の名作です。まず「読む力」を選び、つぎに、気分のジャンルを開いてください。</p>
+    <div class="card" id="bkTrend" style="gap:6px"><b style="font-size:1.1rem">📈 好きな作家トレンド</b><div id="bkTrendBody"></div>
+      <div class="row"><a class="btnlink" target="_blank" rel="noopener" href="https://www.google.com/search?q=%E9%9D%92%E7%A9%BA%E6%96%87%E5%BA%AB+%E4%BA%BA%E6%B0%97+%E3%83%A9%E3%83%B3%E3%82%AD%E3%83%B3%E3%82%B0">🌐 青空文庫の人気ランキング（検索）</a></div></div>
+    <div class="card" id="bkDeep" style="gap:8px"><b style="font-size:1.1rem">🔎 AIと深堀する（声でも、文字でも）</b>
+      <p class="fl-sub" style="margin:0">作家の人生、作品の時代背景、「次に読むなら？」など、気になることを聞いてください。</p>
+      <input id="bdIn" type="text" maxlength="200" placeholder="例：夏目漱石は、どんな人？" style="min-height:52px;font-size:1.1rem;width:100%;box-sizing:border-box">
+      <div class="row"><button class="btn primary" id="bdSend" type="button">🔎 文字で聞く</button><button class="btn" id="bdMic" type="button">🎤 声で聞く</button></div>
+      <div class="fl-chips" id="bdEx"></div></div>
     <div class="card" id="bkQuiz" style="gap:8px"><b style="font-size:1.1rem">🎯 あなたの好みで、さがす（3つの質問）</b>
       <b>① いまの気分は？</b><div class="fl-chips" id="bqMood" role="group" aria-label="気分"></div>
       <b>② 読みやすさは？</b><div class="fl-chips" id="bqEase" role="group" aria-label="読みやすさ"></div>
@@ -4139,11 +4146,11 @@ button[aria-pressed="true"] { font-weight:700; }
   /* ---------- 青空文学 ---------- */
   (function () {
     var LV = { 1: '初心者', 2: '中級者', 3: 'マニア' };
-    var GN = [['chief', '🎓 図書館長のおすすめ'], ['love', '💗 ちょっと恋愛'], ['fun', '😄 おもしろい展開'], ['twist', '😲 まさかの展開'], ['warm', '☕ ほっこりする'], ['wakaru', '🤝 わかるわー（世代同調）'], ['jun', '📚 純文学'], ['world', '🌏 異文化体験'], ['essay', '✏️ エッセー'], ['other', '✨ その他']];
+    var GN = [['chief', '🎓 図書館長のおすすめ'], ['love', '💗 ちょっと恋愛'], ['fun', '😄 おもしろい展開'], ['twist', '😲 まさかの展開'], ['warm', '☕ ほっこりする'], ['wakaru', '🤝 わかるわー（世代同調）'], ['jun', '📚 純文学'], ['history', '📜 歴史もの'], ['novel', '📕 小説（長編）'], ['world', '🌏 異文化体験'], ['essay', '✏️ エッセー'], ['other', '✨ その他']];
     var W = [
       ['蜘蛛の糸', '芥川龍之介', 'twist', 1, '短くて、最後に、ハッとします。'],
       ['杜子春', '芥川龍之介', 'fun', 1, '仙人と、ふしぎな修行をめぐる物語。'],
-      ['羅生門', '芥川龍之介', 'twist jun', 2, '荒れた京の都で、ひとりの下人が、ある決断をします。'],
+      ['羅生門', '芥川龍之介', 'twist jun history', 2, '荒れた京の都で、ひとりの下人が、ある決断をします。'],
       ['藪の中', '芥川龍之介', 'twist', 3, 'ひとつの事件が、語る人ごとに、ちがって見えてきます。'],
       ['注文の多い料理店', '宮沢賢治', 'twist fun', 1, '山奥の西洋料理店。注文の意味に気づくと、ドキリ。'],
       ['セロ弾きのゴーシュ', '宮沢賢治', 'warm', 1, '下手なセロ弾きと、夜ごとたずねてくる動物たち。'],
@@ -4152,42 +4159,51 @@ button[aria-pressed="true"] { font-weight:700; }
       ['銀河鉄道の夜', '宮沢賢治', 'jun', 2, '銀河を走る汽車の、ふしぎな旅。'],
       ['ごんぎつね', '新美南吉', 'warm', 1, 'いたずら狐と兵十。切なくも、心にのこります。'],
       ['手袋を買いに', '新美南吉', 'warm', 1, '子狐の、はじめてのお買いもの。'],
-      ['坊っちゃん', '夏目漱石', 'fun wakaru', 1, 'まっすぐな江戸っ子の先生が、松山で大騒ぎ。'],
-      ['吾輩は猫である', '夏目漱石', 'fun', 2, '猫の目で見た、人間たちのおかしさ。'],
+      ['坊っちゃん', '夏目漱石', 'fun wakaru novel', 1, 'まっすぐな江戸っ子の先生が、松山で大騒ぎ。'],
+      ['吾輩は猫である', '夏目漱石', 'fun novel', 2, '猫の目で見た、人間たちのおかしさ。'],
       ['夢十夜', '夏目漱石', 'twist jun', 2, '「こんな夢を見た」で始まる、十の不思議な夢。'],
-      ['三四郎', '夏目漱石', 'love', 2, '上京した青年の、ほのかな恋と迷い。'],
-      ['こころ', '夏目漱石', 'love jun', 2, '「先生」と「私」。人の心の、深いところ。'],
+      ['三四郎', '夏目漱石', 'love novel', 2, '上京した青年の、ほのかな恋と迷い。'],
+      ['こころ', '夏目漱石', 'love jun novel', 2, '「先生」と「私」。人の心の、深いところ。'],
       ['硝子戸の中', '夏目漱石', 'essay', 2, '書斎から見える日々を、しずかにつづる随筆。'],
       ['走れメロス', '太宰治', 'fun', 1, '友との約束のために、メロスが走ります。'],
       ['女生徒', '太宰治', 'wakaru', 2, 'ある少女の、一日の心の動き。'],
       ['津軽', '太宰治', 'essay', 2, 'ふるさと津軽をたずねる、旅の記。'],
-      ['斜陽', '太宰治', 'jun', 3, '戦後に没落していく、貴族の家族の物語。'],
-      ['山月記', '中島敦', 'jun twist', 2, '才能をもてあました男が、虎になってしまいます。'],
+      ['斜陽', '太宰治', 'jun novel', 3, '戦後に没落していく、貴族の家族の物語。'],
+      ['山月記', '中島敦', 'jun twist history', 2, '才能をもてあました男が、虎になってしまいます。'],
       ['舞姫', '森鷗外', 'love world', 2, 'ドイツに留学した青年と、踊り子の恋。文語調です。'],
-      ['高瀬舟', '森鷗外', 'jun', 2, '罪人を乗せた舟の上の、静かな問いかけ。'],
+      ['高瀬舟', '森鷗外', 'jun history', 2, '罪人を乗せた舟の上の、静かな問いかけ。'],
       ['たけくらべ', '樋口一葉', 'love jun', 3, '吉原のそばで育つ、子どもたちの淡い恋。文語調で、慣れが要ります。'],
       ['伊豆の踊子', '川端康成', 'love jun', 2, '旅の青年と、旅芸人の少女。'],
       ['檸檬', '梶井基次郎', 'jun', 2, '一個のレモンが、憂うつな気持ちを変えます。'],
       ['二銭銅貨', '江戸川乱歩', 'fun twist', 2, '暗号を解くおもしろさ。乱歩のデビュー作です。'],
       ['人間椅子', '江戸川乱歩', 'twist', 2, '届いた手紙に、ぞくり。'],
       ['瓶詰地獄', '夢野久作', 'twist', 3, '海に流された、三つの瓶の手紙。'],
-      ['ドグラ・マグラ', '夢野久作', 'twist', 3, '「日本三大奇書」のひとつと言われる、長い怪作。'],
+      ['ドグラ・マグラ', '夢野久作', 'twist novel', 3, '「日本三大奇書」のひとつと言われる、長い怪作。'],
       ['耳なし芳一', '小泉八雲', 'world', 1, '日本の怪談を、外から来た目で、語り直した一編（『怪談』所収）。'],
       ['茶の本', '岡倉天心', 'world essay', 3, '英語で書かれ、茶を通して、東洋の美を世界に伝えた本。'],
       ['阿房列車', '内田百閒', 'essay fun wakaru', 2, '用事がないのに、汽車に乗る、ぜいたくな旅。'],
       ['柿の種', '寺田寅彦', 'essay', 2, '短い随筆と、ひとことの数々。'],
       ['徒然草', '吉田兼好', 'essay wakaru', 2, '「あるある」の、七百年前の元祖です。'],
       ['枕草子', '清少納言', 'essay wakaru', 2, '「春はあけぼの」。好きなもの、きらいなものを、書きつづります。'],
-      ['夫婦善哉', '織田作之助', 'wakaru love', 2, '大阪の、頼りない夫としっかり者の妻。'],
+      ['夫婦善哉', '織田作之助', 'wakaru love novel', 2, '大阪の、頼りない夫としっかり者の妻。'],
       ['堕落論', '坂口安吾', 'essay jun', 3, '人は堕ちきって、はじめて救われる、という、挑戦的な評論。'],
       ['一房の葡萄', '有島武郎', 'warm', 1, '子どものころの、小さな過ちと、先生のやさしさ。'],
-      ['二十四の瞳', '壺井栄', 'warm wakaru', 2, '小豆島の分教場の、女の先生と十二人の子ども。'],
-      ['風立ちぬ', '堀辰雄', 'love', 2, '高原の療養所での、ふたりの時間。'],
-      ['放浪記', '林芙美子', 'wakaru', 3, 'しなやかに、貧しさを生きぬく、女性の日記ふう小説。'],
-      ['半七捕物帳', '岡本綺堂', 'fun', 2, '江戸の岡っ引き、半七の事件簿。'],
+      ['二十四の瞳', '壺井栄', 'warm wakaru novel', 2, '小豆島の分教場の、女の先生と十二人の子ども。'],
+      ['風立ちぬ', '堀辰雄', 'love novel', 2, '高原の療養所での、ふたりの時間。'],
+      ['放浪記', '林芙美子', 'wakaru novel', 3, 'しなやかに、貧しさを生きぬく、女性の日記ふう小説。'],
+      ['半七捕物帳', '岡本綺堂', 'fun history', 2, '江戸の岡っ引き、半七の事件簿。'],
       ['高野聖', '泉鏡花', 'twist jun', 3, '山の中で出会った、ふしぎな女性の話。'],
       ['一握の砂', '石川啄木', 'other wakaru', 1, '「はたらけど　はたらけど…」。短歌なので、1首ずつ読めます。'],
-      ['赤いろうそくと人魚', '小川未明', 'other', 1, '人魚の娘と、町の人々。悲しく、美しい童話。']
+      ['赤いろうそくと人魚', '小川未明', 'other', 1, '人魚の娘と、町の人々。悲しく、美しい童話。'],
+      ['阿部一族', '森鷗外', 'history jun', 3, '江戸初期の熊本藩で、殉死をめぐって起きた、阿部家の悲劇。文体は硬めです。'],
+      ['山椒大夫', '森鷗外', 'history warm', 2, '安寿と厨子王の、別れと再会の物語。'],
+      ['恩讐の彼方に', '菊池寛', 'history jun', 2, '罪をおかした男が、青の洞門を、掘りつづけます。'],
+      ['宮本武蔵', '吉川英治', 'history novel fun', 3, '剣豪・宮本武蔵の生涯を描く長編。武蔵は、晩年を熊本で過ごしました。'],
+      ['銭形平次捕物控', '野村胡堂', 'history fun', 2, '江戸の岡っ引き、平次の事件簿。'],
+      ['李陵', '中島敦', 'history jun', 3, '漢の時代、匈奴との戦いの中の、人間の運命。'],
+      ['怪人二十面相', '江戸川乱歩', 'fun twist novel', 1, '変装の名人と、名探偵の、はらはらする対決。'],
+      ['破戒', '島崎藤村', 'jun novel', 3, '自分の出自を、かくして生きる青年の、苦しみと決意。'],
+      ['金色夜叉', '尾崎紅葉', 'love novel', 3, '「貫一お宮」で知られる、明治の恋愛長編。文語調です。']
     ];
     var CHIEF = { 1: ['蜘蛛の糸', '手袋を買いに', '坊っちゃん'], 2: ['山月記', '夢十夜', '津軽'], 3: ['藪の中', 'ドグラ・マグラ', '茶の本'] };
     var lv = 0, au = '';
@@ -4203,7 +4219,8 @@ button[aria-pressed="true"] { font-weight:700; }
       var a = document.createElement('a'); a.className = 'btn'; a.target = '_blank'; a.rel = 'noopener'; a.textContent = '📖 青空文庫で探す';
       a.href = 'https://www.google.com/search?q=' + encodeURIComponent('青空文庫 ' + w[0] + ' ' + w[1]);
       var mr = document.createElement('div'); mr.className = 'row'; var fb = document.createElement('button'); fb.type = 'button'; fb.className = 'btn'; function fl() { fb.textContent = (typeof fav !== 'undefined' && fav[w[0]]) ? '♥ 好き（済）' : '♡ 好き'; } var rb = document.createElement('button'); rb.type = 'button'; rb.className = 'btn'; function rl() { rb.textContent = (typeof rd !== 'undefined' && rd[w[0]]) ? '✓ 読んだ（済）' : '□ 読んだ'; } fl(); rl();
-      fb.addEventListener('click', function () { fav[w[0]] = !fav[w[0]]; save('kesera-bk-fav', fav); fl(); }); rb.addEventListener('click', function () { rd[w[0]] = !rd[w[0]]; save('kesera-bk-read', rd); rl(); });
+      fb.addEventListener('click', function () { fav[w[0]] = !fav[w[0]]; save('kesera-bk-fav', fav); fl(); if (typeof trend === 'function') trend(); }); rb.addEventListener('click', function () { rd[w[0]] = !rd[w[0]]; save('kesera-bk-read', rd); rl(); if (typeof trend === 'function') trend(); });
+      var ab2 = document.createElement('button'); ab2.type = 'button'; ab2.className = 'btn'; ab2.textContent = '🔎 AIと深堀'; ab2.addEventListener('click', function () { askDeep('『' + w[0] + '』（' + w[1] + '）の見どころと、書かれた時代の背景を、結末は言わずに、教えてください。'); }); mr.appendChild(ab2);
       mr.appendChild(fb); mr.appendChild(rb); d.appendChild(t); d.appendChild(p); d.appendChild(a); d.appendChild(mr); return d;
     }
     function render() {
@@ -4242,6 +4259,21 @@ button[aria-pressed="true"] { font-weight:700; }
       res.forEach(function (r) { var c = card(r.w); if (r.why.length) { var y = document.createElement('span'); y.className = 'fl-sub'; y.textContent = '✨ ' + r.why.join('・'); c.insertBefore(y, c.children[1]); } c.style.border = '2px solid var(--accent)'; c.style.borderRadius = '10px'; out.appendChild(c); });
     }
     qChips('bqMood', MOOD, 'm'); qChips('bqEase', EASE, 'e'); qChips('bqTheme', THEME, 't'); $('bqGo').addEventListener('click', recommend);
+
+    /* 作家トレンド・AI深堀 */
+    function askDeep(qq) { show('ask'); setTimeout(function () { $('askin').value = qq; $('asksend').click(); }, 150); }
+    function trend() {
+      var cnt = {}; W.forEach(function (w) { var n = (fav[w[0]] ? 2 : 0) + (rd[w[0]] ? 1 : 0); if (n) cnt[w[1]] = (cnt[w[1]] || 0) + n; });
+      var ks = Object.keys(cnt).sort(function (a, b) { return cnt[b] - cnt[a]; }).slice(0, 5), el = $('bkTrendBody'); el.innerHTML = '';
+      if (!ks.length) { el.textContent = 'まだ、記録がありません。作品の「♡ 好き」「□ 読んだ」を押すと、あなたの好きな作家のランキングが、ここに出ます。'; return; }
+      var ol = document.createElement('ol'); ol.style.cssText = 'margin:0;padding-left:1.3em;line-height:1.9'; ks.forEach(function (k) { var li = document.createElement('li'); li.textContent = k + '（点数 ' + cnt[k] + '）'; ol.appendChild(li); }); el.appendChild(ol);
+      var p = document.createElement('span'); p.className = 'fl-sub'; p.textContent = '「好き」は2点、「読んだ」は1点です。'; el.appendChild(p);
+    }
+    $('bdSend').addEventListener('click', function () { var v = $('bdIn').value.trim(); if (v) askDeep('青空文庫の作家・作品に関する質問です。' + v); });
+    $('bdIn').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); $('bdSend').click(); } });
+    $('bdMic').addEventListener('click', function () { show('ask'); setTimeout(function () { $('askmic').click(); }, 200); });
+    ['この作家が好きなら、次は誰？', '歴史ものの、おすすめは？', '初心者が読みやすい長編は？', '熊本ゆかりの作家は？'].forEach(function (t) { var b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = t; b.addEventListener('click', function () { askDeep('青空文庫で読める作品を前提に、' + t); }); $('bdEx').appendChild(b); });
+    trend();
     render();
   })();
 
