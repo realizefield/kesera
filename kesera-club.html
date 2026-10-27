@@ -4338,20 +4338,21 @@ button[aria-pressed="true"] { font-weight:700; }
       ['climb', '⛰', '山登り愛好会', '無理のない山歩きと、景色。', '山登り愛好会へ、ようこそ！　山は、逃げません。天気と体調を見て、ゆっくり登りましょう。日帰り・低い山から、安全第一で。', [['⭐ マニアージュ（日帰り登山・キャンプ）', 'mania'], ['🌼 花の見どころ', 'flower']]],
       ['kosodate', '👶', '子育て・孫育てサークル', '子育ても、孫との時間も。', '子育て・孫育てサークルへ、ようこそ！　子育ては、いつの時代も、手さぐりです。孫と遊べる公園など、まちの発見で探せます。', [['🛝 孫と遊びたい公園（まちの発見）', 'town'], ['📷 思い出の記録', 'album']]]
     ];
-    var KEY = 'kesera-clubs', st = load(KEY, { j: [], at: {}, memo: {} }); if (!st.j) st.j = []; if (!st.at) st.at = {}; if (!st.memo) st.memo = {};
-    var mode = st.j.length ? 'mine' : 'find', SR3 = window.SpeechRecognition || window.webkitSpeechRecognition;
+    var KEY = 'kesera-clubs', st = load(KEY, { j: [], at: {}, memo: {} }); if (!st.j) st.j = []; if (!st.at) st.at = {}; if (!st.memo) st.memo = {}; if (!st.hide) st.hide = [];
+    var showHid = false, mode = st.j.length ? 'mine' : 'find', SR3 = window.SpeechRecognition || window.webkitSpeechRecognition;
     function E(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; }
     function stamp(ts) { var d = new Date(ts), w = '日月火水木金土'[d.getDay()]; return d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日（' + w + '）' + pad(d.getHours()) + ':' + pad(d.getMinutes()); }
     function go(x) { if (x[1].indexOf('href:') === 0) { var b = E('button', 'btn', x[0]); b.type = 'button'; b.style.cssText = 'min-height:52px;text-align:left'; b.addEventListener('click', function () { window.location.href = x[1].slice(5); }); return b; } var b2 = E('button', 'btn', x[0]); b2.type = 'button'; b2.style.cssText = 'min-height:52px;text-align:left'; b2.setAttribute('data-go', x[1]); return b2; }
     function sv() { save(KEY, st); }
-    function reset() { $('hgWel').style.display = 'none'; mode = st.j.length ? 'mine' : 'find'; draw(); window.scrollTo(0, 0); }
+    function reset() { $('hgWel').style.display = 'none'; showHid = false; mode = st.j.length ? 'mine' : 'find'; draw(); window.scrollTo(0, 0); }
     function welcome(c) {
       var w = $('hgWel'); w.style.display = 'flex'; w.innerHTML = '';
       w.appendChild(E('b', '', c[1] + ' ' + c[2] + '　新入生かんげい！')); w.firstChild.style.fontSize = '1.2rem'; var m = E('p', '', c[4]); m.style.cssText = 'margin:0;line-height:1.9'; w.appendChild(m);
       var r = E('div', 'row'); var j = E('button', 'btn primary', '🎒 参加する'); j.type = 'button'; j.style.minHeight = '56px'; var n = E('button', 'btn', '不参加'); n.type = 'button'; n.style.minHeight = '56px';
-      j.addEventListener('click', function () { if (st.j.indexOf(c[0]) < 0) { st.j.push(c[0]); st.at[c[0]] = Date.now(); sv(); } w.style.display = 'none'; mode = 'mine'; draw(); window.scrollTo(0, 0); });
+      j.addEventListener('click', function () { if (st.j.indexOf(c[0]) < 0) { st.j.push(c[0]); st.at[c[0]] = Date.now(); var hi = st.hide.indexOf(c[0]); if (hi >= 0) st.hide.splice(hi, 1); sv(); } w.style.display = 'none'; mode = 'mine'; draw(); window.scrollTo(0, 0); });
       n.addEventListener('click', function () { w.style.display = 'none'; reset(); });
-      r.appendChild(j); r.appendChild(n); w.appendChild(r);
+      var hb2 = E('button', 'btn', '今は興味がない'); hb2.type = 'button'; hb2.style.minHeight = '56px'; hb2.addEventListener('click', function () { if (st.hide.indexOf(c[0]) < 0) st.hide.push(c[0]); sv(); w.style.display = 'none'; reset(); });
+      r.appendChild(j); r.appendChild(n); r.appendChild(hb2); w.appendChild(r);
       try { w.scrollIntoView({ block: 'center' }); } catch (e) {}
     }
     function diary(c) {
@@ -4374,12 +4375,17 @@ button[aria-pressed="true"] { font-weight:700; }
         } catch (er) { cur = null; mic.textContent = '🎤 声で書く'; msg.textContent = '声で書く機能を始められませんでした。'; } });
       var br = E('div', 'row'); br.appendChild(mic); br.appendChild(s); pane.appendChild(ta); pane.appendChild(br); pane.appendChild(msg); pane.appendChild(lst); d.appendChild(tb); d.appendChild(pane); dr(); lab(); return d;
     }
+    function hidToggle() {
+      if (!st.hide.length) return;
+      var t = E('button', 'btn', showHid ? '🙈 「今は興味がない」を、かくす' : '🙈 「今は興味がない」にした部活（' + st.hide.length + '）を見る'); t.type = 'button'; t.style.minHeight = '52px';
+      t.addEventListener('click', function () { showHid = !showHid; draw(); }); BODY.appendChild(t);
+    }
     function draw() {
       BODY.innerHTML = ''; var all = mode === 'find';
       $('hgFind').style.outline = all ? '3px solid var(--accent)' : ''; $('hgMine').style.outline = all ? '' : '3px solid var(--accent)';
-      var list = C.filter(function (c) { return all || st.j.indexOf(c[0]) >= 0; });
+      var list = C.filter(function (c) { return all ? (showHid || st.hide.indexOf(c[0]) < 0 || st.j.indexOf(c[0]) >= 0) : st.j.indexOf(c[0]) >= 0; });
       BODY.appendChild(E('b', '', all ? '🔍 すべての部活（' + C.length + '）　気になる部活を、押してみてください' : '🎒 わたしの部活（' + list.length + '）')); BODY.firstChild.style.fontSize = '1.15rem';
-      if (!list.length) { var p = E('p', 'fl-sub', 'まだ、どの部活にも入っていません。「🔍 部活を探す」を押して、のぞいてみましょう。'); p.style.lineHeight = '1.8'; BODY.appendChild(p); return; }
+      if (!list.length) { var p = E('p', 'fl-sub', all ? 'いま表示する部活は、ありません。下のボタンで、もどせます。' : 'まだ、どの部活にも入っていません。「🔍 部活を探す」を押して、のぞいてみましょう。'); p.style.lineHeight = '1.8'; BODY.appendChild(p); if (all) hidToggle(); return; }
       list.forEach(function (c) {
         var joined = st.j.indexOf(c[0]) >= 0, card = E('div', 'card'); card.style.gap = '8px'; card.id = 'hg-' + c[0];
         var h = E('b', '', c[1] + ' ' + c[2] + (joined ? '　✔ 入部ずみ' : '')); h.style.fontSize = '1.2rem'; card.appendChild(h); var d = E('span', 'fl-sub', c[3]); d.style.margin = '0'; card.appendChild(d);
@@ -4387,6 +4393,8 @@ button[aria-pressed="true"] { font-weight:700; }
           var b = E('button', joined ? 'btn' : 'btn primary', joined ? '🎒 部室へ' : '🚪 のぞいてみる'); b.type = 'button'; b.style.minHeight = '52px';
           b.addEventListener('click', function () { if (joined) { mode = 'mine'; draw(); var t = $('hg-' + c[0]); if (t) t.scrollIntoView({ block: 'start' }); } else welcome(c); }); card.appendChild(b);
           if (joined) { var lv2 = E('button', 'btn', '不参加'); lv2.type = 'button'; lv2.style.minHeight = '48px'; lv2.addEventListener('click', function () { lv2.parentNode.querySelector('.hgq') && lv2.parentNode.removeChild(lv2.parentNode.querySelector('.hgq')); var q2 = E('div', 'row hgq'); q2.appendChild(E('span', 'fl-sub', '退部しますか？（日誌は、残ります）')); var y2 = E('button', 'btn', 'はい、退部します'); y2.type = 'button'; var n2 = E('button', 'btn', 'いいえ'); n2.type = 'button'; y2.addEventListener('click', function () { st.j.splice(st.j.indexOf(c[0]), 1); sv(); reset(); }); n2.addEventListener('click', function () { reset(); }); q2.appendChild(y2); q2.appendChild(n2); lv2.parentNode.appendChild(q2); }); card.appendChild(lv2); }
+          if (!joined) { var hid = st.hide.indexOf(c[0]) >= 0, hb = E('button', 'btn', hid ? '↩ もう一度、興味がある' : '今は興味がない'); hb.type = 'button'; hb.style.minHeight = '48px';
+            hb.addEventListener('click', function () { if (hid) st.hide.splice(st.hide.indexOf(c[0]), 1); else st.hide.push(c[0]); sv(); draw(); }); card.appendChild(hb); if (hid) card.style.opacity = '.65'; }
         } else {
           c[5].forEach(function (x) { card.appendChild(go(x)); }); card.appendChild(diary(c));
           var q = E('div', 'row'); var lv = E('button', 'btn', '不参加'); lv.type = 'button'; lv.style.cssText = 'min-height:44px;font-size:.95rem';
@@ -4395,6 +4403,7 @@ button[aria-pressed="true"] { font-weight:700; }
         }
         BODY.appendChild(card);
       });
+      if (all) hidToggle();
     }
     $('hgFind').addEventListener('click', function () { mode = 'find'; $('hgWel').style.display = 'none'; draw(); });
     $('hgMine').addEventListener('click', function () { mode = 'mine'; $('hgWel').style.display = 'none'; draw(); });
