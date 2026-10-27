@@ -4840,6 +4840,29 @@ button[aria-pressed="true"] { font-weight:700; }
   })();
 
   (function () { var b = $('vcTog'), body = $('vcBody'); if (!b || !body) return; b.addEventListener('click', function () { var open = body.style.display !== 'none'; body.style.display = open ? 'none' : 'flex'; b.textContent = open ? 'ひらく ▼' : 'たたむ ▲'; b.setAttribute('aria-expanded', open ? 'false' : 'true'); }); })();
+  /* ---------- 声で入れる（モノ申す！の各欄） ---------- */
+  (function () {
+    var SR2 = window.SpeechRecognition || window.webkitSpeechRecognition;
+    var ids = ['vcWhen', 'vcFact', 'vcAsk', 'vcName'], body = $('vcBody'); if (!body) return;
+    if (!SR2) { var n = document.createElement('p'); n.className = 'fl-sub'; n.style.margin = '0'; n.textContent = 'この端末のこの画面では、声で入れる機能が使えません。文字で入れてください。（スマホのキーボードの🎤マークも、お使いいただけます）'; body.insertBefore(n, body.firstChild); return; }
+    var cur = null;
+    ids.forEach(function (id) {
+      var el = $(id); if (!el) return;
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'btn'; b.textContent = '🎤 声で入れる'; b.style.cssText = 'min-height:48px;align-self:flex-start';
+      var m = document.createElement('span'); m.className = 'fl-sub'; m.setAttribute('role', 'status'); m.style.margin = '0';
+      el.parentNode.insertBefore(b, el.nextSibling); el.parentNode.insertBefore(m, b.nextSibling);
+      b.addEventListener('click', function () {
+        if (cur) { try { cur.stop(); } catch (e) {} cur = null; b.textContent = '🎤 声で入れる'; m.textContent = ''; return; }
+        try {
+          var r = new SR2(); r.lang = 'ja-JP'; r.interimResults = false; r.continuous = false; cur = r; b.textContent = '■ とめる'; m.textContent = '聞いています。話してください…';
+          r.onresult = function (e) { var t = ''; for (var i = e.resultIndex; i < e.results.length; i++) t += e.results[i][0].transcript; el.value = (el.value ? el.value + (/[。、\s]$/.test(el.value) ? '' : '、') : '') + t; el.dispatchEvent(new Event('input', { bubbles: true })); m.textContent = '入りました。まちがいは、文字で直せます。'; };
+          r.onerror = function (e) { m.textContent = e.error === 'not-allowed' || e.error === 'service-not-allowed' ? 'マイクが許可されていません。文字で入れてください。' : '声を聞き取れませんでした。もういちど、お試しください。'; };
+          r.onend = function () { cur = null; b.textContent = '🎤 声で入れる'; if (m.textContent.indexOf('聞いています') === 0) m.textContent = ''; };
+          r.start(); setTimeout(function () { try { r.stop(); } catch (e) {} }, 30000);
+        } catch (er) { cur = null; b.textContent = '🎤 声で入れる'; m.textContent = '声で入れる機能を始められませんでした。文字で入れてください。'; }
+      });
+    });
+  })();
   /* ---------- 町や市・県に「モノ申す！」 ---------- */
   (function () {
     var card = $('vcCard'); if (!card) return;
