@@ -4157,6 +4157,7 @@ button[aria-pressed="true"] { font-weight:700; }
       var h = E('h2', '', '🆘 いますぐ、助けを呼びましょう'); h.style.cssText = 'margin:0;color:#b3261e'; w.appendChild(h);
       if (reason) { var rr = E('p', '', reason); rr.style.cssText = 'margin:0;line-height:1.8;font-weight:700'; w.appendChild(rr); }
       var c119 = A('📞 119（救急車）に電話する', 'tel:119', true); c119.style.cssText += ';min-height:72px;font-size:1.4rem;background:#b3261e;color:#fff;border-color:#b3261e'; w.appendChild(c119);
+      var hb1 = E('button', 'btn', '🗣 声が出ない：「助けてください」を大きく表示・音声'); hb1.type = 'button'; hb1.style.minHeight = '60px'; hb1.addEventListener('click', function () { document.dispatchEvent(new Event('kesera-help')); }); w.appendChild(hb1);
       w.appendChild(A('🚨 警察 110（交通事故・事件のとき）', 'tel:110', false)); var fb = E('button', 'btn primary', '👪 ご家族に知らせる'); fb.type = 'button'; fb.style.minHeight = '60px'; fb.addEventListener('click', function () { var f = $('safeFam'); if (f) f.click(); }); w.appendChild(fb);
       var m = E('div', 'notice'); m.style.lineHeight = '1.9'; m.innerHTML = '<b>電話がつながらない・かからないとき</b><ol style="margin:6px 0 0;padding-left:1.3em"><li>あわてず、もう一度、119にかけ直します。</li><li>窓や玄関をあけて、近くの人に、大きな声で助けを呼びます。</li><li>ご家族・ご近所の方に、電話やLINEで、知らせます。（上の「ご家族に知らせる」）</li><li>電話のスピーカーを入れて、楽な姿勢で待ちます。</li></ol>'; w.appendChild(m);
       var m2 = E('div', 'notice'); m2.style.lineHeight = '1.9'; m2.innerHTML = '<b>救急車を待つあいだ</b><ul style="margin:6px 0 0;padding-left:1.3em"><li>楽な姿勢で、安静にします。むりに動かないでください。</li><li>玄関の鍵をあけ、保険証・お薬手帳・靴を、近くに用意します。</li><li>食べ物・飲み物は、とらないでください。</li></ul>'; w.appendChild(m2);
@@ -4168,6 +4169,7 @@ button[aria-pressed="true"] { font-weight:700; }
     function stampD(ts) { var d = new Date(ts); return d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日'; }
     var top = E('div'); top.style.cssText = 'display:flex;flex-direction:column;gap:8px';
     var u119 = A('🆘 いますぐ 119（救急車）', 'tel:119', true); u119.style.cssText += ';min-height:64px;font-size:1.25rem;background:#b3261e;color:#fff;border-color:#b3261e'; top.appendChild(u119);
+    var hb0 = E('button', 'btn', '🗣 声が出ない・助けてください（大きな表示と音声）'); hb0.type = 'button'; hb0.style.cssText = 'min-height:60px;font-size:1.1rem'; hb0.addEventListener('click', function () { document.dispatchEvent(new Event('kesera-help')); }); top.appendChild(hb0);
     top.appendChild(E('span', 'fl-sub', '息ができない・意識がない・ひどい胸の痛みなどは、チェックせずに、すぐ119へ。')); top.lastChild.style.margin = '0';
     var urg = E('div'); urg.style.cssText = 'display:none;flex-direction:column;gap:6px;background:#fdeceb;border:3px solid #b3261e;border-radius:12px;padding:10px'; urg.setAttribute('role', 'alert'); urg.appendChild(E('b', '', '⚠ 危ないサインに、チェックが入っています。')); var ub = E('button', 'btn primary', '🆘 SOS（119・ご家族）を出す'); ub.type = 'button'; ub.style.cssText = 'min-height:60px;font-size:1.15rem;background:#b3261e;border-color:#b3261e'; ub.addEventListener('click', function () { sosPop('チェックされたサインは、すぐ救急車が必要なことがあります。'); }); urg.appendChild(ub);
     var cbox = E('div', 'notice'); cbox.style.cssText = 'display:flex;flex-direction:column;gap:8px;line-height:1.8';
@@ -4288,6 +4290,43 @@ button[aria-pressed="true"] { font-weight:700; }
     function resetH() { Object.keys(cbs).forEach(function (k) { cbs[k].checked = false; if (subs[k]) subs[k].checked = false; }); chg(); res.innerHTML = ''; }
     body.appendChild(urg); body.appendChild(vbox); body.appendChild(E('b', '', '🩺 または、当てはまるものに、チェックを入れてください')); body.appendChild(list); body.appendChild(judge); body.appendChild(res);
     hp.appendChild(top); hp.appendChild(cbox); hp.appendChild(body); drawConsent(); chg();
+  })();
+
+  /* ---------- 「助けてください」画面（大きな文字・音声・サイレン） ---------- */
+  (function () {
+    function E(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; }
+    var ss = window.speechSynthesis, timer = null, ac = null, osc = null, sirenT = null, wl = null, dlgEl = null;
+    function say() { if (!ss) return; try { ss.cancel(); var u = new SpeechSynthesisUtterance('助けてください。救急車を、呼んでください。'); u.lang = 'ja-JP'; u.volume = 1; u.rate = 0.9; ss.speak(u); } catch (e) {} }
+    function sirenOff() { if (sirenT) { clearInterval(sirenT); sirenT = null; } try { if (osc) { osc.stop(); osc = null; } if (ac) { ac.close(); ac = null; } } catch (e) {} }
+    function sirenOn() {
+      var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return false;
+      try { ac = new AC(); osc = ac.createOscillator(); var g = ac.createGain(); g.gain.value = 0.5; osc.type = 'square'; osc.frequency.value = 800; osc.connect(g); g.connect(ac.destination); osc.start(); var hi = false; sirenT = setInterval(function () { hi = !hi; try { osc.frequency.value = hi ? 1000 : 700; } catch (e) {} }, 450); return true; } catch (e) { return false; }
+    }
+    function stopAll() { if (timer) { clearInterval(timer); timer = null; } if (ss) { try { ss.cancel(); } catch (e) {} } sirenOff(); try { if (wl) { wl.release(); wl = null; } } catch (e) {} }
+    function openHelp() {
+      var o = document.getElementById('hlHelp'); if (o) { stopAll(); o.remove(); }
+      var d = E('dialog', 'design-dialog location-dialog'); d.id = 'hlHelp'; dlgEl = d; d.style.cssText = 'width:min(96vw,640px);'; var w = E('div'); w.style.cssText = 'display:flex;flex-direction:column;gap:12px;padding:10px;text-align:center';
+      var big = E('div', '', '助けてください'); big.style.cssText = 'font-size:2.6rem;font-weight:900;color:#fff;background:#b3261e;border-radius:16px;padding:22px 8px;line-height:1.3'; big.setAttribute('role', 'alert'); w.appendChild(big);
+      var p = E('p', '', '声が出せません。救急車（119）を、呼んでください。'); p.style.cssText = 'margin:0;font-size:1.5rem;font-weight:800;line-height:1.7'; w.appendChild(p);
+      var sos = load('kesera-sos', {}) || {}, nm = load('kesera-name', '') || '', lines = [];
+      if (nm) lines.push('お名前：' + nm); if (sos.name || sos.phone) lines.push('連絡先：' + (sos.name ? sos.name + '　' : '') + (sos.phone || ''));
+      if (lines.length) { var q = E('p', '', lines.join('\n')); q.style.cssText = 'margin:0;font-size:1.25rem;line-height:1.8;white-space:pre-line;border:2px solid #b3261e;border-radius:12px;padding:8px'; w.appendChild(q); }
+      var c119 = E('a', 'btnlink primary', '📞 119（救急車）に電話する'); c119.href = 'tel:119'; c119.style.cssText = 'min-height:68px;justify-content:center;font-size:1.3rem;background:#b3261e;color:#fff;border-color:#b3261e'; w.appendChild(c119);
+      var vb = E('button', 'btn primary', '🔊 音声を、とめる'); vb.type = 'button'; vb.style.cssText = 'min-height:60px;font-size:1.15rem'; var on = true;
+      function vstart() { say(); timer = setInterval(say, 7000); vb.textContent = '🔊 音声を、とめる'; on = true; }
+      vb.addEventListener('click', function () { if (on) { if (timer) { clearInterval(timer); timer = null; } try { ss && ss.cancel(); } catch (e) {} vb.textContent = '🔊 音声を、ならす'; on = false; } else vstart(); });
+      if (ss) w.appendChild(vb); else w.appendChild(E('span', 'fl-sub', 'この端末では、音声が出せません。画面を、まわりの人に見せてください。'));
+      var sb = E('button', 'btn', '🚨 大きな音（サイレン）を、ならす'); sb.type = 'button'; sb.style.cssText = 'min-height:60px;font-size:1.15rem'; var sm = E('span', 'fl-sub'); sm.style.margin = '0'; sm.setAttribute('role', 'status'); var sOn = false;
+      sb.addEventListener('click', function () { if (sOn) { sirenOff(); sOn = false; sb.textContent = '🚨 大きな音（サイレン）を、ならす'; sm.textContent = ''; } else { if (sirenOn()) { sOn = true; sb.textContent = '🚨 サイレンを、とめる'; sm.textContent = ''; } else sm.textContent = 'この端末では、サイレンが出せません。'; } });
+      w.appendChild(sb); w.appendChild(sm);
+      w.appendChild(E('span', 'fl-sub', '音が出ないときは、スマホの音量を上げ、マナーモードを、解除してください。画面を、まわりの人に見せてください。')); w.lastChild.style.cssText = 'margin:0;line-height:1.8';
+      var x = E('button', 'btn', '閉じる'); x.type = 'button'; x.style.minHeight = '52px'; x.addEventListener('click', function () { d.close(); }); w.appendChild(x);
+      d.appendChild(w); d.addEventListener('close', function () { stopAll(); d.remove(); }); document.body.appendChild(d); if (d.showModal) d.showModal();
+      vstart(); try { if (navigator.wakeLock) navigator.wakeLock.request('screen').then(function (l) { wl = l; }, function () {}); } catch (e) {}
+    }
+    document.addEventListener('kesera-help', openHelp);
+    var grid = document.querySelector('#safeCard .safe-grid');
+    if (grid) { var b = E('button', 'btnlink safe-btn'); b.type = 'button'; b.innerHTML = '<b>🗣 声が出ない・助けを呼びたい</b><span>「助けてください」を、大きく表示・音声</span>'; b.addEventListener('click', function () { document.dispatchEvent(new Event('kesera-help')); }); grid.insertBefore(b, grid.firstChild); }
   })();
 
   /* ---------- ヘッダーをコンパクトに ---------- */
