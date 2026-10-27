@@ -4384,7 +4384,7 @@ button[aria-pressed="true"] { font-weight:700; }
   /* ---------- 利用規定・緊急時の備え（初回に必ず表示） ---------- */
   (function () {
     function E(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; }
-    var KEY = 'kesera-terms', VER = 1;
+    var KEY = 'kesera-terms', VER = 2;
     function acc() { var a = load(KEY, null); return a && a.v === VER ? a : null; }
     function openTerms(first) {
       var o = document.getElementById('termsDlg'); if (o) return;
@@ -4394,6 +4394,7 @@ button[aria-pressed="true"] { font-weight:700; }
       var h = E('h2', '', '🛡 ご利用前の、お約束と、緊急時の備え'); h.id = 'termsT'; h.style.margin = '0'; w.appendChild(h);
       var lead = E('p', '', first ? 'はじめに、必ずお読みください。すべてにチェックを入れると、「同意してはじめる」が押せます。' : 'いつでも、見直せます。変えたいところを直して、「保存する」を押してください。'); lead.style.margin = '0'; w.appendChild(lead);
       var rules = [
+        '【AIによる情報です】部活・おすすめ・案内などの情報は、AIの判断によるもので、間違うことがあります。すでに終了していたり、けがや重大な事故につながったりしても、当団体は、閲覧・参加される方の安全や健康に責任を負いません。このことを、承認します。',
         '【自己判断・自己責任】ケセラは、診断や治療をするものではありません。体調や安全については、ご自身の判断と責任でご利用ください。',
         '【助けを求めるとき】ケセラの「助けて」の画面は、ご自身で 110（警察）・119（救急）に電話するための、案内です。ケセラが自動で、110・119・ご家族に連絡することは、ありません。',
         '【つながらないこともあります】電話や、メッセージが、つながらないこともあります。電波・端末・音量・相手の状況によります。つながらないときは、近くの人に声をかけてください。',
@@ -4409,6 +4410,10 @@ button[aria-pressed="true"] { font-weight:700; }
         l.appendChild(c); l.appendChild(E('span', '', r)); rb.appendChild(l);
       });
       w.appendChild(rb);
+      var ah = E('h3', '', '📜 利用規約（全文）'); ah.style.margin = '6px 0 0'; w.appendChild(ah);
+      var ab = E('div'); ab.tabIndex = 0; ab.setAttribute('role', 'region'); ab.setAttribute('aria-label', '利用規約の全文'); ab.style.cssText = 'max-height:42vh;overflow:auto;border:2px solid var(--line);border-radius:10px;padding:10px 12px;line-height:1.8;font-size:1rem;background:var(--surface)';
+      [["第1条（目的・適用）", "この規約は、ケセラ（以下「本サービス」）の利用条件を定めるものです。本サービスを利用される方（以下「利用者」）は、この規約に同意したうえでご利用ください。同意いただけない場合は、本サービスをご利用いただけません。"], ["第2条（掲載情報の性質）", "本サービスに表示される、部活・おすすめ・催し・お店・場所・季節の花・天気・健康や安全に関する案内などの情報（以下「掲載情報」）は、AI等の判断により作成・選択された、一般的な参考情報です。正確さ・完全さ・最新であること・特定の目的に合うことを、保証するものではありません。すでに終了・中止・変更されていたり、誤りを含んでいたりすることがあります。"], ["第3条（専門的な助言ではないこと）", "掲載情報は、医師・看護師・弁護士など専門家の診断・治療・助言の代わりにはなりません。体調に不安があるときは、必ず医療機関や専門家にご相談ください。"], ["第4条（自己判断・自己責任）", "運動・外出・食事・移動・各種の活動への参加や実践は、利用者ご自身の年齢・体調・周囲の状況をふまえ、ご自身の判断と責任で行ってください。無理をせず、事前に主催者・施設などに最新の情報をご確認ください。"], ["第5条（責任の範囲）", "当団体（ケセラ運営者）は、掲載情報の内容、およびその利用・参加によって、利用者または第三者に生じた損害（けが・病気・事故・財産の損害を含みます）について、法令で許される範囲で、責任を負いません。ただし、当団体に故意または重大な過失がある場合など、法令により責任を免れることができない場合は、この限りではありません。"], ["第6条（緊急時）", "本サービスの「助けて」「おかしい？」などの機能は、利用者ご自身が 110（警察）・119（救急）などに連絡するための案内です。本サービスが自動で通報・連絡することはありません。電話・メッセージ・音声は、電波・端末・設定などによりつながらないことがあります。"], ["第7条（外部のサービス）", "地図・動画・電話・SMS・外部サイトなど、本サービスから開く外部のサービスは、それぞれの提供者の条件に従います。その内容や利用について、当団体は責任を負いません。"], ["第8条（個人情報・記録の保存）", "お名前・連絡先・メモなどは、原則として利用者の端末の中に保存され、当団体には送られません。端末の紛失・故障・データの消去により、記録が失われることがあります。AIに質問する機能を使うと、入力した内容がAIの処理のために外部の事業者に送られることがあります。お名前・住所・電話番号など、個人が特定できる情報は入力しないでください。"], ["第9条（サービスの変更・中断）", "当団体は、予告なく、本サービスの内容を変更・中断・終了することがあります。"], ["第10条（規約の変更）", "当団体は、この規約を変更することがあります。重要な変更があるときは、あらためて同意をお願いすることがあります。"], ["第11条（準拠法・裁判所）", "この規約は日本法に従います。本サービスに関して争いが生じたときは、熊本地方裁判所または熊本簡易裁判所を、第一審の管轄裁判所とします。"]].forEach(function (a) { var t = E('b', '', a[0]); t.style.display = 'block'; t.style.marginTop = '8px'; ab.appendChild(t); ab.appendChild(E('div', '', a[1])); });
+      var upd0 = E('div', 'muted', '制定：2026年10月　／　当団体（ケセラ運営者）'); upd0.style.marginTop = '10px'; ab.appendChild(upd0); w.appendChild(ab);
       var qh = E('h3', '', '📋 緊急時の備え（アンケート）'); qh.style.margin = '6px 0 0'; w.appendChild(qh);
       var q1 = E('p', '', '1. 緊急のとき、連絡したい人は、いますか？'); q1.style.cssText = 'margin:0;font-weight:700'; w.appendChild(q1);
       var rr = E('div', 'row'); var ry = E('input'), rn = E('input'); ry.type = rn.type = 'radio'; ry.name = rn.name = 'termsContact'; ry.id = 'tcY'; rn.id = 'tcN';
@@ -4427,7 +4432,7 @@ button[aria-pressed="true"] { font-weight:700; }
       var q3 = E('p', '', '3. 連絡がつかないこともあることを、承認します。'); q3.style.cssText = 'margin:0;font-weight:700'; w.appendChild(q3);
       var ag = E('label'); ag.style.cssText = 'display:flex;gap:10px;align-items:flex-start;border:3px solid var(--accent);border-radius:10px;padding:12px;font-size:1.1rem;font-weight:800;line-height:1.7;background:var(--accent-soft)';
       var ac = E('input'); ac.type = 'checkbox'; ac.style.cssText = 'width:28px;height:28px;flex:0 0 auto;margin-top:2px'; ac.checked = !first && !!prev.v; ac.addEventListener('change', upd);
-      ag.appendChild(ac); ag.appendChild(E('span', '', '上の 2 と 3 に同意し、「利用規定」を、すべて読みました。')); w.appendChild(ag);
+      ag.appendChild(ac); ag.appendChild(E('span', '', '上のお約束と、利用規約（全文）を読み、2 と 3 を含めて、すべてに同意します。同意できない場合は、ケセラをご利用いただけません。')); w.appendChild(ag);
       var msg = E('p', 'fl-sub'); msg.style.margin = '0'; msg.setAttribute('role', 'status'); w.appendChild(msg);
       var go = E('button', 'btn primary', first ? '同意して、はじめる' : '保存する'); go.type = 'button'; go.style.minHeight = '60px'; go.style.fontSize = '1.2rem'; w.appendChild(go);
       function upd() {
