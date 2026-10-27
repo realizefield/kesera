@@ -876,6 +876,7 @@ button[aria-pressed="true"] { font-weight:700; }
     <div class="card"><b>調べる場所（市や町の名前）</b>
       <input id="tnCity" type="text" placeholder="例：熊本市、菊池市（空だと「いまいる場所の近く」）" style="min-height:52px;font-size:1.1rem;width:100%;box-sizing:border-box">
       <p class="fl-sub" id="tnNow"></p></div>
+    <div id="tnMine" class="card" style="display:none;gap:8px"></div>
     <div id="tnList" style="display:flex;flex-direction:column;gap:10px"></div>
     <div id="vcCard" class="card" style="gap:10px">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><h2 style="margin:0">📣 町や市・県に「モノ申す！」</h2><button class="btn" id="vcTog" type="button" aria-expanded="false" aria-controls="vcBody" style="min-height:52px;white-space:nowrap">ひらく ▼</button></div>
@@ -4635,6 +4636,49 @@ button[aria-pressed="true"] { font-weight:700; }
         { h: '👧 孫と遊びたい公園', d: '遊具、芝生、水遊び、雨の日の室内まで。ベンチやトイレのある所だと、安心です。', l: [['遊具のある公園（地図）', M('遊具 公園 ' + c)], ['芝生広場・大きな公園', M('芝生広場 大型公園 ' + c)], ['水遊びができる公園', G(near + ' 水遊び 公園 じゃぶじゃぶ池')], ['雨の日の遊び場（児童館・室内）', M('児童館 室内遊び場 ' + c)], ['孫と遊べる公園のおすすめ', G(near + ' 子ども 公園 おすすめ 駐車場 トイレ')]] }
       ];
     }
+    /* ---------- 気になる印・メモ（日付と時刻の刻印・音声メモ） ---------- */
+    var INT = load('kesera-town-int', {}), SRt = window.SpeechRecognition || window.webkitSpeechRecognition;
+    var SL = [['iikamo', '👍 いいかも'], ['kangaeru', '🤔 考えようか'], ['ikou', '🚶 行こう！']];
+    function stamp(ts) { var d = new Date(ts), w = '日月火水木金土'[d.getDay()]; return d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日（' + w + '）' + pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+    function slab(k) { var r = ''; SL.forEach(function (x) { if (x[0] === k) r = x[1]; }); return r; }
+    function mine() {
+      var box = $('tnMine'); if (!box) return; box.innerHTML = ''; var n = 0, keys = Object.keys(INT);
+      var b = document.createElement('b'); b.style.fontSize = '1.1rem'; b.textContent = '💗 気になるリスト（印とメモ）'; box.appendChild(b);
+      keys.forEach(function (k) { var v = INT[k]; if (!v.s && !(v.m && v.m.length)) return; n++; var d = document.createElement('div'); d.style.cssText = 'line-height:1.7;border-top:1px solid var(--accent-soft);padding-top:6px';
+        var t = document.createElement('b'); t.textContent = (slab(v.s) ? slab(v.s) + '　' : '') + k; d.appendChild(t);
+        if (v.m && v.m.length) { var m = v.m[v.m.length - 1], s = document.createElement('div'); s.className = 'fl-sub'; s.style.margin = '0'; s.textContent = '📝 ' + stamp(m.at) + '：' + m.t + (v.m.length > 1 ? '（ほか' + (v.m.length - 1) + '件）' : ''); d.appendChild(s); }
+        box.appendChild(d); });
+      box.style.display = n ? 'flex' : 'none';
+    }
+    function addIntent(c, it) {
+      var key = it.h; var v = INT[key] || (INT[key] = { s: '', m: [] }); if (!v.m) v.m = [];
+      var row = document.createElement('div'); row.className = 'row'; row.setAttribute('role', 'group'); row.setAttribute('aria-label', '気持ちの印');
+      function persist() { save('kesera-town-int', INT); mine(); }
+      function paint() { Array.prototype.forEach.call(row.children, function (b, i) { var on = v.s === SL[i][0]; b.style.background = on ? 'var(--accent)' : ''; b.style.color = on ? '#fff' : ''; b.setAttribute('aria-pressed', on ? 'true' : 'false'); }); }
+      SL.forEach(function (x) { var b = document.createElement('button'); b.type = 'button'; b.className = 'btn'; b.style.minHeight = '48px'; b.textContent = x[1]; b.addEventListener('click', function () { v.s = v.s === x[0] ? '' : x[0]; persist(); paint(); }); row.appendChild(b); });
+      var hint = document.createElement('p'); hint.className = 'fl-sub'; hint.style.margin = '0'; hint.textContent = '時間がたつと、内容の表示が、変わることがあります。メモをしておくことを、おすすめします。';
+      var mb = document.createElement('button'); mb.type = 'button'; mb.className = 'btn'; mb.style.cssText = 'min-height:48px;align-self:flex-start'; var pane = document.createElement('div'); pane.style.cssText = 'display:none;flex-direction:column;gap:8px';
+      function cnt() { mb.textContent = '📝 メモ' + (v.m.length ? '（' + v.m.length + '件）' : '') + (pane.style.display === 'none' ? ' ▼' : ' ▲'); }
+      var ta = document.createElement('textarea'); ta.rows = 3; ta.setAttribute('aria-label', 'メモ'); ta.placeholder = '例：10月30日からと聞いた。バスで行けるか、電話で確認する'; ta.style.cssText = 'width:100%;box-sizing:border-box;font-size:1.1rem;font-family:inherit';
+      var mic = document.createElement('button'); mic.type = 'button'; mic.className = 'btn'; mic.style.cssText = 'min-height:48px'; mic.textContent = '🎤 声でメモ'; var sv = document.createElement('button'); sv.type = 'button'; sv.className = 'btn primary'; sv.style.minHeight = '48px'; sv.textContent = '💾 メモを残す（日付と時刻つき）';
+      var st = document.createElement('span'); st.className = 'fl-sub'; st.setAttribute('role', 'status'); st.style.margin = '0'; var lst = document.createElement('div'); lst.style.cssText = 'display:flex;flex-direction:column;gap:6px';
+      var voiced = false, cur = null;
+      function draw() { lst.innerHTML = ''; v.m.slice().reverse().forEach(function (m, ri) { var i = v.m.length - 1 - ri, d = document.createElement('div'); d.style.cssText = 'line-height:1.7;border-left:4px solid var(--accent);padding-left:8px'; var t = document.createElement('b'); t.style.fontSize = '.95rem'; t.textContent = '🕒 ' + stamp(m.at) + (m.v ? '　🎤' : ''); var x = document.createElement('div'); x.textContent = m.t; var del = document.createElement('button'); del.type = 'button'; del.className = 'btn'; del.style.cssText = 'min-height:40px;font-size:.9rem'; del.textContent = '消す'; del.addEventListener('click', function () { v.m.splice(i, 1); persist(); draw(); cnt(); }); d.appendChild(t); d.appendChild(x); d.appendChild(del); lst.appendChild(d); }); }
+      mb.addEventListener('click', function () { pane.style.display = pane.style.display === 'none' ? 'flex' : 'none'; cnt(); });
+      sv.addEventListener('click', function () { var t = ta.value.trim(); if (!t) { st.textContent = '先に、メモを書くか、声で入れてください。'; return; } v.m.push({ at: Date.now(), t: t, v: voiced }); ta.value = ''; voiced = false; st.textContent = '残しました。（' + stamp(v.m[v.m.length - 1].at) + '）'; persist(); draw(); cnt(); });
+      if (!SRt) mic.style.display = 'none';
+      else mic.addEventListener('click', function () {
+        if (cur) { try { cur.stop(); } catch (e) {} return; }
+        try { var r = new SRt(); r.lang = 'ja-JP'; r.interimResults = false; cur = r; mic.textContent = '■ とめる'; st.textContent = '聞いています。話してください…';
+          r.onresult = function (e) { var s = ''; for (var i = e.resultIndex; i < e.results.length; i++) s += e.results[i][0].transcript; ta.value = (ta.value ? ta.value + '、' : '') + s; voiced = true; st.textContent = '入りました。まちがいは、直せます。'; };
+          r.onerror = function (e) { st.textContent = e.error === 'not-allowed' || e.error === 'service-not-allowed' ? 'マイクが許可されていません。文字で入れてください。' : '声を聞き取れませんでした。もういちど、お試しください。'; };
+          r.onend = function () { cur = null; mic.textContent = '🎤 声でメモ'; if (st.textContent.indexOf('聞いています') === 0) st.textContent = ''; };
+          r.start(); setTimeout(function () { try { r.stop(); } catch (e) {} }, 30000);
+        } catch (er) { cur = null; mic.textContent = '🎤 声でメモ'; st.textContent = '声のメモを始められませんでした。文字で入れてください。'; } });
+      var br = document.createElement('div'); br.className = 'row'; br.appendChild(mic); br.appendChild(sv);
+      pane.appendChild(ta); pane.appendChild(br); pane.appendChild(st); pane.appendChild(lst);
+      c.appendChild(row); c.appendChild(hint); c.appendChild(mb); c.appendChild(pane); paint(); draw(); cnt();
+    }
     function render() {
       $('tnNow').textContent = (inp.value || '').trim() ? '「' + inp.value.trim() + '」で調べます。' : '場所が空なので、「いまいる場所の近く」で調べます（地図は位置情報の許可が要ります）。';
       var box = $('tnList'); box.innerHTML = '';
@@ -4649,8 +4693,9 @@ button[aria-pressed="true"] { font-weight:700; }
           if (!dq) dq = it.h.replace(/^\S+\s/, '') + ' ' + (inp.value || '').trim();
           [['🚃 行き方・運賃（電車・バス）', 'transit'], ['🚗 車での所要時間', 'driving'], ['🚶 歩いて行ける？', 'walking']].forEach(function (n) { var a2 = document.createElement('a'); a2.className = 'btnlink'; a2.target = '_blank'; a2.rel = 'noopener'; a2.style.background = '#eef6f1'; a2.textContent = n[0]; a2.href = 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(dq) + '&travelmode=' + n[1]; r.appendChild(a2); });
         }
-        c.appendChild(h); c.appendChild(p); c.appendChild(r); box.appendChild(c);
+        c.appendChild(h); c.appendChild(p); c.appendChild(r); addIntent(c, it); box.appendChild(c);
       });
+      mine();
     }
     inp.addEventListener('input', function () { save('kesera-city', inp.value); render(); });
     render();
