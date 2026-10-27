@@ -4170,7 +4170,8 @@ button[aria-pressed="true"] { font-weight:700; }
     var top = E('div'); top.style.cssText = 'display:flex;flex-direction:column;gap:8px';
     var u119 = A('🆘 いますぐ 119（救急車）', 'tel:119', true); u119.style.cssText += ';min-height:64px;font-size:1.25rem;background:#b3261e;color:#fff;border-color:#b3261e'; top.appendChild(u119);
     var hb0 = E('button', 'btn', '🗣 声が出ない・助けてください（大きな表示と音声）'); hb0.type = 'button'; hb0.style.cssText = 'min-height:60px;font-size:1.1rem'; hb0.addEventListener('click', function () { document.dispatchEvent(new Event('kesera-help')); }); top.appendChild(hb0);
-    top.appendChild(E('span', 'fl-sub', '息ができない・意識がない・ひどい胸の痛みなどは、チェックせずに、すぐ119へ。')); top.lastChild.style.margin = '0';
+    top.appendChild(E('span', 'fl-sub', '息ができない・意識がない・ひどい胸の痛みなどは、チェックせずに、すぐ119へ。'));
+    var tb0 = E('button', 'btn', '📋 利用規定・緊急時の備え'); tb0.type = 'button'; tb0.addEventListener('click', function () { document.dispatchEvent(new Event('kesera-terms')); }); top.appendChild(tb0); top.lastChild.style.margin = '0';
     var urg = E('div'); urg.style.cssText = 'display:none;flex-direction:column;gap:6px;background:#fdeceb;border:3px solid #b3261e;border-radius:12px;padding:10px'; urg.setAttribute('role', 'alert'); urg.appendChild(E('b', '', '⚠ 危ないサインに、チェックが入っています。')); var ub = E('button', 'btn primary', '🆘 SOS（119・ご家族）を出す'); ub.type = 'button'; ub.style.cssText = 'min-height:60px;font-size:1.15rem;background:#b3261e;border-color:#b3261e'; ub.addEventListener('click', function () { sosPop('チェックされたサインは、すぐ救急車が必要なことがあります。'); }); urg.appendChild(ub);
     var cbox = E('div', 'notice'); cbox.style.cssText = 'display:flex;flex-direction:column;gap:8px;line-height:1.8';
     var body = E('div'); body.style.cssText = 'display:none;flex-direction:column;gap:12px';
@@ -4378,6 +4379,83 @@ button[aria-pressed="true"] { font-weight:700; }
     card.appendChild(mk('kesera-todo', '🌟 きょうの、やりたいこと', '例：散歩、お花に水', true));
     var n = E('p', 'muted', 'メモは、この端末の中だけに残ります。'); card.appendChild(n);
     g.parentNode.insertBefore(card, g.nextSibling);
+  })();
+
+  /* ---------- 利用規定・緊急時の備え（初回に必ず表示） ---------- */
+  (function () {
+    function E(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; }
+    var KEY = 'kesera-terms', VER = 1;
+    function acc() { var a = load(KEY, null); return a && a.v === VER ? a : null; }
+    function openTerms(first) {
+      var o = document.getElementById('termsDlg'); if (o) return;
+      var prev = acc() || {};
+      var d = E('dialog', 'design-dialog location-dialog'); d.id = 'termsDlg'; d.setAttribute('aria-labelledby', 'termsT'); d.style.cssText = 'width:min(96vw,640px);';
+      var w = E('div'); w.style.cssText = 'display:flex;flex-direction:column;gap:12px;padding:10px';
+      var h = E('h2', '', '🛡 ご利用前の、お約束と、緊急時の備え'); h.id = 'termsT'; h.style.margin = '0'; w.appendChild(h);
+      var lead = E('p', '', first ? 'はじめに、必ずお読みください。すべてにチェックを入れると、「同意してはじめる」が押せます。' : 'いつでも、見直せます。変えたいところを直して、「保存する」を押してください。'); lead.style.margin = '0'; w.appendChild(lead);
+      var rules = [
+        '【自己判断・自己責任】ケセラは、診断や治療をするものではありません。体調や安全については、ご自身の判断と責任でご利用ください。',
+        '【助けを求めるとき】ケセラの「助けて」の画面は、ご自身で 110（警察）・119（救急）に電話するための、案内です。ケセラが自動で、110・119・ご家族に連絡することは、ありません。',
+        '【つながらないこともあります】電話や、メッセージが、つながらないこともあります。電波・端末・音量・相手の状況によります。つながらないときは、近くの人に声をかけてください。',
+        '【声が出せないとき】声での通報がむずかしい方向けの「NET119」などは、市町村や消防本部ごとに、事前の登録が必要です。お住まいの消防本部で、ご確認ください。',
+        '【おかしいと思ったら】息ができない・意識がない・ひどい胸の痛みなどのときは、アプリを使う前に、すぐ 119 に電話してください。',
+        '【記録について】お名前・連絡先・メモは、この端末の中だけに残ります。ケセラの運営には、送られません。'
+      ];
+      var cbs = [];
+      var rb = E('div'); rb.style.cssText = 'display:flex;flex-direction:column;gap:8px';
+      rules.forEach(function (r, i) {
+        var l = E('label'); l.style.cssText = 'display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--line);border-radius:10px;padding:10px;font-size:1.05rem;line-height:1.7;background:var(--surface)';
+        var c = E('input'); c.type = 'checkbox'; c.checked = !first && !!prev.v; c.style.cssText = 'width:26px;height:26px;flex:0 0 auto;margin-top:3px'; c.addEventListener('change', upd); cbs.push(c);
+        l.appendChild(c); l.appendChild(E('span', '', r)); rb.appendChild(l);
+      });
+      w.appendChild(rb);
+      var qh = E('h3', '', '📋 緊急時の備え（アンケート）'); qh.style.margin = '6px 0 0'; w.appendChild(qh);
+      var q1 = E('p', '', '1. 緊急のとき、連絡したい人は、いますか？'); q1.style.cssText = 'margin:0;font-weight:700'; w.appendChild(q1);
+      var rr = E('div', 'row'); var ry = E('input'), rn = E('input'); ry.type = rn.type = 'radio'; ry.name = rn.name = 'termsContact'; ry.id = 'tcY'; rn.id = 'tcN';
+      var ly = E('label', '', ''), ln = E('label', '', ''); ly.style.cssText = ln.style.cssText = 'display:flex;gap:8px;align-items:center;font-size:1.15rem;font-weight:700;min-height:48px';
+      ly.appendChild(ry); ly.appendChild(document.createTextNode('いる')); ln.appendChild(rn); ln.appendChild(document.createTextNode('いない・わからない')); rr.appendChild(ly); rr.appendChild(ln); w.appendChild(rr);
+      var sos = load('kesera-sos', {}) || {}; if (prev.contact === 'yes' || (!prev.contact && (sos.name || sos.phone))) ry.checked = true; else if (prev.contact === 'no') rn.checked = true;
+      var yBox = E('div'); yBox.style.cssText = 'display:flex;flex-direction:column;gap:8px';
+      function fld(lbl, id, ph, type) { var l = E('label', '', lbl); l.htmlFor = id; l.style.fontWeight = '700'; var i = E('input'); i.id = id; i.type = type || 'text'; i.placeholder = ph; i.style.cssText = 'min-height:48px;font-size:1.1rem;padding:6px 10px;border-radius:8px;border:1.5px solid var(--line);background:var(--surface);color:inherit;width:100%'; yBox.appendChild(l); yBox.appendChild(i); return i; }
+      var fn = fld('その方の、お名前（例：長男 〇〇）', 'tcName', 'お名前'); fn.value = sos.name || '';
+      var fp = fld('電話番号', 'tcPhone', '例：090-1234-5678', 'tel'); fp.value = sos.phone || '';
+      yBox.appendChild(E('span', 'fl-sub', '「助けて」の画面から、すぐ電話できます。ただし、つながらないこともあります。')); w.appendChild(yBox);
+      var nBox = E('div'); nBox.style.cssText = 'border:2px solid var(--accent);border-radius:10px;padding:10px;line-height:1.8'; nBox.appendChild(E('b', '', '連絡できる人が、いなくても大丈夫です。')); nBox.appendChild(E('div', '', '助けが必要なときは、119（救急）・110（警察）に、ご自身で電話します。ふだんから、近所の方・民生委員・地域包括支援センター（市町村の高齢者の相談窓口）・かかりつけ医など、気軽に話せる相手を、少しずつ、つくっておくと安心です。')); w.appendChild(nBox);
+      function sync() { yBox.style.display = ry.checked ? '' : 'none'; nBox.style.display = rn.checked ? '' : 'none'; upd(); }
+      ry.addEventListener('change', sync); rn.addEventListener('change', sync);
+      var q2 = E('p', '', '2. 助けを求めるときは、ご自身で 110・119 に連絡することを、理解しました。'); q2.style.cssText = 'margin:0;font-weight:700'; w.appendChild(q2);
+      var q3 = E('p', '', '3. 連絡がつかないこともあることを、承認します。'); q3.style.cssText = 'margin:0;font-weight:700'; w.appendChild(q3);
+      var ag = E('label'); ag.style.cssText = 'display:flex;gap:10px;align-items:flex-start;border:3px solid var(--accent);border-radius:10px;padding:12px;font-size:1.1rem;font-weight:800;line-height:1.7;background:var(--accent-soft)';
+      var ac = E('input'); ac.type = 'checkbox'; ac.style.cssText = 'width:28px;height:28px;flex:0 0 auto;margin-top:2px'; ac.checked = !first && !!prev.v; ac.addEventListener('change', upd);
+      ag.appendChild(ac); ag.appendChild(E('span', '', '上の 2 と 3 に同意し、「利用規定」を、すべて読みました。')); w.appendChild(ag);
+      var msg = E('p', 'fl-sub'); msg.style.margin = '0'; msg.setAttribute('role', 'status'); w.appendChild(msg);
+      var go = E('button', 'btn primary', first ? '同意して、はじめる' : '保存する'); go.type = 'button'; go.style.minHeight = '60px'; go.style.fontSize = '1.2rem'; w.appendChild(go);
+      function upd() {
+        var ok = cbs.every(function (c) { return c.checked; }) && ac.checked && (ry.checked || rn.checked) && (!ry.checked || (fp.value.trim() || fn.value.trim()) !== '' || true);
+        go.disabled = !ok; msg.textContent = ok ? '' : 'すべてのチェックと、1 の「いる・いない」を選ぶと、押せます。';
+      }
+      go.addEventListener('click', function () {
+        var contact = ry.checked ? 'yes' : 'no';
+        save(KEY, { v: VER, at: new Date().toISOString(), contact: contact });
+        if (contact === 'yes' && (fn.value.trim() || fp.value.trim())) { var s0 = load('kesera-sos', {}) || {}; s0.name = fn.value.trim(); s0.phone = fp.value.trim(); save('kesera-sos', s0); }
+        d.close();
+      });
+      if (!first) { var x = E('button', 'btn', 'とじる'); x.type = 'button'; x.addEventListener('click', function () { d.close(); }); w.appendChild(x); }
+      d.appendChild(w); document.body.appendChild(d);
+      d.addEventListener('close', function () { d.remove(); });
+      if (first) d.addEventListener('cancel', function (e) { e.preventDefault(); });
+      sync(); if (d.showModal) d.showModal();
+    }
+    document.addEventListener('kesera-terms', function () { openTerms(false); });
+    var grid = document.querySelector('#safeCard .safe-grid');
+    if (grid) { var b = E('button', 'btnlink safe-btn'); b.type = 'button'; b.innerHTML = '<b>📋 利用規定・緊急時の備え</b><span>連絡したい人・お約束を、見直す</span>'; b.addEventListener('click', function () { document.dispatchEvent(new Event('kesera-terms')); }); grid.appendChild(b); }
+    if (!acc()) {
+      var tries = 0;
+      (function wait() {
+        if (document.querySelector('dialog[open]') && tries++ < 400) return setTimeout(wait, 1500);
+        openTerms(true);
+      })();
+    }
   })();
 
   /* ---------- ヘッダーをコンパクトに ---------- */
