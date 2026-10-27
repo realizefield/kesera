@@ -4347,7 +4347,7 @@ button[aria-pressed="true"] { font-weight:700; }
     function welcome(c) {
       var w = $('hgWel'); w.style.display = 'flex'; w.innerHTML = '';
       w.appendChild(E('b', '', c[1] + ' ' + c[2] + '　新入生かんげい！')); w.firstChild.style.fontSize = '1.2rem'; var m = E('p', '', c[4]); m.style.cssText = 'margin:0;line-height:1.9'; w.appendChild(m);
-      var r = E('div', 'row'); var j = E('button', 'btn primary', '🎒 参加する'); j.type = 'button'; j.style.minHeight = '56px'; var n = E('button', 'btn', 'やめておく'); n.type = 'button'; n.style.minHeight = '56px';
+      var r = E('div', 'row'); var j = E('button', 'btn primary', '🎒 参加する'); j.type = 'button'; j.style.minHeight = '56px'; var n = E('button', 'btn', '参加しない'); n.type = 'button'; n.style.minHeight = '56px';
       j.addEventListener('click', function () { if (st.j.indexOf(c[0]) < 0) { st.j.push(c[0]); st.at[c[0]] = Date.now(); sv(); } w.style.display = 'none'; mode = 'mine'; draw(); window.scrollTo(0, 0); });
       n.addEventListener('click', function () { w.style.display = 'none'; });
       r.appendChild(j); r.appendChild(n); w.appendChild(r);
@@ -4385,9 +4385,10 @@ button[aria-pressed="true"] { font-weight:700; }
         if (all) {
           var b = E('button', joined ? 'btn' : 'btn primary', joined ? '🎒 部室へ' : '🚪 のぞいてみる'); b.type = 'button'; b.style.minHeight = '52px';
           b.addEventListener('click', function () { if (joined) { mode = 'mine'; draw(); var t = $('hg-' + c[0]); if (t) t.scrollIntoView({ block: 'start' }); } else welcome(c); }); card.appendChild(b);
+          if (joined) { var lv2 = E('button', 'btn', '🚪 退部'); lv2.type = 'button'; lv2.style.minHeight = '48px'; lv2.addEventListener('click', function () { lv2.parentNode.querySelector('.hgq') && lv2.parentNode.removeChild(lv2.parentNode.querySelector('.hgq')); var q2 = E('div', 'row hgq'); q2.appendChild(E('span', 'fl-sub', 'ほんとうに、退部しますか？（日誌は、残ります）')); var y2 = E('button', 'btn', 'はい、退部'); y2.type = 'button'; var n2 = E('button', 'btn', 'やめる'); n2.type = 'button'; y2.addEventListener('click', function () { st.j.splice(st.j.indexOf(c[0]), 1); sv(); draw(); }); n2.addEventListener('click', function () { draw(); }); q2.appendChild(y2); q2.appendChild(n2); lv2.parentNode.appendChild(q2); }); card.appendChild(lv2); }
         } else {
           c[5].forEach(function (x) { card.appendChild(go(x)); }); card.appendChild(diary(c));
-          var q = E('div', 'row'); var lv = E('button', 'btn', '退部する'); lv.type = 'button'; lv.style.cssText = 'min-height:44px;font-size:.95rem';
+          var q = E('div', 'row'); var lv = E('button', 'btn', '🚪 退部'); lv.type = 'button'; lv.style.cssText = 'min-height:44px;font-size:.95rem';
           lv.addEventListener('click', function () { q.innerHTML = ''; q.appendChild(E('span', 'fl-sub', 'ほんとうに、退部しますか？（日誌は、残ります）')); var y = E('button', 'btn', 'はい、退部'); y.type = 'button'; var n = E('button', 'btn', 'やめる'); n.type = 'button'; y.addEventListener('click', function () { st.j.splice(st.j.indexOf(c[0]), 1); sv(); draw(); }); n.addEventListener('click', function () { draw(); }); q.appendChild(y); q.appendChild(n); });
           q.appendChild(lv); card.appendChild(q);
         }
