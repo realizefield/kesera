@@ -465,7 +465,7 @@ button[aria-pressed="true"] { font-weight:700; }
 <canvas id="petals" aria-hidden="true"></canvas>
 <dialog class="design-dialog location-dialog" id="memoDlg" aria-labelledby="memoDlgT"><div style="display:flex;flex-direction:column;gap:12px;padding:6px"><h2 id="memoDlgT" style="margin:0">📅 予約した予定の一覧</h2><div id="memoDlgList" style="display:flex;flex-direction:column;gap:8px;max-height:55vh;overflow-y:auto"></div><button class="btn primary" id="memoDlgClose" type="button" style="min-height:56px;font-size:1.1rem">閉じる</button></div></dialog>
 <dialog class="design-dialog location-dialog" id="oddDlg" aria-labelledby="oddT"><div style="display:flex;flex-direction:column;gap:12px;padding:6px">
-<h2 id="oddT" style="margin:0">🤔 おかしい？と思ったら</h2>
+<h2 id="oddT" style="margin:0">🤔 おかしい？と思ったら<small style="display:block;font-size:.65em;font-weight:600">体調が変・詐欺かも</small></h2>
 <p style="margin:0;font-weight:700">電話の最中なら、いったん「少し待ってください」と言って、ここを見てください。当てはまるものに、チェックを入れてください。</p>
 <div id="oddQs" style="display:flex;flex-direction:column;gap:8px">
 <label class="odd-q"><input type="checkbox" name="odd"><span>お金を、振り込む・渡すように言われた</span></label>
@@ -4137,6 +4137,155 @@ button[aria-pressed="true"] { font-weight:700; }
   $('gspeak').addEventListener('click', function () { readAloud(screenText()); });
   (function () { var r = document.createElement('button'); r.className = 'btn small'; r.id = 'grepeat'; r.type = 'button'; r.textContent = '↻ もう一度聞く'; r.addEventListener('click', function () { readAloud(lastRead || screenText()); }); $('gspeak').insertAdjacentElement('afterend', r); })();
 
+  /* ---------- おかしい？：体調の変化チェック（応急対応・相談先・SOS） ---------- */
+  (function () {
+    var dlg = $('oddDlg'); if (!dlg) return;
+    var h2 = $('oddT'), inner = h2.parentNode, closeB = $('oddClose'), nodes = [h2.nextElementSibling, $('oddQs'), $('oddJudge'), $('oddResult')];
+    function E(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; }
+    function A(label, href, primary, ext) { var a = E('a', 'btnlink' + (primary ? ' primary' : ''), label); a.href = href; a.style.cssText = 'min-height:56px;justify-content:center;text-align:center'; if (ext) { a.target = '_blank'; a.rel = 'noopener'; } return a; }
+    var scam = E('div'); scam.style.cssText = 'display:flex;flex-direction:column;gap:12px'; nodes.forEach(function (n) { if (n) scam.appendChild(n); });
+    var hp = E('div'); hp.style.cssText = 'display:none;flex-direction:column;gap:12px';
+    var tabs = E('div', 'row'); var t1 = E('button', 'btn', '💰 お金・電話'), t2 = E('button', 'btn', '🩺 体調の変化'); [t1, t2].forEach(function (b) { b.type = 'button'; b.style.cssText = 'min-height:52px;font-size:1.05rem;flex:1'; tabs.appendChild(b); });
+    function tab(w) { scam.style.display = w === 1 ? 'flex' : 'none'; hp.style.display = w === 2 ? 'flex' : 'none'; t1.style.outline = w === 1 ? '3px solid var(--accent)' : ''; t2.style.outline = w === 2 ? '3px solid var(--accent)' : ''; }
+    t1.addEventListener('click', function () { tab(1); }); t2.addEventListener('click', function () { tab(2); });
+    inner.insertBefore(tabs, h2.nextSibling); inner.insertBefore(scam, closeB); inner.insertBefore(hp, closeB); tab(1);
+    $('oddBtn').addEventListener('click', function () { tab(1); resetH(); });
+    /* SOS ポップ */
+    function sosPop(reason) {
+      var o = document.getElementById('hlSos'); if (o) o.remove();
+      var d = E('dialog', 'design-dialog location-dialog'); d.id = 'hlSos'; var w = E('div'); w.style.cssText = 'display:flex;flex-direction:column;gap:12px;padding:8px';
+      var h = E('h2', '', '🆘 いますぐ、助けを呼びましょう'); h.style.cssText = 'margin:0;color:#b3261e'; w.appendChild(h);
+      if (reason) { var rr = E('p', '', reason); rr.style.cssText = 'margin:0;line-height:1.8;font-weight:700'; w.appendChild(rr); }
+      var c119 = A('📞 119（救急車）に電話する', 'tel:119', true); c119.style.cssText += ';min-height:72px;font-size:1.4rem;background:#b3261e;color:#fff;border-color:#b3261e'; w.appendChild(c119);
+      var fb = E('button', 'btn primary', '👪 ご家族に知らせる'); fb.type = 'button'; fb.style.minHeight = '60px'; fb.addEventListener('click', function () { var f = $('safeFam'); if (f) f.click(); }); w.appendChild(fb);
+      var m = E('div', 'notice'); m.style.lineHeight = '1.9'; m.innerHTML = '<b>電話がつながらない・かからないとき</b><ol style="margin:6px 0 0;padding-left:1.3em"><li>あわてず、もう一度、119にかけ直します。</li><li>窓や玄関をあけて、近くの人に、大きな声で助けを呼びます。</li><li>ご家族・ご近所の方に、電話やLINEで、知らせます。（上の「ご家族に知らせる」）</li><li>電話のスピーカーを入れて、楽な姿勢で待ちます。</li></ol>'; w.appendChild(m);
+      var m2 = E('div', 'notice'); m2.style.lineHeight = '1.9'; m2.innerHTML = '<b>救急車を待つあいだ</b><ul style="margin:6px 0 0;padding-left:1.3em"><li>楽な姿勢で、安静にします。むりに動かないでください。</li><li>玄関の鍵をあけ、保険証・お薬手帳・靴を、近くに用意します。</li><li>食べ物・飲み物は、とらないでください。</li></ul>'; w.appendChild(m2);
+      var x = E('button', 'btn', '閉じる'); x.type = 'button'; x.style.minHeight = '52px'; x.addEventListener('click', function () { d.close(); }); w.appendChild(x);
+      d.appendChild(w); d.addEventListener('close', function () { d.remove(); }); document.body.appendChild(d); if (d.showModal) d.showModal();
+    }
+    /* 同意（自己判断・自己責任） */
+    var CK = 'kesera-health-consent', cons = load(CK, null);
+    function stampD(ts) { var d = new Date(ts); return d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日'; }
+    var top = E('div'); top.style.cssText = 'display:flex;flex-direction:column;gap:8px';
+    var u119 = A('🆘 いますぐ 119（救急車）', 'tel:119', true); u119.style.cssText += ';min-height:64px;font-size:1.25rem;background:#b3261e;color:#fff;border-color:#b3261e'; top.appendChild(u119);
+    top.appendChild(E('span', 'fl-sub', '息ができない・意識がない・ひどい胸の痛みなどは、チェックせずに、すぐ119へ。')); top.lastChild.style.margin = '0';
+    var urg = E('div'); urg.style.cssText = 'display:none;flex-direction:column;gap:6px;background:#fdeceb;border:3px solid #b3261e;border-radius:12px;padding:10px'; urg.setAttribute('role', 'alert'); urg.appendChild(E('b', '', '⚠ 危ないサインに、チェックが入っています。')); var ub = E('button', 'btn primary', '🆘 SOS（119・ご家族）を出す'); ub.type = 'button'; ub.style.cssText = 'min-height:60px;font-size:1.15rem;background:#b3261e;border-color:#b3261e'; ub.addEventListener('click', function () { sosPop('チェックされたサインは、すぐ救急車が必要なことがあります。'); }); urg.appendChild(ub);
+    var cbox = E('div', 'notice'); cbox.style.cssText = 'display:flex;flex-direction:column;gap:8px;line-height:1.8';
+    var body = E('div'); body.style.cssText = 'display:none;flex-direction:column;gap:12px';
+    function drawConsent() {
+      cbox.innerHTML = '';
+      if (cons) { var s = E('span', '', '✔ 「自己判断・自己責任」を、' + stampD(cons.at) + 'に、確認ずみです。'); var re = E('button', 'btn', 'もう一度、読む'); re.type = 'button'; re.style.cssText = 'min-height:44px;align-self:flex-start'; re.addEventListener('click', function () { cons = null; try { localStorage.removeItem(CK); } catch (e) {} drawConsent(); body.style.display = 'none'; }); cbox.appendChild(s); cbox.appendChild(re); body.style.display = 'flex'; return; }
+      body.style.display = 'none';
+      cbox.appendChild(E('b', '', '📖 はじめに、お読みください')); var ul = E('ul'); ul.style.cssText = 'margin:0;padding-left:1.3em'; ['この体調チェックは、診断ではありません。お医者さんの診察の代わりにも、なりません。', '表示は「目安」です。最後の判断と行動は、ご自分の責任で、お願いします（自己判断・自己責任）。', '少しでも不安なとき、命にかかわると感じたときは、迷わず119、または医療機関へ。', '入力した体調は、保存しません。'].forEach(function (t) { ul.appendChild(E('li', '', t)); }); cbox.appendChild(ul);
+      var lb = E('label'); lb.style.cssText = 'display:flex;gap:10px;align-items:flex-start;font-weight:700'; var cb = E('input'); cb.type = 'checkbox'; cb.style.cssText = 'width:28px;height:28px;flex:none'; lb.appendChild(cb); lb.appendChild(E('span', '', '読みました。自己判断・自己責任であることを、理解しました。')); cbox.appendChild(lb);
+      var ok = E('button', 'btn primary', '確認して、チェックを使う'); ok.type = 'button'; ok.style.minHeight = '56px'; var mg = E('span', 'fl-sub'); mg.style.margin = '0'; mg.setAttribute('role', 'status');
+      ok.addEventListener('click', function () { if (!cb.checked) { mg.textContent = '上のチェックを入れてから、押してください。'; return; } cons = { at: Date.now(), v: 1 }; save(CK, cons); drawConsent(); });
+      cbox.appendChild(ok); cbox.appendChild(mg);
+    }
+    /* 症状 */
+    var S = [
+      ['breath', '息苦しい', 1, null], ['dizzy', 'めまい', 0, null], ['head', '頭痛', 0, '突然の、はげしい頭痛（これまでにない痛み）'], ['palsy', '麻痺（顔・腕・足に力が入らない／顔がゆがむ）', 1, null],
+      ['numb', 'しびれ', 0, '急に、体の片側だけ、しびれる'], ['speech', 'ろれつがまわらない・ことばが出ない', 1, null], ['palp', '動悸（どきどき・脈がみだれる）', 0, null], ['pain', '痛み（胸・背中・お腹など）', 0, '胸や背中の痛み、または、がまんできない強い痛み'],
+      ['eye', '目のかすみ', 0, '急に、片目や視野の一部が、見えなくなった'], ['ear', '耳鳴り', 0, null], ['fever', '熱がある', 0, null], ['nausea', '気持ち悪い・吐き気', 0, null], ['heat', '熱中症かも', 0, '呼びかけに答えない・ぼんやり・自分で水が飲めない・けいれん']
+    ];
+    var cbs = {}, subs = {}, list = E('div'); list.style.cssText = 'display:flex;flex-direction:column;gap:8px';
+    function chg() { var u = false; S.forEach(function (s) { if ((s[2] && cbs[s[0]].checked) || (subs[s[0]] && cbs[s[0]].checked && subs[s[0]].checked)) u = true; if (subs[s[0]]) subs[s[0]].parentNode.style.display = cbs[s[0]].checked ? 'flex' : 'none'; if (subs[s[0]] && !cbs[s[0]].checked) subs[s[0]].checked = false; }); urg.style.display = u ? 'flex' : 'none'; }
+    S.forEach(function (s) {
+      var wrap = E('div'); wrap.style.cssText = 'display:flex;flex-direction:column;gap:6px'; var lb = E('label', 'odd-q'); var cb = E('input'); cb.type = 'checkbox'; cb.addEventListener('change', chg); cbs[s[0]] = cb; lb.appendChild(cb); lb.appendChild(E('span', '', s[1])); wrap.appendChild(lb);
+      if (s[3]) { var sl = E('label', 'odd-q'); sl.style.cssText = 'display:none;margin-left:24px;border-color:#b3261e;background:#fdeceb'; var sc = E('input'); sc.type = 'checkbox'; sc.addEventListener('change', chg); subs[s[0]] = sc; sl.appendChild(sc); sl.appendChild(E('span', '', '⚠ ' + s[3])); wrap.appendChild(sl); }
+      list.appendChild(wrap);
+    });
+    var judge = E('button', 'btn primary', '確かめる'); judge.type = 'button'; judge.style.cssText = 'min-height:56px;font-size:1.15rem'; var res = E('div'); res.setAttribute('role', 'alert'); res.style.cssText = 'display:flex;flex-direction:column;gap:10px';
+    var FA = { breath: '上体を起こして、楽な姿勢ですわります。衣服をゆるめ、窓をあけて、空気を入れます。', dizzy: 'すぐ座るか、横になります。動かず、転ばないようにします。水分をとり、落ち着くまで休みます。', head: '静かで暗い場所で、休みます。突然のはげしい痛み、吐き気、ろれつの異常があれば、119へ。', palsy: '顔のゆがみ・腕の力・ことば、のどれかが急におかしい場合は、脳卒中のことがあります。すぐ119へ。症状が出た時刻を、覚えておいてください。飲食はしないでください。', numb: '急に片側だけのしびれは、すぐ119へ。長く続く、くり返すときは、早めに医療機関へ。', speech: 'ろれつ・ことばの異常は、脳卒中のサインのことがあります。すぐ119へ。症状が出た時刻を、覚えておいてください。飲食はしないでください。', palp: '座って、安静にします。ゆっくり息を吐きます。胸の痛み・息苦しさ・気が遠くなる感じがあれば、119へ。', pain: '楽な姿勢で、安静にします。胸・背中の痛み、冷や汗をともなう痛み、がまんできない痛みは、119へ。', eye: '目を休めます。急な見えにくさ・片目だけ見えない・頭痛をともなうときは、すぐ医療機関か119へ。', ear: '静かな場所で、休みます。急に聞こえにくくなった・めまいをともなうときは、早めに耳鼻科へ。', fever: '水分をとり、衣服をゆるめ、休みます。ぐったりしている・水分がとれない・息苦しいときは、すぐ受診を。薬は、用法を守ってください。', nausea: '横向きで、安静にします。少しずつ、水分をとります。冷や汗・胸の痛み・動悸をともなうときは、119へ。', heat: '涼しい場所（エアコンのある部屋・日かげ）へ。衣服をゆるめ、首・わき・足のつけ根を、冷やします。水分と塩分（スポーツドリンク・経口補水液）を、少しずつ。自分で飲めない・意識がおかしいときは、119へ。' };
+    judge.addEventListener('click', function () {
+      res.innerHTML = ''; var on = {}, n = 0; S.forEach(function (s) { if (cbs[s[0]].checked) { on[s[0]] = 1; n++; } });
+      var u = false, why = ''; S.forEach(function (s) { if (s[2] && on[s[0]]) { u = true; why = why || s[1].split('（')[0] + 'があります。'; } if (subs[s[0]] && subs[s[0]].checked) { u = true; why = why || '「' + s[3] + '」にチェックがあります。'; } });
+      function any() { for (var i = 0; i < arguments.length; i++) if (on[arguments[i]]) return true; return false; }
+      if (!u && on.palp && any('breath', 'pain', 'dizzy', 'nausea')) { u = true; why = '動悸に、ほかのサインが重なっています。'; }
+      if (!u && on.dizzy && any('numb', 'palsy', 'speech', 'head', 'eye')) { u = true; why = 'めまいに、しびれ・頭痛・目の異常などが重なっています。'; }
+      if (!u && on.nausea && any('pain', 'breath', 'palp', 'dizzy')) { u = true; why = '気持ち悪さに、ほかのサインが重なっています。'; }
+      if (!u && on.head && any('numb', 'palsy', 'speech', 'eye')) { u = true; why = '頭痛に、しびれ・目の異常などが重なっています。'; }
+      var box = E('div', 'odd-res ' + (n ? 'bad' : 'ok')); 
+      if (!n) { box.innerHTML = '<b style="font-size:1.2rem">✅ いまは、当てはまるものが、ありません。</b><br>それでも、いつもと違うと感じたら、無理せず休み、必要なら相談してください。水分と休息を。'; res.appendChild(box); }
+      else if (u) { box.innerHTML = '<b style="font-size:1.3rem">🚨 すぐ、119を考えてください。</b><br>' + why + '<br>ためらわずに、救急車を呼んでください。ひとりのときは、玄関の鍵をあけておきます。'; res.appendChild(box); var c = A('📞 119（救急車）に電話する', 'tel:119', true); c.style.cssText += ';min-height:68px;font-size:1.3rem;background:#b3261e;color:#fff;border-color:#b3261e'; res.appendChild(c); var f = E('button', 'btn primary', '🆘 SOS（ご家族・かからないとき）'); f.type = 'button'; f.style.minHeight = '56px'; f.addEventListener('click', function () { sosPop(why); }); res.appendChild(f); setTimeout(function () { sosPop(why); }, 50); }
+      else { box.innerHTML = '<b style="font-size:1.25rem">⚠ 今日中に、相談か受診を、おすすめします。</b><br>' + (n >= 3 ? 'チェックが' + n + '個あります。重なっているときは、早めの受診を、強くおすすめします。<br>' : '') + '迷うときは、下の健康相談（24時間）に、電話してください。症状が強くなったら、すぐ119へ。'; res.appendChild(box); }
+      if (n) {
+        var fa = E('div', 'card'); fa.style.gap = '6px'; fa.appendChild(E('b', '', '🩹 応急対応（チェックされたもの）')); S.forEach(function (s) { if (on[s[0]]) { var p = E('p', '', '・' + s[1].split('（')[0] + '：' + FA[s[0]]); p.style.cssText = 'margin:0;line-height:1.8'; fa.appendChild(p); } }); res.appendChild(fa);
+        var cs = E('div', 'card'); cs.style.gap = '8px'; cs.appendChild(E('b', '', '☎ 健康相談・受診の案内'));
+        cs.appendChild(A('🤔 救急安心センター　#7119（24時間）', 'tel:%237119', !u)); var t3 = E('span', 'fl-sub', '熊本県内の方・おおむね15歳以上。救急車を呼ぶか迷うとき、受診できる医療機関の案内も。ダイヤル回線・IP電話は 03-6456-3290。（他の県の方は、地域の番号をお調べください）'); t3.style.margin = '0'; cs.appendChild(t3);
+        cs.appendChild(A('📞 つながらないとき：03-6456-3290', 'tel:0364563290', false));
+        cs.appendChild(A('👶 15歳未満：子ども医療電話相談　#8000', 'tel:%238000', false)); var t4 = E('span', 'fl-sub', '受付時間は、熊本県の案内でご確認ください。'); t4.style.margin = '0'; cs.appendChild(t4);
+        cs.appendChild(A('🏥 受診できる医療機関を探す（医療情報ネット）', 'https://www.iryou.teikyouseido.mhlw.go.jp/', false, true));
+        cs.appendChild(A('🗺 近くの病院・夜間休日（地図）', 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('病院 救急 夜間 休日診療'), false, true));
+        var t5 = E('span', 'fl-sub', 'かかりつけ医がいる方は、まず、かかりつけ医に電話を。診療時間外は、#7119へ。どこにもつながらないときは、🆘 SOS（上のボタン）を使ってください。'); t5.style.margin = '0'; cs.appendChild(t5);
+        var sb = E('button', 'btn', '🆘 SOS（ご家族・119）を出す'); sb.type = 'button'; sb.style.minHeight = '52px'; sb.addEventListener('click', function () { sosPop(''); }); cs.appendChild(sb); res.appendChild(cs);
+      }
+      try { res.scrollIntoView({ block: 'nearest' }); } catch (e) {}
+    });
+    /* 声・文字で伝える → AIが整理 → 「伝わった／伝わらない」→ ボタン入力 */
+    var KW = { breath: /息苦|息が(できない|しにくい|切れ|つまる|詰ま)|呼吸が(苦|つら)|ぜーぜー|ゼーゼー/, dizzy: /めまい|ふらふら|ふらつ|目が回|くらくら/, head: /頭(が|は)?(痛|いた)|頭痛|ずつう/, head2: /突然.*頭|いきなり.*頭|はげしい頭|経験(した)?ことがない.*(頭|痛)|ハンマー/, palsy: /麻痺|まひ|力が入らな|動かな(い|くなった)|顔が(ゆがむ|曲が|下が)|口が(ゆがむ|曲が)|腕が上がらな|足が動かな/, numb: /しびれ|痺れ|ジンジン|感覚が(ない|鈍)/, numb2: /(片側|半身|右半分|左半分|右側|左側).*(しびれ|痺れ|麻痺)|急にしびれ/, speech: /ろれつ|呂律|ことば(が|を)(出|うまく)|言葉(が|を)(出|うまく)|うまく(話|しゃべ)れ|話せない|しゃべれない/, palp: /動悸|どきどき|ドキドキ|脈が(速|乱|飛)|心臓が(バクバク|ばくばく)/, pain: /痛い|痛み|いたい|ずきずき|しめつけ|締めつけ|締め付け/, pain2: /胸が(痛|苦し|締)|胸の痛|背中が(痛|いた)|がまんできない|我慢できない|激痛|ものすごく痛|耐えられない/, eye: /目が(かすむ|霞む)|かすむ|見えにくい|ぼやけ/, eye2: /片目.*見えない|急に見えな|視野が欠け|見えなくなった/, ear: /耳鳴り|みみなり|キーン|耳が鳴/, fever: /熱(が|は)?(ある|高|出)|発熱|微熱|高熱/, nausea: /気持ち悪|きもちわる|吐き気|はきけ|吐いた|むかむか/, heat: /熱中症|暑さで|暑くて(ぐったり|倒れ)|日差し.*(ぐったり|ふらふら)/, heat2: /(呼びかけ|返事).*(ない|しない)|意識(が)?(ない|もうろう|おかしい)|けいれん|痙攣|水が飲めない/ };
+    var CRISIS = /意識がない|倒れた|倒れて|呼吸(を)?していない|息(を)?していない|心臓が止ま|大量に出血|血が止まらない/;
+    var LAB = {}; S.forEach(function (s) { LAB[s[0]] = s[1].split('（')[0]; if (s[3]) LAB[s[0] + '2'] = '⚠ ' + s[3]; });
+    function kwKeys(t) { var r = []; Object.keys(KW).forEach(function (k) { if (KW[k].test(t)) r.push(k); }); r.forEach(function (k) { if (/2$/.test(k) && r.indexOf(k.slice(0, -1)) < 0) r.push(k.slice(0, -1)); }); return r; }
+    function aiKeys(t) {
+      var prompt = '次の文は、高齢の方が話した体調の様子です。当てはまる症状のキーだけを、JSONの配列で答えてください。説明は書かないでください。キー：' + Object.keys(LAB).join(',') + '（breath=息苦しい, dizzy=めまい, head=頭痛, head2=突然のはげしい頭痛, palsy=麻痺, numb=しびれ, numb2=急に片側だけのしびれ, speech=ろれつ・ことばの異常, palp=動悸, pain=痛み, pain2=胸や背中の痛み・強い痛み, eye=目のかすみ, eye2=急に見えなくなった, ear=耳鳴り, fever=熱, nausea=気持ち悪い, heat=熱中症かも, heat2=呼びかけに答えない・水が飲めない・けいれん）。診断はしないでください。\n文：' + t;
+      var p;
+      if (window.KESERA_AI_ENDPOINT) p = fetch(window.KESERA_AI_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ persona: 'あなたは、症状のことばを、決められたキーに分類するだけの、助手です。', messages: [{ role: 'user', content: prompt }] }) }).then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (j) { return j.text; });
+      else p = getSample().then(function (sm) { if (!sm) throw 0; return sm([{ role: 'user', content: prompt }], { modelTier: 'quick' }).then(function (o) { return o.text; }); });
+      var to = new Promise(function (_, rej) { setTimeout(function () { rej(0); }, 9000); });
+      return Promise.race([p, to]).then(function (txt) { var m = String(txt || '').match(/\[[^\]]*\]/); if (!m) return []; var a; try { a = JSON.parse(m[0]); } catch (e) { return []; } return a.filter(function (k) { return LAB[k]; }); });
+    }
+    function dlgPop(build) { var o = document.getElementById('hlVc'); if (o) o.remove(); var d = E('dialog', 'design-dialog location-dialog'); d.id = 'hlVc'; var w = E('div'); w.style.cssText = 'display:flex;flex-direction:column;gap:12px;padding:8px'; build(w, d); d.appendChild(w); d.addEventListener('close', function () { d.remove(); }); document.body.appendChild(d); if (d.showModal) d.showModal(); return d; }
+    function applyKeys(keys) { Object.keys(cbs).forEach(function (k) { cbs[k].checked = false; if (subs[k]) subs[k].checked = false; }); keys.forEach(function (k) { var m = /2$/.test(k) ? k.slice(0, -1) : k; if (cbs[m]) cbs[m].checked = true; if (/2$/.test(k) && subs[m]) subs[m].checked = true; }); chg(); judge.click(); }
+    function btnPop(pre) {
+      dlgPop(function (w, d) {
+        w.appendChild(E('h2', '', '👆 ボタンで、えらんでください')); w.firstChild.style.margin = '0'; w.appendChild(E('p', 'fl-sub', '当てはまるものを、押してください（もう一度押すと、はずれます）。')); w.lastChild.style.margin = '0';
+        var sel = {}; (pre || []).forEach(function (k) { sel[k] = 1; }); var grid = E('div'); grid.style.cssText = 'display:flex;flex-direction:column;gap:8px';
+        function mk(k, label, danger) { var b = E('button', 'btn', label); b.type = 'button'; b.style.cssText = 'min-height:56px;font-size:1.1rem;text-align:left;' + (danger ? 'border-color:#b3261e;' : ''); function pt() { b.style.background = sel[k] ? (danger ? '#b3261e' : 'var(--accent)') : ''; b.style.color = sel[k] ? '#fff' : ''; b.setAttribute('aria-pressed', sel[k] ? 'true' : 'false'); } b.addEventListener('click', function () { sel[k] = sel[k] ? 0 : 1; pt(); }); pt(); grid.appendChild(b); }
+        S.forEach(function (s) { mk(s[0], s[1], s[2]); if (s[3]) mk(s[0] + '2', '　⚠ ' + s[3], true); }); w.appendChild(grid);
+        var go2 = E('button', 'btn primary', '✔ これで、確かめる'); go2.type = 'button'; go2.style.cssText = 'min-height:60px;font-size:1.15rem'; go2.addEventListener('click', function () { var ks = Object.keys(sel).filter(function (k) { return sel[k]; }); d.close(); applyKeys(ks); }); w.appendChild(go2);
+        var x = E('button', 'btn', '閉じる'); x.type = 'button'; x.style.minHeight = '48px'; x.addEventListener('click', function () { d.close(); }); w.appendChild(x);
+      });
+    }
+    function confirmPop(keys, aiUsed) {
+      dlgPop(function (w, d) {
+        w.appendChild(E('h2', '', '👂 こう、受け取りました')); w.firstChild.style.margin = '0';
+        var ul = E('ul'); ul.style.cssText = 'margin:0;padding-left:1.3em;line-height:2;font-size:1.15rem'; keys.forEach(function (k) { ul.appendChild(E('li', '', LAB[k])); }); w.appendChild(ul);
+        w.appendChild(E('b', '', 'これで、伝わっていますか？')); w.lastChild.style.fontSize = '1.15rem';
+        var r = E('div', 'row'); var ok = E('button', 'btn primary', '✅ 伝わった'); ok.type = 'button'; ok.style.cssText = 'min-height:64px;font-size:1.2rem'; var ng = E('button', 'btn', '❌ 伝わらない'); ng.type = 'button'; ng.style.cssText = 'min-height:64px;font-size:1.2rem';
+        ok.addEventListener('click', function () { d.close(); applyKeys(keys); }); ng.addEventListener('click', function () { d.close(); btnPop(keys); }); r.appendChild(ok); r.appendChild(ng); w.appendChild(r);
+        w.appendChild(E('span', 'fl-sub', aiUsed ? 'AIが、お話を整理しました。まちがいがあるときは「伝わらない」を押して、ボタンで直せます。' : 'ことばの手がかりから、整理しました。まちがいがあるときは「伝わらない」を押して、ボタンで直せます。')); w.lastChild.style.margin = '0';
+      });
+    }
+    var vbox = E('div', 'card'); vbox.style.gap = '8px'; vbox.appendChild(E('b', '', '🎤 声や文字で、伝える')); vbox.lastChild.style.fontSize = '1.1rem';
+    var vt = E('textarea'); vt.rows = 3; vt.setAttribute('aria-label', '体調の様子'); vt.placeholder = '例：さっきから、めまいがして、胸がどきどきします'; vt.style.cssText = 'width:100%;box-sizing:border-box;font-size:1.1rem;font-family:inherit'; vbox.appendChild(vt);
+    var SRh = window.SpeechRecognition || window.webkitSpeechRecognition, vm = E('span', 'fl-sub'); vm.style.margin = '0'; vm.setAttribute('role', 'status'); var vr = E('div', 'row'), vmic = E('button', 'btn', '🎤 声で話す'), vgo = E('button', 'btn primary', '✔ 伝える'), vcur = null;
+    [vmic, vgo].forEach(function (b) { b.type = 'button'; b.style.cssText = 'min-height:56px;font-size:1.1rem'; });
+    if (!SRh) vmic.style.display = 'none'; else vmic.addEventListener('click', function () {
+      if (vcur) { try { vcur.stop(); } catch (e) {} return; }
+      try { var r = new SRh(); r.lang = 'ja-JP'; r.interimResults = false; vcur = r; vmic.textContent = '■ とめる'; vm.textContent = '聞いています。話してください…';
+        r.onresult = function (e) { var q = ''; for (var i = e.resultIndex; i < e.results.length; i++) q += e.results[i][0].transcript; vt.value = (vt.value ? vt.value + '、' : '') + q; vm.textContent = '入りました。「伝える」を押してください。'; };
+        r.onerror = function (e) { vm.textContent = e.error === 'not-allowed' || e.error === 'service-not-allowed' ? 'マイクが許可されていません。文字か、ボタンで伝えてください。' : '声を聞き取れませんでした。もういちど、お試しください。'; };
+        r.onend = function () { vcur = null; vmic.textContent = '🎤 声で話す'; if (vm.textContent.indexOf('聞いています') === 0) vm.textContent = ''; };
+        r.start(); setTimeout(function () { try { r.stop(); } catch (e) {} }, 30000);
+      } catch (er) { vcur = null; vmic.textContent = '🎤 声で話す'; vm.textContent = '声の機能を始められませんでした。文字か、ボタンで伝えてください。'; } });
+    vgo.addEventListener('click', function () {
+      var t = vt.value.trim(); if (!t) { vm.textContent = '先に、話すか、書いてください。'; return; }
+      if (CRISIS.test(t)) { sosPop('「' + t.slice(0, 40) + '」と受け取りました。すぐ、救急車が必要なことがあります。'); return; }
+      if (privDetect(t)) { vm.textContent = '電話番号・口座番号・暗証番号などは、ここには書かないでください。症状だけを、お書きください。'; return; }
+      var kw = kwKeys(t); vgo.disabled = true; vm.textContent = 'お話を、整理しています…';
+      aiKeys(t).then(function (a) { return { k: a, ai: true }; }, function () { return { k: [], ai: false }; }).then(function (o) {
+        vgo.disabled = false; vm.textContent = ''; var keys = kw.slice(); o.k.forEach(function (k) { if (keys.indexOf(k) < 0) keys.push(k); });
+        if (!keys.length) btnPop([]); else confirmPop(keys, o.ai && o.k.length > 0);
+      });
+    });
+    vr.appendChild(vmic); vr.appendChild(vgo); vbox.appendChild(vr); vbox.appendChild(vm); vbox.appendChild(E('span', 'fl-sub', 'うまく伝わらないときは、ボタンで選べます。')); vbox.lastChild.style.margin = '0';
+    var vbtn = E('button', 'btn', '👆 ボタンで、えらぶ'); vbtn.type = 'button'; vbtn.style.minHeight = '52px'; vbtn.addEventListener('click', function () { btnPop([]); }); vbox.appendChild(vbtn);
+    function resetH() { Object.keys(cbs).forEach(function (k) { cbs[k].checked = false; if (subs[k]) subs[k].checked = false; }); chg(); res.innerHTML = ''; }
+    body.appendChild(urg); body.appendChild(vbox); body.appendChild(E('b', '', '🩺 または、当てはまるものに、チェックを入れてください')); body.appendChild(list); body.appendChild(judge); body.appendChild(res);
+    hp.appendChild(top); hp.appendChild(cbox); hp.appendChild(body); drawConsent(); chg();
+  })();
+
   /* ---------- ヘッダーをコンパクトに ---------- */
   (function () {
     var tools = document.querySelector('.header-tools'), loc = $('locationBtn'), trip = $('tripOpen'), st = $('settingsBtn');
@@ -4144,7 +4293,7 @@ button[aria-pressed="true"] { font-weight:700; }
     if (trip) { trip.textContent = '🚃 お出かけ'; trip.setAttribute('aria-label', '歩く・電車・バス・タクシー'); }
     if (loc) { loc.className = 'btn loc-btn'; loc.innerHTML = '◎ 現在地'; loc.setAttribute('aria-label', 'Googleマップで現在地を見る'); tools.insertBefore(loc, st || null); }
     if (st) st.textContent = '⚙ 設定';
-    var oddb = $('oddBtn'); if (oddb) oddb.textContent = '🤔 おかしい？と思ったら、ここを押す';
+    var oddb = $('oddBtn'); if (oddb) { oddb.innerHTML = '🤔 おかしい？と思ったら、ここを押す<small style="display:block;font-size:.8em;font-weight:600;margin-top:2px">体調が変・詐欺かも</small>'; oddb.setAttribute('aria-label', 'おかしいと思ったら、ここを押す。体調が変、詐欺かも'); }
   })();
 
   /* ---------- 絵記号のメニュー ---------- */
