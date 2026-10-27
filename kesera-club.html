@@ -878,7 +878,8 @@ button[aria-pressed="true"] { font-weight:700; }
       <p class="fl-sub" id="tnNow"></p></div>
     <div id="tnList" style="display:flex;flex-direction:column;gap:10px"></div>
     <div id="vcCard" class="card" style="gap:10px">
-      <h2 style="margin:0">📣 町や市・県に「モノ申す！」</h2>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><h2 style="margin:0">📣 町や市・県に「モノ申す！」</h2><button class="btn" id="vcTog" type="button" aria-expanded="false" aria-controls="vcBody" style="min-height:52px;white-space:nowrap">ひらく ▼</button></div>
+      <div id="vcBody" style="display:none;flex-direction:column;gap:10px">
       <p class="muted" style="margin:0">困っていること、こうなったらいいなと思うことを、きちんと伝わる文章にします。送る先は、あなたが選びます。</p>
       <div class="notice" id="vcDirect" style="display:flex;flex-direction:column;gap:8px"><b style="font-size:1.1rem">🚀 市長・県知事への直行便</b><span class="fl-sub">トップに直接届く、手紙・メールの窓口を探します。</span><div class="row" id="vcDirectRow"></div></div>
       <b>① どこに伝えますか？</b><div class="fl-chips" id="vcTo" role="group" aria-label="宛先"></div>
@@ -892,6 +893,7 @@ button[aria-pressed="true"] { font-weight:700; }
       <div class="row" id="vcAct" style="display:none"></div>
       <div class="row" id="vcLinks"></div>
       <p class="fl-sub" style="margin:0">伝わるコツ：①事実と、お願いを、分ける ②きつい言葉は使わない ③返事がほしいときだけ、連絡先を書く。住所・電話番号・口座などは、必要なときだけにしましょう。</p>
+      </div>
     </div>
 
     <p class="fl-sub">開催日・時間・場所は、リンク先の最新の情報でご確認ください。ケセラの中には、行事の日程は載せていません（古い情報を、お伝えしないためです）。</p>
@@ -4837,6 +4839,7 @@ button[aria-pressed="true"] { font-weight:700; }
     var cond = document.getElementById('inCond'); if (cond) cond.parentNode.insertBefore(note(), cond.nextSibling);
   })();
 
+  (function () { var b = $('vcTog'), body = $('vcBody'); if (!b || !body) return; b.addEventListener('click', function () { var open = body.style.display !== 'none'; body.style.display = open ? 'none' : 'flex'; b.textContent = open ? 'ひらく ▼' : 'たたむ ▲'; b.setAttribute('aria-expanded', open ? 'false' : 'true'); }); })();
   /* ---------- 町や市・県に「モノ申す！」 ---------- */
   (function () {
     var card = $('vcCard'); if (!card) return;
