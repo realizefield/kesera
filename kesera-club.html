@@ -4344,6 +4344,51 @@ button[aria-pressed="true"] { font-weight:700; }
     function stamp(ts) { var d = new Date(ts), w = '日月火水木金土'[d.getDay()]; return d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日（' + w + '）' + pad(d.getHours()) + ':' + pad(d.getMinutes()); }
     function go(x) { if (x[1].indexOf('href:') === 0) { var b = E('button', 'btn', x[0]); b.type = 'button'; b.style.cssText = 'min-height:52px;text-align:left'; b.addEventListener('click', function () { window.location.href = x[1].slice(5); }); return b; } var b2 = E('button', 'btn', x[0]); b2.type = 'button'; b2.style.cssText = 'min-height:52px;text-align:left'; b2.setAttribute('data-go', x[1]); return b2; }
     function sv() { save(KEY, st); }
+    /* ---------- 各部の「きょうのワクワク」と、体調のおねがい ---------- */
+    var IDEAS = {
+      haiku: ['きょう見た空の色を、五音で言ってみましょう。（例：あおいそら）', 'きょう食べたものの「音」や「香り」を、ことばにしてみましょう。', '孫やお友だちの笑顔を、十七音に、とじこめてみましょう。', '季語をひとつ決めて（例：秋の風）、一句つくってみましょう。', 'いままでで、いちばんうれしかった日を、短歌にしてみましょう。'],
+      dajare: ['きょう目にした物の名前で、ダジャレをひとつ作ってみましょう。', '「かさ」「いす」「ねこ」…好きなことばの、同じ音を探してみましょう。', '家族やお友だちに、ダジャレを1個、披露してみましょう。', 'ダジャレバトルで、四天王の「布団の将」に挑戦してみましょう！', 'ダジャレを声に出して、笑ってみましょう。笑うと、気持ちも軽くなります。'],
+      oshare: ['クローゼットで、いちばんお気に入りの一枚を、見つけてみましょう。', 'きょうの服に、「明るい色」をひとつ足してみましょう。（スカーフ・靴下・小物）', '鏡の前で、にっこり笑ってみましょう。おしゃれの仕上げは、笑顔です。', 'お友だちの「素敵だな」と思った着こなしを、まねっこしてみましょう。', '着こなし相談室で、この季節の組み合わせを、のぞいてみましょう。'],
+      yoga: ['いすに座ったまま、肩を、ゆっくり3回まわしましょう。', '鼻から4秒吸って、6秒で吐く。3回だけ、ゆっくり。', '足の指を、グー・パー、10回。座ったままで、できます。', '首を、ゆっくり左右に倒して、気持ちいいところで止めましょう。（痛くない範囲で）', '寝る前に、両腕を上にのばして、「ふぅ〜」と息を吐いてみましょう。'],
+      music: ['青春時代の一曲を、聴いてみましょう。当時の景色が、よみがえるかもしれません。', '好きな歌を、鼻歌で、一番だけ歌ってみましょう。', '思い出の曲を、家族やお友だちに、ひとつ教えてあげましょう。', '童謡を、声に出して、歌ってみましょう。気持ちが、軽くなります。', '目をとじて、好きな音楽を、しばらく聴いてみましょう。'],
+      taiiku: ['その場で、足ぶみ30秒。まずは、ここから。', 'いすから立って、座る。5回だけ。足腰の元気のもとです。', '片足立ち、10秒。（つかまれる物のそばで）', '5分、お散歩。玄関を出て、空を見上げてみましょう。', 'かかとの上げ下げを、10回。ふくらはぎは、第二の心臓です。'],
+      game: ['脳ジムで、気分転換に、ひとつだけ遊んでみましょう。', 'しりとりを、家族やお友だちと。ことばが出てくるのが、楽しい！', 'トランプ・オセロ・将棋など、昔遊んだゲームを、ひとつ思い出してみましょう。', 'ダジャレバトルで、ことばの遊びを、してみましょう。', 'まちがい探しやパズルを、10分。集中する時間は、心にもよいです。'],
+      run: ['外に出て、10歩だけ、いつもより大きな歩幅で、歩いてみましょう。', '天気のよい日に、「歩く3分→ゆっくり走る1分」を、2回。', 'お気に入りの靴を、みがいてみましょう。歩きたくなる気持ちが育ちます。', '歩くコースを地図で眺めて、行ってみたい景色を決めましょう。', 'きょう歩いた歩数や時間を、日誌にメモしてみましょう。'],
+      cycle: ['自転車の空気とブレーキを、点検してみましょう。', '近所の、行ったことのない道を、地図で探してみましょう。', 'ヘルメットを、新しくしてみましょう。安全は、おしゃれにもなります。', '近くのサイクリングロードを、調べてみましょう。', '景色のよい橋や川べりを、ゆっくり走る計画を、立ててみましょう。'],
+      cook: ['冷蔵庫の野菜で、一品。10分ごはんを、のぞいてみましょう。', 'レシピ帳から、きょうの一品を、決めましょう。', 'きょうの料理を、写真に撮って、思い出の記録に残しましょう。', 'いつものお味噌汁に、新しい具をひとつ、足してみましょう。', 'だしを、ひと口、味わってみましょう。素材の味が、よくわかります。'],
+      craft: ['折り紙を、1枚。鶴でも、ハートでも、かんたんな形で。', '花の飾り方を、のぞいてみましょう。', '古い布や毛糸で、小さなコースターを、作ってみましょう。', '手作りの物を、誰かにプレゼント。もらった人は、うれしいです。', '手を動かして、30分。夢中になる時間は、心も休まります。'],
+      guitar: ['好きなギターの曲を、聴いてみましょう。', 'ギターの音色を、目をとじて、しばらく聴いてみましょう。', '（お持ちの方は）弦を1本ずつ、ゆっくり鳴らしてみましょう。', '昔好きだった曲を、思い出してみましょう。', '身近なギター好きの方に、声をかけてみましょう。'],
+      band: ['好きなバンドの曲を、聴いてみましょう。（ご近所に気をつけて）', 'リズムに合わせて、手拍子を、1曲。', '近くのライブ情報を、のぞいてみましょう。', '昔のバンドの思い出を、日誌に書いてみましょう。', '好きな曲の歌詞を、声に出して、読んでみましょう。'],
+      piano: ['好きなピアノ曲を、聴いてみましょう。', '指を、机の上で、ゆっくり、ひとつずつ動かしてみましょう。', 'ドレミを、声に出して、歌ってみましょう。', '「きらきら星」の、はじめの小節を、ゆっくり。', 'お気に入りのピアニストを、ひとり見つけてみましょう。'],
+      council: ['まちの、困っていること・うれしいことを、ひとつ書き出してみましょう。', '近所の道で、気になった場所を、メモしてみましょう。', '「モノ申す！」で、考えを、文章にしてみましょう。', 'まちのよいところを、お友だちに、ひとつ伝えてみましょう。', '近くの公民館のお知らせを、のぞいてみましょう。'],
+      art: ['空や花を、スケッチ1枚。上手・下手は、関係ありません。', '絵画展・展覧会の情報を、のぞいてみましょう。', '家の中の好きな物を、じっくり見つめてみましょう。', '好きな画家の絵を、ひとつ、ゆっくり鑑賞してみましょう。', '色鉛筆で、きょうの気分の色を、ぬってみましょう。'],
+      climb: ['近くの低い山や、公園の丘を、地図で調べてみましょう。', '登山靴やリュックの準備を、見てみましょう。（買わなくても大丈夫です）', '天気予報と、日の出・日の入りの時刻を、チェックしてみましょう。', '景色のよい展望台を、探してみましょう。', '山の写真を見て、行ってみたい山を、決めましょう。'],
+      kosodate: ['孫や子どもの、最近うれしかったことを、ひとつメモしましょう。', '孫と遊べる公園を、探してみましょう。', '昔の子育ての思い出を、日誌に書いてみましょう。', '子どもや孫と、いっしょに歌える歌を、思い出してみましょう。', '子育て中の方に、「よくがんばっているね」と、声をかけてみましょう。']
+    };
+    var RISK = { yoga: '痛いところまで、のばさないでください。気持ちよいところで、止めましょう。', taiiku: '準備運動をして、息が上がったら、すぐ休みましょう。', run: '最初は歩きから。暑い日・寒い日は、無理せず、水分もとりましょう。', cycle: 'ヘルメットを着けて、交通ルールを守りましょう。体調のすぐれない日は、乗らないでください。', climb: '天気を確認し、行き先と帰る時間を、家族に伝えましょう。無理せず、引き返す勇気も、大切です。' };
+    var seen = {}, offs = {}, nopop = load('kesera-hg-nopop', false), PR = ['すばらしい！　一歩、ふみ出せました。', 'いいですね！　その調子です。', 'やってみた、その気持ちが、いちばん大切です。', 'すてきです！　きょうも、いちにち、よい日になりますね。'];
+    function riskDlg(c, force) {
+      var d = document.getElementById('hgRisk'); if (d) d.remove();
+      d = document.createElement('dialog'); d.id = 'hgRisk'; d.className = 'design-dialog location-dialog'; var w = E('div'); w.style.cssText = 'display:flex;flex-direction:column;gap:12px;padding:8px';
+      w.appendChild(E('h2', '', '🌿 体調に合わせて、無理なく')); w.firstChild.style.margin = '0';
+      var p = E('p', '', 'いまの体調に合わせて、できる分だけ、楽しみましょう。いつもと違う・痛い・息苦しい・めまいがする、というときは、すぐお休みして、必要なら医療機関へ。'); p.style.cssText = 'margin:0;line-height:1.9'; w.appendChild(p);
+      if (c && RISK[c[0]]) { var q = E('p', '', c[2] + 'では：' + RISK[c[0]]); q.style.cssText = 'margin:0;line-height:1.9;font-weight:700'; w.appendChild(q); }
+      var r = E('div', 'row'); var ok = E('button', 'btn primary', 'ハイ'); ok.type = 'button'; ok.style.cssText = 'min-height:56px;font-size:1.2rem'; ok.addEventListener('click', function () { d.close(); });
+      var no = E('button', 'btn', '表示しない'); no.type = 'button'; no.style.cssText = 'min-height:56px;font-size:1.1rem'; no.addEventListener('click', function () { nopop = true; save('kesera-hg-nopop', true); d.close(); });
+      r.appendChild(ok); if (!force) r.appendChild(no); w.appendChild(r); if (nopop && force) w.appendChild(E('span', 'fl-sub', '（自動で出す設定は、オフです）'));
+      d.appendChild(w); d.addEventListener('close', function () { d.remove(); }); document.body.appendChild(d); if (d.showModal) d.showModal();
+    }
+    function riskPop() { if (nopop) return; for (var i = 0; i < C.length; i++) { var c = C[i]; if (RISK[c[0]] && st.j.indexOf(c[0]) >= 0 && !seen[c[0]]) { seen[c[0]] = 1; riskDlg(c, false); return; } } }
+    function spark(c) {
+      var a = IDEAS[c[0]], box = E('div'); box.style.cssText = 'display:flex;flex-direction:column;gap:8px;background:var(--accent-soft);border-radius:12px;padding:10px'; if (!a) return box;
+      var i = (doy(now) + (offs[c[0]] || 0)) % a.length; box.appendChild(E('b', '', '✨ きょうのワクワク')); var t = E('div', '', a[i]); t.style.cssText = 'line-height:1.9;font-size:1.1rem'; box.appendChild(t);
+      var m = E('span', 'fl-sub'); m.setAttribute('role', 'status'); m.style.margin = '0'; var r = E('div', 'row');
+      var nx = E('button', 'btn', '🔄 ほかのアイデア'); nx.type = 'button'; nx.style.minHeight = '48px'; nx.addEventListener('click', function () { offs[c[0]] = (offs[c[0]] || 0) + 1; var y = window.scrollY; draw(); window.scrollTo(0, y); });
+      var dn = E('button', 'btn primary', '✅ やってみた！'); dn.type = 'button'; dn.style.minHeight = '48px'; dn.addEventListener('click', function () { var l = st.memo[c[0]] || (st.memo[c[0]] = []); l.push({ at: Date.now(), t: '【きょうの一歩】' + a[i] + '　→ やってみた！', v: false }); sv(); var y = window.scrollY; draw(); window.scrollTo(0, y); var m2 = document.querySelector('#hg-' + c[0] + ' [data-praise]'); if (m2) m2.textContent = '🌸 ' + PR[l.length % PR.length] + '（日誌に残しました）'; });
+      r.appendChild(nx); r.appendChild(dn); box.appendChild(r); m.setAttribute('data-praise', '1'); box.appendChild(m);
+      if (RISK[c[0]]) { var wb = E('button', 'btn', '🌿 体調のおねがいを見る'); wb.type = 'button'; wb.style.minHeight = '44px'; wb.addEventListener('click', function () { riskDlg(c, true); }); box.appendChild(wb); }
+      return box;
+    }
     function reset() { $('hgWel').style.display = 'none'; showHid = false; mode = st.j.length ? 'mine' : 'find'; draw(); window.scrollTo(0, 0); }
     function welcome(c) {
       var w = $('hgWel'); w.style.display = 'flex'; w.innerHTML = '';
@@ -4396,14 +4441,14 @@ button[aria-pressed="true"] { font-weight:700; }
           if (!joined) { var hid = st.hide.indexOf(c[0]) >= 0, hb = E('button', 'btn', hid ? '↩ もう一度、興味がある' : '今は興味がない'); hb.type = 'button'; hb.style.minHeight = '48px';
             hb.addEventListener('click', function () { if (hid) st.hide.splice(st.hide.indexOf(c[0]), 1); else st.hide.push(c[0]); sv(); draw(); }); card.appendChild(hb); if (hid) card.style.opacity = '.65'; }
         } else {
-          c[5].forEach(function (x) { card.appendChild(go(x)); }); card.appendChild(diary(c));
+          c[5].forEach(function (x) { card.appendChild(go(x)); }); card.appendChild(spark(c)); card.appendChild(diary(c));
           var q = E('div', 'row'); var lv = E('button', 'btn', '不参加'); lv.type = 'button'; lv.style.cssText = 'min-height:44px;font-size:.95rem';
           lv.addEventListener('click', function () { q.innerHTML = ''; q.appendChild(E('span', 'fl-sub', '退部しますか？（日誌は、残ります）')); var y = E('button', 'btn', 'はい、退部します'); y.type = 'button'; var n = E('button', 'btn', 'いいえ'); n.type = 'button'; y.addEventListener('click', function () { st.j.splice(st.j.indexOf(c[0]), 1); sv(); reset(); }); n.addEventListener('click', function () { reset(); }); q.appendChild(y); q.appendChild(n); });
           q.appendChild(lv); card.appendChild(q);
         }
         BODY.appendChild(card);
       });
-      if (all) hidToggle();
+      if (all) hidToggle(); else riskPop();
     }
     $('hgFind').addEventListener('click', function () { mode = 'find'; $('hgWel').style.display = 'none'; draw(); });
     $('hgMine').addEventListener('click', function () { mode = 'mine'; $('hgWel').style.display = 'none'; draw(); });
