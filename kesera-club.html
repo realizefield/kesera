@@ -1530,6 +1530,7 @@ button[aria-pressed="true"] { font-weight:700; }
 
   <footer>
     <p>試作版です。動画の再生は、ご自分のサイトに置いたときに、ページの中で動きます。天気は手入力、今日の人物は見本の一覧から選んでいます。AIとの自由な会話は、費用と回数を決めてから加えます。</p>
+    <p><b>制作元：</b>江原予備校（運営：株式会社アイラコーポレーション）／〒862-0950 熊本市中央区水前寺3-1-3／電話 096-382-6761／kogen@coast.ocn.ne.jp<br><button type="button" class="btn" onclick="document.dispatchEvent(new Event('kesera-terms'))">📜 利用規約を読む</button></p>
   </footer>
 </div>
 
@@ -4413,7 +4414,8 @@ button[aria-pressed="true"] { font-weight:700; }
       var ah = E('h3', '', '📜 利用規約（全文）'); ah.style.margin = '6px 0 0'; w.appendChild(ah);
       var ab = E('div'); ab.tabIndex = 0; ab.setAttribute('role', 'region'); ab.setAttribute('aria-label', '利用規約の全文'); ab.style.cssText = 'max-height:42vh;overflow:auto;border:2px solid var(--line);border-radius:10px;padding:10px 12px;line-height:1.8;font-size:1rem;background:var(--surface)';
       [["第1条（目的・適用）", "この規約は、ケセラ（以下「本サービス」）の利用条件を定めるものです。本サービスを利用される方（以下「利用者」）は、この規約に同意したうえでご利用ください。同意いただけない場合は、本サービスをご利用いただけません。"], ["第2条（掲載情報の性質）", "本サービスに表示される、部活・おすすめ・催し・お店・場所・季節の花・天気・健康や安全に関する案内などの情報（以下「掲載情報」）は、AI等の判断により作成・選択された、一般的な参考情報です。正確さ・完全さ・最新であること・特定の目的に合うことを、保証するものではありません。すでに終了・中止・変更されていたり、誤りを含んでいたりすることがあります。"], ["第3条（専門的な助言ではないこと）", "掲載情報は、医師・看護師・弁護士など専門家の診断・治療・助言の代わりにはなりません。体調に不安があるときは、必ず医療機関や専門家にご相談ください。"], ["第4条（自己判断・自己責任）", "運動・外出・食事・移動・各種の活動への参加や実践は、利用者ご自身の年齢・体調・周囲の状況をふまえ、ご自身の判断と責任で行ってください。無理をせず、事前に主催者・施設などに最新の情報をご確認ください。"], ["第5条（責任の範囲）", "当団体（ケセラ運営者）は、掲載情報の内容、およびその利用・参加によって、利用者または第三者に生じた損害（けが・病気・事故・財産の損害を含みます）について、法令で許される範囲で、責任を負いません。ただし、当団体に故意または重大な過失がある場合など、法令により責任を免れることができない場合は、この限りではありません。"], ["第6条（緊急時）", "本サービスの「助けて」「おかしい？」などの機能は、利用者ご自身が 110（警察）・119（救急）などに連絡するための案内です。本サービスが自動で通報・連絡することはありません。電話・メッセージ・音声は、電波・端末・設定などによりつながらないことがあります。"], ["第7条（外部のサービス）", "地図・動画・電話・SMS・外部サイトなど、本サービスから開く外部のサービスは、それぞれの提供者の条件に従います。その内容や利用について、当団体は責任を負いません。"], ["第8条（個人情報・記録の保存）", "お名前・連絡先・メモなどは、原則として利用者の端末の中に保存され、当団体には送られません。端末の紛失・故障・データの消去により、記録が失われることがあります。AIに質問する機能を使うと、入力した内容がAIの処理のために外部の事業者に送られることがあります。お名前・住所・電話番号など、個人が特定できる情報は入力しないでください。"], ["第9条（サービスの変更・中断）", "当団体は、予告なく、本サービスの内容を変更・中断・終了することがあります。"], ["第10条（規約の変更）", "当団体は、この規約を変更することがあります。重要な変更があるときは、あらためて同意をお願いすることがあります。"], ["第11条（準拠法・裁判所）", "この規約は日本法に従います。本サービスに関して争いが生じたときは、熊本地方裁判所または熊本簡易裁判所を、第一審の管轄裁判所とします。"]].forEach(function (a) { var t = E('b', '', a[0]); t.style.display = 'block'; t.style.marginTop = '8px'; ab.appendChild(t); ab.appendChild(E('div', '', a[1])); });
-      var upd0 = E('div', 'muted', '制定：2026年10月　／　当団体（ケセラ運営者）'); upd0.style.marginTop = '10px'; ab.appendChild(upd0); w.appendChild(ab);
+      var mkr = E('div'); mkr.style.cssText = 'margin-top:12px;border-top:1.5px solid var(--line);padding-top:8px'; mkr.appendChild(E('b', '', '制作元・お問い合わせ（当団体）')); mkr.appendChild(E('div', '', '江原予備校（運営：株式会社アイラコーポレーション）\n〒862-0950 熊本市中央区水前寺3-1-3（JR水前寺駅前）\n電話：096-382-6761\nメール：kogen@coast.ocn.ne.jp')); mkr.lastChild.style.whiteSpace = 'pre-line'; ab.appendChild(mkr);
+      var upd0 = E('div', 'muted', '制定：2026年10月　／　当団体＝江原予備校（ケセラ運営者）'); upd0.style.marginTop = '10px'; ab.appendChild(upd0); w.appendChild(ab);
       var qh = E('h3', '', '📋 緊急時の備え（アンケート）'); qh.style.margin = '6px 0 0'; w.appendChild(qh);
       var q1 = E('p', '', '1. 緊急のとき、連絡したい人は、いますか？'); q1.style.cssText = 'margin:0;font-weight:700'; w.appendChild(q1);
       var rr = E('div', 'row'); var ry = E('input'), rn = E('input'); ry.type = rn.type = 'radio'; ry.name = rn.name = 'termsContact'; ry.id = 'tcY'; rn.id = 'tcN';
