@@ -4172,6 +4172,7 @@ button[aria-pressed="true"] { font-weight:700; }
     var u119 = A('🆘 いますぐ 119（救急車）', 'tel:119', true); u119.style.cssText += ';min-height:64px;font-size:1.25rem;background:#b3261e;color:#fff;border-color:#b3261e'; top.appendChild(u119);
     var hb0 = E('button', 'btn', '🗣 声が出ない・助けてください（大きな表示と音声）'); hb0.type = 'button'; hb0.style.cssText = 'min-height:60px;font-size:1.1rem'; hb0.addEventListener('click', function () { document.dispatchEvent(new Event('kesera-help')); }); top.appendChild(hb0);
     top.appendChild(E('span', 'fl-sub', '息ができない・意識がない・ひどい胸の痛みなどは、チェックせずに、すぐ119へ。'));
+    var mb0 = E('button', 'btn', '🩺 いのちのメモ（お薬・既往症・かかりつけ）'); mb0.type = 'button'; mb0.addEventListener('click', function () { document.dispatchEvent(new Event('kesera-med')); }); top.appendChild(mb0);
     var tb0 = E('button', 'btn', '📋 利用規定・緊急時の備え'); tb0.type = 'button'; tb0.addEventListener('click', function () { document.dispatchEvent(new Event('kesera-terms')); }); top.appendChild(tb0); top.lastChild.style.margin = '0';
     var urg = E('div'); urg.style.cssText = 'display:none;flex-direction:column;gap:6px;background:#fdeceb;border:3px solid #b3261e;border-radius:12px;padding:10px'; urg.setAttribute('role', 'alert'); urg.appendChild(E('b', '', '⚠ 危ないサインに、チェックが入っています。')); var ub = E('button', 'btn primary', '🆘 SOS（119・ご家族）を出す'); ub.type = 'button'; ub.style.cssText = 'min-height:60px;font-size:1.15rem;background:#b3261e;border-color:#b3261e'; ub.addEventListener('click', function () { sosPop('チェックされたサインは、すぐ救急車が必要なことがあります。'); }); urg.appendChild(ub);
     var cbox = E('div', 'notice'); cbox.style.cssText = 'display:flex;flex-direction:column;gap:8px;line-height:1.8';
@@ -4312,12 +4313,14 @@ button[aria-pressed="true"] { font-weight:700; }
       var p = E('p', '', '声が出せません。救急車（119）を、呼んでください。'); p.style.cssText = 'margin:0;font-size:1.5rem;font-weight:800;line-height:1.7'; w.appendChild(p);
       var sos = load('kesera-sos', {}) || {}, nm = load('kesera-name', '') || '', lines = [];
       if (nm) lines.push('お名前：' + nm); if (sos.name || sos.phone) lines.push('連絡先：' + (sos.name ? sos.name + '　' : '') + (sos.phone || ''));
+      try { (window.__keseraMedLines ? window.__keseraMedLines() : []).forEach(function (r) { if (r[0] !== 'お名前' && r[0] !== '緊急連絡先') lines.push(r[0] + '：' + r[1]); }); } catch (e) {}
       if (lines.length) { var q = E('p', '', lines.join('\n')); q.style.cssText = 'margin:0;font-size:1.25rem;line-height:1.8;white-space:pre-line;border:2px solid #b3261e;border-radius:12px;padding:8px'; w.appendChild(q); }
       var c119 = E('a', 'btnlink primary', '📞 119（救急車）に電話する'); c119.href = 'tel:119'; c119.style.cssText = 'min-height:68px;justify-content:center;font-size:1.3rem;background:#b3261e;color:#fff;border-color:#b3261e'; w.appendChild(c119);
       var vb = E('button', 'btn primary', '🔊 音声を、とめる'); vb.type = 'button'; vb.style.cssText = 'min-height:60px;font-size:1.15rem'; var on = true;
       function vstart() { say(); timer = setInterval(say, 7000); vb.textContent = '🔊 音声を、とめる'; on = true; }
       vb.addEventListener('click', function () { if (on) { if (timer) { clearInterval(timer); timer = null; } try { ss && ss.cancel(); } catch (e) {} vb.textContent = '🔊 音声を、ならす'; on = false; } else vstart(); });
       if (ss) w.appendChild(vb); else w.appendChild(E('span', 'fl-sub', 'この端末では、音声が出せません。画面を、まわりの人に見せてください。'));
+      var mb = E('button', 'btn', '🩺 いのちのメモ（お薬・既往症）を見せる'); mb.type = 'button'; mb.style.minHeight = '56px'; mb.addEventListener('click', function () { document.dispatchEvent(new Event('kesera-medview')); }); w.appendChild(mb);
       var sb = E('button', 'btn', '🚨 大きな音（サイレン）を、ならす'); sb.type = 'button'; sb.style.cssText = 'min-height:60px;font-size:1.15rem'; var sm = E('span', 'fl-sub'); sm.style.margin = '0'; sm.setAttribute('role', 'status'); var sOn = false;
       sb.addEventListener('click', function () { if (sOn) { sirenOff(); sOn = false; sb.textContent = '🚨 大きな音（サイレン）を、ならす'; sm.textContent = ''; } else { if (sirenOn()) { sOn = true; sb.textContent = '🚨 サイレンを、とめる'; sm.textContent = ''; } else sm.textContent = 'この端末では、サイレンが出せません。'; } });
       w.appendChild(sb); w.appendChild(sm);
@@ -4462,6 +4465,61 @@ button[aria-pressed="true"] { font-weight:700; }
         if (document.querySelector('dialog[open]') && tries++ < 400) return setTimeout(wait, 1500);
         openTerms(true);
       })();
+    }
+  })();
+
+  /* ---------- いのちのメモ（お薬・既往症・かかりつけ） ---------- */
+  (function () {
+    function E(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; }
+    var K = 'kesera-med';
+    var F = [['name', 'お名前', '例：熊本 花子', 'text', 30], ['birth', '生年月日', '例：昭和30年4月1日', 'text', 20], ['addr', 'ご住所（救急車に来てもらう場所）', '例：熊本市中央区水前寺3-1-3', 'text', 80],
+      ['meds', '飲んでいるお薬', '例：血圧の薬（朝1錠）、血をサラサラにする薬', 'area', 200], ['hist', '既往症（これまでの病気・持病）', '例：高血圧、心臓の手術（〇年）', 'area', 200], ['allergy', 'アレルギー', '例：ペニシリン', 'text', 60],
+      ['clinic', 'かかりつけ医院の名前', '例：〇〇内科クリニック', 'text', 40], ['cphone', 'かかりつけ医院の電話', '例：096-000-0000', 'tel', 20], ['other', 'ほかに、伝えたいこと', '例：入れ歯、補聴器、耳が遠い', 'area', 120]];
+    function lines(m) {
+      var o = []; function add(l, v) { if (v) o.push([l, v]); }
+      add('お名前', m.name); add('生年月日', m.birth); add('ご住所', m.addr); add('飲んでいるお薬', m.meds); add('既往症', m.hist); add('アレルギー', m.allergy);
+      add('かかりつけ医院', (m.clinic || '') + (m.cphone ? '　' + m.cphone : '')); add('ほかに', m.other);
+      var s = load('kesera-sos', {}) || {}; if (s.name || s.phone) o.push(['緊急連絡先', (s.name ? s.name + '　' : '') + (s.phone || '')]);
+      return o;
+    }
+    window.__keseraMedLines = function () { return lines(load(K, {}) || {}); };
+    function showView() {
+      var m = load(K, {}) || {}, L = lines(m); var o = document.getElementById('medView'); if (o) o.remove();
+      var d = E('dialog', 'design-dialog location-dialog'); d.id = 'medView'; d.style.cssText = 'width:min(96vw,640px)';
+      var w = E('div'); w.style.cssText = 'display:flex;flex-direction:column;gap:10px;padding:10px';
+      var h = E('div', '', '救急の方・まわりの方へ'); h.style.cssText = 'font-size:1.8rem;font-weight:900;color:#fff;background:#b3261e;border-radius:12px;padding:14px;text-align:center'; w.appendChild(h);
+      if (!L.length) w.appendChild(E('p', '', 'まだ、書かれていません。「いのちのメモ」に記入してください。'));
+      L.forEach(function (r) { var b = E('div'); b.style.cssText = 'border:2px solid var(--line);border-radius:10px;padding:8px 12px'; var t = E('div', 'muted', r[0]); t.style.fontSize = '.95rem'; var v = E('div', '', r[1]); v.style.cssText = 'font-size:1.4rem;font-weight:800;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere'; b.appendChild(t); b.appendChild(v); w.appendChild(b); });
+      if (m.cphone) { var a = E('a', 'btnlink', '📞 かかりつけ医院に電話する'); a.href = 'tel:' + m.cphone.replace(/[^0-9+]/g, ''); a.style.minHeight = '56px'; w.appendChild(a); }
+      var a1 = E('a', 'btnlink primary', '📞 119（救急）に電話する'); a1.href = 'tel:119'; a1.style.cssText = 'min-height:60px;background:#b3261e;color:#fff;border-color:#b3261e;font-size:1.2rem'; w.appendChild(a1);
+      var x = E('button', 'btn', '閉じる'); x.type = 'button'; x.addEventListener('click', function () { d.close(); }); w.appendChild(x);
+      d.appendChild(w); d.addEventListener('close', function () { d.remove(); }); document.body.appendChild(d); if (d.showModal) d.showModal();
+    }
+    function openEdit() {
+      if (document.getElementById('medDlg')) return; var m = load(K, {}) || {};
+      var d = E('dialog', 'design-dialog location-dialog'); d.id = 'medDlg'; d.setAttribute('aria-labelledby', 'medT'); d.style.cssText = 'width:min(96vw,640px)';
+      var w = E('div'); w.style.cssText = 'display:flex;flex-direction:column;gap:8px;padding:10px';
+      var h = E('h2', '', '🩺 いのちのメモ'); h.id = 'medT'; h.style.margin = '0'; w.appendChild(h);
+      w.appendChild(E('p', 'muted', '救急のとき、救急隊や、まわりの方に見せるメモです。書けるところだけで大丈夫です。この端末の中だけに残り、外には送られません。'));
+      var inputs = {};
+      F.forEach(function (f, i) {
+        var l = E('label', '', f[1]); l.htmlFor = 'med_' + f[0]; l.style.fontWeight = '700';
+        var el = f[3] === 'area' ? E('textarea') : E('input'); if (f[3] !== 'area') el.type = f[3]; el.id = 'med_' + f[0]; el.placeholder = f[2]; el.maxLength = f[4]; el.value = m[f[0]] || '';
+        el.style.cssText = 'width:100%;min-height:' + (f[3] === 'area' ? '84' : '48') + 'px;font-size:1.1rem;padding:6px 10px;border-radius:8px;border:1.5px solid var(--line);background:var(--surface);color:inherit'; inputs[f[0]] = el; w.appendChild(l); w.appendChild(el);
+      });
+      var msg = E('span', 'fl-sub'); msg.setAttribute('role', 'status'); msg.style.margin = '0'; w.appendChild(msg);
+      var sv = E('button', 'btn primary', '💾 保存する'); sv.type = 'button'; sv.style.minHeight = '56px';
+      function grab() { var o = {}; F.forEach(function (f) { o[f[0]] = inputs[f[0]].value.trim(); }); return o; }
+      sv.addEventListener('click', function () { save(K, grab()); msg.textContent = '保存しました。'; });
+      var vw = E('button', 'btn', '👁 見せる画面を、ひらく'); vw.type = 'button'; vw.style.minHeight = '56px'; vw.addEventListener('click', function () { save(K, grab()); d.close(); showView(); });
+      var x = E('button', 'btn', '閉じる'); x.type = 'button'; x.addEventListener('click', function () { d.close(); });
+      w.appendChild(sv); w.appendChild(vw); w.appendChild(x);
+      d.appendChild(w); d.addEventListener('close', function () { d.remove(); }); document.body.appendChild(d); if (d.showModal) d.showModal();
+    }
+    document.addEventListener('kesera-med', openEdit); document.addEventListener('kesera-medview', showView);
+    var grid = document.querySelector('#safeCard .safe-grid');
+    if (grid) {
+      var b = E('button', 'btnlink safe-btn'); b.type = 'button'; b.innerHTML = '<b>🩺 いのちのメモ（お薬・既往症）</b><span>記入する・救急の方に見せる</span>'; b.addEventListener('click', function () { openEdit(); }); grid.appendChild(b);
     }
   })();
 
