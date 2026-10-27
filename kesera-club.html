@@ -4329,6 +4329,57 @@ button[aria-pressed="true"] { font-weight:700; }
     if (grid) { var b = E('button', 'btnlink safe-btn'); b.type = 'button'; b.innerHTML = '<b>🗣 声が出ない・助けを呼びたい</b><span>「助けてください」を、大きく表示・音声</span>'; b.addEventListener('click', function () { document.dispatchEvent(new Event('kesera-help')); }); grid.insertBefore(b, grid.firstChild); }
   })();
 
+  /* ---------- おはよう：お買い物メモ・今日のやりたいことメモ ---------- */
+  (function () {
+    function E(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; }
+    var g = document.querySelector('#v-home .greet'); if (!g) return;
+    var td = new Date(), tds = td.getFullYear() + '-' + pad(td.getMonth() + 1) + '-' + pad(td.getDate());
+    var H = td.getHours(), hi = H < 4 ? 'こんばんは' : H < 11 ? 'おはよう' : H < 17 ? 'こんにちは' : 'こんばんは';
+    var SRx = window.SpeechRecognition || window.webkitSpeechRecognition;
+    var card = E('div', 'card'); card.id = 'dayMemo'; card.appendChild(E('h3', '', (H < 11 ? '☀️ ' : '🌿 ') + hi + '！きょうの、メモ'));
+    var intro = E('p', 'muted', '買うものと、きょうやりたいことを、書いておきましょう。「🎤」を押して話すと、文字になります。できたら、チェックを入れます。'); card.appendChild(intro);
+    function mk(key, title, ph, daily) {
+      var items = load(key, []); if (!Array.isArray(items)) items = [];
+      if (daily) items = items.filter(function (x) { return !(x.done && x.d && x.d < tds); }); // きのうまでの「できた」は片づける
+      var box = E('div'); box.style.cssText = 'border:1.5px solid var(--line);border-radius:12px;padding:10px;margin:10px 0';
+      var h = E('b', '', title); h.style.fontSize = '1.15rem'; box.appendChild(h);
+      var list = E('div'); list.style.cssText = 'display:flex;flex-direction:column;gap:6px;margin:8px 0'; box.appendChild(list);
+      var row = E('div', 'row'); var inp = E('input'); inp.type = 'text'; inp.maxLength = 60; inp.placeholder = ph; inp.setAttribute('aria-label', title + 'に足す'); inp.style.cssText = 'flex:1 1 180px;min-height:48px;font-size:1.1rem;padding:6px 10px;border-radius:8px;border:1.5px solid var(--line);background:var(--surface);color:inherit';
+      var add = E('button', 'btn primary', '＋ 足す'); add.type = 'button'; var mic = null;
+      row.appendChild(inp); row.appendChild(add);
+      if (SRx) { mic = E('button', 'btn', '🎤'); mic.type = 'button'; mic.setAttribute('aria-label', '声で入れる'); row.appendChild(mic); }
+      box.appendChild(row); var msg = E('span', 'fl-sub'); msg.setAttribute('role', 'status'); msg.style.margin = '0'; box.appendChild(msg);
+      var clr = E('button', 'btn', '✅ できたものを、消す'); clr.type = 'button'; box.appendChild(clr);
+      function sv() { save(key, items); }
+      function draw() {
+        list.textContent = ''; if (!items.length) { var e0 = E('span', 'fl-sub', 'まだ、ありません。'); e0.style.margin = '0'; list.appendChild(e0); }
+        items.forEach(function (it, i) {
+          var r = E('label'); r.style.cssText = 'display:flex;gap:10px;align-items:center;min-height:48px;font-size:1.2rem;font-weight:700;border:1.5px solid var(--line);border-radius:10px;padding:4px 10px;background:var(--surface)';
+          var c = E('input'); c.type = 'checkbox'; c.checked = !!it.done; c.style.cssText = 'width:26px;height:26px;flex:0 0 auto';
+          c.addEventListener('change', function () { it.done = c.checked; if (c.checked) it.d = tds; sv(); draw(); });
+          var t = E('span', '', it.t); t.style.cssText = 'flex:1;overflow-wrap:anywhere;' + (it.done ? 'text-decoration:line-through;opacity:.6' : '');
+          var x = E('button', 'btn', '✕'); x.type = 'button'; x.setAttribute('aria-label', it.t + 'を消す'); x.addEventListener('click', function (ev) { ev.preventDefault(); items.splice(i, 1); sv(); draw(); });
+          r.appendChild(c); r.appendChild(t); r.appendChild(x); list.appendChild(r);
+        });
+        clr.style.display = items.some(function (z) { return z.done; }) ? '' : 'none';
+      }
+      function addIt(v) { v = (v || '').trim(); if (!v) return false; items.push({ t: v.slice(0, 60), done: false, d: tds }); sv(); draw(); return true; }
+      add.addEventListener('click', function () { if (addIt(inp.value)) inp.value = ''; else msg.textContent = '文字を入れてください。'; });
+      inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); add.click(); } });
+      clr.addEventListener('click', function () { items = items.filter(function (z) { return !z.done; }); sv(); draw(); });
+      if (mic) mic.addEventListener('click', function () {
+        try { var r = new SRx(); r.lang = 'ja-JP'; r.interimResults = false; r.maxAlternatives = 1; msg.textContent = '🎤 聞いています。話してください。';
+          r.onresult = function (e) { var s = (e.results[0][0].transcript || '').replace(/[。、]+$/, ''); inp.value = s; msg.textContent = '「' + s + '」と聞こえました。よければ「＋ 足す」を押してください。'; };
+          r.onerror = function () { msg.textContent = '聞き取れませんでした。文字で入れてください。'; }; r.onend = function () {}; r.start(); } catch (e) { msg.textContent = 'この端末では、声が使えません。文字で入れてください。'; }
+      });
+      draw(); return box;
+    }
+    card.appendChild(mk('kesera-shop', '🛒 お買い物メモ', '例：牛乳、卵', false));
+    card.appendChild(mk('kesera-todo', '🌟 きょうの、やりたいこと', '例：散歩、お花に水', true));
+    var n = E('p', 'muted', 'メモは、この端末の中だけに残ります。'); card.appendChild(n);
+    g.parentNode.insertBefore(card, g.nextSibling);
+  })();
+
   /* ---------- ヘッダーをコンパクトに ---------- */
   (function () {
     var tools = document.querySelector('.header-tools'), loc = $('locationBtn'), trip = $('tripOpen'), st = $('settingsBtn');
