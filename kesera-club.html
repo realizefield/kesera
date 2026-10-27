@@ -1039,6 +1039,15 @@ button[aria-pressed="true"] { font-weight:700; }
     <div id="ykRooms" style="display:flex;flex-direction:column;gap:8px"></div>
   </section>
 
+  <section class="view" id="v-hokago" hidden aria-label="放課後倶楽部（部活）">
+    <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
+    <h2>🎒 放課後倶楽部（部活）</h2>
+    <p class="muted" style="margin:0">好きな部活に入って、のんびり活動しましょう。入るのも、やめるのも、自由です。</p>
+    <div class="row"><button class="btn primary" id="hgFind" type="button" style="min-height:56px;font-size:1.1rem">🔍 部活を探す</button><button class="btn" id="hgMine" type="button" style="min-height:56px;font-size:1.1rem">🎒 わたしの部活</button></div>
+    <div id="hgWel" class="card" style="display:none;gap:8px;border:3px solid var(--accent)"></div>
+    <div id="hgBody" style="display:flex;flex-direction:column;gap:10px"></div>
+  </section>
+
   <section class="view" id="v-dajare" hidden aria-label="ダジャレバトル">
     <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
     <h2>😆 ダジャレバトル</h2>
@@ -2182,7 +2191,7 @@ button[aria-pressed="true"] { font-weight:700; }
   });
 
   /* 画面の切り替え */
-  var views = ['yakata', 'club', 'haiku', 'dajare', 'album', 'laugh', 'up', 'mania', 'town', 'book', 'flower', 'settings', 'home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask', 'dress'];
+  var views = ['hokago', 'yakata', 'club', 'haiku', 'dajare', 'album', 'laugh', 'up', 'mania', 'town', 'book', 'flower', 'settings', 'home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask', 'dress'];
   var navView = 'home', navDepth = 0;
   function show(v, fromPop) {
     if (v !== 'talk' && typeof chatOn !== 'undefined' && chatOn) chatStop();
@@ -4304,6 +4313,92 @@ button[aria-pressed="true"] { font-weight:700; }
     var R = [['🛏 眠りの部屋', '眠れない夜に・自然音', 'sleep'], ['🍚 食の部屋', '四毒抜きレシピ帳', 'href:yodoku-recipes.html?from=kesera'], ['💪 動きの部屋', 'プチ筋トレ', 'move'], ['🧠 整えの部屋', '脳ジム・目トレ・バランス', 'up'], ['😂 笑いの部屋', '全部忘れて笑って、心のリセット', 'laugh'], ['🌼 自然の部屋', '花のお散歩・自然にふれる', 'flower'], ['🌾 土の部屋', '家庭菜園・自然農法', 'farm']];
     var rm = $('ykRooms'); rm.appendChild(E('b', '', '🚪 館の、お部屋'));
     R.forEach(function (r) { var b = E('button', 'btn', r[0] + '　' + r[1]); b.type = 'button'; b.style.cssText = 'min-height:56px;font-size:1.05rem;text-align:left'; if (r[2].indexOf('href:') === 0) b.addEventListener('click', function () { window.location.href = r[2].slice(5); }); else b.setAttribute('data-go', r[2]); rm.appendChild(b); });
+  })();
+
+  /* ---------- 放課後倶楽部（部活） ---------- */
+  (function () {
+    var BODY = $('hgBody'); if (!BODY) return;
+    var C = [
+      ['haiku', '🌸', '俳句短歌部', '五・七・五、五・七・五・七・七で、心が動いた一瞬を言葉に。', '俳句短歌部へ、ようこそ！　うまい・下手は、気にしません。きょう心が動いたことを、ひとことで十分です。毎日ひとつ、いっしょに詠みましょう。', [['🌸 俳句・短歌日誌へ', 'haiku']]],
+      ['dajare', '😆', 'ダジャレ部', 'ダジャレで笑って、頭の体操。', 'ダジャレ部へ、ようこそ！　寒くても大丈夫、笑った人の勝ちです。まずは「ススメ」で作り方のヒントから。', [['😆 ダジャレバトルへ', 'dajare'], ['😂 笑ってすっきりへ', 'laugh']]],
+      ['oshare', '👗', 'おしゃれ倶楽部（服装・化粧）', 'いまの自分に似合う装いを、楽しく。', 'おしゃれ倶楽部へ、ようこそ！　いくつになっても、装うことは、心のはりになります。まずは、着こなし相談室をのぞいてみましょう。（プチお化粧は、準備中です）', [['👗 着こなし相談室（試作）', 'dress']]],
+      ['yoga', '🧘', 'ヨガ・ストレッチ部', '体をのばして、ゆっくり呼吸。', 'ヨガ・ストレッチ部へ、ようこそ！　痛いところまで、のばさないのが、きまりです。気持ちいいところで、ゆっくり呼吸しましょう。体調がすぐれない日は、お休みで大丈夫です。', [['💪 動く（プチ筋トレ・ストレッチ）', 'move'], ['🌬 自然治癒力の館（呼吸）', 'yakata']]],
+      ['music', '🎵', '音楽部', '聴く・歌う・思い出の歌。', '音楽部へ、ようこそ！　昭和歌謡も、童謡も、カラオケも、ぜんぶ音楽です。思い出の一曲から、はじめましょう。', [['🎵 聴く・観る（歌・カラオケ）', 'music']]],
+      ['taiiku', '🏃', '体育部', 'ちょっと体を動かして、元気に。', '体育部へ、ようこそ！　きょうは5分でも、立派な活動です。無理をせず、できる日に、できる分だけ。', [['💪 動く（プチ筋トレ）', 'move'], ['🧠 1mm違う自分へ（バランス・目トレ）', 'up']]],
+      ['game', '🎮', 'ゲーム部', '頭を使って、遊んで、脳の体操。', 'ゲーム部へ、ようこそ！　勝ち負けより、楽しんだ人が勝ちです。まずは、脳ジムから遊んでみましょう。', [['🧠 脳ジム・遊び（1mm違う自分へ）', 'up'], ['😆 ダジャレバトル', 'dajare']]],
+      ['run', '👟', 'ランニング同好会', '歩く・走る、マイペースで。', 'ランニング同好会へ、ようこそ！　歩いても、ゆっくり走っても、どちらも大歓迎です。体調と相談しながら、気持ちよく。', [['⭐ マニアージュ（ランニング・マラソン）', 'mania'], ['🏅 マラソン・スポーツ大会（まちの発見）', 'town']]],
+      ['cycle', '🚲', 'サイクリング同好会', '風を感じて、まちを走る。', 'サイクリング同好会へ、ようこそ！　ヘルメットと、水分と、無理のない距離を忘れずに。景色を楽しむ旅に出ましょう。', [['🧳 旅する', 'travel'], ['🗺 まちの発見', 'town']]],
+      ['cook', '🍳', '料理研究会', '体にやさしい、10分ごはんと四毒抜き。', '料理研究会へ、ようこそ！　きょうの一品を、いっしょに。レシピ帳には、四毒抜きの料理が、ならんでいます。', [['📒 レシピ帳（四毒抜き）', 'href:yodoku-recipes.html?from=kesera'], ['🌾 自然農法・家庭菜園', 'farm']]],
+      ['craft', '🧶', '手芸部', '折り紙・飾り・手づくりの時間。', '手芸部へ、ようこそ！　手を動かす時間は、心が落ち着く時間です。折り紙や、花の飾りから、はじめましょう。', [['✂ 作る・飾る', 'make']]],
+      ['guitar', '🎸', 'ギター愛好会', 'ギターの音色を、楽しむ仲間。', 'ギター愛好会へ、ようこそ！　初心者も、久しぶりの方も、大歓迎です。まずは、好きな曲を聴くところから。（ギター専用の教材は、これから育てていきます）', [['🎵 聴く・観る', 'music']]],
+      ['band', '🥁', '軽音楽部', 'バンド・セッション・ライブ好きの集まり。', '軽音楽部へ、ようこそ！　聴く人も、弾く人も、いっしょに盛りあがりましょう。近くのライブ情報は、まちの発見で探せます。', [['🎤 ライブ・演奏会（まちの発見）', 'town'], ['🎵 聴く・観る', 'music']]],
+      ['piano', '🎹', 'ピアノ部', 'ピアノのやさしい曲を、ゆっくりと。', 'ピアノ部へ、ようこそ！　一曲を、ゆっくり、何度でも。（ピアノ専用の教材は、これから育てていきます）', [['🎵 聴く・観る', 'music']]],
+      ['council', '📣', '生徒会', 'まちをよくする声を、あげる会。', '生徒会へ、ようこそ！　まちの困りごとや、「こうなったらいいな」を、文章にして届けましょう。市長・県知事への直行便も、あります。', [['📣 モノ申す！・直行便（まちの発見）', 'town']]],
+      ['art', '🎨', '芸術部（鑑賞・デッサン）', '見て、感じて、描く。', '芸術部へ、ようこそ！　絵画展を見に行くのも、スケッチを楽しむのも、立派な芸術活動です。', [['🖼 展覧会・スケッチスポット（まちの発見）', 'town'], ['⭐ マニアージュ（絵画）', 'mania'], ['📷 思い出の記録', 'album']]],
+      ['climb', '⛰', '山登り愛好会', '無理のない山歩きと、景色。', '山登り愛好会へ、ようこそ！　山は、逃げません。天気と体調を見て、ゆっくり登りましょう。日帰り・低い山から、安全第一で。', [['⭐ マニアージュ（日帰り登山・キャンプ）', 'mania'], ['🌼 花の見どころ', 'flower']]],
+      ['kosodate', '👶', '子育て・孫育てサークル', '子育ても、孫との時間も。', '子育て・孫育てサークルへ、ようこそ！　子育ては、いつの時代も、手さぐりです。孫と遊べる公園など、まちの発見で探せます。', [['🛝 孫と遊びたい公園（まちの発見）', 'town'], ['📷 思い出の記録', 'album']]]
+    ];
+    var KEY = 'kesera-clubs', st = load(KEY, { j: [], at: {}, memo: {} }); if (!st.j) st.j = []; if (!st.at) st.at = {}; if (!st.memo) st.memo = {};
+    var mode = st.j.length ? 'mine' : 'find', SR3 = window.SpeechRecognition || window.webkitSpeechRecognition;
+    function E(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; }
+    function stamp(ts) { var d = new Date(ts), w = '日月火水木金土'[d.getDay()]; return d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日（' + w + '）' + pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+    function go(x) { if (x[1].indexOf('href:') === 0) { var b = E('button', 'btn', x[0]); b.type = 'button'; b.style.cssText = 'min-height:52px;text-align:left'; b.addEventListener('click', function () { window.location.href = x[1].slice(5); }); return b; } var b2 = E('button', 'btn', x[0]); b2.type = 'button'; b2.style.cssText = 'min-height:52px;text-align:left'; b2.setAttribute('data-go', x[1]); return b2; }
+    function sv() { save(KEY, st); }
+    function welcome(c) {
+      var w = $('hgWel'); w.style.display = 'flex'; w.innerHTML = '';
+      w.appendChild(E('b', '', c[1] + ' ' + c[2] + '　新入生かんげい！')); w.firstChild.style.fontSize = '1.2rem'; var m = E('p', '', c[4]); m.style.cssText = 'margin:0;line-height:1.9'; w.appendChild(m);
+      var r = E('div', 'row'); var j = E('button', 'btn primary', '🎒 参加する'); j.type = 'button'; j.style.minHeight = '56px'; var n = E('button', 'btn', 'やめておく'); n.type = 'button'; n.style.minHeight = '56px';
+      j.addEventListener('click', function () { if (st.j.indexOf(c[0]) < 0) { st.j.push(c[0]); st.at[c[0]] = Date.now(); sv(); } w.style.display = 'none'; mode = 'mine'; draw(); window.scrollTo(0, 0); });
+      n.addEventListener('click', function () { w.style.display = 'none'; });
+      r.appendChild(j); r.appendChild(n); w.appendChild(r);
+      try { w.scrollIntoView({ block: 'center' }); } catch (e) {}
+    }
+    function diary(c) {
+      var d = E('div'); d.style.cssText = 'display:flex;flex-direction:column;gap:8px'; var arr = st.memo[c[0]] || (st.memo[c[0]] = []);
+      var pane = E('div'); pane.style.cssText = 'display:none;flex-direction:column;gap:8px'; var tb = E('button', 'btn'); tb.type = 'button'; tb.style.cssText = 'min-height:48px;align-self:flex-start';
+      function lab() { tb.textContent = '📔 活動日誌' + (arr.length ? '（' + arr.length + '件）' : '') + (pane.style.display === 'none' ? ' ▼' : ' ▲'); }
+      var ta = E('textarea'); ta.rows = 3; ta.setAttribute('aria-label', '活動日誌'); ta.placeholder = 'きょうの活動・気づき・次にやりたいこと'; ta.style.cssText = 'width:100%;box-sizing:border-box;font-size:1.1rem;font-family:inherit';
+      var mic = E('button', 'btn', '🎤 声で書く'); mic.type = 'button'; mic.style.minHeight = '48px'; var s = E('button', 'btn primary', '💾 日誌に残す（日付と時刻つき）'); s.type = 'button'; s.style.minHeight = '48px';
+      var msg = E('span', 'fl-sub'); msg.setAttribute('role', 'status'); msg.style.margin = '0'; var lst = E('div'); lst.style.cssText = 'display:flex;flex-direction:column;gap:6px'; var voiced = false, cur = null;
+      function dr() { lst.innerHTML = ''; arr.slice().reverse().forEach(function (m, ri) { var i = arr.length - 1 - ri, x = E('div'); x.style.cssText = 'line-height:1.7;border-left:4px solid var(--accent);padding-left:8px'; var t = E('b', '', '🕒 ' + stamp(m.at) + (m.v ? '　🎤' : '')); t.style.fontSize = '.95rem'; var tx = E('div', '', m.t); var del = E('button', 'btn', '消す'); del.type = 'button'; del.style.cssText = 'min-height:40px;font-size:.9rem'; del.addEventListener('click', function () { arr.splice(i, 1); sv(); dr(); lab(); }); x.appendChild(t); x.appendChild(tx); x.appendChild(del); lst.appendChild(x); }); }
+      tb.addEventListener('click', function () { pane.style.display = pane.style.display === 'none' ? 'flex' : 'none'; lab(); });
+      s.addEventListener('click', function () { var t = ta.value.trim(); if (!t) { msg.textContent = '先に、書くか、声で入れてください。'; return; } arr.push({ at: Date.now(), t: t, v: voiced }); ta.value = ''; voiced = false; msg.textContent = '残しました。（' + stamp(arr[arr.length - 1].at) + '）'; sv(); dr(); lab(); });
+      if (!SR3) mic.style.display = 'none'; else mic.addEventListener('click', function () {
+        if (cur) { try { cur.stop(); } catch (e) {} return; }
+        try { var r = new SR3(); r.lang = 'ja-JP'; r.interimResults = false; cur = r; mic.textContent = '■ とめる'; msg.textContent = '聞いています。話してください…';
+          r.onresult = function (e) { var q = ''; for (var i = e.resultIndex; i < e.results.length; i++) q += e.results[i][0].transcript; ta.value = (ta.value ? ta.value + '、' : '') + q; voiced = true; msg.textContent = '入りました。まちがいは、直せます。'; };
+          r.onerror = function (e) { msg.textContent = e.error === 'not-allowed' || e.error === 'service-not-allowed' ? 'マイクが許可されていません。文字で入れてください。' : '声を聞き取れませんでした。もういちど、お試しください。'; };
+          r.onend = function () { cur = null; mic.textContent = '🎤 声で書く'; if (msg.textContent.indexOf('聞いています') === 0) msg.textContent = ''; };
+          r.start(); setTimeout(function () { try { r.stop(); } catch (e) {} }, 30000);
+        } catch (er) { cur = null; mic.textContent = '🎤 声で書く'; msg.textContent = '声で書く機能を始められませんでした。'; } });
+      var br = E('div', 'row'); br.appendChild(mic); br.appendChild(s); pane.appendChild(ta); pane.appendChild(br); pane.appendChild(msg); pane.appendChild(lst); d.appendChild(tb); d.appendChild(pane); dr(); lab(); return d;
+    }
+    function draw() {
+      BODY.innerHTML = ''; var all = mode === 'find';
+      $('hgFind').style.outline = all ? '3px solid var(--accent)' : ''; $('hgMine').style.outline = all ? '' : '3px solid var(--accent)';
+      var list = C.filter(function (c) { return all || st.j.indexOf(c[0]) >= 0; });
+      BODY.appendChild(E('b', '', all ? '🔍 すべての部活（' + C.length + '）　気になる部活を、押してみてください' : '🎒 わたしの部活（' + list.length + '）')); BODY.firstChild.style.fontSize = '1.15rem';
+      if (!list.length) { var p = E('p', 'fl-sub', 'まだ、どの部活にも入っていません。「🔍 部活を探す」を押して、のぞいてみましょう。'); p.style.lineHeight = '1.8'; BODY.appendChild(p); return; }
+      list.forEach(function (c) {
+        var joined = st.j.indexOf(c[0]) >= 0, card = E('div', 'card'); card.style.gap = '8px'; card.id = 'hg-' + c[0];
+        var h = E('b', '', c[1] + ' ' + c[2] + (joined ? '　✔ 入部ずみ' : '')); h.style.fontSize = '1.2rem'; card.appendChild(h); var d = E('span', 'fl-sub', c[3]); d.style.margin = '0'; card.appendChild(d);
+        if (all) {
+          var b = E('button', joined ? 'btn' : 'btn primary', joined ? '🎒 部室へ' : '🚪 のぞいてみる'); b.type = 'button'; b.style.minHeight = '52px';
+          b.addEventListener('click', function () { if (joined) { mode = 'mine'; draw(); var t = $('hg-' + c[0]); if (t) t.scrollIntoView({ block: 'start' }); } else welcome(c); }); card.appendChild(b);
+        } else {
+          c[5].forEach(function (x) { card.appendChild(go(x)); }); card.appendChild(diary(c));
+          var q = E('div', 'row'); var lv = E('button', 'btn', '退部する'); lv.type = 'button'; lv.style.cssText = 'min-height:44px;font-size:.95rem';
+          lv.addEventListener('click', function () { q.innerHTML = ''; q.appendChild(E('span', 'fl-sub', 'ほんとうに、退部しますか？（日誌は、残ります）')); var y = E('button', 'btn', 'はい、退部'); y.type = 'button'; var n = E('button', 'btn', 'やめる'); n.type = 'button'; y.addEventListener('click', function () { st.j.splice(st.j.indexOf(c[0]), 1); sv(); draw(); }); n.addEventListener('click', function () { draw(); }); q.appendChild(y); q.appendChild(n); });
+          q.appendChild(lv); card.appendChild(q);
+        }
+        BODY.appendChild(card);
+      });
+    }
+    $('hgFind').addEventListener('click', function () { mode = 'find'; $('hgWel').style.display = 'none'; draw(); });
+    $('hgMine').addEventListener('click', function () { mode = 'mine'; $('hgWel').style.display = 'none'; draw(); });
+    draw();
+    var cb = $('clubBody'); if (cb) { var l = E('button', 'btn primary', '🎒 放課後倶楽部（部活）へ'); l.type = 'button'; l.setAttribute('data-go', 'hokago'); l.style.cssText = 'min-height:56px;font-size:1.1rem'; cb.insertBefore(l, cb.firstChild); }
+    var cat = document.querySelector('.pgcat'); if (cat) { var h2 = document.createElement('button'); h2.type = 'button'; h2.className = 'pgc'; h2.setAttribute('data-go', 'hokago'); h2.style.cssText = 'grid-column:1/-1;min-height:84px;flex-direction:row;gap:14px'; h2.innerHTML = '<span style="font-size:2rem" aria-hidden="true">🎒</span><span style="font-size:1.2rem">放課後倶楽部<br><small style="font-weight:600">部活に入って、仲間と楽しむ</small></span>'; var cl = cat.querySelector('[data-go="club"]'); cat.insertBefore(h2, cl ? cl.nextSibling : cat.firstChild); }
   })();
 
   /* ---------- もしもの時：コンパクトボタン＋ポップ ---------- */
