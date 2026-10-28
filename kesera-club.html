@@ -4707,7 +4707,7 @@ button[aria-pressed="true"] { font-weight:700; }
   (function () {
     function E(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; }
     var PH = { a: '🛏 寝たまま', b: '🪑 ベッドに座って', c: '🧍 立ち上がって' };
-    var ST = [
+    var ST5 = [
       ['a', 10, 'おはようございます', '{n}さん、おはようございます。ゆっくり、息をしながら、無理のない範囲で、はじめましょう。あお向けのまま、体の力をぬきます。', '🌅'],
       ['a', 20, '足首ぐりんぐりん', '足首を、ぐりんぐりん。右回し、左回し。ゆっくり、大きく回します。', '🦶'],
       ['a', 20, '左右ワイパー', '両ひざを立てて、左右に、ゆっくり倒します。ワイパーのように。痛くない範囲で。', '🚗'],
@@ -4727,7 +4727,10 @@ button[aria-pressed="true"] { font-weight:700; }
       ['c', 10, '両耳つり上げ', '両耳を、指でつまんで、やさしく、上へつり上げます。', '👂'],
       ['c', 15, 'あ・え・い・お・う・あ・う', '口を大きく、あ、え、い、お、う、あ、う。声に出しても、出さなくても、大丈夫です。おつかれさまでした。', '🗣']
     ];
-    var TOTAL = ST.reduce(function (s, x) { return s + x[1]; }, 0);
+    var D3 = { 'おはようございます': 10, '足首ぐりんぐりん': 15, '左右ワイパー': 15, '股関節ゆるめ（4の字）': 15, '肩まわり ぐりん': 15, '背筋ピン': 10, '腹式呼吸': 15, '息をはき切る': 10, '瞑想 1分': 30, 'ひざまわり': 10, '腰まわり': 10, '両耳つり上げ': 10, 'あ・え・い・お・う・あ・う': 15 };
+    var ST3 = ST5.filter(function (x) { return D3[x[2]]; }).map(function (x) { return [x[0], D3[x[2]], x[2] === '瞑想 1分' ? '瞑想 30秒' : x[2], x[2] === '瞑想 1分' ? '目を閉じて、30秒。呼吸だけを、感じましょう。考えごとが浮かんだら、そっと手放します。' : x[3], x[4]]; });
+    var ST = ST5, TOTAL = 300, MODE = load('kesera-str-mode', 5) === 3 ? 3 : 5;
+    function setMode(m) { MODE = m; ST = m === 3 ? ST3 : ST5; TOTAL = ST.reduce(function (s, x) { return s + x[1]; }, 0); AN = m === 3 ? { 60: '1分経過です。', 120: 'あと1分です。' } : { 60: '1分経過です。', 120: '2分経過です。', 180: '3分経過です。', 240: 'あと1分です。' }; save('kesera-str-mode', m); }
     function nm() { var n = ''; try { n = ($('name').value || '').trim(); } catch (e) {} return n || ''; }
     function fill(t) { var n = nm(); return t.replace('{n}さん、', n ? n + 'さん、' : ''); }
     function key() { var d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
@@ -4756,11 +4759,11 @@ button[aria-pressed="true"] { font-weight:700; }
     function refreshStat() { var e = document.getElementById('strStat'); if (!e) return; var L = load('kesera-stretch', null); e.textContent = L && L.days && L.days.length ? '📝 ' + statLine(L) : ''; }
     function finish() {
       stopAll(); var L = load('kesera-stretch', { days: [] }); if (!L || !Array.isArray(L.days)) L = { days: [] }; var td = key(); if (!L.first) L.first = L.days.slice().sort()[0] || td; if (L.days.indexOf(td) < 0) L.days.push(td); save('kesera-stretch', L);
-      UI.ph.textContent = '🎉 おつかれさまでした'; UI.em.textContent = '🌸'; UI.ti.textContent = 'よく頑張りました！　5分、できました'; UI.tx.textContent = '記録を保存しました。\n' + statLine(L).replace(/／/g, '\n') + '\n今日も、よい一日になりますように。'; UI.tx.style.whiteSpace = 'pre-line'; UI.cd.textContent = ''; UI.bar.style.width = '100%'; UI.st.textContent = '';
+      UI.ph.textContent = '🎉 おつかれさまでした'; UI.em.textContent = '🌸'; UI.ti.textContent = 'よく頑張りました！　' + MODE + '分、できました'; UI.tx.textContent = '記録を保存しました。\n' + statLine(L).replace(/／/g, '\n') + '\n今日も、よい一日になりますように。'; UI.tx.style.whiteSpace = 'pre-line'; UI.cd.textContent = ''; UI.bar.style.width = '100%'; UI.st.textContent = '';
       UI.ctl.style.display = 'none'; UI.end.style.display = ''; refreshStat(); UI.an.style.display = 'none'; try { burst(160); } catch (e) {}
       if (voice && ss) { try { var u = new SpeechSynthesisUtterance('おつかれさまでした。今日も、よい一日になりますように。'); u.lang = 'ja-JP'; ss.speak(u); } catch (e) {} }
     }
-    var AN = { 60: '1分経過です。', 120: '2分経過です。', 180: '3分経過です。', 240: 'あと1分です。' }, annDone = {}, annT = null;
+    var AN = {}, annDone = {}, annT = null; setMode(MODE);
     function elapsed() { var e = 0; for (var k = 0; k < i; k++) e += ST[k][1]; return e + ST[i][1] - left; }
     function announce() {
       var e = elapsed(); Object.keys(AN).forEach(function (k) { if (e >= +k && !annDone[k]) { annDone[k] = 1; UI.an.textContent = '⏱ ' + AN[k].replace('。', ''); UI.an.style.display = ''; if (annT) clearTimeout(annT); annT = setTimeout(function () { UI.an.style.display = 'none'; }, 6000);
@@ -4778,7 +4781,9 @@ button[aria-pressed="true"] { font-weight:700; }
       var w = E('div'); w.style.cssText = 'display:flex;flex-direction:column;gap:12px;padding:10px'; var h = E('h2', '', '☀️ 朝のゴロゴロストレッチ（5分）'); h.id = 'strT'; h.style.margin = '0'; w.appendChild(h);
       var s0 = E('div'); s0.style.cssText = 'display:flex;flex-direction:column;gap:10px'; UI.start = s0;
       var hi = E('p', '', (nm() || '〇〇') + 'さん、おはようございます。'); hi.style.cssText = 'margin:0;font-size:1.3rem;font-weight:800'; s0.appendChild(hi);
-      s0.appendChild(E('p', '', '寝たまま → ベッドに座って → 立ち上がって、の順に、全身をゆっくり動かします。約5分です。'));
+      s0.appendChild(E('p', '', '寝たまま → ベッドに座って → 立ち上がって、の順に、全身をゆっくり動かします。'));
+      var mrow = E('div', 'row'), mbs = []; [[5, '5分コース（ぜんぶ）'], [3, '3分コース（かんたん）']].forEach(function (c) { var mb = E('button', 'btn', c[1]); mb.type = 'button'; mb.style.cssText = 'min-height:52px;flex:1 1 150px;font-weight:800'; mb.setAttribute('aria-pressed', MODE === c[0] ? 'true' : 'false'); if (MODE === c[0]) mb.classList.add('primary'); mb.addEventListener('click', function () { setMode(c[0]); mbs.forEach(function (x) { var on = x === mb; x.classList.toggle('primary', on); x.setAttribute('aria-pressed', on ? 'true' : 'false'); }); }); mbs.push(mb); mrow.appendChild(mb); }); s0.appendChild(mrow);
+      s0.appendChild(E('span', 'fl-sub', '3分コースは、目・口・頭皮の体操と、外旋を省いた、かんたん版です。'));
       var nt = E('div'); nt.style.cssText = 'border:2px solid var(--accent);border-radius:10px;padding:10px;line-height:1.8'; nt.appendChild(E('b', '', '⚠ はじめる前に（体調優先）')); nt.appendChild(E('div', '', '・体調が悪い日、めまい・ふらつき・痛みがある日は、やすみましょう。\n・痛いと感じたら、すぐやめます。無理をしません。\n・立ち上がるときは、ゆっくり。ベッドや壁、いすに、つかまってください。\n・股関節や、ひざ、腰、首に病気や手術のある方は、かかりつけ医に相談してから。\n・体操は、治療や病気の予防をするものではありません。')); nt.lastChild.style.whiteSpace = 'pre-line'; s0.appendChild(nt);
       var b1 = E('button', 'btn primary', '🔊 音声あんない（音楽つき）ではじめる'); b1.type = 'button'; b1.style.cssText = 'min-height:64px;font-size:1.15rem'; b1.addEventListener('click', function () { run(true, true); });
       var b2 = E('button', 'btn primary', '🔇 音声なし（画面だけ）ではじめる'); b2.type = 'button'; b2.style.cssText = 'min-height:64px;font-size:1.15rem'; b2.addEventListener('click', function () { run(false, false); });
@@ -4801,10 +4806,14 @@ button[aria-pressed="true"] { font-weight:700; }
     document.addEventListener('kesera-stretch', open);
     window.__keseraStretchSteps = ST;
     var host = document.getElementById('dayMemo') || document.querySelector('#v-home .greet'); if (!host) return;
-    var card = E('div', 'card'); card.id = 'strCard'; card.appendChild(E('h3', '', '☀️ 朝のゴロゴロストレッチ（5分）')); card.appendChild(E('p', 'muted', '寝たまま・座って・立って。音声あんない（音楽つき）か、音声なしで。無理をしないで、体調のよい日に。'));
+    var card = E('div', 'card'); card.id = 'strCard'; var ch = E('h3', '', '☀️ 朝のゴロゴロストレッチ（3分・5分）'); card.appendChild(ch); var cd0 = E('p', 'muted', '寝たまま・座って・立って。3分か5分を選べます。音声あんない（音楽つき）か、音声なしで。無理をしないで、体調のよい日に。'); card.appendChild(cd0);
     var gb = E('button', 'btn primary', '🌅 はじめる'); gb.type = 'button'; gb.style.cssText = 'min-height:60px;font-size:1.15rem;width:100%'; gb.addEventListener('click', open); card.appendChild(gb);
     var sl = E('p', 'muted'); sl.id = 'strStat'; sl.style.cssText = 'margin:8px 0 0;font-weight:700'; card.appendChild(sl); refreshStat();
-    host.parentNode.insertBefore(card, host.nextSibling);
+    var hb = E('button', 'btn', '表示しない'); hb.type = 'button'; hb.style.cssText = 'min-height:48px;width:100%;margin-top:6px'; card.appendChild(hb);
+    var mini = E('button', 'btn', '☀️ 朝のストレッチ（非表示中）　表示する'); mini.type = 'button'; mini.style.cssText = 'min-height:44px;width:100%;font-size:.95rem'; mini.style.display = 'none';
+    function vis() { var h = load('kesera-str-hide', false) === true; card.style.display = h ? 'none' : ''; mini.style.display = h ? '' : 'none'; }
+    hb.addEventListener('click', function () { save('kesera-str-hide', true); vis(); }); mini.addEventListener('click', function () { save('kesera-str-hide', false); vis(); });
+    host.parentNode.insertBefore(card, host.nextSibling); card.parentNode.insertBefore(mini, card.nextSibling); vis();
   })();
 
   /* ---------- ヘッダーをコンパクトに ---------- */
