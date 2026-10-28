@@ -4703,6 +4703,95 @@ button[aria-pressed="true"] { font-weight:700; }
     card.appendChild(gb); card.appendChild(rb); pc.parentNode.insertBefore(card, pc.nextSibling);
   })();
 
+  /* ---------- 朝のゴロゴロストレッチ（5分・音声あんない／音声なし） ---------- */
+  (function () {
+    function E(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; }
+    var PH = { a: '🛏 寝たまま', b: '🪑 ベッドに座って', c: '🧍 立ち上がって' };
+    var ST = [
+      ['a', 10, 'おはようございます', '{n}さん、おはようございます。ゆっくり、息をしながら、無理のない範囲で、はじめましょう。あお向けのまま、体の力をぬきます。', '🌅'],
+      ['a', 20, '足首ぐりんぐりん', '足首を、ぐりんぐりん。右回し、左回し。ゆっくり、大きく回します。', '🦶'],
+      ['a', 20, '左右ワイパー', '両ひざを立てて、左右に、ゆっくり倒します。ワイパーのように。痛くない範囲で。', '🚗'],
+      ['a', 20, '股関節ゆるめ（4の字）', '右足首を、左ひざにのせて、4の字をつくります。ひざは押さず、10秒。つぎに、反対側です。', '🔢'],
+      ['b', 20, '肩まわり ぐりん', 'ゆっくり起き上がり、ベッドに座ります。肩を、うしろへ、ぐるんぐるん。つぎに、前へ。', '💪'],
+      ['b', 10, '背筋ピン', '背すじを、ピン。頭の先が、天井から引っぱられるように。', '📏'],
+      ['b', 15, '目のまわりの体操', '目を、ぎゅっと閉じて、ぱっと大きく開きます。まぶたのまわりを、動かしましょう。', '👀'],
+      ['b', 10, 'くちびる ぷるぷる', 'くちびるを、ぷるぷるぷる。ふるわせます。', '👄'],
+      ['b', 15, 'ほおと口もとの体操', 'ほおを、ふくらませて、すぼめて。口角を、きゅっと上げて、にっこり。', '😊'],
+      ['b', 15, '頭皮のマッサージ', '指の腹で、頭皮を、やさしく動かします。こすらず、地肌を動かすように。', '💆'],
+      ['b', 20, '腹式呼吸', '鼻から吸って、おなかをふくらませ、口から、ゆっくりはきます。', '🌬'],
+      ['b', 10, '息をはき切る', '息を、ふーっと、はき切ります。苦しいときは、無理をしないで。', '🍃'],
+      ['b', 60, '瞑想 1分', '目を閉じて、1分間。呼吸だけを、感じましょう。考えごとが浮かんだら、そっと手放します。', '🧘'],
+      ['c', 10, 'ひざまわり', 'ゆっくり立ち上がります。ベッドや壁に、つかまって。ひざに手をあて、ひざを回します。', '🦵'],
+      ['c', 10, '腰まわり', '足を肩はばに開き、腰を、ゆっくり、大きく回します。', '🌀'],
+      ['c', 10, '股関節の外旋', 'つま先とひざを、少し外へ向けて、股関節を外にひらくように、軽く腰を落とします。ふらつくときは、つかまって。', '🤸'],
+      ['c', 10, '両耳つり上げ', '両耳を、指でつまんで、やさしく、上へつり上げます。', '👂'],
+      ['c', 15, 'あ・え・い・お・う・あ・う', '口を大きく、あ、え、い、お、う、あ、う。声に出しても、出さなくても、大丈夫です。おつかれさまでした。', '🗣']
+    ];
+    var TOTAL = ST.reduce(function (s, x) { return s + x[1]; }, 0);
+    function nm() { var n = ''; try { n = ($('name').value || '').trim(); } catch (e) {} return n || ''; }
+    function fill(t) { var n = nm(); return t.replace('{n}さん、', n ? n + 'さん、' : ''); }
+    function key() { var d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+    var ss = window.speechSynthesis, ac = null, mt = null, wl = null, tm = null, i = 0, left = 0, voice = false, music = false, paused = false, d = null, UI = {};
+    var SC = [261.63, 293.66, 329.63, 392, 440, 523.25, 392, 329.63];
+    function mOn() {
+      var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return; try { ac = new AC(); var k = 0;
+        function note() { if (!ac) return; var o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime, f = SC[k++ % SC.length]; o.type = 'sine'; o.frequency.value = f; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.07, t + 0.5); g.gain.exponentialRampToValueAtTime(0.0001, t + 2.4); o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + 2.5); }
+        note(); mt = setInterval(note, 1600); } catch (e) { ac = null; }
+    }
+    function mOff() { if (mt) { clearInterval(mt); mt = null; } try { if (ac) { ac.close(); ac = null; } } catch (e) {} }
+    function speak(t) { if (!voice || !ss) return; try { ss.cancel(); var u = new SpeechSynthesisUtterance(t); u.lang = 'ja-JP'; u.rate = 0.9; u.volume = 1; ss.speak(u); } catch (e) {} }
+    function stopAll() { if (tm) { clearInterval(tm); tm = null; } mOff(); try { ss && ss.cancel(); } catch (e) {} try { if (wl) { wl.release(); wl = null; } } catch (e) {} }
+    function paint() {
+      var s = ST[i]; UI.ph.textContent = PH[s[0]]; UI.em.textContent = s[4]; UI.ti.textContent = s[2]; UI.tx.textContent = fill(s[3]); UI.cd.textContent = left + ' 秒';
+      var done = 0; for (var k = 0; k < i; k++) done += ST[k][1]; done += s[1] - left; UI.bar.style.width = Math.round(done * 100 / TOTAL) + '%'; UI.st.textContent = (i + 1) + ' / ' + ST.length + '　（のこり ' + Math.max(0, Math.ceil((TOTAL - done) / 6) / 10) + ' 分ほど）';
+    }
+    function begin(k) { i = k; left = ST[i][1]; paint(); speak(fill(ST[i][3])); }
+    function finish() {
+      stopAll(); var L = load('kesera-stretch', { days: [] }); if (!L || !Array.isArray(L.days)) L = { days: [] }; var td = key(); if (L.days.indexOf(td) < 0) L.days.push(td); save('kesera-stretch', L);
+      UI.ph.textContent = '🎉 おつかれさまでした'; UI.em.textContent = '🌸'; UI.ti.textContent = '5分、できました'; UI.tx.textContent = 'すばらしいです。今日も、よい一日になりますように。これまでに ' + L.days.length + ' 日、できました。'; UI.cd.textContent = ''; UI.bar.style.width = '100%'; UI.st.textContent = '';
+      UI.ctl.style.display = 'none'; UI.end.style.display = ''; try { burst(160); } catch (e) {}
+      if (voice && ss) { try { var u = new SpeechSynthesisUtterance('おつかれさまでした。今日も、よい一日になりますように。'); u.lang = 'ja-JP'; ss.speak(u); } catch (e) {} }
+    }
+    function tick() { if (paused) return; left--; if (left <= 0) { if (i + 1 >= ST.length) return finish(); begin(i + 1); } else { UI.cd.textContent = left + ' 秒'; var done = 0; for (var k = 0; k < i; k++) done += ST[k][1]; done += ST[i][1] - left; UI.bar.style.width = Math.round(done * 100 / TOTAL) + '%'; } }
+    function run(v, m) {
+      voice = v; music = m; paused = false; UI.start.style.display = 'none'; UI.run.style.display = '';
+      try { if (navigator.wakeLock) navigator.wakeLock.request('screen').then(function (l) { wl = l; }, function () {}); } catch (e) {}
+      if (music) mOn(); begin(0); tm = setInterval(tick, window.__keseraTick || 1000);
+    }
+    function open() {
+      var o = document.getElementById('strDlg'); if (o) { stopAll(); o.remove(); }
+      d = E('dialog', 'design-dialog location-dialog'); d.id = 'strDlg'; d.setAttribute('aria-labelledby', 'strT'); d.style.cssText = 'width:min(96vw,640px)';
+      var w = E('div'); w.style.cssText = 'display:flex;flex-direction:column;gap:12px;padding:10px'; var h = E('h2', '', '☀️ 朝のゴロゴロストレッチ（5分）'); h.id = 'strT'; h.style.margin = '0'; w.appendChild(h);
+      var s0 = E('div'); s0.style.cssText = 'display:flex;flex-direction:column;gap:10px'; UI.start = s0;
+      var hi = E('p', '', (nm() || '〇〇') + 'さん、おはようございます。'); hi.style.cssText = 'margin:0;font-size:1.3rem;font-weight:800'; s0.appendChild(hi);
+      s0.appendChild(E('p', '', '寝たまま → ベッドに座って → 立ち上がって、の順に、全身をゆっくり動かします。約5分です。'));
+      var nt = E('div'); nt.style.cssText = 'border:2px solid var(--accent);border-radius:10px;padding:10px;line-height:1.8'; nt.appendChild(E('b', '', '⚠ はじめる前に（体調優先）')); nt.appendChild(E('div', '', '・体調が悪い日、めまい・ふらつき・痛みがある日は、やすみましょう。\n・痛いと感じたら、すぐやめます。無理をしません。\n・立ち上がるときは、ゆっくり。ベッドや壁、いすに、つかまってください。\n・股関節や、ひざ、腰、首に病気や手術のある方は、かかりつけ医に相談してから。\n・体操は、治療や病気の予防をするものではありません。')); nt.lastChild.style.whiteSpace = 'pre-line'; s0.appendChild(nt);
+      var b1 = E('button', 'btn primary', '🔊 音声あんない（音楽つき）ではじめる'); b1.type = 'button'; b1.style.cssText = 'min-height:64px;font-size:1.15rem'; b1.addEventListener('click', function () { run(true, true); });
+      var b2 = E('button', 'btn primary', '🔇 音声なし（画面だけ）ではじめる'); b2.type = 'button'; b2.style.cssText = 'min-height:64px;font-size:1.15rem'; b2.addEventListener('click', function () { run(false, false); });
+      var b3 = E('button', 'btn', '🎙 音声あんないだけ（音楽なし）'); b3.type = 'button'; b3.style.minHeight = '52px'; b3.addEventListener('click', function () { run(true, false); });
+      s0.appendChild(b1); s0.appendChild(b2); s0.appendChild(b3); if (!ss) s0.appendChild(E('span', 'fl-sub', 'この端末では、音声が出せないことがあります。そのときは、画面を見ながら行ってください。'));
+      var L = load('kesera-stretch', { days: [] }); if (L && L.days && L.days.length) s0.appendChild(E('span', 'fl-sub', 'これまでに ' + L.days.length + ' 日、できています。'));
+      w.appendChild(s0);
+      var r = E('div'); r.style.cssText = 'display:none;flex-direction:column;gap:12px;text-align:center'; UI.run = r;
+      UI.ph = E('div', '', ''); UI.ph.style.cssText = 'font-size:1.1rem;font-weight:800;color:var(--accent)'; UI.em = E('div', '', ''); UI.em.style.fontSize = '3.2rem'; UI.ti = E('div', '', ''); UI.ti.style.cssText = 'font-size:1.8rem;font-weight:900'; UI.ti.setAttribute('role', 'status'); UI.tx = E('div', '', ''); UI.tx.style.cssText = 'font-size:1.2rem;line-height:1.8'; UI.cd = E('div', '', ''); UI.cd.style.cssText = 'font-size:2.2rem;font-weight:900';
+      var bw = E('div'); bw.style.cssText = 'height:16px;border-radius:8px;background:var(--line);overflow:hidden'; UI.bar = E('div'); UI.bar.style.cssText = 'height:100%;width:0;background:var(--accent);transition:width .3s'; bw.appendChild(UI.bar); UI.st = E('div', 'muted', '');
+      [UI.ph, UI.em, UI.ti, UI.tx, UI.cd, bw, UI.st].forEach(function (x) { r.appendChild(x); });
+      var ctl = E('div', 'row'); ctl.style.justifyContent = 'center'; UI.ctl = ctl;
+      var bp = E('button', 'btn', '◀ まえへ'); bp.type = 'button'; bp.style.minHeight = '56px'; bp.addEventListener('click', function () { if (i > 0) begin(i - 1); });
+      var bz = E('button', 'btn primary', '⏸ 一時停止'); bz.type = 'button'; bz.style.minHeight = '56px'; bz.addEventListener('click', function () { paused = !paused; bz.textContent = paused ? '▶ つづける' : '⏸ 一時停止'; if (paused) { try { ss && ss.cancel(); } catch (e) {} } else speak(fill(ST[i][3])); });
+      var bn = E('button', 'btn', 'つぎへ ▶'); bn.type = 'button'; bn.style.minHeight = '56px'; bn.addEventListener('click', function () { if (i + 1 >= ST.length) finish(); else begin(i + 1); });
+      ctl.appendChild(bp); ctl.appendChild(bz); ctl.appendChild(bn); r.appendChild(ctl);
+      var en = E('button', 'btn', 'やめる・とじる'); en.type = 'button'; en.style.minHeight = '52px'; en.addEventListener('click', function () { d.close(); }); r.appendChild(en); UI.end = en; w.appendChild(r);
+      d.appendChild(w); d.addEventListener('close', function () { stopAll(); d.remove(); }); document.body.appendChild(d); if (d.showModal) d.showModal();
+    }
+    document.addEventListener('kesera-stretch', open);
+    window.__keseraStretchSteps = ST;
+    var host = document.getElementById('dayMemo') || document.querySelector('#v-home .greet'); if (!host) return;
+    var card = E('div', 'card'); card.id = 'strCard'; card.appendChild(E('h3', '', '☀️ 朝のゴロゴロストレッチ（5分）')); card.appendChild(E('p', 'muted', '寝たまま・座って・立って。音声あんない（音楽つき）か、音声なしで。無理をしないで、体調のよい日に。'));
+    var gb = E('button', 'btn primary', '🌅 はじめる'); gb.type = 'button'; gb.style.cssText = 'min-height:60px;font-size:1.15rem;width:100%'; gb.addEventListener('click', open); card.appendChild(gb);
+    host.parentNode.insertBefore(card, host.nextSibling);
+  })();
+
   /* ---------- ヘッダーをコンパクトに ---------- */
   (function () {
     var tools = document.querySelector('.header-tools'), loc = $('locationBtn'), trip = $('tripOpen'), st = $('settingsBtn');
