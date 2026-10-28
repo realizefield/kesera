@@ -4752,9 +4752,15 @@ button[aria-pressed="true"] { font-weight:700; }
       UI.ctl.style.display = 'none'; UI.end.style.display = ''; try { burst(160); } catch (e) {}
       if (voice && ss) { try { var u = new SpeechSynthesisUtterance('おつかれさまでした。今日も、よい一日になりますように。'); u.lang = 'ja-JP'; ss.speak(u); } catch (e) {} }
     }
-    function tick() { if (paused) return; left--; if (left <= 0) { if (i + 1 >= ST.length) return finish(); begin(i + 1); } else { UI.cd.textContent = left + ' 秒'; var done = 0; for (var k = 0; k < i; k++) done += ST[k][1]; done += ST[i][1] - left; UI.bar.style.width = Math.round(done * 100 / TOTAL) + '%'; } }
+    var AN = { 60: '1分経過です。', 120: '2分経過です。', 180: '3分経過です。', 240: 'あと1分です。' }, annDone = {}, annT = null;
+    function elapsed() { var e = 0; for (var k = 0; k < i; k++) e += ST[k][1]; return e + ST[i][1] - left; }
+    function announce() {
+      var e = elapsed(); Object.keys(AN).forEach(function (k) { if (e >= +k && !annDone[k]) { annDone[k] = 1; UI.an.textContent = '⏱ ' + AN[k].replace('。', ''); UI.an.style.display = ''; if (annT) clearTimeout(annT); annT = setTimeout(function () { UI.an.style.display = 'none'; }, 6000);
+        if (voice && ss) { try { var u = new SpeechSynthesisUtterance(AN[k]); u.lang = 'ja-JP'; u.rate = 0.9; u.volume = 1; ss.speak(u); } catch (er) {} } } });
+    }
+    function tick() { if (paused) return; left--; if (left <= 0) { if (i + 1 >= ST.length) return finish(); begin(i + 1); announce(); } else { UI.cd.textContent = left + ' 秒'; announce(); var done = 0; for (var k = 0; k < i; k++) done += ST[k][1]; done += ST[i][1] - left; UI.bar.style.width = Math.round(done * 100 / TOTAL) + '%'; } }
     function run(v, m) {
-      voice = v; music = m; paused = false; UI.start.style.display = 'none'; UI.run.style.display = '';
+      voice = v; music = m; paused = false; annDone = {}; UI.start.style.display = 'none'; UI.run.style.display = '';
       try { if (navigator.wakeLock) navigator.wakeLock.request('screen').then(function (l) { wl = l; }, function () {}); } catch (e) {}
       if (music) mOn(); begin(0); tm = setInterval(tick, window.__keseraTick || 1000);
     }
@@ -4773,9 +4779,9 @@ button[aria-pressed="true"] { font-weight:700; }
       var L = load('kesera-stretch', { days: [] }); if (L && L.days && L.days.length) s0.appendChild(E('span', 'fl-sub', 'これまでに ' + L.days.length + ' 日、できています。'));
       w.appendChild(s0);
       var r = E('div'); r.style.cssText = 'display:none;flex-direction:column;gap:12px;text-align:center'; UI.run = r;
-      UI.ph = E('div', '', ''); UI.ph.style.cssText = 'font-size:1.1rem;font-weight:800;color:var(--accent)'; UI.em = E('div', '', ''); UI.em.style.fontSize = '3.2rem'; UI.ti = E('div', '', ''); UI.ti.style.cssText = 'font-size:1.8rem;font-weight:900'; UI.ti.setAttribute('role', 'status'); UI.tx = E('div', '', ''); UI.tx.style.cssText = 'font-size:1.2rem;line-height:1.8'; UI.cd = E('div', '', ''); UI.cd.style.cssText = 'font-size:2.2rem;font-weight:900';
+      UI.ph = E('div', '', ''); UI.ph.style.cssText = 'font-size:1.1rem;font-weight:800;color:var(--accent)'; UI.em = E('div', '', ''); UI.em.style.fontSize = '3.2rem'; UI.ti = E('div', '', ''); UI.ti.style.cssText = 'font-size:1.8rem;font-weight:900'; UI.ti.setAttribute('role', 'status'); UI.tx = E('div', '', ''); UI.tx.style.cssText = 'font-size:1.2rem;line-height:1.8'; UI.cd = E('div', '', ''); UI.cd.style.cssText = 'font-size:2.2rem;font-weight:900'; UI.an = E('div', '', ''); UI.an.setAttribute('role', 'status'); UI.an.style.cssText = 'display:none;font-size:1.5rem;font-weight:900;color:#fff;background:var(--accent);border-radius:10px;padding:8px';
       var bw = E('div'); bw.style.cssText = 'height:16px;border-radius:8px;background:var(--line);overflow:hidden'; UI.bar = E('div'); UI.bar.style.cssText = 'height:100%;width:0;background:var(--accent);transition:width .3s'; bw.appendChild(UI.bar); UI.st = E('div', 'muted', '');
-      [UI.ph, UI.em, UI.ti, UI.tx, UI.cd, bw, UI.st].forEach(function (x) { r.appendChild(x); });
+      [UI.ph, UI.em, UI.ti, UI.tx, UI.cd, UI.an, bw, UI.st].forEach(function (x) { r.appendChild(x); });
       var ctl = E('div', 'row'); ctl.style.justifyContent = 'center'; UI.ctl = ctl;
       var bp = E('button', 'btn', '◀ まえへ'); bp.type = 'button'; bp.style.minHeight = '56px'; bp.addEventListener('click', function () { if (i > 0) begin(i - 1); });
       var bz = E('button', 'btn primary', '⏸ 一時停止'); bz.type = 'button'; bz.style.minHeight = '56px'; bz.addEventListener('click', function () { paused = !paused; bz.textContent = paused ? '▶ つづける' : '⏸ 一時停止'; if (paused) { try { ss && ss.cancel(); } catch (e) {} } else speak(fill(ST[i][3])); });
