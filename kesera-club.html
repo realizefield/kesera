@@ -4380,8 +4380,11 @@ button[aria-pressed="true"] { font-weight:700; }
       clr.addEventListener('click', function () { items = items.filter(function (z) { return !z.done; }); sv(); draw(); });
       if (mic) mic.addEventListener('click', function () {
         try { var r = new SRx(); r.lang = 'ja-JP'; r.interimResults = false; r.maxAlternatives = 1; msg.textContent = '🎤 聞いています。話してください。';
-          r.onresult = function (e) { var s = (e.results[0][0].transcript || '').replace(/[。、]+$/, ''); inp.value = s; msg.textContent = '「' + s + '」と聞こえました。よければ「＋ 足す」を押してください。'; };
-          r.onerror = function () { msg.textContent = '聞き取れませんでした。文字で入れてください。'; }; r.onend = function () {}; r.start(); } catch (e) { msg.textContent = 'この端末では、声が使えません。文字で入れてください。'; }
+          var got = false, errd = false;
+          r.onresult = function (e) { got = true; var s = (e.results[0][0].transcript || '').replace(/[。、]+$/, ''); inp.value = s; msg.textContent = '「' + s + '」と聞こえました。よければ「＋ 足す」を押してください。'; };
+          r.onerror = function (e) { errd = true; var c = e && e.error; msg.textContent = (c === 'not-allowed' || c === 'service-not-allowed') ? 'マイクが許可されていません。アドレスの左の鍵マーク（または設定）で、マイクを「許可」にしてください。見本の画面（プレビュー）では使えないことがあります。ケセラのページ本体でお試しください。文字でも入れられます。' : c === 'no-speech' ? '声が聞こえませんでした。もう一度、🎤を押して、話してください。' : c === 'audio-capture' ? 'マイクが見つかりません。マイクがつながっているか、ご確認ください。文字でも入れられます。' : c === 'network' ? '通信のぐあいで、声を文字にできませんでした。少し待って、もう一度お試しください。' : '声を文字にできませんでした（' + (c || 'エラー') + '）。もう一度お試しください。文字でも入れられます。'; inp.focus(); };
+          r.onend = function () { if (!got && !errd) { msg.textContent = '聞き取れませんでした。もう一度、🎤を押してください。文字でも入れられます。'; } };
+          r.start(); setTimeout(function () { try { r.stop(); } catch (e2) {} }, 20000); } catch (e) { msg.textContent = 'この端末では、声が使えません。文字で入れてください。'; }
       });
       draw(); return box;
     }
