@@ -4872,6 +4872,7 @@ button[aria-pressed="true"] { font-weight:700; }
       var b2 = E('button', 'btn primary', '🔇 音声なし（画面だけ）ではじめる'); b2.type = 'button'; b2.style.cssText = 'min-height:64px;font-size:1.15rem'; b2.addEventListener('click', function () { run(false, false); });
       var b3 = E('button', 'btn', '🎙 音声あんないだけ（音楽なし）'); b3.type = 'button'; b3.style.minHeight = '52px'; b3.addEventListener('click', function () { run(true, false); });
       s0.appendChild(b1); s0.appendChild(b2); s0.appendChild(b3);
+      var yb = E('button', 'btn', '🔍 なぜ転ぶの？（しくみを見る）'); yb.type = 'button'; yb.style.minHeight = '52px'; yb.addEventListener('click', function () { d.close(); document.dispatchEvent(new Event('kesera-fallwhy')); }); s0.appendChild(yb);
       var L = load('kesera-fall', null); if (L && L.days && L.days.length) s0.appendChild(E('span', 'fl-sub', dstat(L)));
       var dt1 = E('details'); dt1.appendChild(E('summary', '', '💡 続けるための、工夫')); HINTS.forEach(function (x) { var p = E('p'); p.style.margin = '6px 0'; p.appendChild(E('b', '', x[0] + '　')); p.appendChild(document.createTextNode(x[1])); dt1.appendChild(p); }); s0.appendChild(dt1);
       var dt2 = E('details'); dt2.appendChild(E('summary', '', '🏠 おうちの「転ばぬ先」チェック')); var saved = load('kesera-fall-chk', []); if (!Array.isArray(saved)) saved = [];
@@ -4901,6 +4902,44 @@ button[aria-pressed="true"] { font-weight:700; }
     function vis() { var h2 = load('kesera-fall-hide', false) === true; card.style.display = h2 ? 'none' : ''; mini.style.display = h2 ? '' : 'none'; }
     hb.addEventListener('click', function () { save('kesera-fall-hide', true); vis(); }); mini.addEventListener('click', function () { save('kesera-fall-hide', false); vis(); });
     host.parentNode.insertBefore(card, host.nextSibling); card.parentNode.insertBefore(mini, card.nextSibling); vis();
+  })();
+
+  /* ---------- なぜ転ぶの？（しくみ）ポップ ---------- */
+  (function () {
+    function E(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; }
+    var SEC = [
+      ['① 立っていられるのは、3つの「目」と「脳」のおかげ', '私たちは、①目（視覚）、②耳の奥の「バランスのしくみ」（平衡感覚）、③足の裏や関節の感覚、の3つから情報を集めて、脳が「いま、どちらに傾いているか」を判断し、すばやく筋肉に指令を出して、体をささえています。', 'flow'],
+      ['② 年を重ねると、変わってくること', '・暗い所や、ものの見え方（視力・暗さへの慣れ）\n・足の裏の感覚（床のようすがわかりにくくなる）\n・筋力（とくに、ももの前・おしり・ふくらはぎ・すねの前）\n・とっさの反応の速さ\n・関節のかたさ\n人によって、ちがいが大きく、いくつからでも、体操でよくなることが知られています。'],
+      ['③ つまずきから転倒への「連鎖」', '足が思ったほど上がらない（つま先が下がったまま）→ 床や段差にひっかかる → とっさに足を出して支えられない（反応・筋力が足りない）→ 踏んばれず、転ぶ。\nこの連鎖の、どこか1つでも強くすると、転びにくくなります。'],
+      ['④ 転びやすい場面', '・朝起きた直後、立ち上がった直後（立ちくらみ）\n・夜中のトイレ（暗い、ねぼけている）\n・向きを変えるとき、急ぐとき\n・「ながら動作」（スマホ・おしゃべり・荷物を持つ）\n・雨の日や、ぬれた床\n転倒は、家の中でも起こります。'],
+      ['⑤ 薬や、体調も、関係します', '・血圧の薬、眠くなる薬、お薬の数が多いときは、ふらつきやすくなることがあります。\n・立ちくらみ（起立性の血圧低下）、脱水、貧血、熱、寝不足。\n・お薬は、自己判断でやめず、ふらつきが気になるときは、かかりつけ医や薬剤師に相談してください。'],
+      ['⑥ 家のなかの「しかけ」', '段差、床のコードや新聞、めくれるマット、すべるくつ下・スリッパ、暗い廊下、ぬれたお風呂の床、手すりがない場所。体の力が少し落ちても、家の工夫で、ぐっと転びにくくなります。'],
+      ['⑦ 「こわい」から動かない → もっと転びやすい', '一度転ぶと、こわくて、動かなくなることがあります。すると、筋力が落ちて、さらに転びやすくなります。ゆっくりでよいので、安全な場所で、少しずつ動き続けることが大切です。'],
+      ['⑧ ケセラの体操との、つながり', '・かかとの上げ下げ：ふくらはぎ（けり出す力、バランス）\n・つま先の上げ下げ：すねの前（つまずき防止）\n・片足立ち：バランスの感覚と、お尻の筋肉\n・足ぶみ：ももの筋肉と、歩く動き\n1日1分でも、つづけることが力になります。'],
+      ['⑨ けがをしやすい場所', '転ぶと、手首、太ももの付け根、背骨などを痛めやすい、といわれます。骨が弱くなっている方は、とくに注意が必要です。痛みが強いときは、動かず、すぐ受診や 119 を。']
+    ];
+    function open() {
+      var o = document.getElementById('whyDlg'); if (o) o.remove();
+      var d = E('dialog', 'design-dialog location-dialog'); d.id = 'whyDlg'; d.setAttribute('aria-labelledby', 'whyT'); d.style.cssText = 'width:min(96vw,680px)';
+      var w = E('div'); w.style.cssText = 'display:flex;flex-direction:column;gap:10px;padding:10px'; var h = E('h2', '', '🔍 なぜ転ぶの？（しくみ）'); h.id = 'whyT'; h.style.margin = '0'; w.appendChild(h);
+      w.appendChild(E('p', 'muted', '転ぶのは、「年だから」だけではありません。しくみを知ると、ふせぐ方法が見えてきます。'));
+      SEC.forEach(function (s) {
+        var b = E('div'); b.style.cssText = 'border:1.5px solid var(--line);border-radius:12px;padding:10px 12px'; var t = E('b', '', s[0]); t.style.cssText = 'display:block;font-size:1.1rem;margin-bottom:6px'; b.appendChild(t);
+        if (s[2] === 'flow') {
+          var fl = E('div'); fl.style.cssText = 'display:flex;flex-wrap:nowrap;align-items:center;justify-content:center;gap:4px;margin:6px 0 10px;text-align:center;font-size:.88rem'; fl.setAttribute('aria-hidden', 'true');
+          function bx(x, c) { var e = E('span', '', x); e.style.cssText = 'white-space:pre;padding:5px 6px;border-radius:10px;border:2px solid ' + c + ';font-weight:800;line-height:1.5'; return e; } function ar(x) { var e = E('span', '', x); e.style.cssText = 'font-size:1.4rem;font-weight:900'; return e; }
+          var l = E('span'); l.style.cssText = 'display:flex;flex-direction:column;gap:4px'; ['👀 目', '👂 耳の奥', '🦶 足の裏'].forEach(function (x) { l.appendChild(bx(x, 'var(--line)')); }); fl.appendChild(l); fl.appendChild(ar('→')); fl.appendChild(bx('🧠 脳\n（判断）', 'var(--accent)')); fl.appendChild(ar('→')); fl.appendChild(bx('💪 筋肉\n（支える）', 'var(--accent)')); b.appendChild(fl);
+        }
+        var p = E('div', '', s[1]); p.style.cssText = 'line-height:1.9;white-space:pre-line'; b.appendChild(p); w.appendChild(b);
+      });
+      w.appendChild(E('span', 'fl-sub', '一般的な説明です。個人の状態は、かかりつけ医などに、ご相談ください。ふらつきや転倒をくり返すときは、受診をおすすめします。')); w.lastChild.style.margin = '0';
+      var go = E('button', 'btn primary', '🦶 転倒予防体操（1分）をする'); go.type = 'button'; go.style.minHeight = '56px'; go.addEventListener('click', function () { d.close(); document.dispatchEvent(new Event('kesera-fall')); });
+      var x = E('button', 'btn', '閉じる'); x.type = 'button'; x.style.minHeight = '52px'; x.addEventListener('click', function () { d.close(); }); w.appendChild(go); w.appendChild(x);
+      d.appendChild(w); d.addEventListener('close', function () { d.remove(); }); document.body.appendChild(d); if (d.showModal) d.showModal(); d.scrollTop = 0; setTimeout(function () { d.scrollTop = 0; }, 50);
+    }
+    document.addEventListener('kesera-fallwhy', open);
+    var st = document.getElementById('fallStat'), card = document.getElementById('fallCard');
+    if (card && st) { var b = E('button', 'btn', '🔍 なぜ転ぶの？（しくみを見る）'); b.type = 'button'; b.style.cssText = 'min-height:52px;width:100%;margin-top:6px'; b.addEventListener('click', open); card.insertBefore(b, st); }
   })();
 
   /* ---------- ヘッダーをコンパクトに ---------- */
