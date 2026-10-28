@@ -4956,6 +4956,152 @@ button[aria-pressed="true"] { font-weight:700; }
     ['strCard', 'fallCard'].forEach(function (id) { var c = document.getElementById(id), st = document.getElementById(id === 'strCard' ? 'strStat' : 'fallStat'); if (c && st) c.insertBefore(mk(), st); });
   })();
 
+  /* ---------- 近くの神社仏閣（歴史・由来・催し） ---------- */
+  (function () {
+    function E(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; }
+    var CHECKED = '2026年10月29日';
+    /* [名前, 種別, 地域, 緯度, 経度, 由緒, 地域の歴史・エピソード, 見どころ, 例年の行事, 読み] ※位置は目安 */
+    var P = [
+      ['加藤神社', '神社', '熊本市中央区（熊本城内）', 32.8059, 130.7076,
+        '慶長16年（1611年）、加藤清正が亡くなったあと、清正をまつる「浄池廟」ができたのが始まりです。明治4年に神社として分かれ、明治7年に城外の新堀町（今の京町一丁目）へ移りました。明治10年（1877年）の西南戦争で社殿を焼失し、明治17年に再建。明治42年に「加藤神社」と名を改めました。',
+        '清正公（せいしょこ）さんへの信仰の中心となった神社です。乃木希典も信仰し、各地に分霊社（神様を分けてまつった社）がつくられました。一時は90社にのぼり、その約半分が熊本県にあります。明治44年には、遠くハワイにも分霊社ができました。昭和37年に道路の改修のため、今の熊本城内に移っています。',
+        'アミュプラザくまもとの庭園内にも、分祠があります。', '例祭の日は、確認できていません。公式でご確認ください。'],
+      ['藤崎八旛宮', '神社', '熊本市中央区井川淵町ほか', 32.7985, 130.7170,
+        '承平5年（935年）、勅願により、藤原純友の乱の追討と九州の守りのため、石清水八幡宮から神様をお迎えして、茶臼山にまつったのが始まりと伝わります。明治10年の西南戦争で焼失し、今の場所に移って復興しました。',
+        '「藤崎」の名は、鎮座のとき勅使が地面にさした藤の枝が芽吹いたから、という言い伝えがあります。国司や朝廷の崇敬を受け、江戸時代には熊本城の守り神とされ、今も熊本市域の総鎮守として信仰されています。社名の「旛」の字は、後奈良天皇の勅額に由来するといわれます。',
+        '参道と国道3号の交差点に、高さも幅も約10mの大鳥居があります。木造僧形八幡神坐像・木造女神坐像などが知られます。', '秋に「秋季例大祭」があります（日にちは確認できていません）。'],
+      ['出水神社', '神社', '熊本市中央区（水前寺成趣園内）', 32.7890, 130.7330,
+        '明治11年（1878年）、旧藩士らの願いで創建されました。西南戦争後の熊本の復興で、人々の心のよりどころにしたい、という思いがありました。藩主の別邸の跡である水前寺成趣園の全域が、境内です。',
+        '細川忠利・藤孝（幽斎）・忠興・重賢をまつり、歴代の藩主と、忠興の妻・玉（ガラシャ）も祀られています。江戸時代には藤孝・忠興父子をまつる構想がありましたが、幕府の規制で見送られました。社名は、成趣園の池の湧き水（出水）に由来し、社紋は細川九曜紋です。',
+        '能楽殿があり、夏祭で奉納される薪能は、日本で5番目に古いといわれます。神楽殿、袈裟紋の水磐、「光復」の碑もあります。', '流鏑馬式：10月20日前後の休日（今年は終わっています）／夏祭（薪能）：夏'],
+      ['北岡神社', '神社', '熊本市西区春日（熊本駅のそば）', 32.7915, 130.6885,
+        '平安時代に、京都の祇園社の神様をお迎えしたと伝わります。社伝では承平4年（934年）に藤原保昌が肥後守として勧請したとされますが、史実とはいえない、という見方もあります。1154年に近衛天皇から「顕神院」の勅額をいただきました。1647年、細川家により、今の北岡の地へ移されました。',
+        '熊本市域で、藤崎八旛宮と並ぶ古い神社です。境内には、樹齢およそ千年といわれる「夫婦楠」があり、厄除け・開運・縁結びの御利益が伝わります。明治10年の西南戦争では、薩摩軍の本営が一時、境内に置かれました。',
+        '祭神は、奇稲田姫命と八柱御子神。境内社に疫神社、京国司神社、清原神社があります。', '8月1日〜3日に、行事が行われると記されています（例年）。'],
+      ['熊本大神宮', '神社', '熊本市中央区（熊本城の東側）', 32.8040, 130.7132,
+        '明治9年（1876年）、神宮教院の熊本本部として熊本城内に鎮座しました。翌年の西南戦争で城とともに焼け、手取本町、鷹匠町と移り、大正15年に今の場所に新しい神殿と拝殿ができ、昭和2年に遷座しました。昭和21年に神社として再出発しています。',
+        '本殿のすぐ左に、熊本城本丸の石垣がそびえます。2016年4月の熊本地震では、熊本城の東十八間櫓と北十八間櫓が倒れ、その影響で神社の建物の屋根を突き破る被害が出ました。南隣には熊本城稲荷神社があります。',
+        '天照皇大神と豊受大神をまつります。', '例祭の日は、確認できていません。'],
+      ['本妙寺', '寺', '熊本市西区花園', 32.8168, 130.6850,
+        '天正13年（1585年）、加藤清正の父・清忠の冥福を祈って、大阪で開かれたのが始まりです。慶長5年（1600年）に熊本城下の瑞龍院へ移り、清正が亡くなった慶長16年（1611年）に、遺言で浄池廟に清正の像が安置されました。1614年の火災のあと、今の場所へ移りました。',
+        '日蓮宗の寺で、「清正公（せいしょこ）さん」をまつる廟所として知られます。毎年7月24日（清正の命日）の前夜は「頓写会」で、写経した法華経が納められ、およそ10万人の参拝でにぎわう、と記されています。',
+        '約300mの桜並木の参道、176段の胸突雁木、宝物館（約1400点）があります。国指定重要文化財の短刀（銘 光世）などが伝わります。2016年の熊本地震で仁王門が被災し、修復のための寄付の募集が2021年に始まっています。今の通行の状況は、公式でご確認ください。', '頓写会：7月23日夜〜24日（例年）'],
+      ['健軍神社', '神社', '熊本市東区健軍', 32.7880, 130.7470,
+        '社伝では欽明天皇19年（558年）に、阿蘇神社の大宮司が神様をお迎えしたのが始まりとされます。熊本市内で最も古い神社といわれ、のちに阿蘇神社の別宮となりました。',
+        '阿蘇神社・甲佐神社・郡浦神社とともに「阿蘇四社」と呼ばれます。「健軍町」という地名は、この神社に由来します。かつては健軍荘の氏神でした。',
+        '「肥後神楽」（無形民俗文化財）、「杉馬場」と境内（史跡）が知られます。', '例祭の日は、確認できていません。'],
+      ['阿蘇神社', '神社', '阿蘇市一の宮町宮地', 32.9487, 131.1228,
+        '孝霊天皇9年に、健磐龍命の子で、初代阿蘇国造となる速瓶玉命が、両親をまつったのが始まりと伝わります。阿蘇十二神をまつる、全国約450社の阿蘇神社の総本社です。',
+        '日本三大楼門にかぞえられる、高さ18mの楼門で知られます。2016年4月16日の熊本地震で、楼門と拝殿が全壊し、神殿3か所も傷みました。復旧は、神殿が2019年3月、拝殿が2021年7月、楼門が2023年12月7日、透塀・御札所が2024年12月20日に竣工祭を迎え、すべての復旧が終わりました。',
+        '「阿蘇の農耕祭事」は国の重要無形民俗文化財です。横参道という、めずらしい形の参道があります。', '例祭と御田植神幸式（おんだ祭り）は、例年28日に行われます（月は公式でご確認ください）。'],
+      ['菊池神社', '神社', '菊池市隈府', 33.0130, 130.8080,
+        '慶応4年（1868年）、長岡護美の建議を受けて、太政官が熊本藩に祭祀を命じ、菊池城のあと（城址）に建てられました。明治3年（1870年）に鎮座祭があり、明治11年に別格官幣社になりました。',
+        '菊池武時・武重・武光の父子をまつり、菊池氏の一族26柱が合わせまつられています。建武中興十五社の一つです。例祭の5月5日は、武時の戦死日を、太陽暦に換算した日と伝えられます。',
+        '絹本著色伝菊池能運像と菊池神社文書が、国の重要文化財です。', '例祭：5月5日'],
+      ['青井阿蘇神社', '神社', '人吉市上青井町', 32.2102, 130.7535,
+        '大同元年（806年）9月9日、阿蘇神社の神主が神託を受け、阿蘇三社の神様を球磨郡青井郷にまつったのが始まりと伝わります。のち相良氏の厚い崇敬を受け、社殿の造営が繰り返されました。',
+        '本殿・廊・幣殿・拝殿・楼門の5棟は、慶長15〜18年（1610〜1613年）の造営で、2008年に国宝になりました。楼門には、球磨地方独自の「人吉様式」が見られます。近世まで神仏習合でしたが、寛文5年（1665年）に神道に改めました。2020年7月豪雨では4.3mも浸水し、国宝の拝殿が床上浸水、禊橋の欄干が壊れました。現在の様子は、公式でご確認ください。',
+        '球磨神楽の奉納でも知られます。', 'おくんち祭：10月3日〜11日（例祭8日、神幸式9日）。今年は終わっています。'],
+      ['八代神社（妙見宮）', '神社', '八代市妙見町', 32.5160, 130.6100,
+        '延暦14年（795年）に横岳の頂上で上宮がまつられたと伝わり、永暦元年（1160年）に中宮、文治2年（1186年）に後鳥羽天皇の勅願で下宮ができました。明治3年まで「妙見宮」と呼ばれ、明治4年の神仏分離で八代神社になりました。',
+        '相馬妙見・能勢妙見と並ぶ「日本三大妙見」の一つです。毎年11月22日・23日の「妙見祭」は九州三大祭りの一つで、国の重要無形民俗文化財、そして2016年にユネスコ無形文化遺産（山・鉾・屋台行事）に登録されました。笠鉾9基、元禄の豪商・井桜屋勘七が取り入れたと伝わる獅子、亀と蛇が合体した「亀蛇」（重さ100kg以上、5人1組で担ぐ）が人気です。',
+        '古い神輿は、寛永13年（1636年）に細川三斎が寄進したものです。5月31日〜6月1日には氷室祭があり、雪餅をお供えします。', '妙見祭：11月22日・23日（今年のおしらせは、下の「いま・これから」をご覧ください）'],
+      ['疋野神社', '神社', '玉名市立願寺', 32.9263, 130.5629,
+        '創建の年は分かりません。社伝では、景行天皇の九州巡幸のときにまつられたとされます。承和7年（840年）に官社になりました。',
+        'もとは郡司の日置氏の守り神でしたが、日置氏が衰えたあと神社も衰え、江戸時代に熊本藩主の細川氏が再興して、厚く敬いました。『延喜式神名帳』にのる肥後国の四座の一つで、熊本県内でもっとも古い神社の一つといわれます。',
+        '製鉄の神・波比岐神と、五穀豊穣の大年神をまつります。', '10月15日に祭事があると記されています（今年は終わっています）。'],
+      ['大宮神社（山鹿）', '神社', '山鹿市山鹿', 33.0200, 130.6930,
+        '第12代景行天皇が筑紫を巡ったときに行宮（仮の宮）が置かれ、その跡に天皇をまつったのが始まりとされます。延久4年（1072年）に菊池則隆が阿蘇十二神をお迎えし、田地36町歩を寄進しました。',
+        '明治4年に山鹿神宮、昭和15年に大宮神社と名を改め、昭和18年に県社になりました。毎年8月15日から17日未明にかけての「山鹿灯籠まつり」で知られます。',
+        '神域は約1万平方メートル。奉納された灯籠を保存する燈籠殿や、猿田彦石碑群があります。', '山鹿灯籠まつり：8月15日〜17日未明（例年）']
+    ];
+    /* いま・これから ［題, 場所, 始まり, 終わり, 内容, 出どころ名, URL］ */
+    var EV = [
+      ['「熊本地震から10年　仏像　国宝×肥後仏」', '熊本県立美術館（熊本市中央区二の丸）', '2026-10-09', '2026-11-29',
+        '県内の寺や神社の調査で見つかった熊本の仏像の名品と、中世の肥後と深い関わりのある京都の国宝仏が、同館で初めて特別公開されます。前期は11月1日まで、後期は11月3日から。休館は月曜日（ただし10月26日と11月24日は開館）と、11月2日・9日・16日。観覧料は一般1,500円、大学生1,000円、高校生以下は無料。', 'Tokyoartbeat', 'https://www.tokyoartbeat.com/events/-/National-Treasures-x-Higo-Buddhist-Statues/E11749-E6/2026-10-09'],
+      ['八代妙見祭（八代神社の秋の大祭）', '八代市・八代神社（妙見宮）と八代の町', '2026-11-22', '2026-11-23',
+        '11月22日が神幸行列の「お下り」と御夜、23日が「お上り」です。笠鉾9基、獅子、亀蛇などが出ます。八代市が2026年6月に作った冊子の情報です。ユネスコ無形文化遺産です。', '八代市', 'https://www.city.yatsushiro.lg.jp/kiji00326985/3_26985_158755_up_8htb2q7v.pdf']
+    ];
+    var TL = [['558年', '健軍神社が始まったと伝わる（社伝）'], ['795年', '八代の妙見宮（上宮）が始まったと伝わる'], ['806年', '青井阿蘇神社が始まったと伝わる'], ['935年', '藤崎八旛宮が始まったと伝わる'], ['1585年', '本妙寺が始まる（大阪で）'], ['1611年', '加藤清正が亡くなる。浄池廟（加藤神社・本妙寺の元）が始まる'], ['1647年', '北岡神社が、細川家により今の地へ'], ['1877年', '西南戦争。熊本城とともに、藤崎八旛宮・加藤神社・熊本大神宮などが焼ける'], ['1878年', '出水神社が創建される（復興のよりどころとして）'], ['2008年', '青井阿蘇神社が国宝になる'], ['2016年', '熊本地震。阿蘇神社の楼門・拝殿が全壊、本妙寺の仁王門などが被災'], ['2020年', '令和2年7月豪雨。青井阿蘇神社が4.3m浸水'], ['2023〜24年', '阿蘇神社の楼門（2023年12月）、透塀・御札所（2024年12月）の復旧が完了']];
+    function ymd(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+    function km(a, b, c, d) { var R = 6371, r = Math.PI / 180, x = (c - a) * r, y = (d - b) * r, h = Math.sin(x / 2) * Math.sin(x / 2) + Math.cos(a * r) * Math.cos(c * r) * Math.sin(y / 2) * Math.sin(y / 2); return 2 * R * Math.asin(Math.sqrt(h)); }
+    function ext(label, url) { var a = E('a', 'btn', label); a.href = url; a.target = '_blank'; a.rel = 'noopener'; a.style.cssText = 'min-height:48px;display:inline-flex;align-items:center;text-decoration:none'; return a; }
+    function open() {
+      var o = document.getElementById('shrDlg'); if (o) o.remove();
+      var d = E('dialog', 'design-dialog location-dialog'); d.id = 'shrDlg'; d.setAttribute('aria-labelledby', 'shrT'); d.style.cssText = 'width:min(96vw,720px)';
+      var w = E('div'); w.style.cssText = 'display:flex;flex-direction:column;gap:10px;padding:10px';
+      var h = E('h2', '', '⛩ 近くの神社仏閣（歴史・由来・催し）'); h.id = 'shrT'; h.style.margin = '0'; w.appendChild(h);
+      w.appendChild(E('p', 'muted', '熊本県内の13か所の、由来と歴史、エピソード、例年の行事をまとめました。「いまいる場所から近い順」を押すと、近い順に並びます。'));
+      /* いま・これから */
+      var today = ymd(new Date());
+      var live = EV.filter(function (e) { return e[3] >= today; });
+      var nb = E('div'); nb.style.cssText = 'border:2px solid var(--accent);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:8px';
+      nb.appendChild(E('b', '', '📅 いま・これから（' + CHECKED + 'に確認）')); nb.firstChild.style.fontSize = '1.15rem';
+      if (!live.length) nb.appendChild(E('p', 'muted', '確認できている催しは、終わりました。下の「最新の行事を調べる」から、最新の情報をご覧ください。'));
+      live.forEach(function (e) {
+        var b = E('div'); b.style.cssText = 'border-top:1.5px solid var(--line);padding-top:8px;line-height:1.8';
+        var t = E('b', '', e[0]); t.style.display = 'block'; b.appendChild(t);
+        b.appendChild(E('div', '', '📍 ' + e[1])); b.appendChild(E('div', '', '🗓 ' + e[2].replace(/^(\d+)-0?(\d+)-0?(\d+)$/, '$1年$2月$3日') + (e[2] === e[3] ? '' : ' 〜 ' + e[3].replace(/^(\d+)-0?(\d+)-0?(\d+)$/, '$2月$3日'))));
+        b.appendChild(E('div', '', e[4])); var s = E('div'); s.style.marginTop = '4px'; s.appendChild(ext('🔗 出どころ：' + e[5], e[6])); b.appendChild(s); nb.appendChild(b);
+      });
+      nb.appendChild(E('span', 'fl-sub', '催しは、日程の変更や中止があります。お出かけの前に、必ず公式の情報でご確認ください。この画面は自動では更新されません。')); nb.lastChild.style.margin = '0';
+      var lk = E('div', 'row'); lk.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px';
+      lk.appendChild(ext('🔎 熊本の神社・お寺の行事を調べる', 'https://www.google.com/search?q=' + encodeURIComponent('熊本 神社 寺 行事 催し 今月')));
+      lk.appendChild(ext('🏛 熊本の展覧会を調べる', 'https://www.google.com/search?q=' + encodeURIComponent('熊本 展覧会 企画展 開催中 歴史')));
+      nb.appendChild(lk); w.appendChild(nb);
+      /* 近い順 */
+      var stat = E('p', 'fl-sub', ''); stat.style.margin = '0'; stat.setAttribute('aria-live', 'polite');
+      var near = E('button', 'btn primary', '📍 いまいる場所から近い順にならべる'); near.type = 'button'; near.style.minHeight = '56px';
+      var list = E('div'); list.style.cssText = 'display:flex;flex-direction:column;gap:8px';
+      var dist = null;
+      function render() {
+        list.textContent = '';
+        var idx = P.map(function (p, i) { return i; });
+        if (dist) idx.sort(function (a, b) { return dist[a] - dist[b]; });
+        idx.forEach(function (i) {
+          var p = P[i], dt = E('details'); dt.style.cssText = 'border:1.5px solid var(--line);border-radius:12px;padding:6px 12px';
+          var sm = E('summary', '', (p[1] === '寺' ? '🛕 ' : '⛩ ') + p[0] + '　（' + p[2] + '）' + (dist ? '　約' + (dist[i] < 10 ? dist[i].toFixed(1) : Math.round(dist[i])) + 'km' : '')); sm.style.cssText = 'font-weight:800;font-size:1.1rem;line-height:1.8;min-height:48px;cursor:pointer;padding:4px 0'; dt.appendChild(sm);
+          [['📖 由来', p[5]], ['🏘 地域の歴史・エピソード', p[6]], ['✨ 見どころ', p[7]], ['📅 例年の行事', p[8]]].forEach(function (r) {
+            var b = E('div'); b.style.cssText = 'margin:8px 0'; var t = E('b', '', r[0]); t.style.display = 'block'; b.appendChild(t); var x = E('div', '', r[1]); x.style.lineHeight = '1.9'; b.appendChild(x); dt.appendChild(b);
+          });
+          var ac = E('div'); ac.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 6px';
+          ac.appendChild(ext('🗺 地図で見る・行き方', 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(p[0].replace(/（.*$/, '') + ' ' + p[2].split('（')[0])));
+          ac.appendChild(ext('📅 最新の行事を調べる', 'https://www.google.com/search?q=' + encodeURIComponent(p[0].replace(/（.*$/, '') + ' 行事 お知らせ 最新')));
+          dt.appendChild(ac); list.appendChild(dt);
+        });
+      }
+      render();
+      near.addEventListener('click', function () {
+        if (!navigator.geolocation) { stat.textContent = 'この端末では、場所を調べられません。地図のボタンをお使いください。'; return; }
+        stat.textContent = '場所を調べています…（許可を求められたら「許可」を押してください）';
+        navigator.geolocation.getCurrentPosition(function (pos) {
+          var la = pos.coords.latitude, lo = pos.coords.longitude; dist = P.map(function (p) { return km(la, lo, p[3], p[4]); }); render();
+          var m = Math.min.apply(null, dist);
+          stat.textContent = m > 150 ? '熊本県から遠い場所のようです。距離は直線の目安です。お近くの神社・お寺は、下の地図ボタンで探せます。' : '近い順にならべました。距離は直線の目安です（位置は、おおよその地点です）。';
+          if (m > 150) { var q = E('div'); q.style.marginTop = '6px'; q.appendChild(ext('🗺 お近くの神社・お寺を地図で探す', 'https://www.google.com/maps/search/' + encodeURIComponent('神社 寺') + '/@' + la + ',' + lo + ',14z')); stat.appendChild(q); }
+        }, function (er) { stat.textContent = (er && er.code === 1) ? '場所の使用が許可されていません。ブラウザの設定で許可すると、近い順になります。' : '場所を調べられませんでした。電波のよいところで、もう一度どうぞ。'; }, { enableHighAccuracy: false, timeout: 12000, maximumAge: 300000 });
+      });
+      w.appendChild(near); w.appendChild(stat); w.appendChild(list);
+      /* 年表 */
+      var tl = E('details'); tl.style.cssText = 'border:1.5px solid var(--line);border-radius:12px;padding:6px 12px';
+      var ts = E('summary', '', '🕰 神社・お寺から見る、熊本の歴史年表'); ts.style.cssText = 'font-weight:800;font-size:1.1rem;line-height:1.8;min-height:48px;cursor:pointer'; tl.appendChild(ts);
+      TL.forEach(function (r) { var l = E('div'); l.style.cssText = 'display:flex;gap:10px;padding:5px 0;line-height:1.8;border-top:1px solid var(--line)'; var a = E('b', '', r[0]); a.style.cssText = 'min-width:5.2em'; l.appendChild(a); l.appendChild(E('span', '', r[1])); tl.appendChild(l); });
+      w.appendChild(tl);
+      w.appendChild(E('span', 'fl-sub', '由来や歴史は、公開されている資料（ウィキペディアなど）をもとにまとめました。伝承は「伝わります」と書いています。誤りや、変わった点があるかもしれません。参拝や見学の前に、各社寺の公式の情報で、開いている時間や行事、工事・復旧の状況をご確認ください。')); w.lastChild.style.margin = '0';
+      var x = E('button', 'btn', '閉じる'); x.type = 'button'; x.style.minHeight = '52px'; x.addEventListener('click', function () { d.close(); }); w.appendChild(x);
+      d.appendChild(w); d.addEventListener('close', function () { d.remove(); }); document.body.appendChild(d); if (d.showModal) d.showModal(); d.scrollTop = 0; setTimeout(function () { d.scrollTop = 0; }, 50);
+    }
+    document.addEventListener('kesera-shrine', open);
+    window.__keseraShrines = P;
+    var anchor = document.getElementById('tnMine');
+    if (anchor && anchor.parentNode) {
+      var c = E('div', 'card'); c.style.gap = '8px';
+      var b = E('button', 'btn primary', '⛩ 近くの神社仏閣：歴史・由来・催しを見る'); b.type = 'button'; b.style.minHeight = '56px'; b.addEventListener('click', open);
+      c.appendChild(E('b', '', '神社・お寺の物語')); c.appendChild(E('span', 'fl-sub', '由来、地域の歴史、エピソード、行事と展覧会の情報を、まとめました。')); c.appendChild(b);
+      anchor.parentNode.insertBefore(c, anchor);
+    }
+  })();
+
   /* ---------- ヘッダーをコンパクトに ---------- */
   (function () {
     var tools = document.querySelector('.header-tools'), loc = $('locationBtn'), trip = $('tripOpen'), st = $('settingsBtn');
