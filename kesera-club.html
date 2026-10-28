@@ -4746,10 +4746,18 @@ button[aria-pressed="true"] { font-weight:700; }
       var done = 0; for (var k = 0; k < i; k++) done += ST[k][1]; done += s[1] - left; UI.bar.style.width = Math.round(done * 100 / TOTAL) + '%'; UI.st.textContent = (i + 1) + ' / ' + ST.length + '　（のこり ' + Math.max(0, Math.ceil((TOTAL - done) / 6) / 10) + ' 分ほど）';
     }
     function begin(k) { i = k; left = ST[i][1]; paint(); speak(fill(ST[i][3])); }
+    function dstat(L) {
+      var ds = (L.days || []).slice().sort(), first = L.first || ds[0] || key(), td = key();
+      function t(s) { var p = s.split('-'); return Date.UTC(+p[0], +p[1] - 1, +p[2]); }
+      var no = Math.round((t(td) - t(first)) / 86400000) + 1, run = 0, c = t(td); while (ds.indexOf(new Date(c).getUTCFullYear() + '-' + pad(new Date(c).getUTCMonth() + 1) + '-' + pad(new Date(c).getUTCDate())) >= 0) { run++; c -= 86400000; }
+      var fp = first.split('-'); return { no: no, total: ds.length, run: run, firstLabel: (+fp[1]) + '月' + (+fp[2]) + '日' };
+    }
+    function statLine(L) { var s = dstat(L); return 'はじめて ' + s.no + ' 日目（' + s.firstLabel + 'から）／できた日は、全部で ' + s.total + ' 日／いま ' + s.run + ' 日つづけて'; }
+    function refreshStat() { var e = document.getElementById('strStat'); if (!e) return; var L = load('kesera-stretch', null); e.textContent = L && L.days && L.days.length ? '📝 ' + statLine(L) : ''; }
     function finish() {
-      stopAll(); var L = load('kesera-stretch', { days: [] }); if (!L || !Array.isArray(L.days)) L = { days: [] }; var td = key(); if (L.days.indexOf(td) < 0) L.days.push(td); save('kesera-stretch', L);
-      UI.ph.textContent = '🎉 おつかれさまでした'; UI.em.textContent = '🌸'; UI.ti.textContent = '5分、できました'; UI.tx.textContent = 'すばらしいです。今日も、よい一日になりますように。これまでに ' + L.days.length + ' 日、できました。'; UI.cd.textContent = ''; UI.bar.style.width = '100%'; UI.st.textContent = '';
-      UI.ctl.style.display = 'none'; UI.end.style.display = ''; try { burst(160); } catch (e) {}
+      stopAll(); var L = load('kesera-stretch', { days: [] }); if (!L || !Array.isArray(L.days)) L = { days: [] }; var td = key(); if (!L.first) L.first = L.days.slice().sort()[0] || td; if (L.days.indexOf(td) < 0) L.days.push(td); save('kesera-stretch', L);
+      UI.ph.textContent = '🎉 おつかれさまでした'; UI.em.textContent = '🌸'; UI.ti.textContent = 'よく頑張りました！　5分、できました'; UI.tx.textContent = '記録を保存しました。\n' + statLine(L).replace(/／/g, '\n') + '\n今日も、よい一日になりますように。'; UI.tx.style.whiteSpace = 'pre-line'; UI.cd.textContent = ''; UI.bar.style.width = '100%'; UI.st.textContent = '';
+      UI.ctl.style.display = 'none'; UI.end.style.display = ''; refreshStat(); UI.an.style.display = 'none'; try { burst(160); } catch (e) {}
       if (voice && ss) { try { var u = new SpeechSynthesisUtterance('おつかれさまでした。今日も、よい一日になりますように。'); u.lang = 'ja-JP'; ss.speak(u); } catch (e) {} }
     }
     var AN = { 60: '1分経過です。', 120: '2分経過です。', 180: '3分経過です。', 240: 'あと1分です。' }, annDone = {}, annT = null;
@@ -4776,7 +4784,7 @@ button[aria-pressed="true"] { font-weight:700; }
       var b2 = E('button', 'btn primary', '🔇 音声なし（画面だけ）ではじめる'); b2.type = 'button'; b2.style.cssText = 'min-height:64px;font-size:1.15rem'; b2.addEventListener('click', function () { run(false, false); });
       var b3 = E('button', 'btn', '🎙 音声あんないだけ（音楽なし）'); b3.type = 'button'; b3.style.minHeight = '52px'; b3.addEventListener('click', function () { run(true, false); });
       s0.appendChild(b1); s0.appendChild(b2); s0.appendChild(b3); if (!ss) s0.appendChild(E('span', 'fl-sub', 'この端末では、音声が出せないことがあります。そのときは、画面を見ながら行ってください。'));
-      var L = load('kesera-stretch', { days: [] }); if (L && L.days && L.days.length) s0.appendChild(E('span', 'fl-sub', 'これまでに ' + L.days.length + ' 日、できています。'));
+      var L = load('kesera-stretch', { days: [] }); if (L && L.days && L.days.length) s0.appendChild(E('span', 'fl-sub', statLine(L)));
       w.appendChild(s0);
       var r = E('div'); r.style.cssText = 'display:none;flex-direction:column;gap:12px;text-align:center'; UI.run = r;
       UI.ph = E('div', '', ''); UI.ph.style.cssText = 'font-size:1.1rem;font-weight:800;color:var(--accent)'; UI.em = E('div', '', ''); UI.em.style.fontSize = '3.2rem'; UI.ti = E('div', '', ''); UI.ti.style.cssText = 'font-size:1.8rem;font-weight:900'; UI.ti.setAttribute('role', 'status'); UI.tx = E('div', '', ''); UI.tx.style.cssText = 'font-size:1.2rem;line-height:1.8'; UI.cd = E('div', '', ''); UI.cd.style.cssText = 'font-size:2.2rem;font-weight:900'; UI.an = E('div', '', ''); UI.an.setAttribute('role', 'status'); UI.an.style.cssText = 'display:none;font-size:1.5rem;font-weight:900;color:#fff;background:var(--accent);border-radius:10px;padding:8px';
@@ -4795,6 +4803,7 @@ button[aria-pressed="true"] { font-weight:700; }
     var host = document.getElementById('dayMemo') || document.querySelector('#v-home .greet'); if (!host) return;
     var card = E('div', 'card'); card.id = 'strCard'; card.appendChild(E('h3', '', '☀️ 朝のゴロゴロストレッチ（5分）')); card.appendChild(E('p', 'muted', '寝たまま・座って・立って。音声あんない（音楽つき）か、音声なしで。無理をしないで、体調のよい日に。'));
     var gb = E('button', 'btn primary', '🌅 はじめる'); gb.type = 'button'; gb.style.cssText = 'min-height:60px;font-size:1.15rem;width:100%'; gb.addEventListener('click', open); card.appendChild(gb);
+    var sl = E('p', 'muted'); sl.id = 'strStat'; sl.style.cssText = 'margin:8px 0 0;font-weight:700'; card.appendChild(sl); refreshStat();
     host.parentNode.insertBefore(card, host.nextSibling);
   })();
 
