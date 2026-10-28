@@ -4820,6 +4820,89 @@ button[aria-pressed="true"] { font-weight:700; }
     host.parentNode.insertBefore(card, host.nextSibling); card.parentNode.insertBefore(mini, card.nextSibling); vis();
   })();
 
+  /* ---------- 転倒予防体操（1分） ---------- */
+  (function () {
+    function E(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; }
+    var ST = [
+      [5, 'じゅんび', 'いすの背や、安定した机に、両手を軽くそえて、まっすぐ立ちます。足は、こぶし1つぶんあけます。', '🪑'],
+      [10, 'かかとの上げ下げ', 'かかとを、ゆっくり上げて、ゆっくり下ろします。ふくらはぎを、しっかり使います。', '🦶'],
+      [10, 'つま先の上げ下げ', 'かかとは床につけたまま、つま先を持ち上げて、下ろします。つまずきを防ぐ、すねの筋肉です。', '👟'],
+      [10, '片足立ち（右足）', 'つかまったまま、右足を少し上げます。支えは、いつでもつかめるように。', '🧍'],
+      [10, '片足立ち（左足）', 'つぎは、左足を少し上げます。ふらついたら、すぐ、足を下ろしましょう。', '🧍'],
+      [10, '足ぶみ（ももあげ）', 'ももを、ゆっくり上げて、足ぶみ。つかまったままで大丈夫です。いち、にい、いち、にい。', '🚶'],
+      [5, 'おわりの深呼吸', '深く息をすって、ゆっくり、はきます。よくできました。', '🌸']
+    ];
+    var TOTAL = ST.reduce(function (s, x) { return s + x[0]; }, 0);
+    var HINTS = [
+      ['🦷 「歯みがき」とセットに', '歯みがきをしながら、片足立ち。毎日の習慣にくっつけると、続きます。（つかまれる洗面台の近くで）'],
+      ['🏠 「つかまれる場所」を決める', 'キッチンのカウンター、いすの背、洗面台など、ふだんの場所を決めておくと、安全です。'],
+      ['🌙 夜は、足もとを明るく', '夜のトイレの通り道に、足もとの明かりを。暗い場所は、転びやすいところです。'],
+      ['🧦 くつ下・スリッパに注意', 'すべりやすいくつ下や、ぬげやすいスリッパは、転ぶ原因に。すべり止めつきをおすすめします。']
+    ];
+    var CHK = ['段差や、玄関の上がりかまちに、手すりや、足もとの印がある', '床に、コードや、新聞・雑誌など、つまずくものを置いていない', 'じゅうたんの端や、マットが、めくれたり、すべったりしない', '廊下や階段、トイレまでの道が、夜も明るい', 'お風呂や、ぬれた床は、すべり止めがある', 'いつも使う、つかまれる場所（手すり・いす）が、安定している'];
+    var ss = window.speechSynthesis, ac = null, mt = null, wl = null, tm = null, i = 0, left = 0, voice = false, paused = false, d = null, UI = {}, half = false;
+    var SC = [261.63, 329.63, 392, 440, 392, 329.63];
+    function key() { var x = new Date(); return x.getFullYear() + '-' + pad(x.getMonth() + 1) + '-' + pad(x.getDate()); }
+    function mOn() { var AC = window.AudioContext || window.webkitAudioContext; if (!AC) return; try { ac = new AC(); var k = 0; function note() { if (!ac) return; var o = ac.createOscillator(), g = ac.createGain(), t = ac.currentTime; o.type = 'sine'; o.frequency.value = SC[k++ % SC.length]; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.07, t + 0.4); g.gain.exponentialRampToValueAtTime(0.0001, t + 1.8); o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + 1.9); } note(); mt = setInterval(note, 1200); } catch (e) { ac = null; } }
+    function mOff() { if (mt) { clearInterval(mt); mt = null; } try { if (ac) { ac.close(); ac = null; } } catch (e) {} }
+    function speak(t, keep) { if (!voice || !ss) return; try { if (!keep) ss.cancel(); var u = new SpeechSynthesisUtterance(t); u.lang = 'ja-JP'; u.rate = 0.9; u.volume = 1; ss.speak(u); } catch (e) {} }
+    function stopAll() { if (tm) { clearInterval(tm); tm = null; } mOff(); try { ss && ss.cancel(); } catch (e) {} try { if (wl) { wl.release(); wl = null; } } catch (e) {} }
+    function elapsed() { var e = 0; for (var k = 0; k < i; k++) e += ST[k][0]; return e + ST[i][0] - left; }
+    function bar() { UI.bar.style.width = Math.round(elapsed() * 100 / TOTAL) + '%'; }
+    function paint() { var s = ST[i]; UI.em.textContent = s[3]; UI.ti.textContent = s[1]; UI.tx.textContent = s[2]; UI.cd.textContent = left + ' 秒'; UI.st.textContent = (i + 1) + ' / ' + ST.length; bar(); }
+    function begin(k) { i = k; left = ST[i][0]; paint(); speak(ST[i][2]); }
+    function dstat(L) { var ds = (L.days || []).slice().sort(), first = L.first || ds[0] || key(), td = key(); function t(s) { var p = s.split('-'); return Date.UTC(+p[0], +p[1] - 1, +p[2]); } var no = Math.round((t(td) - t(first)) / 86400000) + 1, run = 0, c = t(td); while (ds.indexOf(new Date(c).getUTCFullYear() + '-' + pad(new Date(c).getUTCMonth() + 1) + '-' + pad(new Date(c).getUTCDate())) >= 0) { run++; c -= 86400000; } var fp = first.split('-'); return 'はじめて ' + no + ' 日目（' + (+fp[1]) + '月' + (+fp[2]) + '日から）／できた日は、全部で ' + ds.length + ' 日／いま ' + run + ' 日つづけて'; }
+    function refresh() { var e = document.getElementById('fallStat'); if (!e) return; var L = load('kesera-fall', null); e.textContent = L && L.days && L.days.length ? '📝 ' + dstat(L) : ''; }
+    function finish() {
+      stopAll(); var L = load('kesera-fall', { days: [] }); if (!L || !Array.isArray(L.days)) L = { days: [] }; var td = key(); if (!L.first) L.first = L.days.slice().sort()[0] || td; if (L.days.indexOf(td) < 0) L.days.push(td); save('kesera-fall', L);
+      UI.em.textContent = '🌸'; UI.ti.textContent = 'よく頑張りました！　1分、できました'; UI.tx.style.whiteSpace = 'pre-line'; UI.tx.textContent = '記録を保存しました。\n' + dstat(L).replace(/／/g, '\n') + '\nつづけると、足腰が、しっかりしてきます。'; UI.cd.textContent = ''; UI.st.textContent = ''; UI.bar.style.width = '100%'; UI.ctl.style.display = 'none'; UI.end.style.display = ''; UI.an.style.display = 'none'; refresh(); try { burst(150); } catch (e) {}
+      if (voice && ss) { try { var u = new SpeechSynthesisUtterance('よく頑張りました。つづけると、足腰が、しっかりしてきます。'); u.lang = 'ja-JP'; ss.speak(u); } catch (e) {} }
+    }
+    function tick() { if (paused) return; left--; if (left <= 0) { if (i + 1 >= ST.length) return finish(); begin(i + 1); } else { UI.cd.textContent = left + ' 秒'; bar(); }
+      if (!half && elapsed() >= 30) { half = true; UI.an.textContent = '⏱ 半分です。あと30秒'; UI.an.style.display = ''; setTimeout(function () { UI.an.style.display = 'none'; }, 5000); speak('半分です。あと30秒です。', true); } }
+    function run(v, m) { voice = v; paused = false; half = false; UI.start.style.display = 'none'; UI.run.style.display = ''; try { if (navigator.wakeLock) navigator.wakeLock.request('screen').then(function (l) { wl = l; }, function () {}); } catch (e) {} if (m) mOn(); begin(0); tm = setInterval(tick, window.__keseraTick || 1000); }
+    function open() {
+      var o = document.getElementById('fallDlg'); if (o) { stopAll(); o.remove(); }
+      d = E('dialog', 'design-dialog location-dialog'); d.id = 'fallDlg'; d.setAttribute('aria-labelledby', 'fallT'); d.style.cssText = 'width:min(96vw,640px)';
+      var w = E('div'); w.style.cssText = 'display:flex;flex-direction:column;gap:12px;padding:10px'; var h = E('h2', '', '🦶 転倒予防体操（1分）'); h.id = 'fallT'; h.style.margin = '0'; w.appendChild(h);
+      var s0 = E('div'); s0.style.cssText = 'display:flex;flex-direction:column;gap:10px'; UI.start = s0;
+      s0.appendChild(E('p', '', 'いすの背や机につかまって、足腰をきたえる、1分の体操です。「かかと → つま先 → 片足立ち → 足ぶみ」の順に行います。'));
+      var nt = E('div'); nt.style.cssText = 'border:2px solid var(--accent);border-radius:10px;padding:10px;line-height:1.8;white-space:pre-line'; nt.appendChild(E('b', '', '⚠ 安全のために（体調優先）')); nt.appendChild(E('div', '', '・かならず、つかまれるもの（いすの背・机・手すり）のそばで、行います。\n・床がすべらない場所で。くつか、すべり止めのくつ下で。\n・めまい・ふらつき・痛みがあるときは、やすみます。\n・ふらついたら、すぐ足を下ろして、つかまります。\n・医師から運動を止められている方は、相談してから。')); s0.appendChild(nt);
+      var b1 = E('button', 'btn primary', '🔊 音声あんない（音楽つき）ではじめる'); b1.type = 'button'; b1.style.cssText = 'min-height:64px;font-size:1.15rem'; b1.addEventListener('click', function () { run(true, true); });
+      var b2 = E('button', 'btn primary', '🔇 音声なし（画面だけ）ではじめる'); b2.type = 'button'; b2.style.cssText = 'min-height:64px;font-size:1.15rem'; b2.addEventListener('click', function () { run(false, false); });
+      var b3 = E('button', 'btn', '🎙 音声あんないだけ（音楽なし）'); b3.type = 'button'; b3.style.minHeight = '52px'; b3.addEventListener('click', function () { run(true, false); });
+      s0.appendChild(b1); s0.appendChild(b2); s0.appendChild(b3);
+      var L = load('kesera-fall', null); if (L && L.days && L.days.length) s0.appendChild(E('span', 'fl-sub', dstat(L)));
+      var dt1 = E('details'); dt1.appendChild(E('summary', '', '💡 続けるための、工夫')); HINTS.forEach(function (x) { var p = E('p'); p.style.margin = '6px 0'; p.appendChild(E('b', '', x[0] + '　')); p.appendChild(document.createTextNode(x[1])); dt1.appendChild(p); }); s0.appendChild(dt1);
+      var dt2 = E('details'); dt2.appendChild(E('summary', '', '🏠 おうちの「転ばぬ先」チェック')); var saved = load('kesera-fall-chk', []); if (!Array.isArray(saved)) saved = [];
+      CHK.forEach(function (t, k) { var l = E('label'); l.style.cssText = 'display:flex;gap:10px;align-items:flex-start;padding:6px 0;line-height:1.6'; var c = E('input'); c.type = 'checkbox'; c.checked = saved.indexOf(k) >= 0; c.style.cssText = 'width:24px;height:24px;flex:0 0 auto'; c.addEventListener('change', function () { var a = load('kesera-fall-chk', []); if (!Array.isArray(a)) a = []; a = a.filter(function (z) { return z !== k; }); if (c.checked) a.push(k); save('kesera-fall-chk', a); }); l.appendChild(c); l.appendChild(E('span', '', t)); dt2.appendChild(l); });
+      dt2.appendChild(E('span', 'fl-sub', 'チェックがつかないところは、少しずつ、直しましょう。家族や、まわりの方にも、手伝ってもらうと安心です。')); s0.appendChild(dt2);
+      var dt3 = E('details'); dt3.appendChild(E('summary', '', '🆘 転んでしまったとき')); var tp = E('div'); tp.style.cssText = 'line-height:1.8;white-space:pre-line;padding:6px 0'; tp.textContent = 'あわてて起き上がらず、まず、動かずに、体の状態を確かめます。\n頭を打った・強い痛み・動かせない・意識がぼんやりするときは、すぐ 119 に電話してください。\nひとりで起き上がれないときは、大きな声や、「助けてください」の画面で、まわりに知らせます。'; dt3.appendChild(tp); var ob = E('button', 'btn', '🤔 「おかしい？」の画面をひらく'); ob.type = 'button'; ob.addEventListener('click', function () { d.close(); var b = document.getElementById('oddBtn'); if (b) b.click(); }); dt3.appendChild(ob); s0.appendChild(dt3);
+      w.appendChild(s0);
+      var r = E('div'); r.style.cssText = 'display:none;flex-direction:column;gap:12px;text-align:center'; UI.run = r;
+      UI.em = E('div'); UI.em.style.fontSize = '3.2rem'; UI.ti = E('div'); UI.ti.style.cssText = 'font-size:1.8rem;font-weight:900'; UI.ti.setAttribute('role', 'status'); UI.tx = E('div'); UI.tx.style.cssText = 'font-size:1.2rem;line-height:1.8'; UI.cd = E('div'); UI.cd.style.cssText = 'font-size:2.2rem;font-weight:900'; UI.an = E('div'); UI.an.setAttribute('role', 'status'); UI.an.style.cssText = 'display:none;font-size:1.4rem;font-weight:900;color:#fff;background:var(--accent);border-radius:10px;padding:8px';
+      var bw = E('div'); bw.style.cssText = 'height:16px;border-radius:8px;background:var(--line);overflow:hidden'; UI.bar = E('div'); UI.bar.style.cssText = 'height:100%;width:0;background:var(--accent);transition:width .3s'; bw.appendChild(UI.bar); UI.st = E('div', 'muted');
+      [UI.em, UI.ti, UI.tx, UI.cd, UI.an, bw, UI.st].forEach(function (x) { r.appendChild(x); });
+      var ctl = E('div', 'row'); ctl.style.justifyContent = 'center'; UI.ctl = ctl;
+      var bp = E('button', 'btn', '◀ まえへ'); bp.type = 'button'; bp.style.minHeight = '56px'; bp.addEventListener('click', function () { if (i > 0) begin(i - 1); });
+      var bz = E('button', 'btn primary', '⏸ 一時停止'); bz.type = 'button'; bz.style.minHeight = '56px'; bz.addEventListener('click', function () { paused = !paused; bz.textContent = paused ? '▶ つづける' : '⏸ 一時停止'; if (paused) { try { ss && ss.cancel(); } catch (e) {} } else speak(ST[i][2]); });
+      var bn = E('button', 'btn', 'つぎへ ▶'); bn.type = 'button'; bn.style.minHeight = '56px'; bn.addEventListener('click', function () { if (i + 1 >= ST.length) finish(); else begin(i + 1); });
+      ctl.appendChild(bp); ctl.appendChild(bz); ctl.appendChild(bn); r.appendChild(ctl);
+      var en = E('button', 'btn', 'やめる・とじる'); en.type = 'button'; en.style.minHeight = '52px'; en.addEventListener('click', function () { d.close(); }); r.appendChild(en); UI.end = en; w.appendChild(r);
+      d.appendChild(w); d.addEventListener('close', function () { stopAll(); d.remove(); }); document.body.appendChild(d); if (d.showModal) d.showModal();
+    }
+    document.addEventListener('kesera-fall', open); window.__keseraFallSteps = ST;
+    var sc = document.getElementById('strCard'), host = sc ? (sc.nextSibling && sc.nextSibling.nodeType === 1 && /非表示中/.test(sc.nextSibling.textContent) ? sc.nextSibling : sc) : (document.getElementById('dayMemo') || document.querySelector('#v-home .greet')); if (!host) return;
+    var card = E('div', 'card'); card.id = 'fallCard'; card.appendChild(E('h3', '', '🦶 転倒予防体操（1分）')); card.appendChild(E('p', 'muted', 'いすの背につかまって、かかと・つま先・片足立ち・足ぶみ。足腰をきたえて、転ばない体づくりを。'));
+    var gb = E('button', 'btn primary', '🦶 はじめる'); gb.type = 'button'; gb.style.cssText = 'min-height:60px;font-size:1.15rem;width:100%'; gb.addEventListener('click', open); card.appendChild(gb);
+    var sl = E('p', 'muted'); sl.id = 'fallStat'; sl.style.cssText = 'margin:8px 0 0;font-weight:700'; card.appendChild(sl); refresh();
+    var hb = E('button', 'btn', '表示しない'); hb.type = 'button'; hb.style.cssText = 'min-height:48px;width:100%;margin-top:6px'; card.appendChild(hb);
+    var mini = E('button', 'btn', '🦶 転倒予防体操（非表示中）　表示する'); mini.type = 'button'; mini.style.cssText = 'min-height:44px;width:100%;font-size:.95rem;display:none';
+    function vis() { var h2 = load('kesera-fall-hide', false) === true; card.style.display = h2 ? 'none' : ''; mini.style.display = h2 ? '' : 'none'; }
+    hb.addEventListener('click', function () { save('kesera-fall-hide', true); vis(); }); mini.addEventListener('click', function () { save('kesera-fall-hide', false); vis(); });
+    host.parentNode.insertBefore(card, host.nextSibling); card.parentNode.insertBefore(mini, card.nextSibling); vis();
+  })();
+
   /* ---------- ヘッダーをコンパクトに ---------- */
   (function () {
     var tools = document.querySelector('.header-tools'), loc = $('locationBtn'), trip = $('tripOpen'), st = $('settingsBtn');
