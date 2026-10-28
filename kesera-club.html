@@ -4792,7 +4792,8 @@ button[aria-pressed="true"] { font-weight:700; }
       var b1 = E('button', 'btn primary', '🔊 音声あんない（音楽つき）ではじめる'); b1.type = 'button'; b1.style.cssText = 'min-height:64px;font-size:1.15rem'; b1.addEventListener('click', function () { run(true, true); });
       var b2 = E('button', 'btn primary', '🔇 音声なし（画面だけ）ではじめる'); b2.type = 'button'; b2.style.cssText = 'min-height:64px;font-size:1.15rem'; b2.addEventListener('click', function () { run(false, false); });
       var b3 = E('button', 'btn', '🎙 音声あんないだけ（音楽なし）'); b3.type = 'button'; b3.style.minHeight = '52px'; b3.addEventListener('click', function () { run(true, false); });
-      s0.appendChild(b1); s0.appendChild(b2); s0.appendChild(b3); if (!ss) s0.appendChild(E('span', 'fl-sub', 'この端末では、音声が出せないことがあります。そのときは、画面を見ながら行ってください。'));
+      s0.appendChild(b1); s0.appendChild(b2); s0.appendChild(b3);
+      var yg1 = E('button', 'btn', '🧘 本格的にしたい方は、ヨガ・ストレッチ部へ'); yg1.type = 'button'; yg1.style.minHeight = '52px'; yg1.addEventListener('click', function () { document.dispatchEvent(new Event('kesera-yoga')); }); s0.appendChild(yg1); if (!ss) s0.appendChild(E('span', 'fl-sub', 'この端末では、音声が出せないことがあります。そのときは、画面を見ながら行ってください。'));
       var L = load('kesera-stretch', { days: [] }); if (L && L.days && L.days.length) s0.appendChild(E('span', 'fl-sub', statLine(L)));
       w.appendChild(s0);
       var r = E('div'); r.style.cssText = 'display:none;flex-direction:column;gap:12px;text-align:center'; UI.run = r;
@@ -4873,6 +4874,7 @@ button[aria-pressed="true"] { font-weight:700; }
       var b3 = E('button', 'btn', '🎙 音声あんないだけ（音楽なし）'); b3.type = 'button'; b3.style.minHeight = '52px'; b3.addEventListener('click', function () { run(true, false); });
       s0.appendChild(b1); s0.appendChild(b2); s0.appendChild(b3);
       var yb = E('button', 'btn', '🔍 なぜ転ぶの？（しくみを見る）'); yb.type = 'button'; yb.style.minHeight = '52px'; yb.addEventListener('click', function () { d.close(); document.dispatchEvent(new Event('kesera-fallwhy')); }); s0.appendChild(yb);
+      var yg2 = E('button', 'btn', '🧘 本格的にしたい方は、ヨガ・ストレッチ部へ'); yg2.type = 'button'; yg2.style.minHeight = '52px'; yg2.addEventListener('click', function () { document.dispatchEvent(new Event('kesera-yoga')); }); s0.appendChild(yg2);
       var L = load('kesera-fall', null); if (L && L.days && L.days.length) s0.appendChild(E('span', 'fl-sub', dstat(L)));
       var dt1 = E('details'); dt1.appendChild(E('summary', '', '💡 続けるための、工夫')); HINTS.forEach(function (x) { var p = E('p'); p.style.margin = '6px 0'; p.appendChild(E('b', '', x[0] + '　')); p.appendChild(document.createTextNode(x[1])); dt1.appendChild(p); }); s0.appendChild(dt1);
       var dt2 = E('details'); dt2.appendChild(E('summary', '', '🏠 おうちの「転ばぬ先」チェック')); var saved = load('kesera-fall-chk', []); if (!Array.isArray(saved)) saved = [];
@@ -4940,6 +4942,18 @@ button[aria-pressed="true"] { font-weight:700; }
     document.addEventListener('kesera-fallwhy', open);
     var st = document.getElementById('fallStat'), card = document.getElementById('fallCard');
     if (card && st) { var b = E('button', 'btn', '🔍 なぜ転ぶの？（しくみを見る）'); b.type = 'button'; b.style.cssText = 'min-height:52px;width:100%;margin-top:6px'; b.addEventListener('click', open); card.insertBefore(b, st); }
+  })();
+
+  /* ---------- 本格的にしたい方は、ヨガ・ストレッチ部へ ---------- */
+  (function () {
+    function E(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; }
+    document.addEventListener('kesera-yoga', function () {
+      document.querySelectorAll('dialog[open]').forEach(function (d) { d.close(); });
+      show('hokago'); var f = document.getElementById('hgFind'); if (f) f.click();
+      setTimeout(function () { var t = document.getElementById('hg-yoga'); if (t) t.scrollIntoView({ block: 'start' }); else window.scrollTo(0, 0); }, 120);
+    });
+    function mk() { var b = E('button', 'btn', '🧘 本格的にしたい方は、ヨガ・ストレッチ部へ'); b.type = 'button'; b.style.cssText = 'min-height:52px;width:100%;margin-top:6px'; b.addEventListener('click', function () { document.dispatchEvent(new Event('kesera-yoga')); }); return b; }
+    ['strCard', 'fallCard'].forEach(function (id) { var c = document.getElementById(id), st = document.getElementById(id === 'strCard' ? 'strStat' : 'fallStat'); if (c && st) c.insertBefore(mk(), st); });
   })();
 
   /* ---------- ヘッダーをコンパクトに ---------- */
