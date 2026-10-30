@@ -5342,6 +5342,38 @@ button[aria-pressed="true"] { font-weight:700; }
     }, 0);
   })();
 
+  /* ---------- ほっとひと息（お茶） ---------- */
+  (function () {
+    function E(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+    function build() {
+      if (document.getElementById('hottoCard')) return;
+      var pc = document.getElementById('poemCard'); if (!pc || !pc.parentNode) return;
+      var c = E('div', 'card'); c.id = 'hottoCard'; c.style.cssText = 'background:#f3f8ee;border:2px solid #c9dfb8';
+      c.appendChild(E('h3', '', '🍵 ほっとひと息'));
+      var p = E('p', '', '年齢も、評価も、いりません。お茶を一杯、ゆっくり。'); p.style.cssText = 'line-height:1.8;font-size:1.05rem;margin:4px 0'; c.appendChild(p);
+      var b = E('button', 'btn primary', '🍵 お茶を飲む（30秒）'); b.type = 'button'; c.appendChild(b);
+      pc.parentNode.insertBefore(c, pc.nextSibling);
+      b.addEventListener('click', function () {
+        var d = E('dialog', 'design-dialog'); d.id = 'hottoDlg'; d.setAttribute('aria-label', 'ほっとひと息');
+        var w = E('div', 'design-content'); w.style.cssText = 'text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center';
+        var svg = '<svg viewBox="0 0 200 170" width="220" role="img" aria-label="湯気のたつお茶"><defs><style>@keyframes hs{0%{transform:translateY(8px);opacity:0}30%{opacity:.7}100%{transform:translateY(-14px);opacity:0}}.hs{animation:hs 3.2s ease-in-out infinite;fill:none;stroke:#b9c9b0;stroke-width:5;stroke-linecap:round}@media (prefers-reduced-motion:reduce){.hs{animation:none;opacity:.6}}</style></defs><path class="hs" d="M80 70 q-10 -16 0 -30 q10 -14 0 -28"/><path class="hs" style="animation-delay:1s" d="M102 72 q-10 -16 0 -30 q10 -14 0 -28"/><path class="hs" style="animation-delay:2s" d="M124 70 q-10 -16 0 -30 q10 -14 0 -28"/><path d="M52 84 h104 v26 q0 40 -52 40 q-52 0 -52 -40z" fill="#dfe9d2" stroke="#8fae7c" stroke-width="3"/><path d="M156 94 q24 0 24 18 q0 18 -26 18" fill="none" stroke="#8fae7c" stroke-width="4"/><ellipse cx="104" cy="84" rx="52" ry="8" fill="#9cc27a"/></svg>';
+        var a = E('div'); a.innerHTML = svg; w.appendChild(a);
+        var t = E('div', '', 'ゆっくり、息を吸って…'); t.style.cssText = 'font-size:1.4rem;font-weight:900;color:var(--accent);min-height:2.4em'; t.setAttribute('role', 'status'); w.appendChild(t);
+        var s = E('div', 'muted', 'のこり 30 びょう'); w.appendChild(s);
+        var q = E('div', '', '心に従って、自分を信じて。'); q.style.cssText = 'line-height:1.8;font-size:1.05rem'; w.appendChild(q);
+        var x = E('button', 'btn', 'とじる'); x.type = 'button'; w.appendChild(x);
+        d.appendChild(w); document.body.appendChild(d);
+        var n = 30, msgs = ['ゆっくり、息を吸って…', 'ふうーっと、吐いて…', 'ほっ。', 'お茶のぬくもりを、感じて…'], timer;
+        function end() { clearInterval(timer); try { d.close(); } catch (e) {} if (d.parentNode) d.parentNode.removeChild(d); }
+        x.addEventListener('click', end); d.addEventListener('close', function () { clearInterval(timer); if (d.parentNode) d.parentNode.removeChild(d); });
+        timer = setInterval(function () { n--; s.textContent = n > 0 ? 'のこり ' + n + ' びょう' : 'ほっ。おつかれさまでした。'; if (n % 4 === 0 && n > 0) t.textContent = msgs[(30 - n) / 4 % msgs.length | 0]; if (n <= 0) { clearInterval(timer); t.textContent = 'ほっ。'; } }, 1000);
+        t.textContent = msgs[0];
+        try { d.showModal(); } catch (e) { d.setAttribute('open', ''); }
+      });
+    }
+    setTimeout(build, 0); setTimeout(build, 600); setTimeout(build, 2000);
+  })();
+
   /* ---------- ヘッダーをコンパクトに ---------- */
   (function () {
     var tools = document.querySelector('.header-tools'), loc = $('locationBtn'), trip = $('tripOpen'), st = $('settingsBtn');
