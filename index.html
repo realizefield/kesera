@@ -877,6 +877,7 @@ button[aria-pressed="true"] { font-weight:700; }
     <div class="card" id="setBasic"><h3>見た目・声</h3><div class="row" id="setBasicRow"></div><div id="setBasicNote"></div><div id="setVoice"></div></div>
     <div class="card" id="setProfile"><h3>お名前・お住まい</h3><div id="setProfileBody"></div></div>
     <div id="setCards"></div>
+    <p class="muted" style="font-size:.9em">案内係の声：VOICEVOX：四国めたん</p>
   </section>
 
   <!-- 花の見どころ -->
@@ -3600,7 +3601,10 @@ button[aria-pressed="true"] { font-weight:700; }
       gMin = true; $('guide').hidden = true; $('gopen').hidden = false; fitGuide();
     }
   }
-  function speakGuide() {
+  /* 案内係の声：四国めたん（VOICEVOX）の録音。なければ、端末の読み上げにきりかえる */
+  var gAudio = null;
+  function gAudioStop() { if (gAudio) { try { gAudio.pause(); } catch (e) {} gAudio.onended = gAudio.onerror = null; gAudio = null; } }
+  function speakSynth() {
     if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') { gStart(); setTimeout(gStop, 2500); return; }
     try {
       window.speechSynthesis.cancel(); gStop();
@@ -3611,13 +3615,22 @@ button[aria-pressed="true"] { font-weight:700; }
       window.speechSynthesis.speak(u);
     } catch (er) { gStop(); }
   }
+  function speakGuide() {
+    try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e) {}
+    gAudioStop(); gStop();
+    var a = new Audio('voice/guide_' + curView + '.mp3'); gAudio = a;
+    a.onplaying = gStart; a.onended = function () { gStop(); gAudio = null; };
+    a.onerror = function () { gAudioStop(); speakSynth(); };
+    var pr = a.play();
+    if (pr && pr.catch) pr.catch(function () { if (gAudio === a) { gAudioStop(); speakSynth(); } });
+  }
   $('gauto').addEventListener('click', function () {
     gAuto = !gAuto; this.setAttribute('aria-pressed', String(gAuto));
-    if (gAuto) speakGuide(); else { try { window.speechSynthesis.cancel(); } catch (er) {} gStop(); }
+    if (gAuto) speakGuide(); else { gAudioStop(); try { window.speechSynthesis.cancel(); } catch (er) {} gStop(); }
   });
   $('gmin').addEventListener('click', function () {
     gMin = true; $('guide').hidden = true; $('gopen').hidden = false; fitGuide();
-    try { window.speechSynthesis.cancel(); } catch (er) {} gStop();
+    gAudioStop(); try { window.speechSynthesis.cancel(); } catch (er) {} gStop();
   });
   $('gopen').addEventListener('click', function () { setGuide(curView, true); });
   window.addEventListener('resize', fitGuide);
