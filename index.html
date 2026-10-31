@@ -5534,7 +5534,7 @@ button[aria-pressed="true"] { font-weight:700; }
       if (a.href) { window.location.href = a.href; return; }
       if (a.help) { openHelp(); return; }
       if (a.click) { var e = document.querySelector(a.click); if (e) e.click(); return; }
-      if (a.home) { show('home'); setTimeout(function () { var e = document.querySelector(a.home); if (e) { try { e.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (x) { e.scrollIntoView(); } } }, 80); return; }
+      if (a.home) { show('home'); setTimeout(function () { var e = document.querySelector(a.home); if (e) { var sh = e.closest && e.closest('details.stp-shelf'); if (sh) sh.open = true; try { e.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (x) { e.scrollIntoView(); } } }, 80); return; }
       if (a.menu) { show('menu'); setTimeout(function () { var e = document.getElementById('stpcat' + a.menu); if (e) { try { e.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (x) { e.scrollIntoView(); } } }, 80); }
     }
     function tile(t, cls) { var b = E('button', 'stp-t ' + (cls || t.c || '')); b.type = 'button'; b.appendChild(E('span', 'ic', t.ic)); b.appendChild(E('span', '', t.n)); if (t.s) b.appendChild(E('small', '', t.s)); b.addEventListener('click', function () { run(t.a); }); return b; }
@@ -5687,12 +5687,12 @@ button[aria-pressed="true"] { font-weight:700; }
     var g6 = E('div', 'stp-grid');
     [T('📅', '今日の予定', 'メモ・うっかり防止', { home: '#memoCard' }, 'c-r'), T('☀', '天気・ニュース', '今日のできごと', { home: '.news-card' }, 'c-o'),
      T('🚶', 'お出かけ', '歩く・電車・バス・タクシー', { click: '#tripOpen' }, 'c-g'), T('🎭', '楽しむ・学ぶ', '読書・俳句・旅・学び', { menu: 1 }, 'c-p'),
-     T('🌿', '暮らし・健康', 'レシピ・眠る・動く', { menu: 2 }, 'c-v'), T('🛡', '詐欺対策・防災', 'おかしい？と思ったら', { click: '#oddBtn' }, 'c-b')
+     T('🌿', '暮らし・健康', 'レシピ・眠る・動く', { menu: 2 }, 'c-v'), T('🛡', '安心・防災', '近くの病院・詐欺対策', { menu: 5 }, 'c-b')
     ].forEach(function (t) { g6.appendChild(tile(t)); });
     wrap.appendChild(g6);
     var sos = E('button', 'stp-sos'); sos.type = 'button'; sos.appendChild(E('span', '', '📞 困った・助けて')); sos.appendChild(E('small', '', '緊急連絡・道に迷った・けが・体調不良')); sos.addEventListener('click', openHelp); wrap.appendChild(sos);
     var mb = E('button', 'stp-more', '📋 メニューをひらく（すべての項目）'); mb.type = 'button'; mb.addEventListener('click', function () { show('menu'); }); wrap.appendChild(mb);
-    var dv = E('p', 'muted', '▼ これより下に、今日の花言葉・占い・メモなど、これまでの内容が、ならんでいます。'); dv.style.cssText = 'margin:4px 0 0;text-align:center'; wrap.appendChild(dv);
+    var dv = E('p', 'muted', '▼ 下の、たたんだ箱を押すと、ひらきます。'); dv.style.cssText = 'margin:4px 0 0;text-align:center'; wrap.appendChild(dv);
     home.insertBefore(wrap, first);
 
     /* ---- 下のタブ（いつでも：ホーム・メニュー・困った・設定） ---- */
@@ -5795,6 +5795,41 @@ button[aria-pressed="true"] { font-weight:700; }
       box.appendChild(el('p', 'fl-sub', '見ごろや行事の日程は、その年や、天候で変わります。出かける前に、公式の最新情報で、確かめてください。'));
     }
     draw();
+  })();
+
+  /* ---------- ホームを短く：たたんだ箱にまとめる ---------- */
+  (function () {
+    var SH = [
+      ['☀️', '天気・花言葉・占い', '今日の空と、ひとこと', ['.greet', '#hanaCard', '#uranaiCard']],
+      ['📝', 'メモ・からだの体操', 'うっかりメモ、ストレッチ', ['#dayMemo', '#strCard', '#fallCard', '#memoCard']],
+      ['🚶', 'お出かけ・近くの安心', '運行情報、お店、病院、交番', ['#transCard', '#nearCard', '#safeNearCard', '.trip-card', '#scamCard']],
+      ['🌸', 'ひとこと歌・読みもの', '歌、ニュース、読書、学び', ['#poemCard', '.news-card', '#mymCard', '#inspireCard', '#pgMenu']],
+      ['ℹ️', 'ケセラについて', '5つの柱、付属サイト', ['#sites']]
+    ];
+    var st = document.createElement('style');
+    st.textContent = '.stp-shelf{border:2px solid var(--line);border-radius:16px;background:var(--surface);margin:10px 0}.stp-shelf>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;min-height:64px;padding:10px 16px;font-size:1.15rem;font-weight:800}.stp-shelf>summary::-webkit-details-marker{display:none}.stp-shelf>summary small{display:block;font-weight:500;font-size:.9rem;opacity:.75}.stp-shelf>summary .ar{margin-left:auto;font-size:1.4rem;transition:transform .15s}.stp-shelf[open]>summary .ar{transform:rotate(90deg)}.stp-shelf>.sb{padding:4px 8px 12px;display:flex;flex-direction:column;gap:12px}';
+    document.head.appendChild(st);
+    function textCard(home, t) { var k = home.children; for (var i = 0; i < k.length; i++) { if (k[i].classList.contains('card') && k[i].textContent.indexOf(t) >= 0 && k[i].textContent.length < 1500) return k[i]; } return null; }
+    function build() {
+      var home = document.getElementById('v-home'); if (!home) return;
+      var anchor = home.querySelector('.card.memo-due') || home.querySelector('.sos-row');
+      SH.forEach(function (g, gi) {
+        var d = document.getElementById('stpShelf' + gi);
+        if (!d) {
+          d = document.createElement('details'); d.className = 'stp-shelf'; d.id = 'stpShelf' + gi; d.hidden = true;
+          var sm = document.createElement('summary'); sm.innerHTML = '<span aria-hidden="true" style="font-size:1.6rem">' + g[0] + '</span><span>' + g[1] + '<small>' + g[2] + '</small></span><span class="ar" aria-hidden="true">›</span>';
+          var sb = document.createElement('div'); sb.className = 'sb'; d.appendChild(sm); d.appendChild(sb);
+          var prev = gi ? document.getElementById('stpShelf' + (gi - 1)) : anchor;
+          if (prev && prev.parentNode === home) home.insertBefore(d, prev.nextSibling); else home.appendChild(d);
+        }
+        var els = [];
+        g[3].forEach(function (sel) { Array.prototype.forEach.call(home.querySelectorAll(':scope > ' + sel), function (e) { els.push(e); var nx = e.nextElementSibling; if (nx && nx.tagName === 'BUTTON' && /非表示中/.test(nx.textContent)) els.push(nx); }); });
+        if (gi === 4) { var a = textCard(home, 'ケセラの5つの柱'); if (a) els.push(a); var b = textCard(home, '福沢'); if (b) els.push(b); }
+        els.forEach(function (e) { if (!e.closest('details.stp-shelf')) d.querySelector('.sb').appendChild(e); });
+        d.hidden = !d.querySelector('.sb').children.length;
+      });
+    }
+    [1200, 2500, 4500, 8000].forEach(function (t) { setTimeout(build, t); });
   })();
 
   /* ---------- ヘッダーをコンパクトに ---------- */
