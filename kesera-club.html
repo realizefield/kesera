@@ -3520,6 +3520,7 @@ button[aria-pressed="true"] { font-weight:700; }
   var GUIDE = {
     flower: 'ここは「花の見どころ」です。時期と地域をえらぶと、見ごろの花が出ます。「写真を見る」「行き方」のボタンも、使えます。',
     settings: 'ここは「設定」です。文字の大きさ、デザイン、声、お名前とお住まい、緊急連絡先、ご家族への見まもりを、ここで変えられます。終わったら、「ホームにもどる」を押してください。',
+    menu: 'ここは「メニュー」です。したいことの絵を押すと、その画面に進みます。いつでも、いちばん上の「ホーム」で、もどれます。',
     home: 'こんにちは。ここがホームです。絵のボタンを押すと、その画面に進みます。文字が小さいときは、いちばん上の「⚙ 設定」の中の「文字を大きくする」を押してください。',
     learn: 'ここは「学ぶ」です。折り紙の図を見ながら、手順のとおりに折ってみましょう。終わったら、下のミニテストに答えてください。「ホームにもどる」で、いつでも最初の画面にもどれます。',
     move: 'ここは「動く」です。まず、ご注意をお読みください。椅子からの立ち座りを1回できるたびに、大きなボタンを押します。痛みやめまいがあるときは、やめてください。',
@@ -5402,6 +5403,169 @@ button[aria-pressed="true"] { font-weight:700; }
       });
     }
     setTimeout(build, 0); setTimeout(build, 600); setTimeout(build, 2000);
+  })();
+
+  /* ---------- 段階表示：①ホーム ②メニュー ③困った・助けて ④各画面 ---------- */
+  (function () {
+    function E(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+    var st = E('style'); st.textContent = [
+      '.stp-hero{border-radius:20px;padding:16px;background:linear-gradient(135deg,#fdeef2,#e8f4ea 60%,#e6f0fa);border:2px solid #f0d9e0;display:flex;flex-direction:column;gap:8px}',
+      '.stp-hero h2{margin:0;font-size:1.45rem;line-height:1.5;color:var(--accent)}',
+      '.stp-wx{display:flex;align-items:center;gap:10px;font-size:1.1rem;font-weight:700;line-height:1.5}',
+      '.stp-wx .wxi{width:56px;height:56px;flex:none}.stp-wx .wxi img,.stp-wx .wxi svg{width:100%;height:100%}',
+      '.stp-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}',
+      '.stp-t{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:104px;padding:10px 6px;border-radius:18px;border:2px solid transparent;font-weight:800;font-size:1.1rem;line-height:1.35;text-align:center;cursor:pointer;color:#2b2b2b}',
+      '.stp-t .ic{font-size:2.2rem;line-height:1}.stp-t small{font-weight:500;font-size:.82rem;color:#4a4a4a;line-height:1.35}',
+      '.stp-t:active{transform:scale(.98)}',
+      '.c-r{background:#fde9e4;border-color:#f3c6bc}.c-o{background:#fdf0d8;border-color:#f1d9a3}.c-g{background:#e6f3e3;border-color:#c5e0be}.c-p{background:#fbe6f0;border-color:#efc3d8}.c-v{background:#eee6f8;border-color:#d6c8ec}.c-b{background:#e3eefa;border-color:#bcd4ef}',
+      '.stp-sos{width:100%;min-height:72px;border:0;border-radius:18px;background:#d32f2f;color:#fff;font-size:1.4rem;font-weight:900;box-shadow:0 3px 10px #d32f2f55;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:8px}',
+      '.stp-sos small{font-weight:500;font-size:.88rem}',
+      '.stp-more{width:100%;min-height:56px;border-radius:14px;border:2px solid var(--accent);background:var(--surface);color:var(--accent);font-size:1.15rem;font-weight:800;cursor:pointer}',
+      '.stp-bar{display:flex;gap:8px;flex-wrap:wrap;position:sticky;top:0;z-index:6;padding:8px 0;background:var(--bg)}',
+      '.stp-bar button{flex:1 1 0;min-width:0;min-height:50px;border-radius:14px;border:2px solid var(--line);background:var(--surface);color:var(--fg);font-size:1rem;font-weight:800;cursor:pointer;padding:6px 4px}',
+      '.stp-bar button.sos{border-color:#e8b9b5;color:#b3261e}',
+      '.stp-cat{border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:10px}.stp-cat h3{margin:0;font-size:1.15rem}',
+      '.stp-cat .stp-grid{grid-template-columns:repeat(3,1fr);gap:8px}',
+      '.stp-cat .stp-t{min-height:92px;font-size:.98rem;background:#fff;border:1.5px solid #0001;padding:8px 3px}.stp-cat .stp-t .ic{font-size:1.9rem}',
+      '.hs-dlg{width:min(96vw,520px);max-height:94vh;overflow:auto;padding:14px;border-radius:20px}',
+      '.hs-dlg .stp-t{min-height:112px}',
+      '.hs-act{display:flex;flex-direction:column;gap:8px;margin-top:10px;padding:12px;border-radius:16px;background:#fff7f5;border:2px solid #f3c6bc}',
+      '.hs-act a,.hs-act button{display:flex;flex-direction:column;gap:2px;align-items:flex-start;min-height:56px;padding:10px 14px;border-radius:14px;border:2px solid #e8b9b5;background:#fff;color:#2b2b2b;font-size:1.1rem;font-weight:800;text-decoration:none;cursor:pointer;text-align:left;font-family:inherit}',
+      '.hs-act a.p{background:#d32f2f;border-color:#d32f2f;color:#fff}.hs-act small{font-weight:500;font-size:.85rem;opacity:.9}',
+      '#floatHome{display:none!important}',
+      '@media (prefers-reduced-motion:no-preference){.stp-t{transition:transform .1s}}'
+    ].join('\n'); document.head.appendChild(st);
+
+    /* ---- ふだんの行き先（メニューの中身） ---- */
+    var T = function (ic, name, sub, act, cls) { return { ic: ic, n: name, s: sub || '', a: act, c: cls }; };
+    var CATS = [
+      ['お出かけ・移動', 'c-g', [
+        T('🚶', '歩く・電車・バス・タクシー', '', { click: '#tripOpen' }), T('🚃', '運行情報', '', { home: '#transCard' }), T('🏪', '近くのお店', '', { home: '#nearCard' }),
+        T('🧳', '旅する', '', { go: 'travel' }), T('🚶‍♀️', '動く', '', { go: 'move' }), T('🔎', 'まちの発見', '神社仏閣・散歩', { go: 'town' }), T('🌸', '花の見どころ', '', { go: 'flower' })]],
+      ['楽しむ・学ぶ', 'c-p', [
+        T('📚', '読書くん', '', { go: 'book' }), T('🎓', '学ぶ', '', { go: 'learn' }), T('🎧', '聴く・観る', '', { go: 'music' }),
+        T('🖋', '俳句・短歌日誌', '', { go: 'haiku' }), T('😄', 'ダジャレバトル', '', { go: 'dajare' }), T('🤣', '笑ってすっきり', '', { go: 'laugh' }),
+        T('🍷', 'マニアージュ', '', { go: 'mania' }), T('🌱', '1mm違う自分へ', '', { go: 'up' })]],
+      ['暮らし・健康', 'c-v', [
+        T('🍲', 'レシピ帳', '', { href: 'yodoku-recipes.html?from=kesera' }), T('🌾', '自然農法', '', { go: 'farm' }), T('👗', '装う', '', { go: 'dress' }),
+        T('🎨', '作る・飾る', '', { go: 'make' }), T('😴', '眠る', '', { go: 'sleep' }), T('🌿', '自然治癒力の館', '', { go: 'yakata' }),
+        T('📷', '思い出の記録', '', { go: 'album' }), T('📝', '今日の予定・メモ', '', { home: '#memoCard' })]],
+      ['仲間・お話', 'c-b', [
+        T('🎭', 'ケセラ部', '', { go: 'club' }), T('🎒', '放課後倶楽部', '', { go: 'hokago' }), T('💬', 'お話する', '', { go: 'talk' }), T('🔍', '調べる', '', { go: 'ask' })]],
+      ['ニュース・天気', 'c-o', [
+        T('🌤', '今日の天気・花言葉', '', { home: '.greet' }), T('📰', 'ニュース', '', { home: '.news-card' })]],
+      ['安心・設定', 'c-r', [
+        T('🆘', '困った・助けて', '', { help: 1 }), T('🤔', 'おかしい？と思ったら', '', { click: '#oddBtn' }), T('⚙', '設定', '文字の大きさなど', { go: 'settings' })]]
+    ];
+    function run(a) {
+      if (!a) return;
+      if (a.go) { show(a.go); return; }
+      if (a.href) { window.location.href = a.href; return; }
+      if (a.help) { openHelp(); return; }
+      if (a.click) { var e = document.querySelector(a.click); if (e) e.click(); return; }
+      if (a.home) { show('home'); setTimeout(function () { var e = document.querySelector(a.home); if (e) { try { e.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (x) { e.scrollIntoView(); } } }, 80); return; }
+      if (a.menu) { show('menu'); setTimeout(function () { var e = document.getElementById('stpcat' + a.menu); if (e) { try { e.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (x) { e.scrollIntoView(); } } }, 80); }
+    }
+    function tile(t, cls) { var b = E('button', 'stp-t ' + (cls || t.c || '')); b.type = 'button'; b.appendChild(E('span', 'ic', t.ic)); b.appendChild(E('span', '', t.n)); if (t.s) b.appendChild(E('small', '', t.s)); b.addEventListener('click', function () { run(t.a); }); return b; }
+
+    /* ---- ③ 困った・助けて ---- */
+    var dlg = E('dialog', 'design-dialog hs-dlg'); dlg.id = 'helpStep'; dlg.setAttribute('aria-label', '困った・助けて');
+    function after(fn) { try { dlg.close(); } catch (e) {} setTimeout(fn, 60); }
+    function link(href, title, sub, primary, ext) { var a = E('a', primary ? 'p' : '', ''); a.href = href; if (ext) { a.target = '_blank'; a.rel = 'noopener'; } a.appendChild(E('span', '', title)); if (sub) a.appendChild(E('small', '', sub)); return a; }
+    function btn(title, sub, fn) { var b = E('button'); b.type = 'button'; b.appendChild(E('span', '', title)); if (sub) b.appendChild(E('small', '', sub)); b.addEventListener('click', fn); return b; }
+    function mapNow() {
+      var msg = document.getElementById('hsMsg'); if (msg) msg.textContent = '場所を調べています…（許可が出たら「許可」を押してください）';
+      if (!navigator.geolocation) { if (msg) msg.textContent = 'この端末では、場所を調べられません。'; return; }
+      navigator.geolocation.getCurrentPosition(function (p) { var u = 'https://www.google.com/maps?q=' + p.coords.latitude.toFixed(5) + ',' + p.coords.longitude.toFixed(5); if (msg) msg.textContent = '地図を開きます。'; window.open(u, '_blank', 'noopener'); },
+        function () { if (msg) msg.textContent = '場所がわかりませんでした。端末の設定で、位置情報を許可してください。'; }, { enableHighAccuracy: true, timeout: 10000 });
+    }
+    var FAM = function () { return btn('👪 ご家族に知らせる', 'ご家族の連絡先は「設定」で入れておけます', function () {
+      var e = document.getElementById('safeFam'), m = document.getElementById('safeMsg'), h = document.getElementById('hsMsg'); if (m) m.textContent = ''; if (e) e.click();
+      if (m && m.textContent && h) { h.textContent = m.textContent; var a = document.querySelector('#helpStep .hs-act'); if (a && !a.querySelector('.hs-set')) { var sb = btn('⚙ 設定をひらく', '「緊急連絡先」に、電話番号を入れます', function () { after(function () { show('settings'); }); }); sb.className = 'hs-set'; a.appendChild(sb); } }
+    }); };
+    var HOSP = function () { return link('https://www.google.com/maps/search/?api=1&query=%E7%97%85%E9%99%A2', '🏥 近くの病院を探す', 'Googleマップが開きます', false, true); };
+    var HELP = [
+      ['🗺', '道に迷った', '場所を確認', 'c-g', function () { return [btn('📍 いまいる場所を地図で見る', 'Googleマップが開きます', mapNow), FAM(), link('tel:110', '🚨 あぶない・こわいとき　110', '警察に電話の画面が開きます', false)]; }],
+      ['🩹', 'けがをした', '救急・病院', 'c-b', function () { return [link('tel:119', '🚑 救急車を呼ぶ　119', '電話の画面が開きます', true), link('tel:%237119', '🤔 迷うとき　#7119', '救急安心センター（地域によります）', false), HOSP(), FAM()]; }],
+      ['🤒', '具合が悪い', 'すぐに相談', 'c-p', function () { return [link('tel:119', '🚑 急に具合が悪い・倒れた　119', '電話の画面が開きます', true), link('tel:%237119', '🤔 救急車を呼ぶか迷う　#7119', '救急安心センター（地域によります）', false), HOSP(), FAM()]; }],
+      ['🌧', '災害が心配', '防災情報', 'c-o', function () { return [link('https://www.jma.go.jp/bosai/', '🌧 気象庁 防災情報', '別のタブで開きます', false, true), link('https://disaportal.gsi.go.jp/', '🗺 ハザードマップ（国土地理院）', '別のタブで開きます', false, true), link('https://www.google.com/maps/search/?api=1&query=%E9%81%BF%E9%9B%A3%E6%89%80', '🏫 近くの避難所を探す', 'Googleマップが開きます', false, true), FAM(), (function () { var p = E('p', 'fl-sub', '避難の指示は、お住まいの市町村からの連絡に従ってください。'); p.style.margin = '0'; return p; })()]; }],
+      ['🕵', '詐欺かもしれない', '相談先・手口', 'c-v', function () { return [btn('🤔 「おかしい？」で確かめる', 'ケセラの確認画面が開きます', function () { after(function () { var e = document.getElementById('oddBtn'); if (e) e.click(); }); }), link('tel:188', '💴 消費者ホットライン　188', 'お金・契約の相談', false), link('tel:110', '🚨 だまされた・あぶない　110', '警察', false), link('tel:%239110', '🤔 警察に相談したい　#9110', '警察相談専用電話', false)]; }],
+      ['👪', '家族・知人に連絡', '知らせる', 'c-r', function () { return [FAM(), btn('🆘 くわしい「もしもの時」の画面', '119・110・相談先がそろっています', function () { after(function () { var e = document.getElementById('sosMini'); if (e) e.click(); }); })]; }]
+    ];
+    function buildHelp() {
+      dlg.textContent = '';
+      var top = E('div'); top.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:8px';
+      var h = E('h2', '', '📞 困った・助けて'); h.style.cssText = 'margin:0;font-size:1.4rem;color:#b3261e'; top.appendChild(h);
+      var x = E('button', 'btn', '✕ 閉じる'); x.type = 'button'; x.addEventListener('click', function () { dlg.close(); }); top.appendChild(x); dlg.appendChild(top);
+      var p = E('p', 'muted', 'いまの状況を、選んでください。電話のボタンは、押すと電話の画面が開きます。かけるかどうかは、ご自分で決められます。'); p.style.lineHeight = '1.7'; dlg.appendChild(p);
+      var g = E('div', 'stp-grid'); dlg.appendChild(g);
+      var act = E('div', 'hs-act'); act.hidden = true;
+      HELP.forEach(function (h2) {
+        var b = tile({ ic: h2[0], n: h2[1], s: h2[2] }, h2[3]);
+        b.addEventListener('click', function () { act.textContent = ''; h2[4]().forEach(function (n) { act.appendChild(n); }); act.hidden = false; try { act.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (e) {} });
+        g.appendChild(b);
+      });
+      dlg.appendChild(act);
+      var em = E('div'); em.style.cssText = 'margin-top:12px;padding:12px;border-radius:16px;background:#d32f2f;color:#fff;display:flex;flex-direction:column;gap:8px';
+      em.appendChild(E('b', '', '🚨 緊急通報'));
+      var r = E('div'); r.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:8px';
+      [['tel:119', '119', '救急・火事'], ['tel:110', '110', '警察']].forEach(function (a) { var l = E('a'); l.href = a[0]; l.style.cssText = 'display:flex;flex-direction:column;align-items:center;min-height:64px;justify-content:center;border-radius:14px;background:#fff;color:#b3261e;font-weight:900;font-size:1.6rem;text-decoration:none'; l.appendChild(E('span', '', a[1])); var s = E('small', '', a[2]); s.style.cssText = 'font-size:.85rem;font-weight:600'; l.appendChild(s); r.appendChild(l); });
+      em.appendChild(r); dlg.appendChild(em);
+      var m = E('p', 'msg', ''); m.id = 'hsMsg'; m.setAttribute('role', 'status'); m.style.cssText = 'min-height:1.4em;margin:8px 0 0'; dlg.appendChild(m);
+      var n = E('p', 'fl-sub', 'ケセラは、119や110の代わりにはなりません。命にかかわるときは、まず119に電話してください。'); n.style.margin = '4px 0 0'; dlg.appendChild(n);
+    }
+    function openHelp() { buildHelp(); if (!dlg.open) { try { dlg.showModal(); } catch (e) { dlg.setAttribute('open', ''); } } }
+    dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
+    document.body.appendChild(dlg);
+    window.__keseraOpenHelp = openHelp;
+
+    /* ---- ② メニュー画面 ---- */
+    function bar(skip) {
+      var b = E('div', 'stp-bar'); b.setAttribute('role', 'navigation'); b.setAttribute('aria-label', 'いつでも使えるボタン');
+      [['home', '🏠 ホーム'], ['menu', '📋 メニュー'], ['help', '🆘 困った']].forEach(function (x) {
+        if (x[0] === skip) return; var k = E('button', x[0] === 'help' ? 'sos' : '', x[1]); k.type = 'button';
+        k.addEventListener('click', function () { if (x[0] === 'help') openHelp(); else show(x[0]); }); b.appendChild(k);
+      }); return b;
+    }
+    var menu = document.createElement('section'); menu.className = 'view'; menu.id = 'v-menu'; menu.hidden = true; menu.setAttribute('aria-label', 'メニュー');
+    menu.appendChild(bar('menu'));
+    var mh = E('h2', '', '📋 メニュー'); mh.style.margin = '0'; menu.appendChild(mh);
+    menu.appendChild(E('p', 'muted', 'したいことを、えらんでください。'));
+    CATS.forEach(function (c, i) {
+      var box = E('div', 'stp-cat ' + c[1]); box.id = 'stpcat' + i; box.appendChild(E('h3', '', c[0]));
+      var g = E('div', 'stp-grid'); c[2].forEach(function (t) { g.appendChild(tile(t)); }); box.appendChild(g); menu.appendChild(box);
+    });
+    var ref = document.getElementById('v-settings'); ref.parentNode.insertBefore(menu, ref);
+    if (views.indexOf('menu') < 0) views.push('menu');
+
+    /* ---- ④ 各画面の上に、共通のボタン ---- */
+    Array.prototype.forEach.call(document.querySelectorAll('section.view'), function (s) {
+      if (s.id === 'v-home' || s.id === 'v-menu') return;
+      s.insertBefore(bar(''), s.firstChild);
+    });
+
+    /* ---- ① ホームの入口 ---- */
+    var home = document.getElementById('v-home'), first = home.querySelector('.sos-row');
+    var wrap = E('div'); wrap.id = 'stepHome'; wrap.style.cssText = 'display:flex;flex-direction:column;gap:12px';
+    var hero = E('div', 'stp-hero'); var hg = E('h2', '', '今日も、いい一日を、はじめましょう。'); hero.appendChild(hg);
+    var wx = E('div', 'stp-wx'); var wi = E('div', 'wxi'); wi.setAttribute('aria-hidden', 'true'); var wt = E('div', ''); wx.appendChild(wi); wx.appendChild(wt); hero.appendChild(wx); wrap.appendChild(hero);
+    function sync() {
+      var g = document.getElementById('greet'), w = document.getElementById('wx'), ic = document.getElementById('wxIcon');
+      if (g && g.textContent.trim()) hg.textContent = g.textContent.trim();
+      if (w && w.textContent.trim()) wt.textContent = w.textContent.trim();
+      if (ic && ic.innerHTML && wi.innerHTML !== ic.innerHTML) wi.innerHTML = ic.innerHTML;
+    }
+    sync(); setTimeout(sync, 800); setInterval(sync, 4000);
+    var g6 = E('div', 'stp-grid');
+    [T('📅', '今日の予定', 'メモ・うっかり防止', { home: '#memoCard' }, 'c-r'), T('☀', '天気・ニュース', '今日のできごと', { home: '.news-card' }, 'c-o'),
+     T('🚶', 'お出かけ', '歩く・電車・バス・タクシー', { click: '#tripOpen' }, 'c-g'), T('🎭', '楽しむ・学ぶ', '読書・俳句・旅・学び', { menu: 1 }, 'c-p'),
+     T('🌿', '暮らし・健康', 'レシピ・眠る・動く', { menu: 2 }, 'c-v'), T('🛡', '詐欺対策・防災', 'おかしい？と思ったら', { click: '#oddBtn' }, 'c-b')
+    ].forEach(function (t) { g6.appendChild(tile(t)); });
+    wrap.appendChild(g6);
+    var sos = E('button', 'stp-sos'); sos.type = 'button'; sos.appendChild(E('span', '', '📞 困った・助けて')); sos.appendChild(E('small', '', '緊急連絡・道に迷った・けが・体調不良')); sos.addEventListener('click', openHelp); wrap.appendChild(sos);
+    var mb = E('button', 'stp-more', '📋 メニューをひらく（すべての項目）'); mb.type = 'button'; mb.addEventListener('click', function () { show('menu'); }); wrap.appendChild(mb);
+    var dv = E('p', 'muted', '▼ これより下に、今日の花言葉・占い・メモなど、これまでの内容が、ならんでいます。'); dv.style.cssText = 'margin:4px 0 0;text-align:center'; wrap.appendChild(dv);
+    home.insertBefore(wrap, first);
   })();
 
   /* ---------- ヘッダーをコンパクトに ---------- */
