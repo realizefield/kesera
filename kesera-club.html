@@ -5582,6 +5582,10 @@ button[aria-pressed="true"] { font-weight:700; }
       var r = E('div'); r.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:8px';
       [['tel:119', '119', '救急・火事'], ['tel:110', '110', '警察']].forEach(function (a) { var l = E('a'); l.href = a[0]; l.style.cssText = 'display:flex;flex-direction:column;align-items:center;min-height:64px;justify-content:center;border-radius:14px;background:#fff;color:#b3261e;font-weight:900;font-size:1.6rem;text-decoration:none'; l.appendChild(E('span', '', a[1])); var s = E('small', '', a[2]); s.style.cssText = 'font-size:.85rem;font-weight:600'; l.appendChild(s); r.appendChild(l); });
       em.appendChild(r); dlg.appendChild(em);
+      var ex = E('div'); ex.style.cssText = 'display:grid;grid-template-columns:1fr;gap:8px;margin-top:10px';
+      var ba = E('button', 'btn', '📣 周りを呼ぶ（アラーム）'); ba.type = 'button'; ba.style.cssText = 'min-height:60px;font-weight:800;border-color:#b3261e;color:#b3261e'; ba.addEventListener('click', function () { if (window.__keseraAlarm) window.__keseraAlarm(); });
+      var bs = E('button', 'btn', '🙏 声が出せない：画面を周りの人に見せる'); bs.type = 'button'; bs.style.cssText = 'min-height:60px;font-weight:800'; bs.addEventListener('click', function () { if (window.__keseraShowScreen) window.__keseraShowScreen(); });
+      ex.appendChild(ba); ex.appendChild(bs); dlg.appendChild(ex);
       var m = E('p', 'msg', ''); m.id = 'hsMsg'; m.setAttribute('role', 'status'); m.style.cssText = 'min-height:1.4em;margin:8px 0 0'; dlg.appendChild(m);
       var n = E('p', 'fl-sub', 'ケセラは、119や110の代わりにはなりません。命にかかわるときは、まず119に電話してください。'); n.style.margin = '4px 0 0'; dlg.appendChild(n);
     }
@@ -5830,6 +5834,133 @@ button[aria-pressed="true"] { font-weight:700; }
       });
     }
     [1200, 2500, 4500, 8000].forEach(function (t) { setTimeout(build, t); });
+  })();
+
+  /* ---------- 緊急の強化：電話の前の確認・いまの場所・周りを呼ぶアラーム ---------- */
+  (function () {
+    function E(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+    var st = document.createElement('style');
+    st.textContent = '.emg-dlg{border:0;border-radius:18px;padding:0;width:min(94vw,520px);max-height:92vh;overflow:auto;background:var(--surface,#fff);color:var(--fg,#222)}.emg-dlg::backdrop{background:rgba(0,0,0,.6)}.emg-in{padding:16px;display:flex;flex-direction:column;gap:12px}.emg-in h2{margin:0;font-size:1.45rem;line-height:1.4;color:#b3261e}.emg-loc{border:2px solid var(--line,#ccc);border-radius:14px;padding:12px;font-size:1.15rem;line-height:1.7;background:var(--bg,#fafafa)}.emg-loc b{font-size:1.25rem}.emg-yes{display:flex;align-items:center;justify-content:center;text-align:center;min-height:72px;border-radius:16px;background:#b3261e;color:#fff;font-size:1.35rem;font-weight:800;text-decoration:none;padding:8px 12px}.emg-btn{min-height:60px;border-radius:14px;border:2px solid var(--accent,#2a6f4e);background:var(--surface,#fff);color:var(--accent,#2a6f4e);font-size:1.15rem;font-weight:800;cursor:pointer;padding:8px 12px}.emg-btn.no{border-color:var(--line,#999);color:var(--fg,#222)}.emg-btn.al{border-color:#b3261e;color:#b3261e}.emg-sm{font-size:1rem;line-height:1.7;margin:0;opacity:.85}#emgAlarm{position:fixed;inset:0;z-index:2147483000;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;text-align:center;padding:20px;background:#d32f2f;color:#fff}#emgAlarm.on{display:flex;animation:emgf .5s steps(1) infinite}#emgAlarm h2{font-size:2.6rem;margin:0}#emgAlarm p{font-size:1.5rem;margin:0;line-height:1.6}#emgAlarm button{min-height:84px;min-width:70vw;border-radius:20px;border:4px solid #fff;background:#fff;color:#b3261e;font-size:1.8rem;font-weight:900}@keyframes emgf{0%{background:#d32f2f}50%{background:#ffd600;color:#222}}@media (prefers-reduced-motion:reduce){#emgAlarm.on{animation:none}}';
+    document.head.appendChild(st);
+    function prefName(code2) {
+      var o = document.querySelector('#wxPref option[value^="' + code2 + '"]'); if (!o) return '';
+      return o.textContent.replace(/\(.*\)/, '');
+    }
+    /* ---- 現在地 ---- */
+    var lastLoc = null;
+    function getLoc(cb) {
+      if (lastLoc && Date.now() - lastLoc.t < 60000) { cb(lastLoc); return; }
+      if (!navigator.geolocation) { cb({ err: '位置情報に、対応していません。' }); return; }
+      var done = false;
+      navigator.geolocation.getCurrentPosition(function (pos) {
+        if (done) return; done = true;
+        var L = { lat: pos.coords.latitude, lon: pos.coords.longitude, acc: Math.round(pos.coords.accuracy || 0), t: Date.now(), town: '', pref: '' };
+        lastLoc = L; cb(L);
+        try {
+          var ctl = window.AbortController ? new AbortController() : null; if (ctl) setTimeout(function () { ctl.abort(); }, 5000);
+          fetch('https://mreversegeocoder.gsi.go.jp/reverse-geocoder/LonLatToAddress?lat=' + L.lat + '&lon=' + L.lon, ctl ? { signal: ctl.signal } : {})
+            .then(function (r) { return r.json(); }).then(function (j) {
+              var r = j && j.results; if (!r) return;
+              L.pref = prefName(String(r.muniCd || '').slice(0, 2)); L.town = r.lv01Nm || ''; L.t = Date.now(); cb(L);
+            }).catch(function () {});
+        } catch (e) {}
+      }, function (er) {
+        if (done) return; done = true;
+        cb({ err: er && er.code === 1 ? '位置情報が、許可されていません。携帯の設定で、位置情報を「オン」にし、このページに許可してください。' : '位置を、取得できませんでした。' });
+      }, { enableHighAccuracy: true, timeout: 9000, maximumAge: 15000 });
+    }
+    function fmt(n) { return n.toFixed(5); }
+    function renderLoc(box, L, big) {
+      box.textContent = '';
+      if (!L) { box.appendChild(E('div', '', '📍 いまの場所を、さがしています…')); return; }
+      if (L.err) { box.appendChild(E('div', '', '📍 ' + L.err)); box.appendChild(E('div', 'emg-sm', '周りの建物や、お店の名前、信号の名前などを、口で伝えてください。')); return; }
+      var h = E('div'); h.appendChild(E('b', '', '📍 いまの場所（目安）')); box.appendChild(h);
+      if (L.pref || L.town) box.appendChild(E('div', '', (L.pref || '') + ' ' + (L.town || '') + ' 付近'));
+      box.appendChild(E('div', '', '緯度 ' + fmt(L.lat) + ' ／ 経度 ' + fmt(L.lon)));
+      box.appendChild(E('div', 'emg-sm', 'ずれの目安：約' + L.acc + 'm' + (L.acc > 200 ? '（大きくずれている可能性があります）' : '')));
+      var a = E('a', '', '🗺 地図で、いまの場所を見る'); a.href = 'https://www.google.com/maps/search/?api=1&query=' + L.lat + ',' + L.lon; a.target = '_blank'; a.rel = 'noopener'; a.style.cssText = 'font-weight:800;display:inline-block;margin-top:4px'; box.appendChild(a);
+    }
+    function nameLine() { try { var n = JSON.parse(localStorage.getItem('kesera-name') || '""'); return n ? 'お名前：' + n : ''; } catch (e) { return ''; } }
+    function openDlg(d) { document.body.appendChild(d); d.addEventListener('close', function () { if (d.parentNode) d.parentNode.removeChild(d); }); try { d.showModal(); } catch (e) { d.setAttribute('open', ''); } }
+
+    /* ---- アラーム ---- */
+    var ov = E('div'); ov.id = 'emgAlarm'; ov.setAttribute('role', 'alertdialog'); ov.setAttribute('aria-label', '助けを呼ぶアラーム');
+    ov.appendChild(E('h2', '', '助けてください'));
+    ov.appendChild(E('p', '', 'この音が鳴っています。近くの方は、119に電話して、お声がけをお願いします。'));
+    var stopB = E('button', '', 'とめる'); stopB.type = 'button'; ov.appendChild(stopB);
+    document.body.appendChild(ov);
+    var ac = null, osc = null, gain = null, sweep = 0, wl = null, killT = 0, up = true;
+    function alarmStop() {
+      clearInterval(sweep); clearTimeout(killT); ov.classList.remove('on');
+      try { if (osc) osc.stop(); } catch (e) {} try { if (ac) ac.close(); } catch (e) {}
+      ac = osc = gain = null; try { if (wl) wl.release(); } catch (e) {} wl = null; try { navigator.vibrate && navigator.vibrate(0); } catch (e) {}
+    }
+    function alarmStart() {
+      alarmStop(); ov.classList.add('on'); stopB.focus();
+      try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
+      try {
+        var AC = window.AudioContext || window.webkitAudioContext;
+        ac = new AC(); osc = ac.createOscillator(); gain = ac.createGain(); osc.type = 'sawtooth'; gain.gain.value = 1;
+        osc.connect(gain); gain.connect(ac.destination); osc.frequency.value = 700; osc.start();
+        var f = 700; up = true;
+        sweep = setInterval(function () { f += up ? 60 : -60; if (f >= 1500) up = false; if (f <= 700) up = true; try { osc.frequency.setValueAtTime(f, ac.currentTime); } catch (e) {} if (ac && ac.state === 'suspended') { try { ac.resume(); } catch (e) {} } }, 40);
+      } catch (e) {}
+      try { if (navigator.wakeLock) navigator.wakeLock.request('screen').then(function (l) { wl = l; }).catch(function () {}); } catch (e) {}
+      try { navigator.vibrate && navigator.vibrate([600, 200, 600, 200, 600]); } catch (e) {}
+      killT = setTimeout(alarmStop, 10 * 60 * 1000);
+    }
+    stopB.addEventListener('click', alarmStop);
+    window.__keseraAlarm = function () {
+      var d = E('dialog', 'emg-dlg'); var w = E('div', 'emg-in'); d.appendChild(w);
+      w.appendChild(E('h2', '', '📣 周りの人を呼びます'));
+      w.appendChild(E('p', 'emg-sm', '大きな音が鳴り、画面が点滅します。まず、携帯の音量を上げてください。携帯が「消音」だと、鳴らないことがあります。'));
+      var go = E('button', 'emg-yes', '📣 音を鳴らす'); go.type = 'button'; go.style.border = '0'; go.addEventListener('click', function () { d.close(); alarmStart(); }); w.appendChild(go);
+      var no = E('button', 'emg-btn no', 'やめる'); no.type = 'button'; no.addEventListener('click', function () { d.close(); }); w.appendChild(no);
+      openDlg(d);
+    };
+
+    /* ---- 周りの人に見せる画面 ---- */
+    function showScreen() {
+      var d = E('dialog', 'emg-dlg'); var w = E('div', 'emg-in'); d.appendChild(w);
+      var h = E('h2', '', '助けてください'); h.style.cssText = 'font-size:2.2rem;text-align:center'; w.appendChild(h);
+      var p = E('p', '', '声が出せません。119に電話して、下の場所を伝えてください。'); p.style.cssText = 'font-size:1.5rem;line-height:1.7;margin:0;font-weight:700'; w.appendChild(p);
+      var nm = nameLine(); if (nm) { var n = E('p', '', nm); n.style.cssText = 'font-size:1.3rem;margin:0'; w.appendChild(n); }
+      var box = E('div', 'emg-loc'); box.style.fontSize = '1.3rem'; w.appendChild(box); renderLoc(box, null);
+      getLoc(function (L) { renderLoc(box, L, true); });
+      var a = E('a', 'emg-yes', '📞 119に電話する'); a.href = 'tel:119'; a.setAttribute('data-ok', '1'); a.addEventListener('click', function () { setTimeout(function () { d.close(); }, 300); }); w.appendChild(a);
+      var al = E('button', 'emg-btn al', '📣 アラームを鳴らす'); al.type = 'button'; al.addEventListener('click', function () { d.close(); alarmStart(); }); w.appendChild(al);
+      var no = E('button', 'emg-btn no', 'とじる'); no.type = 'button'; no.addEventListener('click', function () { d.close(); }); w.appendChild(no);
+      openDlg(d);
+    }
+    window.__keseraShowScreen = showScreen;
+
+    /* ---- 110・119 の前の確認 ---- */
+    function confirmCall(num) {
+      var fire = num === '119', label = fire ? '119（救急車・火事）' : '110（警察）';
+      var d = E('dialog', 'emg-dlg'); d.id = 'emgConfirm'; var w = E('div', 'emg-in'); d.appendChild(w);
+      w.appendChild(E('h2', '', '本当に、' + label + 'に電話しますか？'));
+      w.appendChild(E('p', 'emg-sm', '間違えて押したときは、「やめる」を押してください。'));
+      var yes = E('a', 'emg-yes', '📞 はい、' + num + 'に電話する'); yes.href = 'tel:' + num; yes.setAttribute('data-ok', '1'); yes.addEventListener('click', function () { setTimeout(function () { d.close(); }, 300); }); w.appendChild(yes);
+      var no = E('button', 'emg-btn no', 'やめる'); no.type = 'button'; no.addEventListener('click', function () { d.close(); }); w.appendChild(no);
+      var box = E('div', 'emg-loc'); w.appendChild(box); renderLoc(box, null);
+      getLoc(function (L) { renderLoc(box, L); });
+      w.appendChild(E('p', 'emg-sm', 'つながったら、①何があったか ②いまの場所 を、お伝えください。携帯の位置情報がオンだと、通報先に位置が届くことがありますが、必ず、住所や目印も、口で伝えてください。'));
+      var sh = E('button', 'emg-btn', '🙏 声が出せないとき：この画面を周りの人に見せる'); sh.type = 'button'; sh.addEventListener('click', function () { d.close(); showScreen(); }); w.appendChild(sh);
+      var al = E('button', 'emg-btn al', '📣 周りを呼ぶ（アラーム）'); al.type = 'button'; al.addEventListener('click', function () { d.close(); window.__keseraAlarm(); }); w.appendChild(al);
+      openDlg(d);
+    }
+    document.addEventListener('click', function (ev) {
+      var a = ev.target && ev.target.closest ? ev.target.closest('a[href]') : null; if (!a || a.getAttribute('data-ok')) return;
+      var m = /^tel:(119|110)$/.exec(a.getAttribute('href') || ''); if (!m) return;
+      ev.preventDefault(); ev.stopPropagation(); confirmCall(m[1]);
+    }, true);
+    /* 「たすけて」ダイアログにも、周りを呼ぶボタン */
+    setTimeout(function () {
+      var cl = document.getElementById('sosclose'); if (!cl || document.getElementById('sosalarm')) return;
+      var b = E('button', 'btn', '📣 周りを呼ぶ（アラーム）'); b.id = 'sosalarm'; b.type = 'button'; b.style.cssText = 'min-height:56px;font-weight:800;border-color:#b3261e;color:#b3261e'; b.addEventListener('click', function () { window.__keseraAlarm(); });
+      var b2 = E('button', 'btn', '🙏 声が出せない：画面を周りの人に見せる'); b2.type = 'button'; b2.style.cssText = 'min-height:56px;font-weight:800'; b2.addEventListener('click', showScreen);
+      cl.parentNode.insertBefore(b, cl); cl.parentNode.insertBefore(b2, cl);
+    }, 300);
   })();
 
   /* ---------- ヘッダーをコンパクトに ---------- */
