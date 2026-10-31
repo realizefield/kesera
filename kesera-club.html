@@ -5672,11 +5672,32 @@ button[aria-pressed="true"] { font-weight:700; }
     var hero = E('div', 'stp-hero');
     (function () {
       try {
-        var mo = new Date().getMonth() + 1, sc = (mo === 12 || mo <= 1) ? ['snow', {}] : mo === 2 ? ['plum', {}] : mo <= 4 ? ['sakura', {}] : mo === 5 ? ['field', { sun: 1, sky3: 1 }] : mo === 6 ? ['rain', {}] : mo <= 8 ? ['summer', { cloud: 1 }] : mo === 9 ? ['dragonfly', {}] : ['autumn', { house: 1 }];
         if (!window.__keseraArt) return;
-        var ar = E('div', 'stp-art'); ar.setAttribute('aria-hidden', 'true'); ar.style.cssText = 'border-radius:14px;overflow:hidden;height:150px;margin:-4px -4px 2px';
-        ar.innerHTML = window.__keseraArt(sc[0], sc[1]).replace('width="100%"', 'width="100%" height="150" preserveAspectRatio="xMidYMid slice"').replace(/role="img" aria-label="[^"]*"/, '');
+        var mo = new Date().getMonth() + 1;
+        /* 季節ごとの景色。最初の1枚が、その月のおもな絵。数秒ごとに、ゆっくり入れかわる */
+        var SET = (mo === 12 || mo === 1) ? [['snow', {}], ['winter', {}], ['moon', {}]]
+          : mo === 2 ? [['plum', {}], ['snow', {}], ['bird', {}]]
+          : mo <= 4 ? [['sakura', {}], ['field', { sun: 1, sky3: 1 }], ['river', {}], ['bird', {}]]
+          : mo === 5 ? [['field', { sun: 1, sky3: 1 }], ['violet', {}], ['bamboo', {}], ['pond', {}]]
+          : mo === 6 ? [['rain', {}], ['pond', {}], ['bamboo', {}], ['violet', {}]]
+          : mo <= 8 ? [['summer', { cloud: 1 }], ['sea', {}], ['mountain', {}], ['night', {}]]
+          : mo === 9 ? [['dragonfly', {}], ['moon', {}], ['mountain', {}], ['cloudant', {}]]
+          : [['autumn', { house: 1 }], ['temple', {}], ['dawn', {}], ['moon', {}]];
+        var ar = E('div', 'stp-art'); ar.setAttribute('aria-hidden', 'true');
+        ar.style.cssText = 'position:relative;border-radius:14px;overflow:hidden;aspect-ratio:360/200;margin:-4px -4px 2px;background:var(--bg)';
+        var slides = SET.map(function (sc, i) {
+          var d = E('div'); d.style.cssText = 'position:absolute;inset:0;transition:opacity 1.8s ease;opacity:' + (i ? 0 : 1);
+          d.innerHTML = window.__keseraArt(sc[0], sc[1]).replace(/width="100%"/, 'width="100%" height="100%" preserveAspectRatio="xMidYMid slice"').replace(/role="img" aria-label="[^"]*"/, '');
+          ar.appendChild(d); return d;
+        });
         hero.appendChild(ar);
+        var cur = 0, calm = false;
+        try { calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+        function next() { slides[cur].style.opacity = 0; cur = (cur + 1) % slides.length; slides[cur].style.opacity = 1; }
+        if (!calm && slides.length > 1) {
+          setInterval(function () { if (document.hidden || !ar.offsetParent) return; next(); }, 9000);
+          ar.style.cursor = 'pointer'; ar.addEventListener('click', next);
+        }
       } catch (e) {}
     })();
     var hg = E('h2', '', '今日も、いい一日を、はじめましょう。'); hero.appendChild(hg);
