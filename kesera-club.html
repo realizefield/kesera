@@ -3559,12 +3559,18 @@ button[aria-pressed="true"] { font-weight:700; }
     var g = $('guide');
     document.body.style.paddingBottom = ((g.hidden ? 90 : g.offsetHeight + 24) + (document.getElementById('stpTabs') ? 80 : 0)) + 'px';
   }
-  function setGuide(v) {
+  function setGuide(v, force) {
     curView = v;
-    gMin = false; $('guide').hidden = false; $('gopen').hidden = true;
     $('gtext').textContent = GUIDE[v] || GUIDE.home;
-    fitGuide();
-    if (gAuto) speakGuide();
+    /* 初めて開いたときだけ、大きく出す。あとは、「案内係をよぶ」を押したときだけ出す */
+    var first = !load('kesera-guide-seen', false);
+    if (force || first) {
+      if (first) save('kesera-guide-seen', true);
+      gMin = false; $('guide').hidden = false; $('gopen').hidden = true; fitGuide();
+      if (gAuto) speakGuide();
+    } else {
+      gMin = true; $('guide').hidden = true; $('gopen').hidden = false; fitGuide();
+    }
   }
   function speakGuide() {
     if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') { gStart(); setTimeout(gStop, 2500); return; }
@@ -3585,7 +3591,7 @@ button[aria-pressed="true"] { font-weight:700; }
     gMin = true; $('guide').hidden = true; $('gopen').hidden = false; fitGuide();
     try { window.speechSynthesis.cancel(); } catch (er) {} gStop();
   });
-  $('gopen').addEventListener('click', function () { setGuide(curView); });
+  $('gopen').addEventListener('click', function () { setGuide(curView, true); });
   window.addEventListener('resize', fitGuide);
   (function initGuide() {
     $('gavatar').innerHTML = GPLACE;
