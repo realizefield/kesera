@@ -877,6 +877,7 @@ button[aria-pressed="true"] { font-weight:700; }
     <div class="card" id="setBasic"><h3>見た目・声</h3><div class="row" id="setBasicRow"></div><div id="setBasicNote"></div><div id="setVoice"></div></div>
     <div class="card" id="setProfile"><h3>お名前・お住まい</h3><div id="setProfileBody"></div></div>
     <div id="setCards"></div>
+    <div class="card" id="voiceRateCard"><h3>案内係（四国めたん）の声の速さ</h3><div class="row" id="voiceRateRow"></div><p class="muted" id="voiceRateMsg" style="margin:6px 0 0"></p></div>
     <p class="muted" style="font-size:.9em">案内係の声：VOICEVOX：四国めたん</p>
   </section>
 
@@ -3619,11 +3620,13 @@ button[aria-pressed="true"] { font-weight:700; }
     try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e) {}
     gAudioStop(); gStop();
     var a = new Audio('voice/guide_' + curView + '.mp3'); gAudio = a;
+    try { a.preservesPitch = true; a.webkitPreservesPitch = true; a.playbackRate = Number(load('kesera-voice-rate', 0.85)) || 0.85; } catch (e) {}
     a.onplaying = gStart; a.onended = function () { gStop(); gAudio = null; };
     a.onerror = function () { gAudioStop(); speakSynth(); };
     var pr = a.play();
     if (pr && pr.catch) pr.catch(function () { if (gAudio === a) { gAudioStop(); speakSynth(); } });
   }
+  window.__keseraSpeakGuide = speakGuide;
   $('gauto').addEventListener('click', function () {
     gAuto = !gAuto; this.setAttribute('aria-pressed', String(gAuto));
     if (gAuto) speakGuide(); else { gAudioStop(); try { window.speechSynthesis.cancel(); } catch (er) {} gStop(); }
@@ -4229,8 +4232,8 @@ button[aria-pressed="true"] { font-weight:700; }
     var k = sec.firstElementChild; sec.insertBefore(readBar(function () { return screenText(); }), k && k.nextSibling);
   });
   $('gspeak').textContent = '🔊 声で聞く';
-  $('gspeak').addEventListener('click', function () { readAloud(screenText()); });
-  (function () { var r = document.createElement('button'); r.className = 'btn small'; r.id = 'grepeat'; r.type = 'button'; r.textContent = '↻ もう一度聞く'; r.addEventListener('click', function () { readAloud(lastRead || screenText()); }); $('gspeak').insertAdjacentElement('afterend', r); })();
+  $('gspeak').addEventListener('click', function () { if (window.__keseraSpeakGuide) window.__keseraSpeakGuide(); else readAloud(screenText()); });
+  (function () { var r = document.createElement('button'); r.className = 'btn small'; r.id = 'grepeat'; r.type = 'button'; r.textContent = '↻ もう一度聞く'; r.addEventListener('click', function () { if (window.__keseraSpeakGuide) window.__keseraSpeakGuide(); else readAloud(lastRead || screenText()); }); $('gspeak').insertAdjacentElement('afterend', r); })();
 
   /* ---------- おかしい？：体調の変化チェック（応急対応・相談先・SOS） ---------- */
   (function () {
@@ -5982,6 +5985,24 @@ button[aria-pressed="true"] { font-weight:700; }
       var b2 = E('button', 'btn', '🙏 声が出せない：画面を周りの人に見せる'); b2.type = 'button'; b2.style.cssText = 'min-height:56px;font-weight:800'; b2.addEventListener('click', showScreen);
       cl.parentNode.insertBefore(b, cl); cl.parentNode.insertBefore(b2, cl);
     }, 300);
+  })();
+
+  /* ---------- 案内係の声の速さ ---------- */
+  (function () {
+    var row = document.getElementById('voiceRateRow'); if (!row) return;
+    var OPT = [['ゆっくり', 0.75], ['ふつう', 0.85], ['はやめ', 1.0]];
+    function paint() {
+      var cur = Number(load('kesera-voice-rate', 0.85)) || 0.85; row.textContent = '';
+      OPT.forEach(function (o) {
+        var b = document.createElement('button'); b.type = 'button'; b.className = 'btn' + (Math.abs(cur - o[1]) < 0.01 ? ' primary' : ''); b.textContent = o[0]; b.setAttribute('aria-pressed', String(Math.abs(cur - o[1]) < 0.01)); b.style.minHeight = '52px';
+        b.addEventListener('click', function () {
+          save('kesera-voice-rate', o[1]); paint();
+          document.getElementById('voiceRateMsg').textContent = '「' + o[0] + '」にしました。案内係の「声で聞く」で、確かめられます。';
+        });
+        row.appendChild(b);
+      });
+    }
+    paint();
   })();
 
   /* ---------- ヘッダーをコンパクトに ---------- */
