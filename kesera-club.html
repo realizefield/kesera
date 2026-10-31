@@ -874,6 +874,13 @@ button[aria-pressed="true"] { font-weight:700; }
     <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
     <h2>⚙ 設定</h2>
     <p class="muted">文字の大きさ、デザイン、声、お名前・お住まい、緊急連絡先、ご家族への見まもりなどは、すべてここで変えられます。</p>
+    <div class="card" id="saveApp"><h3>📲 ケセラを、すぐ出せるようにする</h3>
+      <p class="muted" style="margin:0 0 8px">携帯の画面に、ケセラの絵（アイコン）を置くと、押すだけで開けます。</p>
+      <div id="saveAppNow" hidden><button class="btn primary" id="saveAppBtn" type="button" style="min-height:56px;width:100%;font-size:1.15rem">📲 ホーム画面に追加する</button></div>
+      <details id="saveIos"><summary style="min-height:48px;cursor:pointer;font-weight:800">🍎 iPhone（Safari）の場合</summary><ol style="line-height:1.9;margin:6px 0 0;padding-left:1.4em"><li>画面の下の「共有」ボタン（四角から矢印が出た形）を押します。</li><li>出てきた一覧を、下へ動かし、「ホーム画面に追加」を押します。</li><li>右上の「追加」を押すと、画面にケセラの絵が置かれます。</li></ol><p class="muted" style="margin:6px 0 0">Safari以外のアプリで開いているときは、Safariで開き直してください。</p></details>
+      <details id="saveAnd"><summary style="min-height:48px;cursor:pointer;font-weight:800">🤖 Android（Chrome）の場合</summary><ol style="line-height:1.9;margin:6px 0 0;padding-left:1.4em"><li>画面の右上の「︙」（点が3つ）を押します。</li><li>「ホーム画面に追加」（または「アプリをインストール」）を押します。</li><li>確認が出たら「追加」を押します。</li></ol></details>
+      <details id="saveBm"><summary style="min-height:48px;cursor:pointer;font-weight:800">⭐ ブックマーク（お気に入り）に入れる</summary><p style="line-height:1.9;margin:6px 0 0">Chromeでは、「︙」→「☆」（ブックマーク）を押します。Safariでは、「共有」→「ブックマークを追加」です。</p></details>
+    </div>
     <div class="card" id="setBasic"><h3>見た目・声</h3><div class="row" id="setBasicRow"></div><div id="setBasicNote"></div><div id="setVoice"></div></div>
     <div class="card" id="setProfile"><h3>お名前・お住まい</h3><div id="setProfileBody"></div></div>
     <div id="setCards"></div>
@@ -5518,7 +5525,7 @@ button[aria-pressed="true"] { font-weight:700; }
       ['ニュース・天気', 'c-o', [
         T('🌤', '今日の天気・花言葉', '', { home: '.greet' }), T('📰', 'ニュース', '', { home: '.news-card' })]],
       ['安心・設定', 'c-r', [
-        T('🏥', '近くの病院・交番', '避難所・薬局も', { home: '#safeNearCard' }), T('🆘', '困った・助けて', '', { help: 1 }), T('🤔', 'おかしい？と思ったら', '', { click: '#oddBtn' }), T('⚙', '設定', '文字の大きさなど', { go: 'settings' })]]
+        T('🏥', '近くの病院・交番', '避難所・薬局も', { home: '#safeNearCard' }), T('📲', 'ケセラをすぐ出せるように', 'ホーム画面に追加', { go: 'settings' }), T('🆘', '困った・助けて', '', { help: 1 }), T('🤔', 'おかしい？と思ったら', '', { click: '#oddBtn' }), T('⚙', '設定', '文字の大きさなど', { go: 'settings' })]]
     ];
     function soonDlg() {
       var d = E('dialog', 'design-dialog'); d.id = 'soonDlg'; d.setAttribute('aria-label', '地域の仲間探し（開発中）');
@@ -6003,6 +6010,16 @@ button[aria-pressed="true"] { font-weight:700; }
       });
     }
     paint();
+  })();
+
+  /* ---------- ケセラをホーム画面に追加 ---------- */
+  (function () {
+    var dp = null; var box = document.getElementById('saveAppNow'), btn = document.getElementById('saveAppBtn'); if (!box) return;
+    var ua = navigator.userAgent || '', ios = /iPhone|iPad|iPod/.test(ua), and = /Android/.test(ua);
+    if (ios) document.getElementById('saveIos').open = true; else if (and) document.getElementById('saveAnd').open = true;
+    window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); dp = e; box.hidden = false; });
+    btn.addEventListener('click', function () { if (!dp) return; dp.prompt(); dp.userChoice.then(function () { dp = null; box.hidden = true; }).catch(function () {}); });
+    window.addEventListener('appinstalled', function () { box.hidden = true; });
   })();
 
   /* ---------- ヘッダーをコンパクトに ---------- */
