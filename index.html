@@ -3518,6 +3518,8 @@ button[aria-pressed="true"] { font-weight:700; }
 
   /* ---------- 案内係（女性・AI） ---------- */
   var GUIDE = {
+    fav: 'ここは「お気に入り」です。メニューで、☆を押した項目が、ここに集まります。よく使う項目を、ここから開けます。',
+    news: 'ここは「お知らせ」です。ケセラの新しい機能や、変わったところを、お知らせします。',
     flower: 'ここは「花の見どころ」です。時期と地域をえらぶと、見ごろの花が出ます。「写真を見る」「行き方」のボタンも、使えます。',
     settings: 'ここは「設定」です。文字の大きさ、デザイン、声、お名前とお住まい、緊急連絡先、ご家族への見まもりを、ここで変えられます。終わったら、「ホームにもどる」を押してください。',
     menu: 'ここは「メニュー」です。したいことの絵を押すと、その画面に進みます。いつでも、いちばん下の「ホーム」で、もどれます。',
@@ -5440,6 +5442,9 @@ button[aria-pressed="true"] { font-weight:700; }
       '.stp-tabs button{flex:1 1 0;min-width:0;min-height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;border:0;border-radius:12px;background:transparent;color:var(--fg);font-size:.82rem;font-weight:800;cursor:pointer;padding:2px}',
       '.stp-tabs button .ic{font-size:1.5rem;line-height:1}',
       '.stp-tabs button.on{background:#f6e4ec;color:var(--accent)}',
+      '.stp-tabs button{position:relative;font-size:.78rem}.stp-tabs .bdg{position:absolute;top:2px;right:8px;min-width:20px;height:20px;border-radius:10px;background:#d32f2f;color:#fff;font-size:.75rem;line-height:20px;text-align:center;padding:0 4px;font-weight:900}',
+      '.stp-cat .stp-t{padding-top:24px}',
+      '.stp-star{position:absolute;top:2px;right:2px;width:44px;height:44px;border:0;border-radius:50%;background:transparent;font-size:1.6rem;line-height:1;color:#8a6d1a;cursor:pointer}.stp-star.on{color:#e0a800}',
       '.stp-tabs button.sos{color:#b3261e}.stp-tabs button.sos.on{background:#fde9e4}',
       '@media (prefers-reduced-motion:no-preference){.stp-t{transition:transform .1s}}'
     ].join('\n'); document.head.appendChild(st);
@@ -5535,20 +5540,65 @@ button[aria-pressed="true"] { font-weight:700; }
         k.addEventListener('click', function () { if (x[0] === 'help') openHelp(); else show(x[0]); }); b.appendChild(k);
       }); return b;
     }
+    /* ---- お気に入り（☆） ---- */
+    var FAVK = 'kesera-fav';
+    function favGet() { try { var a = JSON.parse(localStorage.getItem(FAVK) || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
+    function favSet(a) { try { localStorage.setItem(FAVK, JSON.stringify(a)); } catch (e) {} }
+    var favGrid = null, favEmpty = null;
+    function starTile(t) {
+      var w = E('div'); w.style.cssText = 'position:relative;display:flex;flex-direction:column'; var b = tile(t); b.style.flex = '1'; w.appendChild(b);
+      var s = E('button', 'stp-star'); s.type = 'button';
+      function paint() { var on = favGet().indexOf(t.n) >= 0; s.textContent = on ? '★' : '☆'; s.setAttribute('aria-pressed', on ? 'true' : 'false'); s.setAttribute('aria-label', t.n + 'を、お気に入りに' + (on ? 'はずす' : '入れる')); s.classList.toggle('on', on); }
+      s.addEventListener('click', function (e) { e.stopPropagation(); var a = favGet(), i = a.indexOf(t.n); if (i >= 0) a.splice(i, 1); else a.push(t.n); favSet(a); paint(); buildFav(); });
+      paint(); w.appendChild(s); return w;
+    }
+    function buildFav() {
+      if (!favGrid) return; favGrid.textContent = ''; var a = favGet(), n = 0;
+      CATS.forEach(function (c) { c[2].forEach(function (t) { if (a.indexOf(t.n) >= 0) { favGrid.appendChild(tile(t, c[1])); n++; } }); });
+      favEmpty.style.display = n ? 'none' : 'block';
+    }
+    var fav = document.createElement('section'); fav.className = 'view'; fav.id = 'v-fav'; fav.hidden = true; fav.setAttribute('aria-label', 'お気に入り');
+    var fh = E('h2', '', '⭐ お気に入り'); fh.style.margin = '0'; fav.appendChild(fh);
+    fav.appendChild(E('p', 'muted', 'メニューで、項目の右上の ☆ を押すと、ここに集まります。もう一度押すと、はずれます。'));
+    favGrid = E('div', 'stp-grid'); fav.appendChild(favGrid);
+    favEmpty = E('div', '', ''); favEmpty.style.cssText = 'padding:14px;border-radius:16px;background:var(--surface);border:2px dashed var(--line);line-height:1.8;font-size:1.05rem';
+    favEmpty.appendChild(E('p', '', 'まだ、お気に入りは、ありません。'));
+    var gm = E('button', 'stp-more', '📋 メニューを見て、☆を押す'); gm.type = 'button'; gm.addEventListener('click', function () { show('menu'); }); favEmpty.appendChild(gm); fav.appendChild(favEmpty);
+    /* ---- お知らせ ---- */
+    var NEWS = [
+      ['10月31日', '下のタブができました', '画面の下に、ホーム・メニュー・お気に入り・お知らせ・困った、のタブが、いつも出ます。ホームの上の絵は、月ごとに変わります。'],
+      ['10月31日', '画面が、4つの段階になりました', 'ホーム → メニュー → 困った・助けて → 各画面、の順に、迷わず進めます。'],
+      ['10月30日', '「ほっとひと息」と、ケセラの理念が入りました', 'ホームで、お茶を飲む30秒の時間が持てます。理念の中に、禅語「主人公」の原文と注釈も、入っています。'],
+      ['10月30日', '「きょうの、ひとこと歌」が、くわしくなりました', '74首すべてに、水彩画ふうの絵と、「ここがすごい」の解説がつきました。'],
+      ['10月29日', '神社仏閣・手料理・風水が入りました', '「まちの発見」の近くの神社仏閣、「ケセラ部」の手料理20選、風水と断捨離です。']
+    ];
+    var NK = 'kesera-news-seen', nv = document.createElement('section'); nv.className = 'view'; nv.id = 'v-news'; nv.hidden = true; nv.setAttribute('aria-label', 'お知らせ');
+    function newsSeen() { try { var v = localStorage.getItem(NK); return v === null ? NEWS.length - 1 : Math.min(NEWS.length, parseInt(v, 10) || 0); } catch (e) { return NEWS.length - 1; } }
+    var nh = E('h2', '', '🔔 お知らせ'); nh.style.margin = '0'; nv.appendChild(nh);
+    nv.appendChild(E('p', 'muted', 'ケセラからの、お知らせです。新しい順に、ならんでいます。'));
+    var newsBox = E('div'); newsBox.style.cssText = 'display:flex;flex-direction:column;gap:10px'; nv.appendChild(newsBox);
+    function buildNews(unseenFrom) {
+      newsBox.textContent = '';
+      NEWS.forEach(function (n, i) {
+        var c = E('div', 'card'); c.style.cssText = 'padding:12px 14px'; var top = E('div'); top.style.cssText = 'display:flex;gap:8px;align-items:center;flex-wrap:wrap';
+        top.appendChild(E('span', 'muted', n[0])); if (i < unseenFrom) { var nb = E('span', '', '新着'); nb.style.cssText = 'background:#d32f2f;color:#fff;border-radius:10px;padding:1px 8px;font-size:.85rem;font-weight:800'; top.appendChild(nb); }
+        c.appendChild(top); var h = E('h3', '', n[1]); h.style.margin = '4px 0'; c.appendChild(h); var p = E('p', '', n[2]); p.style.cssText = 'line-height:1.8;font-size:1.05rem;margin:0'; c.appendChild(p); newsBox.appendChild(c);
+      });
+    }
     var menu = document.createElement('section'); menu.className = 'view'; menu.id = 'v-menu'; menu.hidden = true; menu.setAttribute('aria-label', 'メニュー');
     menu.appendChild(bar('menu'));
     var mh = E('h2', '', '📋 メニュー'); mh.style.margin = '0'; menu.appendChild(mh);
     menu.appendChild(E('p', 'muted', 'したいことを、えらんでください。'));
     CATS.forEach(function (c, i) {
       var box = E('div', 'stp-cat ' + c[1]); box.id = 'stpcat' + i; box.appendChild(E('h3', '', c[0]));
-      var g = E('div', 'stp-grid'); c[2].forEach(function (t) { g.appendChild(tile(t)); }); box.appendChild(g); menu.appendChild(box);
+      var g = E('div', 'stp-grid'); c[2].forEach(function (t) { g.appendChild(starTile(t)); }); box.appendChild(g); menu.appendChild(box);
     });
-    var ref = document.getElementById('v-settings'); ref.parentNode.insertBefore(menu, ref);
-    if (views.indexOf('menu') < 0) views.push('menu');
+    var ref = document.getElementById('v-settings'); ref.parentNode.insertBefore(menu, ref); ref.parentNode.insertBefore(fav, ref); ref.parentNode.insertBefore(nv, ref);
+    ['menu', 'fav', 'news'].forEach(function (k) { if (views.indexOf(k) < 0) views.push(k); }); buildFav();
 
     /* ---- ④ 各画面の上に、共通のボタン ---- */
     Array.prototype.forEach.call(document.querySelectorAll('section.view'), function (s) {
-      if (s.id === 'v-home' || s.id === 'v-menu') return;
+      if (s.id === 'v-home' || s.id === 'v-menu' || s.id === 'v-fav' || s.id === 'v-news') return;
       s.insertBefore(bar(''), s.firstChild);
     });
 
@@ -5587,7 +5637,7 @@ button[aria-pressed="true"] { font-weight:700; }
 
     /* ---- 下のタブ（いつでも：ホーム・メニュー・困った・設定） ---- */
     var tabs = E('nav', 'stp-tabs'); tabs.id = 'stpTabs'; tabs.setAttribute('aria-label', 'いつでも使えるタブ');
-    var TB = [['home', '🏠', 'ホーム'], ['menu', '📋', 'メニュー'], ['help', '🆘', '困った'], ['settings', '⚙', '設定']], tbs = {};
+    var TB = [['home', '🏠', 'ホーム'], ['menu', '📋', 'メニュー'], ['fav', '⭐', 'お気に入り'], ['news', '🔔', 'お知らせ'], ['help', '🆘', '困った']], tbs = {};
     TB.forEach(function (x) {
       var k = E('button', x[0] === 'help' ? 'sos' : ''); k.type = 'button'; k.appendChild(E('span', 'ic', x[1])); k.appendChild(E('span', '', x[2])); k.setAttribute('aria-label', x[2]);
       k.addEventListener('click', function () { if (x[0] === 'help') openHelp(); else show(x[0]); }); tabs.appendChild(k); tbs[x[0]] = k;
@@ -5595,11 +5645,22 @@ button[aria-pressed="true"] { font-weight:700; }
     document.body.appendChild(tabs);
     function mark() {
       var cur = ''; Array.prototype.forEach.call(document.querySelectorAll('section.view'), function (v) { if (!v.hidden) cur = v.id.replace('v-', ''); });
-      var on = cur === 'home' ? 'home' : cur === 'settings' ? 'settings' : 'menu';
+      var on = cur === 'home' ? 'home' : cur === 'fav' ? 'fav' : cur === 'news' ? 'news' : cur === 'settings' ? '' : 'menu';
       Object.keys(tbs).forEach(function (k) { tbs[k].classList.toggle('on', k === on); if (k === on) tbs[k].setAttribute('aria-current', 'page'); else tbs[k].removeAttribute('aria-current'); });
     }
     try { var mo2 = new MutationObserver(mark); Array.prototype.forEach.call(document.querySelectorAll('section.view'), function (v) { mo2.observe(v, { attributes: true, attributeFilter: ['hidden'] }); }); } catch (e) {}
-    mark(); fitGuide();
+    function badge() {
+      var old = tbs.news.querySelector('.bdg'); if (old) old.remove();
+      var cur = ''; Array.prototype.forEach.call(document.querySelectorAll('section.view'), function (v) { if (!v.hidden) cur = v.id; });
+      var un = NEWS.length - newsSeen();
+      if (cur === 'v-news') { try { localStorage.setItem(NK, String(NEWS.length)); } catch (e) {} un = 0; }
+      if (un > 0) { var b = E('span', 'bdg', String(un)); b.setAttribute('aria-label', '新着' + un + '件'); tbs.news.appendChild(b); }
+      if (cur === 'v-news') buildNews(window.__newsUnseenOnOpen || 0);
+    }
+    var lastCur = '';
+    function onView() { mark(); var cur = ''; Array.prototype.forEach.call(document.querySelectorAll('section.view'), function (v) { if (!v.hidden) cur = v.id; }); if (cur === 'v-news' && lastCur !== 'v-news') window.__newsUnseenOnOpen = NEWS.length - newsSeen(); lastCur = cur; badge(); }
+    try { var mo3 = new MutationObserver(onView); Array.prototype.forEach.call(document.querySelectorAll('section.view'), function (v) { mo3.observe(v, { attributes: true, attributeFilter: ['hidden'] }); }); } catch (e) {}
+    mark(); badge(); fitGuide();
   })();
 
   /* ---------- ヘッダーをコンパクトに ---------- */
