@@ -672,6 +672,22 @@ button[aria-pressed="true"] { font-weight:700; }
       <p class="muted">金額は、お店の情報にある目安で探すため、ぴったりとは限りません。メニューや値段は、お店で確かめてください。</p>
     </div>
 
+    <div class="card" id="safeNearCard">
+      <h2>🏥 近くの安心（病院・交番・避難所）</h2>
+      <p class="muted">押すと、Googleマップが開いて、いまいる場所の近くが出ます。（位置情報の許可が出たら、「許可」を押してください）</p>
+      <div class="row">
+        <a class="btnlink" href="https://www.google.com/maps/search/?api=1&amp;query=%E7%97%85%E9%99%A2" target="_blank" rel="noopener">🏥 病院</a>
+        <a class="btnlink" href="https://www.google.com/maps/search/?api=1&amp;query=%E4%BA%A4%E7%95%AA" target="_blank" rel="noopener">🚓 交番</a>
+        <a class="btnlink" href="https://www.google.com/maps/search/?api=1&amp;query=%E8%AD%A6%E5%AF%9F%E7%BD%B2" target="_blank" rel="noopener">🚔 警察署</a>
+        <a class="btnlink" href="https://www.google.com/maps/search/?api=1&amp;query=%E8%96%AC%E5%B1%80" target="_blank" rel="noopener">💊 薬局</a>
+        <a class="btnlink" href="https://www.google.com/maps/search/?api=1&amp;query=%E9%81%BF%E9%9B%A3%E6%89%80" target="_blank" rel="noopener">🏫 避難所</a>
+        <a class="btnlink" href="https://www.google.com/maps/search/?api=1&amp;query=%E5%85%AC%E8%A1%86%E3%83%88%E3%82%A4%E3%83%AC" target="_blank" rel="noopener">🚻 トイレ</a>
+      </div>
+      <p class="muted">地図に出る場所は、目安です。病院は、診察の時間や科目を、電話や公式の案内で確かめてください。避難所は、災害のときに、開くかどうかが変わります。市町村の発表を、いちばんに確かめてください。</p>
+      <div class="notice"><b>命にかかわるとき</b>は、まず119に電話してください。あぶない・こわいときは、110です。</div>
+      <button class="btn" id="safeNearHelp" type="button" style="margin-top:8px;min-height:52px">🆘 「困った・助けて」を開く</button>
+    </div>
+
     <div class="card trip-card">
       <h2>お出かけのお手伝い</h2><p class="muted">いまいる場所から、行きたい場所へ。</p>
       <div class="trip-modes">
@@ -5485,7 +5501,7 @@ button[aria-pressed="true"] { font-weight:700; }
       ['ニュース・天気', 'c-o', [
         T('🌤', '今日の天気・花言葉', '', { home: '.greet' }), T('📰', 'ニュース', '', { home: '.news-card' })]],
       ['安心・設定', 'c-r', [
-        T('🆘', '困った・助けて', '', { help: 1 }), T('🤔', 'おかしい？と思ったら', '', { click: '#oddBtn' }), T('⚙', '設定', '文字の大きさなど', { go: 'settings' })]]
+        T('🏥', '近くの病院・交番', '避難所・薬局も', { home: '#safeNearCard' }), T('🆘', '困った・助けて', '', { help: 1 }), T('🤔', 'おかしい？と思ったら', '', { click: '#oddBtn' }), T('⚙', '設定', '文字の大きさなど', { go: 'settings' })]]
     ];
     function run(a) {
       if (!a) return;
@@ -5583,6 +5599,7 @@ button[aria-pressed="true"] { font-weight:700; }
     var gm = E('button', 'stp-more', '📋 メニューを見て、☆を押す'); gm.type = 'button'; gm.addEventListener('click', function () { show('menu'); }); favEmpty.appendChild(gm); fav.appendChild(favEmpty);
     /* ---- お知らせ ---- */
     var NEWS = [
+      ['10月31日', '近くの病院・交番・避難所が探せます', 'ホームの「近くの安心」から、病院、交番、警察署、薬局、避難所、トイレを、地図で探せます。「設定」では、いまいる場所から、お住まいの県を決められます。'],
       ['10月31日', '下のタブができました', '画面の下に、ホーム・メニュー・お気に入り・お知らせ・困った、のタブが、いつも出ます。ホームの上の絵は、月ごとに変わります。'],
       ['10月31日', '画面が、4つの段階になりました', 'ホーム → メニュー → 困った・助けて → 各画面、の順に、迷わず進めます。'],
       ['10月30日', '「ほっとひと息」と、ケセラの理念が入りました', 'ホームで、お茶を飲む30秒の時間が持てます。理念の中に、禅語「主人公」の原文と注釈も、入っています。'],
@@ -5678,6 +5695,41 @@ button[aria-pressed="true"] { font-weight:700; }
     function onView() { mark(); var cur = ''; Array.prototype.forEach.call(document.querySelectorAll('section.view'), function (v) { if (!v.hidden) cur = v.id; }); if (cur === 'v-news' && lastCur !== 'v-news') window.__newsUnseenOnOpen = NEWS.length - newsSeen(); lastCur = cur; badge(); }
     try { var mo3 = new MutationObserver(onView); Array.prototype.forEach.call(document.querySelectorAll('section.view'), function (v) { mo3.observe(v, { attributes: true, attributeFilter: ['hidden'] }); }); } catch (e) {}
     mark(); badge(); fitGuide();
+  })();
+
+
+  /* ---------- 近くの安心／現在地から県を決める ---------- */
+  (function () {
+    var hb = document.getElementById('safeNearHelp'); if (hb) hb.addEventListener('click', function () { if (window.__keseraOpenHelp) window.__keseraOpenHelp(); });
+    function nearest(lat, lon) {
+      var best = null, bd = 1e9, R = Math.PI / 180;
+      Object.keys(PREF_LL).forEach(function (code) {
+        if (!document.querySelector('#wxPref option[value="' + code + '"]')) return;
+        var ll = PREF_LL[code], dLa = (ll[0] - lat) * R, dLo = (ll[1] - lon) * R;
+        var a = Math.sin(dLa / 2) * Math.sin(dLa / 2) + Math.cos(lat * R) * Math.cos(ll[0] * R) * Math.sin(dLo / 2) * Math.sin(dLo / 2);
+        var d = 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); if (d < bd) { bd = d; best = code; }
+      }); return best ? { code: best, km: Math.round(bd) } : null;
+    }
+    function addBtn(selId) {
+      var sel = document.getElementById(selId); if (!sel || !sel.parentNode) return;
+      var box = document.createElement('div'); box.style.cssText = 'margin:6px 0;display:flex;flex-direction:column;gap:6px';
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'btn'; b.textContent = '📍 いまいる場所から、県を決める'; b.style.minHeight = '48px';
+      var m = document.createElement('p'); m.className = 'muted'; m.setAttribute('role', 'status'); m.style.margin = '0'; box.appendChild(b); box.appendChild(m);
+      sel.parentNode.parentNode.insertBefore(box, sel.parentNode.nextSibling);
+      b.addEventListener('click', function () {
+        m.textContent = '場所を調べています…（許可が出たら「許可」を押してください）';
+        if (!navigator.geolocation || window.isSecureContext === false) { m.textContent = 'この開き方では、場所を調べられません。上の欄から、県を選んでください。'; return; }
+        navigator.geolocation.getCurrentPosition(function (pos) {
+          var r = nearest(pos.coords.latitude, pos.coords.longitude); if (!r) { m.textContent = '県を決められませんでした。上の欄から選んでください。'; return; }
+          var o = document.querySelector('#' + selId + ' option[value="' + r.code + '"]'), nm = o ? o.textContent.replace(/[（(].*$/, '') : '';
+          m.textContent = 'いまいる場所に近いのは、「' + nm + '」です。（県境の近くでは、ちがう県が出ることがあります）';
+          var ok = document.createElement('button'); ok.type = 'button'; ok.className = 'btn primary'; ok.textContent = '✔ ' + nm + 'にする'; ok.style.minHeight = '48px';
+          ok.addEventListener('click', function () { sel.value = r.code; sel.dispatchEvent(new Event('change')); m.textContent = nm + 'にしました。天気や日の出・日の入りも、この県に合わせます。'; });
+          m.appendChild(document.createElement('br')); m.appendChild(ok);
+        }, function () { m.textContent = '場所がわかりませんでした。許可がないか、場所が取れません。上の欄から、県を選んでください。'; }, { timeout: 10000, maximumAge: 600000 });
+      });
+    }
+    addBtn('wxPref'); addBtn('pfPref');
   })();
 
   /* ---------- ヘッダーをコンパクトに ---------- */
