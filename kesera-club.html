@@ -142,14 +142,14 @@ input[type="range"] { width: 100%; height: 36px; accent-color: var(--accent); }
 .talkcard { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
 .bubble { flex: 1 1 220px; background: var(--accent-soft); border-radius: 16px; padding: 14px 16px; position: relative; }
 
-.guide { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: var(--surface); border-top: 2px solid var(--accent); padding-top: 10px; padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px)); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.guide { position: fixed; left: 0; right: 0; bottom: var(--tabh, 0px); z-index: 20; background: var(--surface); border-top: 2px solid var(--accent); padding-top: 10px; padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px)); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .guide-in { max-width: 760px; margin: 0 auto; display: flex; gap: 12px; align-items: flex-start; }
 .g-avatar { width: 104px; height: 104px; border-radius: 14px; overflow: hidden; flex: none; background: radial-gradient(circle at 35% 30%, var(--accent-soft), var(--leaf-soft)); border: 2px solid var(--line); }
 .g-avatar img, .g-avatar svg { width: 100%; height: 100%; object-fit: cover; display: block; }
 .g-body { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
 .g-name { font-size: 0.85rem; color: var(--accent); }
 #gtext { font-size: 0.95rem; line-height: 1.7; }
-.gopen { position: fixed; z-index: 20; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); }
+.gopen { position: fixed; z-index: 20; bottom: calc(16px + var(--tabh, 0px) + env(safe-area-inset-bottom, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); }
 #petals { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
 
 .sosbtn { position: fixed; top: calc(8px + env(safe-area-inset-top, 0px)); right: max(8px, env(safe-area-inset-right, 0px)); z-index: 40; min-height: 52px; min-width: 52px; padding: 6px 16px; border-radius: 26px; border: 2px solid #fff; background: #b3261e; color: #fff; font-weight: 800; font-size: 1.05rem; box-shadow: 0 2px 8px rgba(0,0,0,.35); cursor: pointer; }
@@ -3520,7 +3520,7 @@ button[aria-pressed="true"] { font-weight:700; }
   var GUIDE = {
     flower: 'ここは「花の見どころ」です。時期と地域をえらぶと、見ごろの花が出ます。「写真を見る」「行き方」のボタンも、使えます。',
     settings: 'ここは「設定」です。文字の大きさ、デザイン、声、お名前とお住まい、緊急連絡先、ご家族への見まもりを、ここで変えられます。終わったら、「ホームにもどる」を押してください。',
-    menu: 'ここは「メニュー」です。したいことの絵を押すと、その画面に進みます。いつでも、いちばん上の「ホーム」で、もどれます。',
+    menu: 'ここは「メニュー」です。したいことの絵を押すと、その画面に進みます。いつでも、いちばん下の「ホーム」で、もどれます。',
     home: 'こんにちは。ここがホームです。絵のボタンを押すと、その画面に進みます。文字が小さいときは、いちばん上の「⚙ 設定」の中の「文字を大きくする」を押してください。',
     learn: 'ここは「学ぶ」です。折り紙の図を見ながら、手順のとおりに折ってみましょう。終わったら、下のミニテストに答えてください。「ホームにもどる」で、いつでも最初の画面にもどれます。',
     move: 'ここは「動く」です。まず、ご注意をお読みください。椅子からの立ち座りを1回できるたびに、大きなボタンを押します。痛みやめまいがあるときは、やめてください。',
@@ -3555,7 +3555,7 @@ button[aria-pressed="true"] { font-weight:700; }
   function gStop() { gFlapOn = false; clearTimeout(gFlapT); gMouth(false); }
   function fitGuide() {
     var g = $('guide');
-    document.body.style.paddingBottom = (g.hidden ? 90 : g.offsetHeight + 24) + 'px';
+    document.body.style.paddingBottom = ((g.hidden ? 90 : g.offsetHeight + 24) + (document.getElementById('stpTabs') ? 80 : 0)) + 'px';
   }
   function setGuide(v) {
     curView = v;
@@ -4626,6 +4626,7 @@ button[aria-pressed="true"] { font-weight:700; }
       var svg = '<svg viewBox="0 0 360 200" width="100%" role="img" aria-label="' + (opt.alt || '水彩風のイメージ絵') + '" style="display:block;border-radius:14px;background:#fbf7ee"><defs><filter id="' + fid + '" x="-3%" y="-3%" width="106%" height="106%"><feTurbulence type="fractalNoise" baseFrequency="0.022" numOctaves="3" seed="' + (ARTN % 9 + 2) + '" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="8"/><feGaussianBlur stdDeviation="0.9"/></filter><filter id="' + fid + 'p"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 .55  0 0 0 0 .48  0 0 0 0 .38  0 0 0 .09 0"/></filter></defs><g filter="url(#' + fid + ')">' + o.join('') + '</g><rect width="360" height="200" filter="url(#' + fid + 'p)"/></svg>';
       return svg;
     }
+    window.__keseraArt = artSvg;
     var idx = doy(now) % POEMS.length, shown = idx;
     function body(p, big) {
       var w = E('div'); w.style.cssText = 'display:flex;flex-direction:column;gap:8px';
@@ -5433,6 +5434,13 @@ button[aria-pressed="true"] { font-weight:700; }
       '.hs-act a,.hs-act button{display:flex;flex-direction:column;gap:2px;align-items:flex-start;min-height:56px;padding:10px 14px;border-radius:14px;border:2px solid #e8b9b5;background:#fff;color:#2b2b2b;font-size:1.1rem;font-weight:800;text-decoration:none;cursor:pointer;text-align:left;font-family:inherit}',
       '.hs-act a.p{background:#d32f2f;border-color:#d32f2f;color:#fff}.hs-act small{font-weight:500;font-size:.85rem;opacity:.9}',
       '#floatHome{display:none!important}',
+      '.stp-bar{display:none!important}',
+      ':root{--tabh:calc(68px + env(safe-area-inset-bottom,0px))}',
+      '.stp-tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;gap:4px;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));background:var(--surface);border-top:2px solid var(--line);box-shadow:0 -2px 10px #0001}',
+      '.stp-tabs button{flex:1 1 0;min-width:0;min-height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;border:0;border-radius:12px;background:transparent;color:var(--fg);font-size:.82rem;font-weight:800;cursor:pointer;padding:2px}',
+      '.stp-tabs button .ic{font-size:1.5rem;line-height:1}',
+      '.stp-tabs button.on{background:#f6e4ec;color:var(--accent)}',
+      '.stp-tabs button.sos{color:#b3261e}.stp-tabs button.sos.on{background:#fde9e4}',
       '@media (prefers-reduced-motion:no-preference){.stp-t{transition:transform .1s}}'
     ].join('\n'); document.head.appendChild(st);
 
@@ -5547,7 +5555,17 @@ button[aria-pressed="true"] { font-weight:700; }
     /* ---- ① ホームの入口 ---- */
     var home = document.getElementById('v-home'), first = home.querySelector('.sos-row');
     var wrap = E('div'); wrap.id = 'stepHome'; wrap.style.cssText = 'display:flex;flex-direction:column;gap:12px';
-    var hero = E('div', 'stp-hero'); var hg = E('h2', '', '今日も、いい一日を、はじめましょう。'); hero.appendChild(hg);
+    var hero = E('div', 'stp-hero');
+    (function () {
+      try {
+        var mo = new Date().getMonth() + 1, sc = (mo === 12 || mo <= 1) ? ['snow', {}] : mo === 2 ? ['plum', {}] : mo <= 4 ? ['sakura', {}] : mo === 5 ? ['field', { sun: 1, sky3: 1 }] : mo === 6 ? ['rain', {}] : mo <= 8 ? ['summer', { cloud: 1 }] : mo === 9 ? ['dragonfly', {}] : ['autumn', { house: 1 }];
+        if (!window.__keseraArt) return;
+        var ar = E('div', 'stp-art'); ar.setAttribute('aria-hidden', 'true'); ar.style.cssText = 'border-radius:14px;overflow:hidden;height:150px;margin:-4px -4px 2px';
+        ar.innerHTML = window.__keseraArt(sc[0], sc[1]).replace('width="100%"', 'width="100%" height="150" preserveAspectRatio="xMidYMid slice"').replace(/role="img" aria-label="[^"]*"/, '');
+        hero.appendChild(ar);
+      } catch (e) {}
+    })();
+    var hg = E('h2', '', '今日も、いい一日を、はじめましょう。'); hero.appendChild(hg);
     var wx = E('div', 'stp-wx'); var wi = E('div', 'wxi'); wi.setAttribute('aria-hidden', 'true'); var wt = E('div', ''); wx.appendChild(wi); wx.appendChild(wt); hero.appendChild(wx); wrap.appendChild(hero);
     function sync() {
       var g = document.getElementById('greet'), w = document.getElementById('wx'), ic = document.getElementById('wxIcon');
@@ -5566,6 +5584,22 @@ button[aria-pressed="true"] { font-weight:700; }
     var mb = E('button', 'stp-more', '📋 メニューをひらく（すべての項目）'); mb.type = 'button'; mb.addEventListener('click', function () { show('menu'); }); wrap.appendChild(mb);
     var dv = E('p', 'muted', '▼ これより下に、今日の花言葉・占い・メモなど、これまでの内容が、ならんでいます。'); dv.style.cssText = 'margin:4px 0 0;text-align:center'; wrap.appendChild(dv);
     home.insertBefore(wrap, first);
+
+    /* ---- 下のタブ（いつでも：ホーム・メニュー・困った・設定） ---- */
+    var tabs = E('nav', 'stp-tabs'); tabs.id = 'stpTabs'; tabs.setAttribute('aria-label', 'いつでも使えるタブ');
+    var TB = [['home', '🏠', 'ホーム'], ['menu', '📋', 'メニュー'], ['help', '🆘', '困った'], ['settings', '⚙', '設定']], tbs = {};
+    TB.forEach(function (x) {
+      var k = E('button', x[0] === 'help' ? 'sos' : ''); k.type = 'button'; k.appendChild(E('span', 'ic', x[1])); k.appendChild(E('span', '', x[2])); k.setAttribute('aria-label', x[2]);
+      k.addEventListener('click', function () { if (x[0] === 'help') openHelp(); else show(x[0]); }); tabs.appendChild(k); tbs[x[0]] = k;
+    });
+    document.body.appendChild(tabs);
+    function mark() {
+      var cur = ''; Array.prototype.forEach.call(document.querySelectorAll('section.view'), function (v) { if (!v.hidden) cur = v.id.replace('v-', ''); });
+      var on = cur === 'home' ? 'home' : cur === 'settings' ? 'settings' : 'menu';
+      Object.keys(tbs).forEach(function (k) { tbs[k].classList.toggle('on', k === on); if (k === on) tbs[k].setAttribute('aria-current', 'page'); else tbs[k].removeAttribute('aria-current'); });
+    }
+    try { var mo2 = new MutationObserver(mark); Array.prototype.forEach.call(document.querySelectorAll('section.view'), function (v) { mo2.observe(v, { attributes: true, attributeFilter: ['hidden'] }); }); } catch (e) {}
+    mark(); fitGuide();
   })();
 
   /* ---------- ヘッダーをコンパクトに ---------- */
