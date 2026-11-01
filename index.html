@@ -5647,6 +5647,7 @@ button[aria-pressed="true"] { font-weight:700; }
     var gm = E('button', 'stp-more', '📋 メニューを見て、☆を押す'); gm.type = 'button'; gm.addEventListener('click', function () { show('menu'); }); favEmpty.appendChild(gm); fav.appendChild(favEmpty);
     /* ---- お知らせ ---- */
     var NEWS = [
+      ['11月2日', '「今日の人物」に、深堀りボタンができました', 'ホームの「今日の人物」の下の「深堀り」を押すと、年表（歴史カレンダー）、エピソード、性格、身長、作品、成し遂げたこと、家族、受賞・栄典、出典を、読めます。13人ぶんあります。事実と、言い伝えは、書き分けています。'],
       ['11月1日', '「気になる予防知識」ができました', 'ぎっくり腰、圧迫骨折、糖尿病、痛風、腰痛、老眼、四十肩・五十肩、骨粗しょう症、高血圧、頻尿、加齢臭について、しくみと予防、かかってからの対策、運動を、まとめました。メニューの「気になる予防知識」から、お読みください。'],
       ['11月1日', '「周りを呼ぶ」アラームを直しました', '別の画面が開いているときでも、アラームの画面が一番前に出て、「とめる」を押せるようにしました。'],
       ['10月31日', '花の見どころで、行ってみたい県をえらべます', '県をえらぶと、その県の花の名所や、行事・お祭りを探すボタンが出ます。お気に入りの県も、ためておけます。「地域の仲間探し」は、開発中です。'],
@@ -6038,6 +6039,75 @@ button[aria-pressed="true"] { font-weight:700; }
     window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); dp = e; box.hidden = false; });
     btn.addEventListener('click', function () { if (!dp) return; dp.prompt(); dp.userChoice.then(function () { dp = null; box.hidden = true; }).catch(function () {}); });
     window.addEventListener('appinstalled', function () { box.hidden = true; });
+  })();
+
+  /* ---------- 今日の人物：深堀り ---------- */
+  (function () {
+    function E(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+    var st = document.createElement('style');
+    st.textContent = '.jb-btn{min-height:56px;width:100%;margin-top:10px;border-radius:14px;border:2px solid var(--accent);background:var(--surface);color:var(--accent);font-size:1.15rem;font-weight:800;cursor:pointer}.jb-dlg{border:0;border-radius:18px;padding:0;width:min(96vw,640px);max-height:94vh;overflow:auto;background:var(--surface);color:var(--fg)}.jb-dlg::backdrop{background:rgba(0,0,0,.55)}.jb-in{padding:14px 14px 22px;display:flex;flex-direction:column;gap:10px}.jb-top{display:flex;justify-content:space-between;gap:8px;align-items:center}.jb-in h2{margin:0;font-size:1.5rem;line-height:1.4}.jb-yomi{color:var(--muted);margin:0;font-size:.95rem}.jb-life{margin:0;font-weight:700}.jb-img{width:100%;border-radius:12px;display:block;background:var(--accent-soft)}.jb-sum{background:var(--leaf-soft);border-radius:12px;padding:10px 14px;line-height:1.8;margin:0}.jb-sec{border:1.5px solid var(--line);border-radius:12px}.jb-sec>summary{list-style:none;cursor:pointer;min-height:56px;display:flex;align-items:center;gap:10px;padding:8px 14px;font-weight:800;font-size:1.1rem}.jb-sec>summary::-webkit-details-marker{display:none}.jb-sec>summary .ar{margin-left:auto;transition:transform .15s}.jb-sec[open]>summary .ar{transform:rotate(90deg)}.jb-sec[open]>summary{border-bottom:1px solid var(--line)}.jb-bd{padding:10px 14px 14px;line-height:1.85}.jb-bd ul{margin:0;padding-left:1.3em}.jb-bd li{margin:5px 0}.jb-tl{list-style:none!important;padding:0!important;border-left:4px solid var(--accent);margin-left:6px!important}.jb-tl li{position:relative;padding:2px 0 8px 14px}.jb-tl li:before{content:"";position:absolute;left:-10px;top:12px;width:12px;height:12px;border-radius:50%;background:var(--accent)}.jb-tl b{display:block;color:var(--accent)}.jb-ep{margin:0 0 10px}.jb-ep b{display:block;margin-bottom:2px}.jb-note{font-size:.92rem;color:var(--warn);background:var(--warn-soft);border-radius:8px;padding:8px 12px}.jb-pick{display:flex;flex-wrap:wrap;gap:8px}.jb-pick button{min-height:44px;padding:4px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);font-weight:700;cursor:pointer}.jb-pick button[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}.jb-src{font-size:.9rem}';
+    document.head.appendChild(st);
+    var KJ = null, loading = false, waiters = [];
+    function loadData(cb) {
+      if (window.KESERA_JINBUTSU) { cb(window.KESERA_JINBUTSU); return; }
+      waiters.push(cb); if (loading) return; loading = true;
+      var sc = document.createElement('script'); sc.src = 'jinbutsu.js?v=20261102';
+      sc.onload = function () { waiters.splice(0).forEach(function (f) { f(window.KESERA_JINBUTSU || []); }); loading = false; };
+      sc.onerror = function () { waiters.splice(0).forEach(function (f) { f(null); }); loading = false; };
+      document.head.appendChild(sc);
+    }
+    function nameNow() { var t = (document.getElementById('pname') || {}).textContent || ''; return t.replace(/^今日は/, '').replace(/さんです。?$/, ''); }
+    function sec(title, ic, open) { var d = E('details', 'jb-sec'); if (open) d.open = true; var sm = E('summary'); sm.appendChild(E('span', '', ic)); sm.appendChild(E('span', '', title)); sm.appendChild(E('span', 'ar', '›')); d.appendChild(sm); var b = E('div', 'jb-bd'); d.appendChild(b); return [d, b]; }
+    function ul(arr) { var u = E('ul'); arr.forEach(function (t) { u.appendChild(E('li', '', t)); }); return u; }
+    function show(list, who) {
+      var d = E('dialog', 'jb-dlg'); d.setAttribute('aria-label', '人物の深堀り'); var w = E('div', 'jb-in'); d.appendChild(w);
+      var top = E('div', 'jb-top'); var tt = E('b', '', '🔍 人物の深堀り'); top.appendChild(tt);
+      var x = E('button', 'btn', '✕ とじる'); x.type = 'button'; x.style.minHeight = '48px'; x.addEventListener('click', function () { d.close(); }); top.appendChild(x); w.appendChild(top);
+      var pick = E('div', 'jb-pick'); pick.setAttribute('aria-label', '人物をえらぶ'); w.appendChild(pick);
+      var box = E('div'); box.style.cssText = 'display:flex;flex-direction:column;gap:10px'; w.appendChild(box);
+      function render(p) {
+        box.textContent = '';
+        Array.prototype.forEach.call(pick.children, function (b) { b.setAttribute('aria-pressed', String(b.textContent === p.name)); });
+        box.appendChild(E('h2', '', p.name + 'さん')); box.appendChild(E('p', 'jb-yomi', p.yomi || '')); box.appendChild(E('p', 'jb-life', p.life + (p.place ? '　／　' + p.place : '')));
+        var im = new Image(); im.alt = p.name + 'さんのイラスト'; im.className = 'jb-img'; im.loading = 'lazy'; im.src = 'people/' + p.id + '.jpg'; var cap = E('p', 'jb-yomi', 'イラストは、想像でえがいたものです。'); cap.hidden = true; im.onload = function () { cap.hidden = false; }; im.onerror = function () { if (im.parentNode) im.parentNode.removeChild(im); cap.hidden = true; }; box.appendChild(im); box.appendChild(cap);
+        box.appendChild(E('p', 'jb-sum', p.summary));
+        var s;
+        s = sec('歴史カレンダー（年表）', '📅', true); var tl = E('ul', 'jb-tl'); (p.timeline || []).forEach(function (t) { var li = E('li'); li.appendChild(E('b', '', t.y)); li.appendChild(E('span', '', t.t)); tl.appendChild(li); }); s[1].appendChild(tl); box.appendChild(s[0]);
+        s = sec('エピソード', '💬'); (p.episodes || []).forEach(function (e) { var a = E('p', 'jb-ep'); a.appendChild(E('b', '', e.title)); a.appendChild(E('span', '', e.text)); s[1].appendChild(a); }); box.appendChild(s[0]);
+        s = sec('性格・人がら', '🙂'); s[1].appendChild(ul(p.personality || [])); box.appendChild(s[0]);
+        s = sec('身長', '📏'); s[1].appendChild(E('p', '', (p.height && p.height.text) || 'はっきりした記録はありません。')); box.appendChild(s[0]);
+        s = sec('作品・おもな仕事', '📚'); s[1].appendChild(ul(p.works || [])); box.appendChild(s[0]);
+        s = sec('成し遂げたこと', '🏆'); s[1].appendChild(ul(p.achievements || [])); box.appendChild(s[0]);
+        s = sec('家族', '👪'); s[1].appendChild(ul(p.family || [])); box.appendChild(s[0]);
+        s = sec('受賞・栄典', '🎖'); s[1].appendChild(ul(p.awards || [])); box.appendChild(s[0]);
+        if (p.kumamoto) { s = sec('熊本・九州との関わり', '🏯'); s[1].appendChild(E('p', '', p.kumamoto)); box.appendChild(s[0]); }
+        box.appendChild(E('p', 'jb-note', '事実としてたしかめられたことと、「〜と伝わります」という言い伝えは、書き分けています。くわしくは、下の出典をご覧ください。'));
+        s = sec('出典（もとの資料）', '🔗'); var u = E('ul', 'jb-src'); (p.sources || []).forEach(function (r) { var li = E('li'); var a = E('a', '', r.title); a.href = r.url; a.target = '_blank'; a.rel = 'noopener'; li.appendChild(a); u.appendChild(li); }); s[1].appendChild(u); box.appendChild(s[0]);
+        try { d.scrollTop = 0; } catch (e) {}
+      }
+      list.forEach(function (p) { var b = E('button', '', p.name); b.type = 'button'; b.setAttribute('aria-pressed', 'false'); b.addEventListener('click', function () { render(p); }); pick.appendChild(b); });
+      var cur = list.filter(function (p) { return p.name === who; })[0] || list[0]; render(cur);
+      d.addEventListener('close', function () { if (d.parentNode) d.parentNode.removeChild(d); });
+      document.body.appendChild(d); try { d.showModal(); } catch (e) { d.setAttribute('open', ''); }
+    }
+    function sorry(msg) {
+      var d = E('dialog', 'jb-dlg'); var w = E('div', 'jb-in'); d.appendChild(w); w.appendChild(E('p', '', msg)); var x = E('button', 'btn primary', 'とじる'); x.type = 'button'; x.addEventListener('click', function () { d.close(); }); w.appendChild(x);
+      d.addEventListener('close', function () { if (d.parentNode) d.parentNode.removeChild(d); }); document.body.appendChild(d); try { d.showModal(); } catch (e) { d.setAttribute('open', ''); }
+    }
+    function build() {
+      var pt = document.getElementById('ptext'); if (!pt || document.getElementById('jbBtn')) return;
+      var b = E('button', 'jb-btn', '🔍 深堀り（年表・エピソード・家族など）'); b.id = 'jbBtn'; b.type = 'button';
+      b.addEventListener('click', function () {
+        var who = nameNow(); b.disabled = true; b.textContent = '読みこんでいます…';
+        loadData(function (list) {
+          b.disabled = false; b.textContent = '🔍 深堀り（年表・エピソード・家族など）';
+          if (!list || !list.length) { sorry('深堀りの資料を、読みこめませんでした。通信のよいところで、もう一度お試しください。'); return; }
+          show(list, who);
+        });
+      });
+      pt.insertAdjacentElement('afterend', b);
+    }
+    build(); setTimeout(build, 800);
   })();
 
   /* ---------- ヘッダーをコンパクトに ---------- */
