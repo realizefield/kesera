@@ -606,6 +606,7 @@ button[aria-pressed="true"] { font-weight:700; }
         <button class="pgt" type="button" data-go="dress"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8L6 14l4 8 5-2v22h18V20l5 2 4-8-10-6c0 4-4 6-8 6s-8-2-8-6z"/></svg><span>装う</span></button>
         <button class="pgt" type="button" data-href="yodoku-recipes.html?from=kesera"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22h36a18 18 0 01-36 0z"/><path d="M16 14c0-3 3-3 3-6M24 14c0-3 3-3 3-6M32 14c0-3 3-3 3-6"/></svg><span>レシピ帳</span></button>
         <button class="pgt" type="button" data-href="mono-wasure.html?from=kesera"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 42V32a12 12 0 01-4-9 14 14 0 0128 0c0 4-2 6-2 9v10z"/><path d="M20 22h8M24 18v8"/></svg><span>物忘れ</span></button>
+        <button class="pgt" type="button" data-href="yobou-chishiki.html?from=kesera"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 40S8 30 8 18a9 9 0 0116-5 9 9 0 0116 5c0 12-16 22-16 22z"/><path d="M24 18v10M19 23h10"/></svg><span>予防知識</span></button>
         <button class="pgt" type="button" data-go="farm"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 42V24M24 28c-10 0-14-6-14-14 8 0 14 4 14 14zM24 24c0-8 6-12 14-12 0 8-6 12-14 12z"/></svg><span>自然農法</span></button>
       </div>
       <p class="pgh">もしものとき・設定</p>
@@ -5526,6 +5527,7 @@ button[aria-pressed="true"] { font-weight:700; }
         T('🍲', 'レシピ帳', '', { href: 'yodoku-recipes.html?from=kesera' }), T('🌾', '自然農法', '', { go: 'farm' }), T('👗', '装う', '', { go: 'dress' }),
         T('🎨', '作る・飾る', '', { go: 'make' }), T('😴', '眠る', '', { go: 'sleep' }), T('🌿', '自然治癒力の館', '', { go: 'yakata' }),
         T('🧠', '物忘れと加齢リスク', '', { href: 'mono-wasure.html?from=kesera' }),
+        T('🩺', '気になる予防知識', '腰・血圧・糖尿病など', { href: 'yobou-chishiki.html?from=kesera' }),
         T('📷', '思い出の記録', '', { go: 'album' }), T('📝', '今日の予定・メモ', '', { home: '#memoCard' })]],
       ['仲間・お話', 'c-b', [
         T('🤝', '地域の仲間探し', '開発中', { soon: 'region' }), T('🎭', 'ケセラ部', '', { go: 'club' }), T('🎒', '放課後倶楽部', '', { go: 'hokago' }), T('💬', 'お話する', '', { go: 'talk' }), T('🔍', '調べる', '', { go: 'ask' })]],
@@ -5645,6 +5647,8 @@ button[aria-pressed="true"] { font-weight:700; }
     var gm = E('button', 'stp-more', '📋 メニューを見て、☆を押す'); gm.type = 'button'; gm.addEventListener('click', function () { show('menu'); }); favEmpty.appendChild(gm); fav.appendChild(favEmpty);
     /* ---- お知らせ ---- */
     var NEWS = [
+      ['11月1日', '「気になる予防知識」ができました', 'ぎっくり腰、圧迫骨折、糖尿病、痛風、腰痛、老眼、四十肩・五十肩、骨粗しょう症、高血圧、頻尿、加齢臭について、しくみと予防、かかってからの対策、運動を、まとめました。メニューの「気になる予防知識」から、お読みください。'],
+      ['11月1日', '「周りを呼ぶ」アラームを直しました', '別の画面が開いているときでも、アラームの画面が一番前に出て、「とめる」を押せるようにしました。'],
       ['10月31日', '花の見どころで、行ってみたい県をえらべます', '県をえらぶと、その県の花の名所や、行事・お祭りを探すボタンが出ます。お気に入りの県も、ためておけます。「地域の仲間探し」は、開発中です。'],
       ['10月31日', '近くの病院・交番・避難所が探せます', 'ホームの「近くの安心」から、病院、交番、警察署、薬局、避難所、トイレを、地図で探せます。「設定」では、いまいる場所から、お住まいの県を決められます。'],
       ['10月31日', '下のタブができました', '画面の下に、ホーム・メニュー・お気に入り・お知らせ・困った、のタブが、いつも出ます。ホームの上の絵は、月ごとに変わります。'],
