@@ -5883,7 +5883,7 @@ button[aria-pressed="true"] { font-weight:700; }
   (function () {
     function E(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
     var st = document.createElement('style');
-    st.textContent = '.emg-dlg{border:0;border-radius:18px;padding:0;width:min(94vw,520px);max-height:92vh;overflow:auto;background:var(--surface,#fff);color:var(--fg,#222)}.emg-dlg::backdrop{background:rgba(0,0,0,.6)}.emg-in{padding:16px;display:flex;flex-direction:column;gap:12px}.emg-in h2{margin:0;font-size:1.45rem;line-height:1.4;color:#b3261e}.emg-loc{border:2px solid var(--line,#ccc);border-radius:14px;padding:12px;font-size:1.15rem;line-height:1.7;background:var(--bg,#fafafa)}.emg-loc b{font-size:1.25rem}.emg-yes{display:flex;align-items:center;justify-content:center;text-align:center;min-height:72px;border-radius:16px;background:#b3261e;color:#fff;font-size:1.35rem;font-weight:800;text-decoration:none;padding:8px 12px}.emg-btn{min-height:60px;border-radius:14px;border:2px solid var(--accent,#2a6f4e);background:var(--surface,#fff);color:var(--accent,#2a6f4e);font-size:1.15rem;font-weight:800;cursor:pointer;padding:8px 12px}.emg-btn.no{border-color:var(--line,#999);color:var(--fg,#222)}.emg-btn.al{border-color:#b3261e;color:#b3261e}.emg-sm{font-size:1rem;line-height:1.7;margin:0;opacity:.85}#emgAlarm{position:fixed;inset:0;z-index:2147483000;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;text-align:center;padding:20px;background:#d32f2f;color:#fff}#emgAlarm.on{display:flex;animation:emgf .5s steps(1) infinite}#emgAlarm h2{font-size:2.6rem;margin:0}#emgAlarm p{font-size:1.5rem;margin:0;line-height:1.6}#emgAlarm button{min-height:84px;min-width:70vw;border-radius:20px;border:4px solid #fff;background:#fff;color:#b3261e;font-size:1.8rem;font-weight:900}@keyframes emgf{0%{background:#d32f2f}50%{background:#ffd600;color:#222}}@media (prefers-reduced-motion:reduce){#emgAlarm.on{animation:none}}';
+    st.textContent = '.emg-dlg{border:0;border-radius:18px;padding:0;width:min(94vw,520px);max-height:92vh;overflow:auto;background:var(--surface,#fff);color:var(--fg,#222)}.emg-dlg::backdrop{background:rgba(0,0,0,.6)}.emg-in{padding:16px;display:flex;flex-direction:column;gap:12px}.emg-in h2{margin:0;font-size:1.45rem;line-height:1.4;color:#b3261e}.emg-loc{border:2px solid var(--line,#ccc);border-radius:14px;padding:12px;font-size:1.15rem;line-height:1.7;background:var(--bg,#fafafa)}.emg-loc b{font-size:1.25rem}.emg-yes{display:flex;align-items:center;justify-content:center;text-align:center;min-height:72px;border-radius:16px;background:#b3261e;color:#fff;font-size:1.35rem;font-weight:800;text-decoration:none;padding:8px 12px}.emg-btn{min-height:60px;border-radius:14px;border:2px solid var(--accent,#2a6f4e);background:var(--surface,#fff);color:var(--accent,#2a6f4e);font-size:1.15rem;font-weight:800;cursor:pointer;padding:8px 12px}.emg-btn.no{border-color:var(--line,#999);color:var(--fg,#222)}.emg-btn.al{border-color:#b3261e;color:#b3261e}.emg-sm{font-size:1rem;line-height:1.7;margin:0;opacity:.85}dialog#emgAlarm{border:0;margin:0;padding:20px;width:100vw;max-width:none;height:100vh;height:100dvh;max-height:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;text-align:center;background:#d32f2f;color:#fff}dialog#emgAlarm::backdrop{background:#d32f2f}dialog#emgAlarm[open]{display:flex;animation:emgf .5s steps(1) infinite}#emgAlarm h2{font-size:2.6rem;margin:0}#emgAlarm p{font-size:1.5rem;margin:0;line-height:1.6}#emgAlarm button{min-height:84px;min-width:70vw;border-radius:20px;border:4px solid #fff;background:#fff;color:#b3261e;font-size:1.8rem;font-weight:900}@keyframes emgf{0%{background:#d32f2f}50%{background:#ffd600;color:#222}}@media (prefers-reduced-motion:reduce){dialog#emgAlarm[open]{animation:none}}';
     document.head.appendChild(st);
     function prefName(code2) {
       var o = document.querySelector('#wxPref option[value^="' + code2 + '"]'); if (!o) return '';
@@ -5927,19 +5927,19 @@ button[aria-pressed="true"] { font-weight:700; }
     function openDlg(d) { document.body.appendChild(d); d.addEventListener('close', function () { if (d.parentNode) d.parentNode.removeChild(d); }); try { d.showModal(); } catch (e) { d.setAttribute('open', ''); } }
 
     /* ---- アラーム ---- */
-    var ov = E('div'); ov.id = 'emgAlarm'; ov.setAttribute('role', 'alertdialog'); ov.setAttribute('aria-label', '助けを呼ぶアラーム');
+    var ov = E('dialog'); ov.id = 'emgAlarm'; ov.setAttribute('role', 'alertdialog'); ov.setAttribute('aria-label', '助けを呼ぶアラーム');
     ov.appendChild(E('h2', '', '助けてください'));
     ov.appendChild(E('p', '', 'この音が鳴っています。近くの方は、119に電話して、お声がけをお願いします。'));
     var stopB = E('button', '', 'とめる'); stopB.type = 'button'; ov.appendChild(stopB);
     document.body.appendChild(ov);
     var ac = null, osc = null, gain = null, sweep = 0, wl = null, killT = 0, up = true;
     function alarmStop() {
-      clearInterval(sweep); clearTimeout(killT); ov.classList.remove('on');
+      clearInterval(sweep); clearTimeout(killT); try { if (ov.open) ov.close(); } catch (e) { ov.removeAttribute('open'); }
       try { if (osc) osc.stop(); } catch (e) {} try { if (ac) ac.close(); } catch (e) {}
       ac = osc = gain = null; try { if (wl) wl.release(); } catch (e) {} wl = null; try { navigator.vibrate && navigator.vibrate(0); } catch (e) {}
     }
     function alarmStart() {
-      alarmStop(); ov.classList.add('on'); stopB.focus();
+      alarmStop(); try { ov.showModal(); } catch (e) { ov.setAttribute('open', ''); } stopB.focus();
       try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
       try {
         var AC = window.AudioContext || window.webkitAudioContext;
@@ -5953,6 +5953,8 @@ button[aria-pressed="true"] { font-weight:700; }
       killT = setTimeout(alarmStop, 10 * 60 * 1000);
     }
     stopB.addEventListener('click', alarmStop);
+    ov.addEventListener('cancel', function () { alarmStop(); });
+    ov.addEventListener('close', function () { if (ac || osc) alarmStop(); });
     window.__keseraAlarm = function () {
       var d = E('dialog', 'emg-dlg'); var w = E('div', 'emg-in'); d.appendChild(w);
       w.appendChild(E('h2', '', '📣 周りの人を呼びます'));
