@@ -5699,16 +5699,21 @@ button[aria-pressed="true"] { font-weight:700; }
           : mo === 6 ? [['rain', {}], ['pond', {}], ['bamboo', {}], ['violet', {}]]
           : mo <= 8 ? [['summer', { cloud: 1 }], ['sea', {}], ['mountain', {}], ['night', {}]]
           : mo === 9 ? [['dragonfly', {}], ['moon', {}], ['mountain', {}], ['cloudant', {}]]
-          : [['autumn', { house: 1 }], ['temple', {}], ['dawn', {}], ['moon', {}]];
+          : [['photo', 'hero/aki1.jpg'], ['photo', 'hero/aki2.jpg'], ['photo', 'hero/aki3.jpg'], ['photo', 'hero/aki4.jpg'], ['photo', 'hero/aki5.jpg']];
+        var cur = 0, calm = false;
         var ar = E('div', 'stp-art'); ar.setAttribute('aria-hidden', 'true');
         ar.style.cssText = 'position:relative;border-radius:14px;overflow:hidden;aspect-ratio:360/200;margin:-4px -4px 2px;background:var(--bg)';
         var slides = SET.map(function (sc, i) {
           var d = E('div'); d.style.cssText = 'position:absolute;inset:0;transition:opacity 1.8s ease;opacity:' + (i ? 0 : 1);
+          if (sc[0] === 'photo') {
+            var im = new Image(); im.alt = ''; im.decoding = 'async'; im.src = sc[1]; im.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block';
+            im.onerror = function () { if (d.parentNode) d.parentNode.removeChild(d); var k = slides.indexOf(d); if (k >= 0) slides.splice(k, 1); if (cur >= slides.length) cur = 0; if (slides[cur]) slides[cur].style.opacity = 1; };
+            d.appendChild(im); ar.appendChild(d); return d;
+          }
           d.innerHTML = window.__keseraArt(sc[0], sc[1]).replace(/width="100%"/, 'width="100%" height="100%" preserveAspectRatio="xMidYMid slice"').replace(/role="img" aria-label="[^"]*"/, '');
           ar.appendChild(d); return d;
         });
         hero.appendChild(ar);
-        var cur = 0, calm = false;
         try { calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
         function next() { slides[cur].style.opacity = 0; cur = (cur + 1) % slides.length; slides[cur].style.opacity = 1; }
         if (!calm && slides.length > 1) {
