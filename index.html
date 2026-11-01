@@ -391,6 +391,7 @@ button[aria-pressed="true"] { font-weight:700; }
 .odd-q { display:flex; gap:12px; align-items:flex-start; border:1.5px solid var(--line); border-radius:10px; padding:12px; font-size:1.08rem; line-height:1.5; background:var(--surface); }
 .odd-q input { width:28px; height:28px; flex:none; margin-top:2px; }
 .bk-d{border:2px solid var(--line,#d9c9cf);border-radius:12px;background:var(--surface,#fff);overflow:hidden}.bk-d>summary{cursor:pointer;padding:14px;font-weight:700;font-size:1.1rem;min-height:52px;display:flex;align-items:center;gap:8px}.bk-d[open]>summary{background:#fbeff3}.bk-w{padding:10px 14px;border-top:1px solid #0001;display:flex;flex-direction:column;gap:4px}.bk-w b{font-size:1.05rem}.bk-t{display:inline-block;font-size:.8rem;border-radius:999px;padding:1px 9px;background:#eee;margin-left:6px}.bk-w a{align-self:flex-start;min-height:44px;display:inline-flex;align-items:center}
+.rinen-quiet>summary{list-style:none;display:inline-flex;align-items:center;min-height:44px;padding:4px 16px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--muted);font-size:.9rem;cursor:pointer}.rinen-quiet>summary::-webkit-details-marker{display:none}.rinen-quiet[open]>summary{background:var(--surface)}
 .up-d{border:2px solid var(--line,#d9c9cf);border-radius:12px;background:var(--surface,#fff);overflow:hidden}.up-d>summary{cursor:pointer;padding:14px;font-weight:700;font-size:1.1rem;min-height:52px;display:flex;align-items:center}.up-d[open]>summary{background:#fbeff3}.up-c{padding:12px 14px;display:flex;flex-direction:column;gap:10px;border-top:1px solid #0001}.up-c ol,.up-c ul{margin:0;padding-left:1.3em;line-height:1.8}.up-big{font-size:2rem;font-weight:700;text-align:center;letter-spacing:.2em;padding:10px}.up-c input{min-height:52px;font-size:1.2rem;width:100%;box-sizing:border-box}.ml-i{display:flex;gap:8px;align-items:center;border:1px solid #0002;border-radius:10px;padding:6px 10px;min-height:52px}.ml-i.done span{text-decoration:line-through;opacity:.55}.ml-i span{flex:1;font-size:1.1rem}
 #vcCard textarea,#vcCard input{width:100%;box-sizing:border-box;font-size:1.05rem;min-height:52px;font-family:inherit}
 .mm-stars{display:flex;gap:4px}.mm-stars button{font-size:2rem;line-height:1;min-width:52px;min-height:52px;border:0;background:none;cursor:pointer;color:#c9b8be}.mm-stars button.on{color:#e0a100}
@@ -604,6 +605,7 @@ button[aria-pressed="true"] { font-weight:700; }
         <button class="pgt" type="button" data-go="sleep"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M32 8a16 16 0 1010 22A14 14 0 0132 8z"/></svg><span>眠る</span></button>
         <button class="pgt" type="button" data-go="dress"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8L6 14l4 8 5-2v22h18V20l5 2 4-8-10-6c0 4-4 6-8 6s-8-2-8-6z"/></svg><span>装う</span></button>
         <button class="pgt" type="button" data-href="yodoku-recipes.html?from=kesera"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22h36a18 18 0 01-36 0z"/><path d="M16 14c0-3 3-3 3-6M24 14c0-3 3-3 3-6M32 14c0-3 3-3 3-6"/></svg><span>レシピ帳</span></button>
+        <button class="pgt" type="button" data-href="mono-wasure.html?from=kesera"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M14 42V32a12 12 0 01-4-9 14 14 0 0128 0c0 4-2 6-2 9v10z"/><path d="M20 22h8M24 18v8"/></svg><span>物忘れ</span></button>
         <button class="pgt" type="button" data-go="farm"><svg class="pg" viewBox="0 0 48 48" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 42V24M24 28c-10 0-14-6-14-14 8 0 14 4 14 14zM24 24c0-8 6-12 14-12 0 8-6 12-14 12z"/></svg><span>自然農法</span></button>
       </div>
       <p class="pgh">もしものとき・設定</p>
@@ -756,8 +758,10 @@ button[aria-pressed="true"] { font-weight:700; }
       <p class="muted" id="days"></p>
     </div>
 
-    <div class="card" id="rinenCard" style="background:#fffaf0;border:2px solid #f0d9a8">
-      <h3>🍵 ケセラの理念</h3>
+    <div id="rinenCard">
+     <details class="rinen-quiet">
+      <summary>🍵 ケセラの理念</summary>
+      <div class="card" style="background:#fffaf0;border:1px solid #f0d9a8;margin-top:8px">
       <p style="font-size:1.15rem;font-weight:800;line-height:1.9;color:var(--accent);margin:4px 0">年齢も、評価も、いりません。<br>そのまま受け入れて、誠実に生きる。</p>
       <p style="line-height:1.9;font-size:1.05rem;margin:6px 0">一瞬一瞬に、妄想や評価はいりません。<br>お茶を飲んで、「ほっ」としませんか。<br>心に従って、自分を信じて。</p>
       <p style="line-height:1.9;font-size:1.05rem;margin:6px 0">死は、だれにでもきます。<br>その前の一瞬でも、ほっとしませんか。<br><b>その一瞬が、私の、あなたの、永遠です。</b></p>
@@ -792,6 +796,8 @@ button[aria-pressed="true"] { font-weight:700; }
           <p class="fl-sub">禅の読み方は、人や師によって、ちがいます。これは、野田の味わい方のひとつです。</p>
         </div>
       </details>
+      </div>
+     </details>
     </div>
 
     <div class="card">
@@ -5519,6 +5525,7 @@ button[aria-pressed="true"] { font-weight:700; }
       ['暮らし・健康', 'c-v', [
         T('🍲', 'レシピ帳', '', { href: 'yodoku-recipes.html?from=kesera' }), T('🌾', '自然農法', '', { go: 'farm' }), T('👗', '装う', '', { go: 'dress' }),
         T('🎨', '作る・飾る', '', { go: 'make' }), T('😴', '眠る', '', { go: 'sleep' }), T('🌿', '自然治癒力の館', '', { go: 'yakata' }),
+        T('🧠', '物忘れと加齢リスク', '', { href: 'mono-wasure.html?from=kesera' }),
         T('📷', '思い出の記録', '', { go: 'album' }), T('📝', '今日の予定・メモ', '', { home: '#memoCard' })]],
       ['仲間・お話', 'c-b', [
         T('🤝', '地域の仲間探し', '開発中', { soon: 'region' }), T('🎭', 'ケセラ部', '', { go: 'club' }), T('🎒', '放課後倶楽部', '', { go: 'hokago' }), T('💬', 'お話する', '', { go: 'talk' }), T('🔍', '調べる', '', { go: 'ask' })]],

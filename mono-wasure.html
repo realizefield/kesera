@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="ja" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>物忘れと加齢リスク｜ケセラ</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&display=swap">
+<style>
+/* 構成：10の単元をひらいて読み、各単元の最後に4択ミニテストで確かめる。大きな文字、一列、押しやすいボタン。 */
+:root {
+  --bg: #f6f3f4; --surface: #ffffff; --fg: #26303c; --muted: #566170; --line: #dcd5d9;
+  --accent: #b83a64; --accent-ink: #ffffff; --accent-soft: #f7e3ea;
+  --leaf: #3f6b57; --leaf-soft: #dfece5; --warn: #8a5200; --warn-soft: #f9ecd3;
+  --bad: #a1362b; --bad-soft: #fbe6e2;
+  --f: 'BIZ UDGothic', 'BIZ UD Gothic', 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+  --base: 18px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #171b22; --surface: #1f252e; --fg: #ecebee; --muted: #aab1bb; --line: #343c48;
+    --accent: #f08aa8; --accent-ink: #2a1019; --accent-soft: #3a2430;
+    --leaf: #8cc5a7; --leaf-soft: #223329; --warn: #f0c27a; --warn-soft: #3a2f1a;
+    --bad: #f0a095; --bad-soft: #3b2420; color-scheme: dark;
+  }
+}
+:root.big { --base: 21px; }
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg); font-family: var(--f);
+  font-size: var(--base); line-height: 1.85; padding-block: 20px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+h1, h2, h3 { margin: 0; line-height: 1.45; text-wrap: balance; }
+h1 { font-size: 1.6rem; font-weight: 800; }
+h3 { font-size: 1.05rem; font-weight: 800; margin-top: 8px; }
+p { margin: 0; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+a { color: var(--accent); }
+.back a { display: inline-flex; align-items: center; min-height: 48px; font-weight: 700; text-decoration: none; }
+.tag { display: inline-block; font-size: .75rem; letter-spacing: .12em; color: var(--warn); background: var(--warn-soft); padding: 2px 10px; border-radius: 4px; font-weight: 700; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.note { background: var(--warn-soft); color: var(--warn); border-radius: 10px; padding: 12px 14px; font-size: .95rem; }
+.top-btns { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn { min-height: 48px; padding: 6px 16px; border-radius: 8px; border: 1.5px solid var(--line); background: var(--surface); font-weight: 700; }
+.btn[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.score { font-weight: 700; color: var(--leaf); }
+.idx { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.idx button { width: 100%; min-height: 52px; text-align: left; padding: 8px 14px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--surface); display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+.idx .n { color: var(--accent); font-weight: 800; margin-right: 8px; }
+.idx .s { font-size: .85rem; color: var(--leaf); white-space: nowrap; }
+details.unit { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+details.unit > summary { list-style: none; cursor: pointer; padding: 14px 16px; font-weight: 800; font-size: 1.1rem; min-height: 56px; display: flex; gap: 10px; align-items: center; }
+details.unit > summary::-webkit-details-marker { display: none; }
+details.unit > summary::after { content: "＋"; margin-left: auto; color: var(--accent); font-size: 1.3rem; }
+details.unit[open] > summary::after { content: "－"; }
+details.unit[open] > summary { border-bottom: 1px solid var(--line); background: var(--accent-soft); }
+.num { background: var(--accent); color: var(--accent-ink); border-radius: 999px; min-width: 2em; height: 2em; display: inline-grid; place-items: center; font-size: .9rem; flex: none; }
+.body { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.lead { font-weight: 700; }
+ul.pts { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 6px; }
+ol.pts { margin: 0; padding-left: 1.5em; display: flex; flex-direction: column; gap: 6px; }
+.tw { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--line); border-radius: 8px; }
+table { border-collapse: collapse; width: 100%; min-width: 520px; font-size: .92rem; line-height: 1.6; }
+th, td { border-bottom: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+th { background: var(--accent-soft); white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+.quiz { margin-top: 6px; border: 2px solid var(--accent); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 14px; }
+.quiz h3 { margin: 0; color: var(--accent); }
+.q { display: flex; flex-direction: column; gap: 8px; }
+.q .qt { font-weight: 800; }
+.opt { width: 100%; min-height: 52px; text-align: left; padding: 8px 12px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--surface); line-height: 1.6; }
+.opt:disabled { cursor: default; }
+.opt.ok { border-color: var(--leaf); background: var(--leaf-soft); font-weight: 800; }
+.opt.ng { border-color: var(--bad); background: var(--bad-soft); }
+.fb { border-radius: 8px; padding: 10px 12px; font-size: .95rem; }
+.fb.ok { background: var(--leaf-soft); }
+.fb.ng { background: var(--bad-soft); }
+.again { align-self: flex-start; }
+.fig { margin: 4px 0; display: flex; flex-direction: column; gap: 6px; }
+.fig img { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+.fig figcaption { font-size: .85rem; color: var(--muted); }
+.src { font-size: .9rem; color: var(--muted); }
+.src ul { margin: 6px 0 0; padding-left: 1.2em; }
+</style>
+</head>
+<body>
+<main class="wrap" id="app">
+  <p class="back" id="backp" hidden><a href="kesera-club.html">← ケセラにもどる</a></p>
+  <header class="card">
+    <span class="tag">健康・学び</span>
+    <h1>物忘れと加齢リスク</h1>
+    <p class="muted" style="color:var(--muted)">お酒、血管、認知症のしくみまで、10の単元に分けました。各単元の最後に4択のミニテストがあります。</p>
+    <div class="top-btns">
+      <button class="btn" id="bigBtn" type="button" aria-pressed="false">文字を大きくする</button>
+      <button class="btn" id="openAll" type="button">すべてひらく</button>
+      <button class="btn" id="resetBtn" type="button">テストをやり直す</button>
+    </div>
+    <p class="score" id="total" aria-live="polite"></p>
+  </header>
+  <p class="note">この内容は一般的な健康情報です。診断や治療の代わりにはなりません。気になる症状や持病がある方、薬を飲んでいる方は、必ずかかりつけのお医者さんに相談してください。</p>
+  <section class="card" aria-labelledby="idxT">
+    <h2 id="idxT" style="font-size:1.15rem">単元いちらん</h2>
+    <ul class="idx" id="idx"></ul>
+  </section>
+  <div id="units" style="display:flex;flex-direction:column;gap:14px"></div>
+  <section class="card" id="sum"></section>
+  <section class="card src">
+    <p>単元1の糖質の数字は、文部科学省「日本食品標準成分表（2020年版・八訂）」の数値を紹介している下記ページを参考にしています（2026年11月1日時点）。ほかの単元の数字は一般的な目安です。</p>
+    <ul>
+      <li><a href="https://macaro-ni.jp/33411?page=4" target="_blank" rel="noopener">ビールと発泡酒の栄養成分を比較（macaro-ni）</a></li>
+      <li><a href="https://delishkitchen.tv/articles/1365" target="_blank" rel="noopener">種類ごとに比較！お酒のカロリーや糖質（デリッシュキッチン）</a></li>
+      <li><a href="https://serai.jp/gourmet/1258363" target="_blank" rel="noopener">日本酒の糖質・カロリー（serai）</a></li>
+      <li><a href="https://allabout.co.jp/gm/gc/434160/" target="_blank" rel="noopener">日本酒と他のお酒の糖質ランキング（All About）</a></li>
+      <li><a href="https://www.mhlw.go.jp/content/10900000/001450452.pdf" target="_blank" rel="noopener">令和5年国民健康・栄養調査の結果の概要（厚生労働省）</a></li>
+      <li><a href="https://www.mhlw.go.jp/content/12300000/001011998.pdf" target="_blank" rel="noopener">わが国の独居認知症高齢者数について（粟田主一氏、厚生労働省掲載）</a></li>
+    </ul>
+  </section>
+  <p class="back" id="backp2" hidden><a href="kesera-club.html">← ケセラにもどる</a></p>
+</main>
+<script>
+(function () {
+  'use strict';
+  var KEY = 'kesera.monowasure.v1';
+
+  /* ---------- 内容 ---------- */
+  var U = [
+    { t: 'お酒の種類別の糖質ランキングと、体の条件別の注意',
+      lead: '糖質がいちばん多いのは梅酒で、日本酒は上位ですが突出していません。ただし体への影響は、糖質よりも、飲んだ純アルコールの総量で決まる面が大きいです。',
+      b: [
+        { h: '糖質ランキング（100mlあたり・多い順）' },
+        { tbl: [['順位', 'お酒', '糖質（g）', 'ひとこと'], [
+          ['1', '梅酒', '約21.7', '甘いお酒の代表。ほかより桁違いに多い'],
+          ['2', '紹興酒', '約5.1', '日本酒より少し多い'],
+          ['3', '日本酒', '約3.6〜4.9', '辛口は3〜4程度、甘口は5〜7程度の商品もある'],
+          ['4', '発泡酒', '約3.6', 'ビールよりやや多い'],
+          ['5', 'ビール', '約3.1', '日本酒とほぼ同じ水準'],
+          ['6', '缶チューハイ（レモン風味）', '約2.8', '商品による差が大きい'],
+          ['7', '白ワイン', '約2.0', ''],
+          ['8', '赤ワイン', '約1.5', ''],
+          ['9', '焼酎・ウイスキー・ブランデー', '0', '糖質は0でも、アルコールのカロリーはある']]] },
+        { ul: ['順位が低いお酒が安全という意味ではありません。糖質だけを比べた順位です。',
+               '純アルコール20gの目安量は、ビール中びん1本（500ml）、日本酒1合弱、ウイスキーのダブル1杯（60ml）です。',
+               '日本酒度は、水と比べた比重の指標です。プラスが大きいほど辛口、マイナスが大きいほど甘口の傾向で、+6以上が辛口、±0前後が中間、−6以下が甘口の目安です。'] },
+        { h: '体の条件別・気をつけること' },
+        { tbl: [['条件', '影響が大きいもの', '気をつける点'], [
+          ['高血圧', '飲酒の総量', '飲酒量に比例して血圧が上がります。漬物・干物・練り物など、塩分の多いおつまみに注意します'],
+          ['糖尿病・血糖が高め', '甘いお酒の糖質、食べすぎ', '梅酒など甘いお酒は避けます。空腹での飲酒は低血糖の危険があります。薬を使っている方は、必ず医師に相談します'],
+          ['中性脂肪が高い', '飲酒の総量、おつまみ、〆の炭水化物', 'アルコールは中性脂肪を増やします。種類を変えるより、量と回数を減らします'],
+          ['痛風・尿酸値が高い', 'アルコールそのもの、ビール', 'ビールや発泡酒はプリン体が比較的多めです。ただしアルコール自体も尿酸値を上げるため、日本酒や焼酎なら安心とは言えません'],
+          ['肥満・内臓脂肪', '総カロリー', '糖質0のお酒でもカロリーはあります'],
+          ['不整脈・肝臓', '飲酒の総量', '多量飲酒で心房細動や肝臓障害のリスクが上がります。休肝日をつくります']]] },
+        { p: '条件ごとに「このお酒がいちばん安全」と順位を付けられるほどの根拠は、現時点では限られています。共通して大切なのは、お酒の種類より、純アルコールの総量と休肝日です。' }
+      ],
+      q: [
+        { q: '100mlあたりの糖質が最も多いお酒はどれですか。', o: ['ビール', '日本酒', '梅酒', '赤ワイン'], a: 2, e: '糖質は梅酒が突出して多く、日本酒は3位です。' },
+        { q: '高血圧の人がお酒を飲むとき、いちばん大切なことはどれですか。', o: ['糖質0のお酒を選べば問題ない', 'お酒の種類より、飲む量と、塩分の多いおつまみに注意する', '日本酒だけは血圧に影響しない', '赤ワインならいくら飲んでもよい'], a: 1, e: '血圧には、種類より飲む量と塩分が大きく関わります。' }
+      ] },
+    { t: '飲酒と糖尿病リスク',
+      lead: '日本酒の糖質そのものが、特別に糖尿病を招くわけではありません。飲みすぎがリスクを上げます。',
+      b: [
+        { ul: ['カロリー：日本酒は糖質よりアルコールでカロリーがあり、1合（180ml）で約180〜200kcalです。飲みすぎは体重増加や内臓脂肪につながります。',
+               'おつまみ・〆：お酒が進むと食事量が増え、揚げ物や〆の炭水化物も重なります。',
+               '肝臓・膵臓：多量飲酒で肝臓の血糖調節が乱れることがあります。膵臓の炎症は、インスリンの分泌にも影響します。',
+               '血糖への影響：空腹時の大量飲酒では低血糖、習慣的な多量飲酒では血糖上昇を起こしやすくなります。',
+               '糖質の比較：日本酒の糖質はビールとほぼ同程度で、甘い酎ハイやカクテルより低めです。'] },
+        { p: '目安と飲み方：厚生労働省の「節度ある適度な飲酒」は、純アルコールで1日約20gまでです。日本酒なら1合弱にあたります。休肝日を週に2日程度つくり、食事と一緒にゆっくり飲み、水を合間に飲みます。血糖値が気になる方は、主治医に飲酒の可否と量を確認してください。' }
+      ],
+      q: [
+        { q: '日本酒が糖尿病のリスクを高める主な理由として、最も適切なのはどれですか。', o: ['日本酒は糖質がとても多いお酒だから', '少量でもインスリンが必ず減るから', '飲みすぎによるカロリー過多、体重増加、肝臓や膵臓への負担', '空腹に飲むと必ず血糖が上がるから'], a: 2, e: 'リスクを高めるのは、糖質より、飲みすぎによるカロリーと臓器への負担です。' },
+        { q: '「節度ある適度な飲酒」の目安（純アルコール量）はどれですか。', o: ['1日約60g', '1日約40g', '1日約10g', '1日約20g（日本酒なら1合弱）'], a: 3, e: '目安は純アルコールで1日約20gです。' }
+      ] },
+    { t: '加齢と血管、飲酒の影響',
+      lead: '年を重ねるとお酒の影響が大きくなり、血管年齢を高める方向に働きます。',
+      b: [
+        { h: '加齢でお酒に弱くなる理由' },
+        { ul: ['体の水分量や筋肉量が減り、同じ量でも血中アルコール濃度が高くなりやすくなります。',
+               '肝臓の代謝能力が落ち、アルコールが体に残る時間が長くなります。',
+               '転倒、骨折、睡眠の質の低下、認知機能への影響も出やすくなります。'] },
+        { h: '血管への影響' },
+        { tbl: [['影響', '内容'], [
+          ['血圧', '飲酒量に比例して上がりやすい。動脈硬化を進める大きな要因'],
+          ['中性脂肪', '多く飲むと増える'],
+          ['尿酸値', '上がりやすい'],
+          ['不整脈', '心房細動が起きやすい'],
+          ['脳卒中', '多量飲酒では特に脳出血のリスクが上がる']]] },
+        { p: '「少量なら健康にいい」の現在：以前は、少量の飲酒は心臓病リスクを下げると言われました。近年の研究では、その効果は疑問視されています。厚生労働省の2024年のガイドラインも、飲む量は少ないほうがよいという考え方です。' },
+        { p: '目安：生活習慣病のリスクが上がる量は、純アルコールで男性1日40g以上、女性20g以上です。高齢の方は、この量より控えめにするのが安心です。' },
+        { h: '年代別の割合（糖尿病・認知症）' },
+        { p: '年齢が上がるほど、どちらの病気も割合が高くなります。' },
+        { h: '糖尿病が強く疑われる人の割合（％）' },
+        { tbl: [['年代', '男性', '女性'], [
+          ['20代', '0', '0'], ['30代', '3.4', '1.0'], ['40代', '6.3', '4.6'], ['50代', '11.1', '6.2'],
+          ['60代', '15.7', '10.1'], ['70歳以上', '26.2', '13.7'], ['20歳以上の全体', '16.8', '8.9']]] },
+        { p: '出典：令和5年国民健康・栄養調査（厚生労働省）。「糖尿病が強く疑われる人」は、HbA1cが6.5％以上、または糖尿病の治療を受けている人です。診断を受けた人の割合とは異なります。' },
+        { h: '認知症の人の割合（65歳以上・％）' },
+        { tbl: [['年代', '男性', '女性'], [
+          ['65〜69歳', '1.9', '2.4'], ['70〜74歳', '4.3', '5.4'], ['75〜79歳', '9.6', '12.0'],
+          ['80〜84歳', '21.2', '26.5'], ['85歳以上', '47.1', '58.9']]] },
+        { p: '出典：厚生労働省の資料に掲載された、性・年齢階級別の認知症有病率（粟田主一氏、2020年）。調査の時期や地域で数字は変わります。近年は、年齢別の有病率が下がったという報告もあります。' },
+        { ul: ['糖尿病は、男性では70歳以上で約4人に1人です。', '認知症は、85歳以上で、男性の約2人に1人、女性の約6割です。'] }
+      ],
+      q: [
+        { q: '加齢でお酒の影響が強く出やすくなる理由はどれですか。', o: ['体の水分量や筋肉量が減り、肝臓の代謝能力も落ちるから', '胃が大きくなるから', '味覚が鋭くなるから', '血液の量が増えるから'], a: 0, e: '水分や筋肉が減り、肝臓の力も落ちるため、アルコールが残りやすくなります。' },
+        { q: '飲酒と血管の関係で正しいものはどれですか。', o: ['飲酒量が増えるほど血圧は下がる', '少量の飲酒は心臓病を必ず予防する', '多量飲酒は血圧の上昇や不整脈の一因になる', '中性脂肪は飲酒で減る'], a: 2, e: '多量飲酒は、血圧の上昇や不整脈のリスクを高めます。' }
+      ] },
+    { t: '運動でどこまで改善できるか',
+      lead: '運動は血管や血糖によい影響がありますが、飲酒の害を打ち消すことはできません。',
+      b: [
+        { h: '運動で期待できること' },
+        { ul: ['血圧、中性脂肪、血糖、内臓脂肪が改善します。', 'インスリンの効きがよくなり、糖尿病のリスクが下がります。', '血管の柔軟性が保たれ、血管年齢の悪化を遅らせます。'] },
+        { h: '運動で消せないこと' },
+        { ul: ['飲酒による肝臓への負担や、脳出血、不整脈、認知機能への影響は、運動をしても残ります。',
+               '多量飲酒を続けながら走っても、リスクが帳消しになる研究結果はありません。',
+               '5km走って消費するのは約300kcalで、日本酒1.5合ほどです。走った分はお酒で簡単に取り戻せます。'] },
+        { h: '運動量の目安と注意' },
+        { ul: ['健康効果を得るだけなら、毎日5kmは必要ありません。早歩き程度の中強度の運動を、週150分以上が目安です（1日30分の早歩きで足ります）。',
+               '毎日の長めのランニングは、年齢が上がると膝や腰、心臓への負担になります。',
+               '飲酒の直後や二日酔いの状態での運動は、脱水や不整脈の危険があるので避けます。',
+               '新しく運動を始める場合や、血圧・心臓に指摘がある場合は、先に主治医に相談してください。'] }
+      ],
+      q: [
+        { q: '運動について正しいものはどれですか。', o: ['飲酒による脳や肝臓への害が、運動で消える', '飲んだ分のカロリーを気にしなくてよくなる', '血圧・中性脂肪・血糖の改善が期待できる', '運動をすれば飲酒量を増やしてもよい'], a: 2, e: '運動で改善が期待できますが、飲酒の害は消せません。' },
+        { q: '健康効果を得るための運動の目安はどれですか。', o: ['毎日10km以上走る', '中強度の運動を週150分以上（1日30分の早歩きなど）', '週に1回、1時間だけ運動する', '運動は必要ない'], a: 1, e: '早歩きなどを、週150分以上が目安です。' }
+      ] },
+    { t: '血管をやわらかく保つ方法',
+      lead: '血管のかたさは、生活習慣の見直しで改善が期待できます。特に血管の内側の機能は、比較的早く改善することが知られています。',
+      b: [
+        { tbl: [['分野', '具体的な方法'], [
+          ['運動', 'ウォーキングなどの有酸素運動を1日30分、週150分以上。筋トレは軽めに。息を止めて力む強い負荷は避ける'],
+          ['減塩', '血圧を下げ、血管への負担を減らす。1日6g未満が目安'],
+          ['青魚', 'イワシ、サバ、サンマのEPA・DHAが中性脂肪を下げる'],
+          ['野菜・海藻・きのこ・大豆', 'カリウムや食物繊維が、血圧とコレステロールの改善を助ける'],
+          ['控えるもの', '揚げ物、脂身の多い肉、加工肉、甘い飲み物'],
+          ['生活習慣', '禁煙、飲酒の節制、睡眠7時間前後、体重管理（内臓脂肪を減らす）'],
+          ['入浴', 'ぬるめの湯で血流がよくなる。熱い湯や急な温度差はヒートショックの危険']]] },
+        { p: '血管の状態を知るには：血圧、血糖、コレステロール、中性脂肪の数値が基本です。必要なら、脈波検査（CAVI）や頸動脈エコーで動脈硬化の程度を調べられます。' },
+        { p: 'サプリについて：サプリメント単独で血管を若返らせる確かな根拠は限られます。まずは運動、減塩、禁煙、飲酒の節制が土台です。' }
+      ],
+      q: [
+        { q: '血管をやわらかく保つための減塩の目安はどれですか。', o: ['1日15g未満', '1日10g未満', '1日20g未満', '1日6g未満'], a: 3, e: '減塩の目安は1日6g未満です。' },
+        { q: '血管の健康について正しいものはどれですか。', o: ['熱い湯に急に入るのが一番血管によい', 'サプリだけで血管が必ず若返る', '息を止めて力む強い筋トレがおすすめ', '有酸素運動、減塩、禁煙、飲酒の節制が基本になる'], a: 3, e: '血管の土台は、運動・減塩・禁煙・飲酒の節制です。' }
+      ] },
+    { t: '認知機能の改善・回復は可能か',
+      lead: '状況によっては可能です。ただし、改善や回復が見込めるかは、原因と進行度で変わります。',
+      b: [
+        { h: '回復が期待できるケース' },
+        { ul: ['加齢による物忘れや軽度認知障害（MCI）：MCIの一部の方は、生活習慣の改善で正常な状態に戻ることが報告されています。',
+               '治療できる原因があるもの：甲状腺機能低下症、ビタミンB12不足、うつ状態、睡眠時無呼吸、薬の影響、多量飲酒、正常圧水頭症、慢性硬膜下血腫などです。原因を治療すれば、大きく改善することがあります。'] },
+        { h: '改善・維持に期待できること' },
+        { ul: ['有酸素運動、血圧・血糖・コレステロールの管理', '飲酒の節制、禁煙、睡眠の確保', '人との交流や、頭を使う活動（会話、趣味、学習、地域活動）', '難聴への対応（補聴器の使用など）', '魚、野菜、豆類を中心にした食事'] },
+        { p: '複数の生活改善を組み合わせた大規模研究では、高齢者の認知機能の低下を抑える効果が確認されています。' },
+        { h: '限界について' },
+        { ul: ['アルツハイマー病などがすでに進行している場合、失われた機能を元に戻すのは難しいのが現状です。',
+               '早期のアルツハイマー病の進行を遅らせる新薬もありますが、対象は限られ、回復させる薬ではありません。',
+               '「飲めば認知症が治る」とうたう健康食品やサプリは、確かな根拠がありません。'] },
+        { p: '受診の目安：物忘れが増えた、同じことを何度も聞く、約束や金銭管理でミスが増えたなどの変化があれば、物忘れ外来、脳神経内科、かかりつけ医に相談してください。早く見つけるほど、できることが増えます。' }
+      ],
+      q: [
+        { q: '認知機能の改善・回復について正しいものはどれですか。', o: ['進行したアルツハイマー病は、生活習慣だけで完全に元に戻る', '甲状腺機能低下症やビタミンB12不足など、治療できる原因なら改善することがある', 'サプリを飲めば認知症が治る', '物忘れは年のせいなので、受診は不要'], a: 1, e: '治せる原因があれば、治療で改善することがあります。' },
+        { q: '認知機能の維持に役立つとされるものはどれですか。', o: ['有酸素運動、血圧管理、人との交流、難聴への対応', '睡眠を削って勉強する', '一日中同じ姿勢で過ごす', '多量の飲酒'], a: 0, e: '運動、血圧管理、交流、難聴への対応が役立ちます。' }
+      ] },
+    { t: '認知症のメカニズム',
+      lead: '認知症は、脳の神経細胞が障害されたり減ったりして、記憶や判断などの働きが低下し、日常生活に支障が出る状態です。原因になる病気が複数あり、メカニズムは病気ごとに異なります。',
+      b: [
+        { tbl: [['種類', '割合の目安', 'しくみ', '特徴'], [
+          ['アルツハイマー型', '約6〜7割', 'アミロイドβとタウというたんぱく質が脳にたまり、神経細胞が壊れて脳が萎縮する', '記憶を担う海馬から影響を受け、新しいことが覚えられない'],
+          ['血管性', '約2割', '脳梗塞や脳出血などで、脳の一部に血流が届かなくなる', '段階的に悪化したり、意欲の低下や歩行障害が目立ったりする'],
+          ['レビー小体型', '少数', 'αシヌクレインというたんぱく質が神経細胞にたまる', '幻視、症状の日内変動、手の震えや動作の遅さ'],
+          ['前頭側頭型', '少数', '前頭葉や側頭葉が萎縮する', '性格の変化、ルールを守れなくなる、言葉が出にくくなる']]] },
+        { ul: ['混合型：高齢になるほど、アルツハイマー型と血管性が合併することも珍しくありません。',
+               '進行の経過：発症の10〜20年前から脳内で変化が静かに進みます。その後、軽度認知障害（MCI）を経て認知症に至ります。',
+               'リスクを高める要因：加齢が最大の要因です。高血圧、糖尿病、肥満、運動不足、喫煙、多量飲酒、難聴、うつ、社会的孤立、睡眠の問題なども知られています。',
+               '血管ケアとのつながり：単元3〜5で見た血管の健康、運動、飲酒の節制は、認知症のリスクを下げる対策にもつながります。'] }
+      ],
+      q: [
+        { q: 'アルツハイマー型認知症で、最初に影響を受けやすい脳の部位はどれですか。', o: ['小脳', '後頭葉', '海馬', '脳幹'], a: 2, e: '記憶を担う海馬から影響を受けます。' },
+        { q: '血管性認知症の主な原因はどれですか。', o: ['アミロイドβの蓄積', 'αシヌクレインの蓄積', '前頭葉の萎縮', '脳梗塞や脳出血で、脳の血流が途絶えること'], a: 3, e: '血管性は、脳の血流の障害が原因です。' }
+      ] },
+    { t: 'アミロイドβができるしくみ（切断）',
+      lead: 'アミロイドβは、神経細胞の膜にあるタンパク質「APP」が、酵素（「はさみ」の働きをするもの）で切り出されてできる、約40個のアミノ酸の断片です。健康な人の脳でも毎日つくられています。',
+      b: [
+        { p: 'たとえ話：APPは、細胞の膜に刺さった長いリボンです。リボンの両端を切って真ん中の部分を取り出すと、アミロイドβになります。' },
+        { tbl: [['はさみ', '切る場所', '役割'], [
+          ['αセクレターゼ', 'アミロイドβ部分の真ん中', '切るとアミロイドβが壊れ、できない'],
+          ['βセクレターゼ', 'アミロイドβの入り口（細胞の外側）', '切り出し1回目'],
+          ['γセクレターゼ', 'アミロイドβの出口（膜の中）', '切り出し2回目']]] },
+        { img: ['mono-amyloid-1.png', '「APPからアミロイドβができるしくみ」の図。膜を1回貫通するAPPを、α・β・γのはさみ（酵素）が切る場所を示しています。αから始まる経路では完全な長さのAβはできず、βからγへの2段階でAβができます。', '図1　APPからアミロイドβができるしくみ（模式図）'] },
+        { ul: ['切り方は2通り：αで切るとアミロイドβはできません。βとγの2回で切ると、アミロイドβができます。',
+               '長さの違い：γは、アミノ酸数個分ずつ、少しずつ短くするように切ります。最終的に40個のもの（Aβ40）や、42個のもの（Aβ42）ができます。',
+               'Aβ42が問題：粘着性が高く、くっつきやすいため、凝集の「種」になります。',
+               '凝集の段階：単量体からオリゴマー（数個から数十個）、線維、老人斑へ進みます。最近の研究では、オリゴマーの毒性が最も強いと考えられています。'] },
+        { img: ['mono-amyloid-2.png', '「Aβ40とAβ42　長さの違いと蓄積」の図。γセクレターゼが3〜4個ずつ段階的に切り短くすること、Aβ42はAβ40より末端に2個多く凝集しやすいこと、作る量と片づける力のバランス、APP・PSEN1・PSEN2の遺伝子の関わりを示しています。', '図2　Aβ40とAβ42の長さの違いと、たまるしくみ（模式図）'] },
+        { p: 'たまる理由：つくる量と、片づける量のバランスが崩れることです。加齢で分解酵素や脳の掃除機能が落ち、睡眠不足や血管の障害で排出が滞ります。アミロイドβの蓄積は、発症の10〜20年前から始まるとされます。' },
+        { p: '神経が壊れる流れ：オリゴマーがシナプス（神経のつながり）をじゃまし、炎症や酸化ストレスが起き、タウというたんぱく質が異常になって絡まり（神経原線維変化）、神経細胞が壊れます。症状の重さと脳の萎縮は、アミロイドよりタウの広がりとよく相関します。' },
+        { p: '仮説の現状：アミロイドを除去する抗体薬（レカネマブ、ドナネマブなど）は、早期のアルツハイマー病で進行を遅らせました。ただし効果は限られ、脳のむくみなどの副作用（ARIA）もあります。アミロイドが原因なのか結果なのかについては、研究者の間でも議論があります。' }
+      ],
+      q: [
+        { q: 'アミロイドβが切り出されるとき、APPを切る酵素の組み合わせはどれですか。', o: ['βセクレターゼとγセクレターゼ', 'αセクレターゼのみ', 'αセクレターゼとβセクレターゼ', 'γセクレターゼのみ'], a: 0, e: 'βとγの2回の切断でアミロイドβができます。αで切ると、できません。' },
+        { q: 'くっつきやすく、病気とのつながりが強いとされるのはどれですか。', o: ['Aβ40', 'アミノ酸が少なく短いもの', 'Aβ42（アミノ酸が42個のもの）', 'αセクレターゼで切られたもの'], a: 2, e: '粘着性が高く凝集しやすいのは、Aβ42です。' }
+      ] },
+    { t: '認知症の歴史と増加の理由',
+      lead: '認知症の症状は大昔からあったと考えられます。現代に増えたのは、主に長生きする人が増えたためです。',
+      b: [
+        { tbl: [['時期', '出来事'], [
+          ['紀元前約2500年ごろ', '古代エジプトの「プタハヘテプの教訓」に、老いによる心身の衰えが記される'],
+          ['古代ギリシャ・ローマ', 'ヒポクラテスやガレノスらが、老年期の精神機能の衰えを記述する'],
+          ['江戸時代まで（日本）', '「ぼけ」という言葉は古くからあり、老いによる物忘れや判断力の低下が知られていた'],
+          ['1906年', 'ドイツの医師アルツハイマーが、若くして発症した女性の脳に特徴的な変化を発見する'],
+          ['20世紀前半〜中ごろ', '「老人性認知症」は、老化に伴う自然な現象とみなされていた'],
+          ['1970年代', '高齢者の認知症も、アルツハイマー病と同じ脳の病気であるとの理解が広がる。日本では1972年に小説『恍惚の人』が話題になる'],
+          ['2004年', '日本で「痴呆」から「認知症」に呼称が変わる']]] },
+        { h: '現代に増えた理由' },
+        { ul: ['寿命の延び：最大の危険因子は加齢です。有病率は65〜69歳では約2％ですが、85歳以上では男性で約47％、女性で約59％とされます。昔は、そこまで生きる人が少なかったのです。',
+               '診断の進歩：以前は「老いの一部」とされていたものが、病気として診断されるようになりました。',
+               '生活習慣病の増加：糖尿病や高血圧などが増え、血管性や混合型のリスクを高めた面もあります。'] },
+        { p: '最近の傾向：日本の推計では、認知症の人は2022年時点で約440万人、軽度認知障害（MCI）の人は約560万人とされます。一方、欧米の一部の研究では、同じ年齢で比べた発症率が、数十年で下がってきたと報告されています。ただし、高齢化が進むため、患者の総数は世界的に増え続けています。' }
+      ],
+      q: [
+        { q: '認知症の患者数が現代に増えた最大の理由は、どれですか。', o: ['昔は認知症がまったく存在しなかったから', '寿命が延び、高齢まで生きる人が増えたから', '若い人の発症が急増したから', '診断をする医師が減ったから'], a: 1, e: '症状は昔からあり、長寿社会になって数が増えて見えるようになりました。' },
+        { q: '日本で「痴呆」から「認知症」に呼び方が変わったのは、いつでしょうか。', o: ['1972年', '1906年', '2004年', '1990年'], a: 2, e: '呼称の変更は2004年です。' }
+      ] },
+    { t: '健康を維持する方策まとめ',
+      lead: '血管と脳を守る方策は共通していて、毎日の小さな習慣の積み重ねです。',
+      b: [
+        { tbl: [['分野', '目安', '今日からできる一歩'], [
+          ['運動', '早歩きなど中強度の運動を週150分以上', '1日30分歩く。エレベーターより階段を選ぶ'],
+          ['食事', '塩分は1日6g未満。魚、野菜、海藻、きのこ、大豆製品を中心に', '汁物は具だくさんにして汁を残す。青魚を週に数回食べる'],
+          ['飲酒', '純アルコールで1日20g以内。週に2日ほど休肝日', '飲む量を先に決める。1杯ごとに水を飲む'],
+          ['禁煙', '吸わない', '禁煙外来に相談する'],
+          ['睡眠', '7時間前後', '寝る時刻と起きる時刻をそろえる。いびきや無呼吸が気になれば受診する'],
+          ['体重', '内臓脂肪を増やさない', '週に1回、体重を測る'],
+          ['入浴', 'ぬるめの湯。急な温度差を避ける', '脱衣所と浴室を暖めておく'],
+          ['人との交流・頭を使う活動', '会話、趣味、学習、地域活動', '週に1回は、人と会って話す'],
+          ['聴力', '聞こえにくさを放置しない', '耳鼻科で相談し、必要なら補聴器を使う'],
+          ['健診・受診', '血圧、血糖、コレステロール、中性脂肪を定期的に確認', '年に1回は健診を受ける。指摘があれば主治医に相談する']]] },
+        { h: '続けるコツ' },
+        { ul: ['一度に全部を始めず、まず1〜2つから始めます。', '続けた日を記録し、仲間と一緒に取り組みます。', '持病がある方や薬を飲んでいる方は、運動や食事の変更の前に主治医に相談します。'] }
+      ],
+      q: [
+        { q: '健康を維持する方策として、正しいものはどれですか。', o: ['睡眠を削って運動の時間を作る', '運動、減塩、禁煙、飲酒の節制、睡眠、人との交流を組み合わせる', 'サプリだけで血管が若返る', 'お酒の種類さえ選べば、量は自由である'], a: 1, e: '方策は組み合わせて続けることが大切です。' },
+        { q: '血圧や血糖、コレステロールの数値に指摘があったとき、まずすることはどれですか。', o: ['自己流で食事を制限する', 'サプリを多めに飲む', 'かかりつけの医師に相談する', 'そのまま様子を見る'], a: 2, e: '数値に指摘があれば、自己流にせず医師に相談します。' }
+      ] }
+  ];
+
+  var SUM = [
+    'お酒の糖質は梅酒が突出して多く、日本酒は上位でも突出しません。体の条件を見るときも、種類より純アルコールの総量が重要です。',
+    '糖尿病リスクを上げるのは、糖質より、飲みすぎによるカロリーと臓器への負担です。目安は純アルコールで1日約20gです。',
+    '加齢でお酒に弱くなり、血圧や不整脈のリスクも上がります。高齢の方は、より控えめにします。',
+    '運動は血管や血糖を改善しますが、飲酒の害を消せません。早歩きなどを週150分以上が目安です。',
+    '血管の土台は、運動・減塩・禁煙・飲酒の節制です。',
+    '治せる原因の認知機能低下は、改善します。物忘れが気になったら、早めに受診します。',
+    '認知症は複数の病気の総称です。アルツハイマー型が最多で、血管性も多いです。',
+    'アミロイドβは、APPがβとγのはさみで2回切られてできます。Aβ42がくっつきやすく、発症の10〜20年前からたまり始めます。',
+    '認知症は昔からあり、長生きする人が増えて患者数が増えました。',
+    '健康の方策は、運動・食事・飲酒・禁煙・睡眠・交流・聴力・健診を組み合わせて続けることです。'
+  ];
+
+  /* ---------- 状態（記録は、できるときだけ保存） ---------- */
+  var st = {};
+  try { st = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { st = {}; }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
+
+  function E(tag, cls, txt) { var n = document.createElement(tag); if (cls) n.className = cls; if (txt != null) n.textContent = txt; return n; }
+  var $units = document.getElementById('units'), $idx = document.getElementById('idx'), $total = document.getElementById('total');
+
+  function score(i) { var s = st[i] || {}, c = 0, d = 0; U[i].q.forEach(function (_, k) { if (s[k] != null) { d++; if (s[k] === U[i].q[k].a) c++; } }); return { c: c, d: d, n: U[i].q.length }; }
+  function updateScores() {
+    var c = 0, d = 0, n = 0;
+    U.forEach(function (u, i) {
+      var s = score(i); c += s.c; d += s.d; n += s.n;
+      var el = document.getElementById('sc' + i); if (el) el.textContent = s.d ? s.c + '/' + s.n + '問' : '';
+    });
+    $total.textContent = d ? ('これまでの正解：' + c + '問 / 全' + n + '問（答えた問題：' + d + '問）') : ('ミニテストは全' + n + '問です。');
+  }
+
+  function renderBlock(b) {
+    if (b.h) return E('h3', '', b.h);
+    if (b.p) return E('p', '', b.p);
+    if (b.img) {
+      var f = E('figure', 'fig'), a = E('a'); a.href = b.img[0]; a.target = '_blank'; a.rel = 'noopener';
+      a.setAttribute('aria-label', b.img[2] + '（押すと大きく開きます）');
+      var im = E('img'); im.src = b.img[0]; im.alt = b.img[1]; im.loading = 'lazy'; im.width = 1536; im.height = 1024;
+      a.appendChild(im); f.appendChild(a);
+      f.appendChild(E('figcaption', '', b.img[2] + '　※押すと大きく開きます。'));
+      return f;
+    }
+    if (b.ul) { var ul = E('ul', 'pts'); b.ul.forEach(function (t) { ul.appendChild(E('li', '', t)); }); return ul; }
+    if (b.tbl) {
+      var w = E('div', 'tw'); w.tabIndex = 0; w.setAttribute('role', 'region'); w.setAttribute('aria-label', '表（横にスクロールできます）');
+      var t = E('table'), th = E('thead'), tr = E('tr');
+      b.tbl[0].forEach(function (h) { var c = E('th', '', h); c.scope = 'col'; tr.appendChild(c); }); th.appendChild(tr); t.appendChild(th);
+      var tb = E('tbody'); b.tbl[1].forEach(function (r) { var x = E('tr'); r.forEach(function (c) { x.appendChild(E('td', '', c)); }); tb.appendChild(x); });
+      t.appendChild(tb); w.appendChild(t); return w;
+    }
+    return E('div');
+  }
+
+  function renderQuiz(i) {
+    var box = E('section', 'quiz'); box.setAttribute('aria-label', 'ミニテスト');
+    box.appendChild(E('h3', '', '✏️ ミニテスト（4択）'));
+    var marks = ['①', '②', '③', '④'];
+    U[i].q.forEach(function (q, k) {
+      var wrap = E('div', 'q'); wrap.appendChild(E('p', 'qt', 'Q' + (k + 1) + '. ' + q.q));
+      var fb = E('div', 'fb'); fb.hidden = true; fb.setAttribute('aria-live', 'polite');
+      var btns = [];
+      q.o.forEach(function (o, j) {
+        var b = E('button', 'opt', marks[j] + ' ' + o); b.type = 'button'; btns.push(b);
+        b.addEventListener('click', function () { answer(i, k, j); });
+        wrap.appendChild(b);
+      });
+      wrap.appendChild(fb);
+      box.appendChild(wrap);
+      wrap._btns = btns; wrap._fb = fb; box['q' + k] = wrap;
+    });
+    var again = E('button', 'btn again', 'この単元をやり直す'); again.type = 'button';
+    again.addEventListener('click', function () { delete st[i]; save(); paint(i, box); updateScores(); });
+    box.appendChild(again);
+    box._i = i; paint(i, box);
+    return box;
+  }
+  function paint(i, box) {
+    var s = st[i] || {};
+    U[i].q.forEach(function (q, k) {
+      var wrap = box['q' + k], fb = wrap._fb, sel = s[k];
+      wrap._btns.forEach(function (b, j) {
+        b.disabled = sel != null; b.classList.remove('ok', 'ng');
+        if (sel != null) { if (j === q.a) b.classList.add('ok'); else if (j === sel) b.classList.add('ng'); }
+      });
+      if (sel == null) { fb.hidden = true; fb.textContent = ''; fb.className = 'fb'; }
+      else { fb.hidden = false; fb.className = 'fb ' + (sel === q.a ? 'ok' : 'ng'); fb.textContent = (sel === q.a ? '正解です。' : 'ちがいます。正解は ' + ['①', '②', '③', '④'][q.a] + ' です。') + q.e; }
+    });
+  }
+  function answer(i, k, j) {
+    st[i] = st[i] || {}; if (st[i][k] != null) return; st[i][k] = j; save();
+    var box = document.getElementById('quiz' + i); paint(i, box); updateScores();
+  }
+
+  U.forEach(function (u, i) {
+    var d = E('details', 'unit'); d.id = 'u' + i;
+    var sm = E('summary'); var n = E('span', 'num', String(i + 1)); sm.appendChild(n); sm.appendChild(E('span', '', u.t));
+    var sc = E('span', 'score'); sc.id = 'sc' + i; sc.style.marginLeft = 'auto'; sc.style.fontSize = '.85rem'; sm.insertBefore(sc, null);
+    d.appendChild(sm);
+    var body = E('div', 'body'); body.appendChild(E('p', 'lead', u.lead));
+    u.b.forEach(function (b) { body.appendChild(renderBlock(b)); });
+    var q = renderQuiz(i); q.id = 'quiz' + i; body.appendChild(q);
+    d.appendChild(body); $units.appendChild(d);
+
+    var li = E('li'); var bt = E('button'); bt.type = 'button';
+    var l = E('span'); l.appendChild(E('span', 'n', (i + 1) + '.')); l.appendChild(document.createTextNode(u.t));
+    var s2 = E('span', 's'); s2.id = 'ix' + i; bt.appendChild(l); bt.appendChild(s2); li.appendChild(bt); $idx.appendChild(li);
+    bt.addEventListener('click', function () { d.open = true; d.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+  });
+  U[0].q; document.getElementById('u0').open = false;
+
+  var sum = document.getElementById('sum'); sum.appendChild(E('h2', '', '全体のまとめ')); sum.lastChild.style.fontSize = '1.2rem';
+  sum.appendChild(E('p', 'lead', '血管と脳を守る土台は、お酒の種類より飲む量の節制と、運動・減塩・禁煙・睡眠です。'));
+  var ol = E('ol', 'pts'); SUM.forEach(function (t) { ol.appendChild(E('li', '', t)); }); sum.appendChild(ol);
+  sum.appendChild(E('p', '', '受診の目安：物忘れが増えた、同じことを何度も聞く、約束や金銭管理でミスが増えたなどの変化があれば、物忘れ外来やかかりつけ医に相談してください。'));
+
+  /* 単元いちらんの○/× 表示も更新 */
+  var _u = updateScores;
+  updateScores = function () { _u(); U.forEach(function (x, i) { var s = score(i), el = document.getElementById('ix' + i); if (el) el.textContent = s.d ? s.c + '/' + s.n + '問' : ''; }); };
+  updateScores();
+
+  /* ボタン */
+  document.getElementById('openAll').addEventListener('click', function () {
+    var ds = document.querySelectorAll('details.unit'), open = Array.prototype.some.call(ds, function (x) { return !x.open; });
+    Array.prototype.forEach.call(ds, function (x) { x.open = open; });
+    this.textContent = open ? 'すべてとじる' : 'すべてひらく';
+  });
+  var bigBtn = document.getElementById('bigBtn');
+  bigBtn.addEventListener('click', function () {
+    var on = document.documentElement.classList.toggle('big'); bigBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    bigBtn.textContent = on ? '文字をふつうにする' : '文字を大きくする';
+  });
+  document.getElementById('resetBtn').addEventListener('click', function () {
+    st = {}; save();
+    U.forEach(function (_, i) { paint(i, document.getElementById('quiz' + i)); });
+    updateScores();
+  });
+
+  /* ケセラから来たときの「もどる」 */
+  if (/[?&]from=kesera/.test(location.search || '')) { document.getElementById('backp').hidden = false; document.getElementById('backp2').hidden = false; }
+})();
+</script>
+</body>
+</html>
