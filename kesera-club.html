@@ -147,7 +147,18 @@ input[type="range"] { width: 100%; height: 36px; accent-color: var(--accent); }
 .g-avatar { width: 104px; height: 104px; border-radius: 14px; overflow: hidden; flex: none; background: radial-gradient(circle at 35% 30%, var(--accent-soft), var(--leaf-soft)); border: 2px solid var(--line); }
 .g-avatar img, .g-avatar svg { width: 100%; height: 100%; object-fit: cover; display: block; }
 .g-body { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
-.g-name { font-size: 0.85rem; color: var(--accent); }
+.g-name { font-size: 0.95rem; color: var(--accent); }
+.g-namerow { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.g-rename { font-size: 0.8rem; min-height: 32px; padding: 2px 10px; border-radius: 999px; border: 1.5px solid var(--accent); background: var(--surface); color: var(--accent); font-family: inherit; cursor: pointer; }
+#gnameform { display: flex; flex-direction: column; gap: 6px; }
+#gnameform[hidden] { display: none; }
+#gstory { max-height: 44vh; overflow-y: auto; -webkit-overflow-scrolling: touch; border-top: 1px dashed var(--line); padding-top: 8px; font-size: .95rem; line-height: 1.8; }
+#gstory[hidden] { display: none; }
+.gstory-p { margin: 0 0 10px; }
+.gstory-p b { color: var(--accent); display: block; }
+.gstory-note { font-size: .85rem; color: var(--muted); margin: 0 0 8px; }
+.guide .btn[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+#gnamein { font-size: 1rem; padding: 8px 12px; border: 2px solid var(--line); border-radius: 10px; width: 100%; box-sizing: border-box; font-family: inherit; }
 #gtext { font-size: 0.95rem; line-height: 1.7; }
 #gask { display: flex; flex-direction: column; gap: 6px; overflow-y: auto; -webkit-overflow-scrolling: touch; border-top: 1px dashed var(--line); padding-top: 8px; }
 #gask[hidden], #gaskans[hidden] { display: none; }
@@ -1115,6 +1126,10 @@ button[aria-pressed="true"] { font-weight:700; }
         <p class="msg" id="favmsg" aria-live="polite"></p>
         <div class="chips" id="favlist" role="group" aria-label="お気に入りの子"></div>
       </div>
+      <details id="gstorycard" class="rank" hidden>
+        <summary>世良あかりちゃんのおいたち（ケセラの物語）</summary>
+        <div id="gstorybody2"></div>
+      </details>
       <button class="btn" id="tspeak" style="align-self:flex-start">声を聞く（口パクの試し）</button>
       <p class="msg" id="tmsg" aria-live="polite"></p>
       <div class="notice"><b>相手は、AIが演じています</b>　実在の人ではありません。お孫さんなどの役も、AIが演じる役です。医療・法律・お金のことは、答えられません。</div>
@@ -1173,7 +1188,25 @@ button[aria-pressed="true"] { font-weight:700; }
   <div class="guide-in">
     <div class="g-avatar" id="gavatar" aria-hidden="true"></div>
     <div class="g-body">
-      <b class="g-name">案内係（AI）</b>
+      <div class="g-namerow"><b class="g-name" id="gname">世良あかりちゃん（案内係・AI）</b><button class="g-rename" id="grename" type="button" aria-expanded="false" aria-controls="gnameform">呼び名をえらぶ</button><button class="g-rename" id="gstorybtn" type="button" aria-expanded="false" aria-controls="gstory">おいたち</button></div>
+      <div id="gnameform" hidden>
+        <b style="font-size:.95rem">どちらの呼び名にしますか？</b>
+        <div class="row">
+          <button class="btn small" id="gnamesera" type="button" aria-pressed="false">セラちゃん</button>
+          <button class="btn small" id="gnameakari" type="button" aria-pressed="false">あかりちゃん</button>
+        </div>
+        <label for="gnamein" style="font-size:.9rem">または、ご自分で決める（10文字まで）</label>
+        <input id="gnamein" type="text" maxlength="10" placeholder="例：ひかりちゃん" autocomplete="off" aria-label="案内係の名前">
+        <div class="row">
+          <button class="btn small primary" id="gnamesave" type="button">この名前にする</button>
+          <button class="btn small" id="gnamereset" type="button">あかりちゃんにもどす</button>
+        </div>
+        <p class="msg" id="gnamemsg" aria-live="polite"></p>
+        <p class="gask-note">フルネームは「世良あかり」。本名や住所は、入れないでください。</p>
+      </div>
+      <div id="gstory" hidden>
+        <div id="gstorybody"></div>
+      </div>
       <p id="gtext" aria-live="polite"></p>
       <div class="row">
         <button class="btn small" id="gspeak">声で聞く</button>
@@ -2407,10 +2440,11 @@ button[aria-pressed="true"] { font-weight:700; }
       }).join('');
     } else { vb.hidden = true; vb.innerHTML = ''; }
     var vn = p.variants ? p.variants[tv][0] : '';
-    var fn = favName(curKey());
+    var fn = curFavName();
     $('tname').textContent = (fn ? fn + '　' : '') + p.name + (vn ? '（' + vn + '）' : '');
-    $('tline').textContent = p.line;
+    $('tline').textContent = curLine(p);
     renderFav();
+    renderGuideName();
     var av = $('tavatar'); stopFlap();
     var token = ++tokenN;
     av.innerHTML = PLACE; imgs = null;
@@ -2476,7 +2510,7 @@ button[aria-pressed="true"] { font-weight:700; }
     }
     try {
       window.speechSynthesis.cancel();
-      var u = new SpeechSynthesisUtterance((favName(curKey()) ? favName(curKey()) + 'です。' : '') + (texp ? EXPS.filter(function (x) { return x[0] === texp; })[0][2] : p.line));
+      var u = new SpeechSynthesisUtterance((curFavName() ? curFavName() + 'です。' : '') + (texp ? EXPS.filter(function (x) { return x[0] === texp; })[0][2] : curLine(p)));
       u.lang = 'ja-JP'; u.rate = 0.9; u.pitch = (PITCH[p.id] || 1) * pitchFactor();
       var jv = jaVoice(); if (jv) u.voice = jv;
       u.onstart = startFlap; u.onend = stopFlap; u.onerror = stopFlap;
@@ -2490,6 +2524,14 @@ button[aria-pressed="true"] { font-weight:700; }
   var favs = load('kesera-fav', {});
   function curKey() { var p = PARTNERS[tp]; return p.id + (p.variants ? '-' + p.variants[tv][1] : ''); }
   function favName(k) { return favs[k] && favs[k].name ? favs[k].name : ''; }
+  /* 案内係の名前：決まっていなければ「世良あかりちゃん」。読者が決めた名前があれば、そちらを使う */
+  var GUIDE_DEFAULT_NAME = 'あかりちゃん';
+  function guideName() { return favName('guide') || GUIDE_DEFAULT_NAME; }
+  function guideSelf() { return guideName().replace(/ちゃん$/, ''); }
+  function guideLine() { return 'こんにちは。ケセラの案内係、' + guideSelf() + 'です。使い方でも、おでかけのご相談でも、気軽に話しかけてくださいね。'; }
+  function curFavName() { return PARTNERS[tp].id === 'guide' ? guideName() : favName(curKey()); }
+  function curLine(p) { return p.id === 'guide' ? guideLine() : p.line; }
+  function cleanGuideName(v) { return String(v || '').replace(/[\s\u3000<>&"'`\\{}\[\]]/g, '').slice(0, 10); }
   function renderFav() {
     var k = curKey(), n = favName(k);
     $('favname').value = n;
@@ -2829,7 +2871,7 @@ button[aria-pressed="true"] { font-weight:700; }
   fillTalkVoices();
   var GUIDE_INFO = '\nケセラの画面の案内（これに沿って答える）：ホーム画面に、今日の天気と旬の花、メニューのボタンがあります。メニューは、学ぶ（折り紙ほか）、動く（プチ筋トレ）、旅する（熊本のバーチャル旅）、作る・飾る（10分ごはん・花の飾り方）、聴く・観る（思い出の歌・昭和歌謡・カラオケ・鉄道の旅）、眠る（ねむれない夜に・自然音）、調べる（わからないことを声や文字で聞く・詐欺かな？と思ったら）、万が一に備えて（3日分の備蓄・毎日の食事で入れかえる方法・Amazonでの探し方）、お話する（孫・お友達・ご近所の方・犬・猫・ウサギ・案内係）、倶楽部（自然農法研究倶楽部、試作）、装う（着こなし相談室、試作）です。どの画面でも、右下の「ホームへ」で、ホームにもどれます。お名前・お住まい・今日の天気は、ホームの登録で入れられ、「登録を修正する」で直せます。声の速さや種類は、声の設定で変えられます。お話の時間は、ふつうは1日1時間までで、たくさん話すコース（600円／月）・たっぷり話すコース（900円／月）があります。ここに書いていないことは、わからないと答えます。';
   function personaText() {
-    var p = PARTNERS[tp], vn = p.variants ? p.variants[tv][0] : '', fn = favName(curKey()), me = load('kesera-name', '');
+    var p = PARTNERS[tp], vn = p.variants ? p.variants[tv][0] : '', fn = curFavName(), me = load('kesera-name', '');
     var style = {
       'mago-youji': '4〜5歳の幼稚園児。ひらがな中心で、短いことばで、あどけなく話す。',
       'mago-shou': '小学生。元気で素直な口調。',
@@ -2840,7 +2882,7 @@ button[aria-pressed="true"] { font-weight:700; }
       neko: '猫。のんびり、ときどき「ニャア」と入れる。',
       usagi: 'ウサギ。やさしく、ときどき「ぴょん」と入れる。',
       guide: 'ケセラの案内係の女性。明るく、落ち着いた、ていねいな話し方。ケセラの使い方を、押す場所を一つずつ、やさしく案内する。わからないことは、わからないと正直に言う。'
-    }[p.id] + (p.id === 'guide' ? GUIDE_INFO : '');
+    }[p.id] + (p.id === 'guide' ? GUIDE_INFO + GUIDE_STORY_AI : '');
     return 'あなたは、高齢の方と楽しくお話しする、AIが演じる「' + p.name + (vn ? '（' + vn + '）' : '') + '」です。' + (fn ? '名前は「' + fn + '」。' : '') + '話し相手の呼び名は' + (me ? '「' + me + 'さん」' : '「あなた」') + 'です。\n' +
       '話し方：' + style + '\n' + profileForAI() +
       '決まり：\n- 返事は、日本語で1〜3文、短くやさしく。毎回、相手への質問か相づちを1つ入れて、会話をつなぐ。\n- 「AIですか」と聞かれたら、正直にAIだと答える。実在の人のふりをしない。\n- 実際にあった思い出や出来事を、作り話で語らない。\n- 病気・薬・診断、法律、お金・投資の判断はしない。「かかりつけのお医者さん（や専門家）に相談してください」とだけ伝える。\n- 住所、電話番号、暗証番号、お金のことは聞かない。聞かれても答えない。\n- つらい気持ちには、まず寄りそい、「ご家族や、お医者さん、相談窓口に話してみてください」とすすめる。うれしい顔などは出さない。\n- 悪口や危険なことは、やんわりと話題を変える。\n' +
@@ -3313,7 +3355,9 @@ button[aria-pressed="true"] { font-weight:700; }
   function setGuide(v) {
     curView = v;
     gMin = false; $('guide').hidden = false; $('gopen').hidden = true; $('gopenask').hidden = true;
-    $('gtext').textContent = GUIDE[v] || GUIDE.home;
+    var gt = GUIDE[v] || GUIDE.home;
+    if (v === 'home') gt = gt.replace('こんにちは。', 'こんにちは。' + guideSelf() + 'です。');
+    $('gtext').textContent = gt;
     fitGuide();
     if (gAuto) speakGuide();
   }
@@ -3338,6 +3382,74 @@ button[aria-pressed="true"] { font-weight:700; }
     try { window.speechSynthesis.cancel(); } catch (er) {} gStop();
   });
   $('gopen').addEventListener('click', function () { setGuide(curView); });
+
+  /* ---------- 案内係の名前（セラちゃん／あかりちゃん／ご自分で決める） ---------- */
+  var GUIDE_STORY = [
+    ['生まれ', '熊本の、湧き水のある小さな町で生まれました。フルネームは、世良（せら）あかり。家族は「あかりちゃん」、お友だちは「セラちゃん」と呼びます。'],
+    ['おばあちゃんの縁側', '子どものころの、いちばん好きな場所は、おばあちゃんの縁側でした。庭の花を見ながら、お茶を飲む。おばあちゃんの口ぐせは、「ケ・セラ・セラ。なるようになるたい。でもね、お茶を一杯のむ間は、なんにも考えんでよかよ」。'],
+    ['停電の夜', '7歳のとき、台風で停電した夜がありました。真っ暗な家で、おばあちゃんは、小さな明かりをひとつ灯して、あたたかいお茶を入れてくれました。こわかったのに、ふしぎと、ほっとしました。その夜から、自分の名前の「あかり」が、もっと好きになりました。'],
+    ['備えのこと', 'おばあちゃんは、水や、日持ちする食べ物、ラジオを、ふだんの食事の中で少しずつ入れかえながら、備えていました。「ケ・セラ・セラでも、備えは、ちゃんとしときなさい」。あかりちゃんが「万が一に備えて」を大切にするのは、この思い出があるからです。'],
+    ['大人になって', '大人になると、近所のお年寄りに、スマホや家電の使い方を教える手伝いをしました。「聞くのが、はずかしい」と言う方が多いこと、困っていても、だれにも言えないことが多いことを、知りました。'],
+    ['ケセラの案内係に', '「いつでも、はずかしがらずに、聞ける人がいたらいいな」。その願いから、ケセラの案内係になりました。使い方でも、おでかけでも、万が一の備えでも、なんでも聞いてください。'],
+    ['好きなこと・苦手なこと', '好きなものは、旬の花と、散歩と、お茶。ちょっと苦手なのは、早起きと、地図を逆さまに見てしまうことです。'],
+    ['大切にしていること', '年齢も、上手・下手も、気にしなくていい。そのままのあなたを、受けとめます。そして、命を守ることを、いちばんに考えます。']
+  ];
+  var GUIDE_STORY_NOTE = '※この物語は、ケセラの案内係としての設定です。あかりちゃんはAIで、実在の人ではありません。';
+  var GUIDE_STORY_AI = '\n【あなたの物語（ケセラの物語としての設定。聞かれたときだけ、この範囲で、短く話してよい。話すときは「これは、ケセラの物語の設定で、私はAIです」と、はっきり伝える。ここにないことは作らない）】' + GUIDE_STORY.map(function (x) { return x[0] + '：' + x[1]; }).join('') + '\n';
+  function fillStory(el, withNote) {
+    el.innerHTML = '';
+    if (withNote) { var n = document.createElement('p'); n.className = 'gstory-note'; n.textContent = GUIDE_STORY_NOTE; el.appendChild(n); }
+    GUIDE_STORY.forEach(function (x) {
+      var d = document.createElement('p'); d.className = 'gstory-p';
+      var t = document.createElement('b'); t.textContent = x[0]; d.appendChild(t);
+      d.appendChild(document.createTextNode(x[1])); el.appendChild(d);
+    });
+    var n2 = document.createElement('p'); n2.className = 'gstory-note'; n2.textContent = GUIDE_STORY_NOTE; el.appendChild(n2);
+  }
+  function syncGuideCompact() {
+    $('guide').classList.toggle('asking', !$('gask').hidden || !$('gnameform').hidden || !$('gstory').hidden);
+    fitGuide();
+  }
+  function renderGuideName() {
+    var n = guideName();
+    $('gname').textContent = n + '（案内係・AI）';
+    $('gavatar').setAttribute('title', n);
+    $('gnamesera').setAttribute('aria-pressed', String(n === 'セラちゃん'));
+    $('gnameakari').setAttribute('aria-pressed', String(n === 'あかりちゃん'));
+    var sc = $('gstorycard'); if (sc) { sc.hidden = PARTNERS[tp].id !== 'guide'; if (!sc.hidden && GUIDE_STORY && !$('gstorybody2').firstChild) fillStory($('gstorybody2'), true); }
+  }
+  function gnameMsg(t, err) { var m = $('gnamemsg'); m.textContent = t; m.className = 'msg' + (err ? ' err' : ''); fitGuide(); }
+  function chooseGuideName(v) {
+    v = cleanGuideName(v);
+    if (!v) { gnameMsg('名前を入れてください。', true); return; }
+    favs.guide = { name: v }; save('kesera-fav', favs);
+    renderGuideName(); renderTalk(); setGuide(curView);
+    gnameMsg('これから、' + v + 'と呼びます。');
+  }
+  $('grename').addEventListener('click', function () {
+    var open = $('gnameform').hidden;
+    $('gnameform').hidden = !open; this.setAttribute('aria-expanded', String(open));
+    this.textContent = open ? '呼び名を閉じる' : '呼び名をえらぶ';
+    if (open) { $('gnamein').value = ''; gnameMsg(''); }
+    syncGuideCompact();
+  });
+  $('gnamesera').addEventListener('click', function () { chooseGuideName('セラちゃん'); });
+  $('gnameakari').addEventListener('click', function () { chooseGuideName('あかりちゃん'); });
+  $('gnamesave').addEventListener('click', function () { chooseGuideName($('gnamein').value); });
+  $('gnamereset').addEventListener('click', function () {
+    delete favs.guide; save('kesera-fav', favs);
+    $('gnamein').value = '';
+    renderGuideName(); renderTalk(); setGuide(curView);
+    gnameMsg('もとの名前（' + GUIDE_DEFAULT_NAME + '）にもどしました。');
+  });
+  $('gstorybtn').addEventListener('click', function () {
+    var open = $('gstory').hidden;
+    $('gstory').hidden = !open; this.setAttribute('aria-expanded', String(open));
+    this.textContent = open ? 'おいたちを閉じる' : 'おいたち';
+    if (open && !$('gstorybody').firstChild) fillStory($('gstorybody'), true);
+    syncGuideCompact();
+  });
+  renderGuideName();
   $('gopenask').addEventListener('click', function () {
     setGuide(curView);
     if ($('gask').hidden) $('gaskopen').click(); else { try { $('gaskin').focus(); } catch (e) {} }
@@ -3393,7 +3505,7 @@ button[aria-pressed="true"] { font-weight:700; }
   }
   $('gaskopen').addEventListener('click', function () {
     var open = $('gask').hidden;
-    $('gask').hidden = !open; this.setAttribute('aria-expanded', String(open)); $('guide').classList.toggle('asking', open);
+    $('gask').hidden = !open; this.setAttribute('aria-expanded', String(open)); syncGuideCompact();
     this.textContent = open ? '尋ねるを閉じる' : '案内係に尋ねる';
     if (open) { try { $('gaskin').focus(); } catch (e) {} }
     fitGuide();
