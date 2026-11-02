@@ -737,7 +737,11 @@ button[aria-pressed="true"] { font-weight:700; }
     <div class="card">
       <h3 id="shelfTitle"></h3>
       <ul class="plist" id="plist"></ul>
-      <a class="btnlink" id="searchLink" href="#" target="_blank" rel="noopener" style="align-self:flex-start">YouTubeで探す</a>
+      <p class="muted" id="shortNote">動画は、短いもの（ショート動画・4分未満）を優先して探します。</p>
+      <div class="row">
+        <a class="btnlink primary" id="searchLink" href="#" target="_blank" rel="noopener">YouTubeで探す</a>
+        <a class="btnlink" id="searchLinkLong" href="#" target="_blank" rel="noopener">長い動画も探す</a>
+      </div>
     </div>
 
     <div class="card">
@@ -812,7 +816,10 @@ button[aria-pressed="true"] { font-weight:700; }
       <p class="muted">1人分です。しょうゆ、みそ、だしの素、納豆のたれなどは、小麦や砂糖が入っていることが多いので、原材料を確認してください。</p>
       <div class="chips" id="rchips" role="group" aria-label="料理を選ぶ"></div>
       <div id="rdeck"></div>
-      <a class="btnlink" id="rsearch" href="https://www.youtube.com/results?search_query=%E5%B0%8F%E9%BA%A6%E7%B2%89%E4%B8%8D%E4%BD%BF%E7%94%A8+%E4%B9%B3%E8%A3%BD%E5%93%81%E4%B8%8D%E4%BD%BF%E7%94%A8+10%E5%88%86+%E3%83%AC%E3%82%B7%E3%83%94" target="_blank" rel="noopener" style="align-self:flex-start">YouTubeで同じような料理を探す</a>
+      <div class="row">
+        <a class="btnlink primary" id="rsearch" href="https://www.youtube.com/results?search_query=%E5%B0%8F%E9%BA%A6%E7%B2%89%E4%B8%8D%E4%BD%BF%E7%94%A8+%E4%B9%B3%E8%A3%BD%E5%93%81%E4%B8%8D%E4%BD%BF%E7%94%A8+10%E5%88%86+%E3%83%AC%E3%82%B7%E3%83%94&sp=EgIYAQ%253D%253D" target="_blank" rel="noopener">ショート動画で、同じような料理を探す</a>
+        <a class="btnlink" id="rsearchLong" href="https://www.youtube.com/results?search_query=%E5%B0%8F%E9%BA%A6%E7%B2%89%E4%B8%8D%E4%BD%BF%E7%94%A8+%E4%B9%B3%E8%A3%BD%E5%93%81%E4%B8%8D%E4%BD%BF%E7%94%A8+10%E5%88%86+%E3%83%AC%E3%82%B7%E3%83%94" target="_blank" rel="noopener">長い動画も探す</a>
+      </div>
       <div class="notice"><b>お読みください</b>　食事全体で、たんぱく質、カルシウム、エネルギーが足りなくならないようにしてください。食が細くなったり、体重が減ったりしたときは、医師や管理栄養士にご相談ください。持病やアレルギーのある方も、ご相談をおすすめします。火を使うときは、その場を離れないでください。</div>
     </div>
 
@@ -1211,7 +1218,7 @@ button[aria-pressed="true"] { font-weight:700; }
       <div class="row">
         <button class="btn small" id="gspeak">声で聞く</button>
         <button class="btn small" id="gauto" aria-pressed="false">画面ごとに自動で話す</button>
-        <button class="btn small" id="gaskopen" aria-expanded="false" aria-controls="gask">案内係に尋ねる</button>
+        <button class="btn small" id="gaskopen" aria-expanded="false" aria-controls="gask">あかりちゃんに尋ねる</button>
         <button class="btn small" id="gmin">しまう</button>
       </div>
       <div id="gask" hidden>
@@ -1246,8 +1253,8 @@ button[aria-pressed="true"] { font-weight:700; }
     </div>
   </div>
 </aside>
-<button class="btn gopen gopen-up" id="gopen" hidden>案内係をよぶ</button>
-<button class="btn primary gopen" id="gopenask" hidden>案内係に尋ねる</button>
+<button class="btn gopen gopen-up" id="gopen" hidden>あかりちゃんをよぶ</button>
+<button class="btn primary gopen" id="gopenask" hidden>あかりちゃんに尋ねる</button>
 
 
 
@@ -2055,6 +2062,8 @@ button[aria-pressed="true"] { font-weight:700; }
 
 
   /* ---------- 聴く・観る（YouTube） ---------- */
+  var YT_SHORT = '&sp=EgIYAQ%253D%253D'; /* YouTubeの「4分未満」の絞りこみ */
+  function ytSearch(q, short) { return 'https://www.youtube.com/results?search_query=' + encodeURIComponent(q) + (short ? YT_SHORT : ''); }
   var SHELVES = [
     { id: 'omoide', name: '思い出の歌', q: '昭和 思い出の歌 名曲' },
     { id: 'showa', name: '昭和歌謡', q: '昭和歌謡 名曲' },
@@ -2098,8 +2107,13 @@ button[aria-pressed="true"] { font-weight:700; }
     }).join('');
     var sh = SHELVES.filter(function (x) { return x.id === cur; })[0];
     $('shelfTitle').textContent = sh.name + 'の保存一覧';
-    $('searchLink').href = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(sh.q);
-    $('searchLink').textContent = 'YouTubeで「' + sh.q + '」を探す';
+    /* 動画は、ショート動画（4分未満）を優先。眠りの音楽・自然音は、長い動画が向いているので、そのまま */
+    var isSleep = sh.id === 'sleep';
+    $('searchLink').href = ytSearch(sh.q, !isSleep);
+    $('searchLink').textContent = isSleep ? 'YouTubeで「' + sh.q + '」を探す' : 'ショート動画で「' + sh.q + '」を探す';
+    $('searchLinkLong').href = ytSearch(sh.q, false);
+    $('searchLinkLong').hidden = isSleep;
+    $('shortNote').hidden = isSleep;
   }
   function renderList() {
     var items = lib[cur];
@@ -2869,7 +2883,7 @@ button[aria-pressed="true"] { font-weight:700; }
   $('tvtest').addEventListener('click', sampleTalkVoice);
   try { window.speechSynthesis.addEventListener('voiceschanged', fillTalkVoices); } catch (e) {}
   fillTalkVoices();
-  var GUIDE_INFO = '\nケセラの画面の案内（これに沿って答える）：ホーム画面に、今日の天気と旬の花、メニューのボタンがあります。メニューは、学ぶ（折り紙ほか）、動く（プチ筋トレ）、旅する（熊本のバーチャル旅）、作る・飾る（10分ごはん・花の飾り方）、聴く・観る（思い出の歌・昭和歌謡・カラオケ・鉄道の旅）、眠る（ねむれない夜に・自然音）、調べる（わからないことを声や文字で聞く・詐欺かな？と思ったら）、万が一に備えて（3日分の備蓄・毎日の食事で入れかえる方法・Amazonでの探し方）、お話する（孫・お友達・ご近所の方・犬・猫・ウサギ・案内係）、倶楽部（自然農法研究倶楽部、試作）、装う（着こなし相談室、試作）です。どの画面でも、右下の「ホームへ」で、ホームにもどれます。お名前・お住まい・今日の天気は、ホームの登録で入れられ、「登録を修正する」で直せます。声の速さや種類は、声の設定で変えられます。お話の時間は、ふつうは1日1時間までで、たくさん話すコース（600円／月）・たっぷり話すコース（900円／月）があります。ここに書いていないことは、わからないと答えます。';
+  var GUIDE_INFO = '\nケセラの画面の案内（これに沿って答える）：ホーム画面に、今日の天気と旬の花、メニューのボタンがあります。メニューは、学ぶ（折り紙ほか）、動く（プチ筋トレ）、旅する（熊本のバーチャル旅）、作る・飾る（10分ごはん・花の飾り方）、聴く・観る（思い出の歌・昭和歌謡・カラオケ・鉄道の旅）、眠る（ねむれない夜に・自然音）、調べる（わからないことを声や文字で聞く・詐欺かな？と思ったら）、万が一に備えて（3日分の備蓄・毎日の食事で入れかえる方法・Amazonでの探し方）、お話する（孫・お友達・ご近所の方・犬・猫・ウサギ・案内係）、倶楽部（自然農法研究倶楽部、試作）、装う（着こなし相談室、試作）です。どの画面でも、右下の「ホームへ」で、ホームにもどれます。お名前・お住まい・今日の天気は、ホームの登録で入れられ、「登録を修正する」で直せます。声の速さや種類は、声の設定で変えられます。お話の時間は、ふつうは1日1時間までで、たくさん話すコース（600円／月）・たっぷり話すコース（900円／月）があります。動画を探すときは、短い（ショート）動画を優先します。ここに書いていないことは、わからないと答えます。';
   function personaText() {
     var p = PARTNERS[tp], vn = p.variants ? p.variants[tv][0] : '', fn = curFavName(), me = load('kesera-name', '');
     var style = {
@@ -3414,6 +3428,9 @@ button[aria-pressed="true"] { font-weight:700; }
     var n = guideName();
     $('gname').textContent = n + '（案内係・AI）';
     $('gavatar').setAttribute('title', n);
+    $('gaskopen').textContent = $('gask').hidden ? n + 'に尋ねる' : '尋ねるを閉じる';
+    $('gopenask').textContent = n + 'に尋ねる';
+    $('gopen').textContent = n + 'をよぶ';
     $('gnamesera').setAttribute('aria-pressed', String(n === 'セラちゃん'));
     $('gnameakari').setAttribute('aria-pressed', String(n === 'あかりちゃん'));
     var sc = $('gstorycard'); if (sc) { sc.hidden = PARTNERS[tp].id !== 'guide'; if (!sc.hidden && GUIDE_STORY && !$('gstorybody2').firstChild) fillStory($('gstorybody2'), true); }
@@ -3506,7 +3523,7 @@ button[aria-pressed="true"] { font-weight:700; }
   $('gaskopen').addEventListener('click', function () {
     var open = $('gask').hidden;
     $('gask').hidden = !open; this.setAttribute('aria-expanded', String(open)); syncGuideCompact();
-    this.textContent = open ? '尋ねるを閉じる' : '案内係に尋ねる';
+    this.textContent = open ? '尋ねるを閉じる' : guideName() + 'に尋ねる';
     if (open) { try { $('gaskin').focus(); } catch (e) {} }
     fitGuide();
   });
