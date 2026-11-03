@@ -1245,6 +1245,54 @@ button[aria-pressed="true"] { font-weight:700; }
     <p class="muted">情報は、公式サイトや、観光情報などをもとにしています。料金・営業時間・休園日は変わりますので、のせていません。かならず、公式の情報で、ご確認ください。</p>
   </section>
 
+  <!-- 今月の本・動画・映画 -->
+  <section class="view" id="v-rank" hidden aria-label="本・動画・映画のランキング">
+    <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
+    <h2>📈 本・動画・映画の「いま」</h2>
+    <p class="muted">いま話題の本・動画・映画を、ひと目で。数字は毎週・毎月かわるため、「いつ時点か」と「出どころ」を、かならず書いています。いちばん新しい順位は、下のボタンで、本家のページをご覧ください。</p>
+
+    <div class="card" id="rkMovie">
+      <h3>🎬 映画</h3>
+      <div class="card" style="background:var(--surface)">
+        <b>🆕 11月3日（火・祝）公開　『ゴジラ-0.0』</b>
+        <p>前作『ゴジラ-1.0』の2年後の日本が舞台です。監督・脚本・VFXは山崎貴さん。神木隆之介さん、浜辺美波さんが続けて出演し、長澤まさみさん、吉岡秀隆さん、田中泯さんなども出ています。上映時間は135分。前作はアカデミー賞の視覚効果賞を受け、国内の興行収入は76.5億円でした。</p>
+        <p class="muted">出どころ：映画公式発表・報道（2026年7〜10月）。公開後の人気は、来週の順位で分かります。</p>
+      </div>
+      <b>全国の週末ランキング（10月30日〜11月1日）</b>
+      <ol style="margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:6px"><li><b>1位　ママがもうこの世界にいなくても 私の命の日記</b><span class="muted">（5週目）先週も1位。口コミで長く上映が続いています。</span></li><li><b>2位　汝、星のごとく</b><span class="muted">（4週目）</span></li><li><b>3位　バイオハザード</b><span class="muted">（4週目）</span></li><li><b>4位　RYUJI 竜二</b><span class="muted">（初登場）</span></li><li><b>5位　映画ちいかわ 人魚の島のひみつ</b><span class="muted">（15週目）公開から15週目のロングランです。</span></li><li><b>6位　耳をすませば（1995）</b><span class="muted">（2週目）</span></li><li><b>7位　うるわしの宵の月</b><span class="muted">（2週目）</span></li><li><b>8位　メイドインアビス 目覚める神秘</b><span class="muted">（2週目）</span></li><li><b>9位　クレイフェイス</b><span class="muted">（初登場）</span></li><li><b>10位　ヤマトよ永遠に REBEL3199 第七章 虹色の輪廻</b><span class="muted">（初登場）</span></li></ol>
+      <p class="muted">出どころ：映画.com「国内映画ランキング」（興行通信社の集計）2026年11月2日更新。『ゴジラ-0.0』は11月3日公開のため、まだ入っていません。</p>
+      <a class="btnlink" href="https://eiga.com/ranking/jp/" target="_blank" rel="noopener">🎬 いちばん新しい映画ランキング（映画.com）</a>
+      <a class="btnlink" href="https://eiga.com/now/" target="_blank" rel="noopener">🎞 上映中の映画をさがす（映画.com）</a>
+    </div>
+
+    <div class="card" id="rkBook">
+      <h3>📚 本</h3>
+      <b>2026年 上半期ベストセラー（日販・トーハン　ともに総合）</b>
+      <ol style="margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:6px">
+        <li><b>『ハーバード、スタンフォード、オックスフォード… 科学的に証明された すごい習慣大百科』堀田秀吾（SBクリエイティブ）</b><span class="muted">　心理学や行動経済学などの研究をもとに、仕事や暮らしに役立つ112の習慣を紹介する実用書。オリコンの上半期でも1位でした。</span></li>
+        <li><b>『変な地図』雨穴</b><span class="muted">　オリコン上半期の「文芸書」ジャンルでも1位でした。</span></li>
+        <li><b>『イン・ザ・メガチャーチ』</b></li>
+      </ol>
+      <p class="muted">出どころ：共同通信（2026年6月1日）、オリコン「上半期“本”ランキング」。<b>これは「上半期」の順位です。「今月」の順位は、本家のページでご確認ください。</b></p>
+      <b>最近の週間1位の例</b>
+      <p>辻村深月さんの新作長編『ファイア・ドーム』（小学館、6月5日発売）は、上下巻が週間1位・2位をそろって獲得しました（オリコン、2026年6月29日付）。</p>
+      <a class="btnlink" href="https://www.oricon.co.jp/rank/obb/w/" target="_blank" rel="noopener">📚 週間BOOKランキング（オリコン）</a>
+      <a class="btnlink" href="https://www.nippan.co.jp/ranking/" target="_blank" rel="noopener">📚 日販のランキング</a>
+      <a class="btnlink" href="https://www.tohan.jp/" target="_blank" rel="noopener">📚 トーハン（ベストセラー）</a>
+    </div>
+
+    <div class="card" id="rkVideo">
+      <h3>▶ 動画</h3>
+      <p>動画の再生回数の順位は、毎日大きく動くため、ここには数字をのせていません。<b>短い動画（ショート）を優先</b>して、いま見られている動画を、すぐ開けるようにしました。</p>
+      <a class="btnlink" href="https://www.youtube.com/results?search_query=%E6%80%A5%E4%B8%8A%E6%98%87&sp=EgIYAQ%253D%253D" target="_blank" rel="noopener">▶ 急上昇の短い動画（YouTube・4分未満）</a>
+      <a class="btnlink" href="https://www.youtube.com/results?search_query=%E3%82%B7%E3%83%8B%E3%82%A2+%E3%81%BB%E3%81%A3%E3%81%93%E3%82%8A&sp=EgIYAQ%253D%253D" target="_blank" rel="noopener">☕ ほっこり系の短い動画</a>
+      <a class="btnlink" href="https://yutura.net/ranking/" target="_blank" rel="noopener">📊 チャンネルのランキング（ユーチュラ・参考）</a>
+      <p class="muted">ユーチュラの数字は推計で、参考程度です。</p>
+    </div>
+
+    <p class="muted">本の内容の説明は、出版社・報道の情報をもとに、短くまとめ直しています。順位は変わります。買う前・出かける前に、本家のページでご確認ください。</p>
+  </section>
+
   <!-- 学ぶ -->
   <section class="view" id="v-learn" hidden aria-label="学ぶ">
     <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
@@ -2560,7 +2608,7 @@ button[aria-pressed="true"] { font-weight:700; }
   });
 
   /* 画面の切り替え */
-  var views = ['hokago', 'yakata', 'club', 'haiku', 'dajare', 'album', 'laugh', 'up', 'mania', 'town', 'book', 'flower', 'settings', 'home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask', 'dress', 'prepare', 'garden'];
+  var views = ['hokago', 'yakata', 'club', 'haiku', 'dajare', 'album', 'laugh', 'up', 'mania', 'town', 'book', 'flower', 'settings', 'home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask', 'dress', 'prepare', 'garden', 'rank'];
   var navView = 'home', navDepth = 0;
   function show(v, fromPop) {
     if (v !== 'talk' && typeof chatOn !== 'undefined' && chatOn) chatStop();
@@ -4026,6 +4074,7 @@ button[aria-pressed="true"] { font-weight:700; }
     make: 'ここは「作る・飾る」です。作りたい料理を選んで、「次へ」を押すと、手順がひとつずつ進みます。火を使うときは、そばを離れないでください。',
     farm: 'ここは自然農法研究倶楽部です。いまは試作で、書いたことは、この端末の中だけに残ります。家庭菜園やプランター菜園の栽培ノートに、作物と作業を書きとめてください。安全のための注意も、お読みください。',
     dress: 'ここは「装う」です。着こなし相談室で、服選びのお手伝いをします。画面の中を、指で上下にさわって、お使いください。もどるときは、右上の「ホームへ」を押してください。',
+    rank: 'ここは「本・動画・映画の、いま」です。映画は、先週末の全国ランキングと、きょう公開のゴジラ-0.0をのせています。本は上半期の順位です。今月の順位は、ボタンから本家のページでご覧ください。動画は、短いものを優先しています。',
     garden: 'ここは「近くのフラワーガーデン」です。「いまの場所から探す」を押すと、近い順に並びます。出かけられない日は、「おうち花さんぽ」で、ストリートビューや短い動画を見てください。出かける前に、公式の情報か電話で、開いているかを確かめましょう。',
     prepare: 'ここは「万が一に備えて」です。災害を経験した方が「困ったこと」と「あってよかったもの」のランキングを、先に載せています。そのあとの、準備したい順のチェックで、①から順にそろえましょう。人数を選ぶと、必要な量が出ます。毎日食べるものを少し多めに買い、古いものから食べる方法なら、無駄になりません。',
     ask: 'ここは「調べる」です。わからないことを、声か文字で聞いてください。詐欺かな、と思ったときの確かめ方と、相談先も、下にあります。お金の話が出たら、まず、詐欺を疑ってください。',
@@ -6131,7 +6180,7 @@ button[aria-pressed="true"] { font-weight:700; }
         T('🚶', '歩く・電車・バス・タクシー', '', { click: '#tripOpen' }), T('🚃', '運行情報', '', { home: '#transCard' }), T('🏪', '近くのお店', '', { home: '#nearCard' }),
         T('🧳', '旅する', '', { go: 'travel' }), T('🚶‍♀️', '動く', '', { go: 'move' }), T('🔎', 'まちの発見', '神社仏閣・散歩', { go: 'town' }), T('🌸', '花の見どころ', '', { go: 'flower' }), T('🌷', '近くのフラワーガーデン', 'おうち花さんぽ（バーチャル）', { go: 'garden' })]],
       ['楽しむ・学ぶ', 'c-p', [
-        T('📚', '読書くん', '', { go: 'book' }), T('🎓', '学ぶ', '', { go: 'learn' }), T('🎧', '聴く・観る', '', { go: 'music' }),
+        T('📚', '読書くん', '', { go: 'book' }), T('🎓', '学ぶ', '', { go: 'learn' }), T('🎧', '聴く・観る', '', { go: 'music' }), T('📈', '本・動画・映画の、いま', '映画ランキング・話題の本', { go: 'rank' }),
         T('🖋', '俳句・短歌日誌', '', { go: 'haiku' }), T('😄', 'ダジャレバトル', '', { go: 'dajare' }), T('🤣', '笑ってすっきり', '', { go: 'laugh' }),
         T('🍷', 'マニアージュ', '', { go: 'mania' }), T('🌱', '1mm違う自分へ', '', { go: 'up' })]],
       ['暮らし・健康', 'c-v', [
