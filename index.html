@@ -1263,6 +1263,15 @@ button[aria-pressed="true"] { font-weight:700; }
       <p class="muted">出どころ：映画.com「国内映画ランキング」（興行通信社の集計）2026年11月2日更新。『ゴジラ-0.0』は11月3日公開のため、まだ入っていません。</p>
       <a class="btnlink" href="https://eiga.com/ranking/jp/" target="_blank" rel="noopener">🎬 いちばん新しい映画ランキング（映画.com）</a>
       <a class="btnlink" href="https://eiga.com/now/" target="_blank" rel="noopener">🎞 上映中の映画をさがす（映画.com）</a>
+      <div class="card" style="background:var(--surface)">
+        <b>🎦 近くの映画館をさがす</b>
+        <p class="muted">「いまの場所から」を押すと、近くの映画館が地図で開きます。映画館の公式ページから、上映時間や料金をご確認ください（ここには料金・時間をのせていません）。</p>
+        <button class="btn primary" id="rkLocate" type="button" style="min-height:52px;align-self:flex-start">📍 いまの場所から、近くの映画館</button>
+        <a class="btnlink" id="rkCinemaMap" href="https://www.google.com/maps/search/?api=1&query=%E6%98%A0%E7%94%BB%E9%A4%A8+%E7%86%8A%E6%9C%AC%E5%B8%82" target="_blank" rel="noopener">🗺 熊本市の映画館を地図で見る</a>
+        <a class="btnlink" id="rkCinemaTime" href="https://www.google.com/search?q=%E6%98%A0%E7%94%BB%E9%A4%A8+%E4%B8%8A%E6%98%A0%E6%99%82%E9%96%93+%E7%86%8A%E6%9C%AC" target="_blank" rel="noopener">🕒 上映時間を調べる</a>
+        <a class="btnlink" href="https://eiga.com/theater/" target="_blank" rel="noopener">🎞 全国の映画館をさがす（映画.com）</a>
+        <p class="muted" id="rkMsg" role="status"></p>
+      </div>
     </div>
 
     <div class="card" id="rkBook">
@@ -6979,6 +6988,24 @@ button[aria-pressed="true"] { font-weight:700; }
     });
     var wp = $('wxPref'); if (wp) wp.addEventListener('change', render);
     render(); renderToday();
+  })();
+
+  /* ---- 本・動画・映画：近くの映画館 ---- */
+  (function () {
+    var btn = document.getElementById('rkLocate'); if (!btn) return;
+    btn.addEventListener('click', function () {
+      var msg = document.getElementById('rkMsg');
+      if (!navigator.geolocation) { msg.textContent = 'この端末では、場所が使えません。下の「熊本市の映画館」をお使いください。'; return; }
+      msg.textContent = '場所を確かめています…';
+      navigator.geolocation.getCurrentPosition(function (pos) {
+        var la = pos.coords.latitude.toFixed(5), ln = pos.coords.longitude.toFixed(5);
+        var u = 'https://www.google.com/maps/search/%E6%98%A0%E7%94%BB%E9%A4%A8/@' + la + ',' + ln + ',14z';
+        document.getElementById('rkCinemaMap').href = u;
+        document.getElementById('rkCinemaTime').href = 'https://www.google.com/search?q=' + encodeURIComponent('近くの映画館 上映時間');
+        msg.textContent = '近くの映画館を、地図で開きます。';
+        window.open(u, '_blank', 'noopener');
+      }, function () { msg.textContent = '場所が分かりませんでした。下の「熊本市の映画館を地図で見る」をお使いください。'; }, { timeout: 10000 });
+    });
   })();
 
   /* ---------- 今日の花言葉・ラッキー ---------- */
