@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAMBA | 古事記への道 第1章</title>
+<style>
+  :root {
+    --primary:#7c3aed; --primary-dark:#6d28d9;
+    --accent:#059669; --accent2:#d97706; --accent3:#2563eb;
+    --danger:#dc2626; --bg:#f5f3ff; --card:#ffffff;
+    --text:#1e293b; --muted:#64748b; --border:#e2e8f0;
+    --yellow-hint:#fef9c3; --blank-border:#fbbf24;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+  header{background:linear-gradient(135deg,#3b0764,#7c3aed);color:white;}
+  .header-top{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid rgba(255,255,255,0.15);}
+  .logo{font-size:1.5rem;font-weight:900;letter-spacing:2px;color:#ddd6fe;}
+  .header-sub{font-size:0.75rem;opacity:0.8;}
+  .chapter-title-bar{padding:14px 20px;display:flex;align-items:center;gap:12px;}
+  .chapter-badge{background:#ddd6fe;color:#3b0764;font-weight:900;font-size:0.75rem;padding:3px 10px;border-radius:20px;}
+  .chapter-title-text{font-size:1.1rem;font-weight:700;}
+  .tab-bar{display:flex;background:white;border-bottom:2px solid var(--border);overflow-x:auto;padding:0 16px;gap:4px;}
+  .tab-btn{padding:10px 16px;border:none;background:none;font-size:0.82rem;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:all 0.2s;font-family:inherit;}
+  .tab-btn.active{color:var(--primary);border-bottom-color:var(--primary);}
+  .tab-btn:hover{color:var(--primary);}
+  main{max-width:860px;margin:0 auto;padding:20px 16px 60px;}
+  .tab-content{display:none;}.tab-content.active{display:block;}
+  .section-card{background:var(--card);border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.07);margin-bottom:20px;overflow:hidden;}
+  .section-header{padding:14px 20px;font-weight:800;font-size:0.95rem;display:flex;align-items:center;gap:8px;}
+  .sh-blue{background:#eff6ff;border-left:4px solid #2563eb;color:#1e40af;}
+  .sh-green{background:#ecfdf5;border-left:4px solid #059669;color:#065f46;}
+  .sh-amber{background:#fffbeb;border-left:4px solid #d97706;color:#92400e;}
+  .sh-purple{background:#f5f3ff;border-left:4px solid #7c3aed;color:#4c1d95;}
+  .sh-red{background:#fef2f2;border-left:4px solid #dc2626;color:#991b1b;}
+  .sh-teal{background:#f0fdfa;border-left:4px solid #0d9488;color:#134e4a;}
+  .sh-indigo{background:#eef2ff;border-left:4px solid #4f46e5;color:#312e81;}
+  .sh-orange{background:#fff7ed;border-left:4px solid #ea580c;color:#7c2d12;}
+  .section-body{padding:18px 20px;}
+  .text-block{font-size:0.92rem;line-height:1.9;margin-bottom:12px;}
+  .key-box{background:#f5f3ff;border:2px solid #c4b5fd;border-radius:8px;padding:14px 16px;margin:12px 0;}
+  .key-box .box-label{font-weight:800;color:#4c1d95;font-size:0.82rem;margin-bottom:6px;}
+  .important-box{background:#fef2f2;border:2px solid #fca5a5;border-radius:8px;padding:14px 16px;margin:12px 0;}
+  .important-box .box-label{font-weight:800;color:var(--danger);font-size:0.82rem;margin-bottom:6px;}
+  .green-box{background:#ecfdf5;border:2px solid #6ee7b7;border-radius:8px;padding:14px 16px;margin:12px 0;}
+  .green-box .box-label{font-weight:800;color:#065f46;font-size:0.82rem;margin-bottom:6px;}
+  .amber-box{background:#fffbeb;border:2px solid #fcd34d;border-radius:8px;padding:14px 16px;margin:12px 0;}
+  .amber-box .box-label{font-weight:800;color:#92400e;font-size:0.82rem;margin-bottom:6px;}
+  .blue-box{background:#eff6ff;border:2px solid #93c5fd;border-radius:8px;padding:14px 16px;margin:12px 0;}
+  .blue-box .box-label{font-weight:800;color:#1e40af;font-size:0.82rem;margin-bottom:6px;}
+  .note-block{background:#f5f3ff;border-left:3px solid #7c3aed;padding:8px 12px;border-radius:0 6px 6px 0;font-size:0.87rem;margin:8px 0;line-height:1.8;}
+  .warn-block{background:#fff7ed;border-left:3px solid #d97706;padding:8px 12px;border-radius:0 6px 6px 0;font-size:0.87rem;margin:8px 0;line-height:1.8;}
+  .chem-table{width:100%;border-collapse:collapse;font-size:0.87rem;margin:12px 0;}
+  .chem-table th{background:#3b0764;color:white;padding:8px 12px;text-align:center;font-weight:700;}
+  .chem-table td{padding:8px 12px;border:1px solid #ddd6fe;text-align:center;line-height:1.7;}
+  .chem-table tr:nth-child(even) td{background:#f5f3ff;}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;}
+  @media(max-width:580px){.two-col{grid-template-columns:1fr;}}
+  .timeline{padding-left:22px;position:relative;margin:14px 0;}
+  .timeline::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:2px;background:linear-gradient(to bottom,#7c3aed,#d97706);}
+  .tl-item{position:relative;margin-bottom:18px;}
+  .tl-item::before{content:'';position:absolute;left:-19px;top:4px;width:11px;height:11px;border-radius:50%;background:white;border:2.5px solid #7c3aed;}
+  .tl-year{font-size:0.75rem;font-weight:800;color:#7c3aed;margin-bottom:2px;}
+  .tl-event{font-size:0.9rem;font-weight:700;margin-bottom:4px;}
+  .tl-detail{font-size:0.82rem;color:var(--muted);line-height:1.7;}
+  /* FILL */
+  .fill-text{font-size:0.92rem;line-height:2.4;}
+  .blank{display:inline-block;min-width:80px;padding:2px 8px;border-radius:4px;border-bottom:2px solid var(--blank-border);background:var(--yellow-hint);color:#92400e;font-weight:700;text-align:center;transition:all 0.3s;cursor:default;}
+  .blank.hidden{color:transparent;background:#e5e7eb;border-bottom-color:#9ca3af;}
+  .blank.revealed{background:#dcfce7;color:#166534;border-bottom-color:#059669;}
+  .btn{padding:7px 16px;border-radius:6px;border:none;font-weight:700;font-size:0.82rem;cursor:pointer;transition:all 0.18s;font-family:inherit;}
+  .btn-primary{background:#7c3aed;color:white;}.btn-primary:hover{background:#6d28d9;}
+  .btn-amber{background:#d97706;color:white;}.btn-amber:hover{background:#b45309;}
+  .btn-gray{background:#94a3b8;color:white;}.btn-gray:hover{background:#64748b;}
+  .word-bank{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;padding:10px 12px;background:#f1f5f9;border-radius:8px;min-height:38px;}
+  .word-bank.hidden{display:none;}
+  .word-chip{background:white;border:1.5px solid #cbd5e1;border-radius:4px;padding:2px 10px;font-weight:600;cursor:pointer;font-size:0.85rem;}
+  .word-chip:hover{background:#f5f3ff;border-color:#7c3aed;}
+  .progress-bar-wrap{background:#e2e8f0;border-radius:99px;height:7px;margin:8px 0 4px;overflow:hidden;}
+  .progress-bar-fill{height:100%;background:#7c3aed;border-radius:99px;transition:width 0.4s;}
+  .progress-label{font-size:0.78rem;color:var(--muted);}
+  .timer-display{font-size:1.1rem;font-weight:800;color:#7c3aed;font-variant-numeric:tabular-nums;}
+  .timer-row{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+  .score-board{background:linear-gradient(135deg,#3b0764,#7c3aed);color:white;border-radius:10px;padding:14px 18px;margin-top:16px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+  .score-item{text-align:center;}.score-num{font-size:1.6rem;font-weight:900;}.score-sub{font-size:0.72rem;opacity:0.8;}
+  .grade-badge{font-size:2rem;font-weight:900;padding:6px 16px;border-radius:8px;margin-left:auto;}
+  .grade-A{background:#ddd6fe;color:#3b0764;}.grade-B{background:#c4b5fd;color:#3b0764;}.grade-C{background:#94a3b8;color:white;}
+  /* QUIZ */
+  .quiz-card{border:2px solid var(--border);border-radius:10px;padding:16px;margin:12px 0;}
+  .quiz-q{font-weight:700;font-size:0.9rem;margin-bottom:12px;line-height:1.7;}
+  .quiz-opts{display:flex;flex-direction:column;gap:8px;}
+  .quiz-opt{padding:9px 14px;border:2px solid var(--border);border-radius:7px;cursor:pointer;font-size:0.87rem;transition:all 0.15s;background:white;font-family:inherit;text-align:left;}
+  .quiz-opt:hover{border-color:#7c3aed;background:#f5f3ff;}
+  .quiz-opt.correct{background:#dcfce7;border-color:#059669;color:#166534;font-weight:700;}
+  .quiz-opt.wrong{background:#fef2f2;border-color:#dc2626;color:#dc2626;}
+  .quiz-feedback{margin-top:10px;padding:8px 12px;border-radius:6px;font-size:0.85rem;display:none;font-weight:600;line-height:1.8;}
+  .quiz-feedback.show{display:block;}.quiz-feedback.ok{background:#dcfce7;color:#166534;}.quiz-feedback.ng{background:#fef2f2;color:#dc2626;}
+  /* フラッシュカード */
+  .fc-wrap{perspective:900px;margin:10px 0;}
+  .fc-inner{position:relative;min-height:110px;transform-style:preserve-3d;transition:transform 0.4s ease;cursor:pointer;}
+  .fc-inner.flipped{transform:rotateY(180deg);}
+  .fc-face{position:absolute;inset:0;backface-visibility:hidden;background:white;border:2px solid var(--border);border-radius:10px;padding:16px 18px 36px;min-height:110px;}
+  .fc-back-face{transform:rotateY(180deg);background:#f5f3ff;border-color:#c4b5fd;}
+  .fc-tag{font-size:0.75rem;color:var(--muted);margin-bottom:6px;}
+  .fc-q{font-size:0.95rem;font-weight:700;line-height:1.6;}
+  .fc-a{font-size:0.88rem;color:#3b0764;line-height:1.8;}
+  .fc-hint{position:absolute;bottom:10px;right:14px;font-size:0.72rem;color:var(--muted);}
+  .fc-nav{display:flex;align-items:center;gap:8px;margin-top:8px;}
+  .fc-nav-btn{background:white;border:1.5px solid var(--border);border-radius:6px;padding:5px 12px;font-size:0.82rem;cursor:pointer;font-family:inherit;}
+  .fc-nav-btn:hover{background:#f5f3ff;}
+  .fc-counter{flex:1;text-align:center;font-size:0.8rem;color:var(--muted);}
+  .fc-progress{height:5px;background:#e2e8f0;border-radius:99px;margin-top:6px;overflow:hidden;}
+  .fc-bar{height:100%;background:#7c3aed;border-radius:99px;transition:width 0.3s;}
+  .fc-speed-row{display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap;}
+  .fc-speed-lbl{font-size:0.78rem;color:var(--muted);}
+  .fc-speed-btn{background:white;border:1.5px solid var(--border);border-radius:6px;padding:4px 10px;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:inherit;color:var(--muted);}
+  .fc-speed-btn.active{background:#f5f3ff;border-color:#7c3aed;color:#3b0764;}
+  .fc-play-btn{background:#7c3aed;color:white;border:none;border-radius:6px;padding:4px 14px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:inherit;}
+  .fc-play-btn.stop{background:#dc2626;}
+  .confetti-piece{position:fixed;width:10px;height:10px;border-radius:2px;animation:confettiFall 1.5s ease-out forwards;pointer-events:none;z-index:9999;}
+  @keyframes confettiFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(80vh) rotate(720deg);opacity:0}}
+  .chapter-nav{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;}
+  .ch-nav-btn{padding:8px 18px;border-radius:8px;border:2px solid #7c3aed;background:white;color:#3b0764;font-weight:700;font-size:0.82rem;cursor:pointer;font-family:inherit;transition:all .2s;}
+  .ch-nav-btn:hover{background:#f5f3ff;}
+  .ch-nav-btn.primary{background:#7c3aed;color:white;}
+  .ch-nav-btn.primary:hover{background:#6d28d9;}
+  /* 神話マップ */
+  .myth-map{background:#1e1b4b;border-radius:12px;padding:16px;margin:12px 0;overflow-x:auto;}
+  .myth-stage{display:inline-flex;flex-direction:column;align-items:center;margin:0 8px;}
+  .myth-stage-title{color:#a5b4fc;font-size:0.72rem;font-weight:800;margin-bottom:6px;text-align:center;}
+  .myth-stage-box{background:#312e81;border:1.5px solid #4f46e5;border-radius:8px;padding:8px 12px;min-width:90px;text-align:center;}
+  .myth-stage-box span{color:#e0e7ff;font-size:0.78rem;line-height:1.8;display:block;}
+.kesera-back{display:block;text-align:center;padding:12px 16px;background:#fff1f5;border-bottom:2px solid #f3b6c8}.kesera-back a{display:inline-block;min-height:48px;line-height:48px;padding:0 24px;border-radius:999px;background:#b3345f;color:#fff;font-size:1.05rem;font-weight:700;text-decoration:none;font-family:inherit}.kesera-back a:focus-visible{outline:3px solid #333;outline-offset:3px}
+</style>
+</head>
+<body>
+<div class="kesera-back"><a href="https://realizefield.github.io/kesera/">🌸 ケセラにもどる</a></div>
+
+<header>
+  <div class="header-top">
+    <div class="logo">GAMBA</div>
+    <div class="header-sub">江原予備校 古典への道</div>
+  </div>
+  <div class="chapter-title-bar">
+    <span class="chapter-badge">第1章</span>
+    <span class="chapter-title-text">古事記・日本書紀とは何か ／ 日本最古の歴史書</span>
+  </div>
+</header>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="showTab('learn',event)">📖 学習</button>
+  <button class="tab-btn" onclick="showTab('myth',event)">🌏 神話マップ</button>
+  <button class="tab-btn" onclick="showTab('fill',event)">✏️ 穴埋め</button>
+  <button class="tab-btn" onclick="showTab('quiz',event)">📜 確認テスト</button>
+  <button class="tab-btn" onclick="showTab('flash',event)">🃏 フラッシュカード</button>
+</div>
+
+<main>
+
+<!-- ========== LEARN ========== -->
+<div id="tab-learn" class="tab-content active">
+
+  <!-- 導入 -->
+  <div class="section-card">
+    <div class="section-header sh-purple">📖 この章で学ぶこと</div>
+    <div class="section-body">
+      <div class="text-block">日本には、1300年以上前に書かれた「国の始まり」を記した書物が2冊あります。それが<strong>古事記</strong>と<strong>日本書紀</strong>です。この2冊を合わせて「記紀（きき）」と呼びます。</div>
+      <div style="background:linear-gradient(135deg,#3b0764,#7c3aed);border-radius:10px;padding:14px 18px;color:white;">
+        <div style="font-weight:800;font-size:0.95rem;margin-bottom:10px;text-align:center;">❓ 根本的な問い</div>
+        <div style="font-size:0.92rem;line-height:2.1;text-align:center;">
+          「日本という国はどのようにして生まれたのか？」<br>
+          <span style="font-size:0.85rem;opacity:0.9;">神々が世界を作り、天皇家が国を治めるまでの物語。<br>これが古事記・日本書紀に書かれていることです。</span>
+        </div>
+      </div>
+      <div style="background:linear-gradient(135deg,#3b0764,#7c3aed);border-radius:10px;padding:14px 18px;color:white;margin-top:12px;">
+        <div style="font-weight:800;font-size:0.88rem;margin-bottom:8px;">💡 第1章で学ぶこと</div>
+        <div style="font-size:0.88rem;line-height:2.1;">
+          📗 古事記とは何か——712年に成立した日本最古の歴史書<br>
+          📘 日本書紀とは何か——720年に成立した日本初の正史<br>
+          ⚖️ 二書の違い——文体・目的・内容<br>
+          🗾 主な神話の流れ——国生みから建国まで<br>
+          👑 なぜ今も大切にされるのか
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1. 古事記 -->
+  <div class="section-card">
+    <div class="section-header sh-purple">📗 1. 古事記——日本最古の歴史書</div>
+    <div class="section-body">
+      <div style="background:#f5f3ff;border:2px solid #c4b5fd;border-radius:10px;padding:14px 18px;margin-bottom:14px;">
+        <div style="font-weight:800;color:#3b0764;font-size:0.88rem;margin-bottom:8px;">📗 古事記（こじき）の基本情報</div>
+        <div class="two-col">
+          <div style="font-size:0.85rem;line-height:1.9;color:#1e293b;">
+            <strong>成立：</strong> 712年（和銅5年）<br>
+            <strong>編纂者：</strong> 太安万侶（おおのやすまろ）<br>
+            <strong>伝承者：</strong> 稗田阿礼（ひえだのあれ）<br>
+            <strong>巻数：</strong> 全3巻
+          </div>
+          <div style="font-size:0.85rem;line-height:1.9;color:#1e293b;">
+            <strong>内容：</strong> 神代〜推古天皇まで<br>
+            <strong>文体：</strong> 和漢混交文（変体漢文）<br>
+            <strong>目的：</strong> 国内向け・正統性の確立<br>
+            <strong>性格：</strong> 文学的・神話的
+          </div>
+        </div>
+      </div>
+
+      <div class="text-block">天武天皇（てんむてんのう）の命令で、<strong>稗田阿礼が暗記していた帝紀・旧辞を、太安万侶が文字に書き記した</strong>のが古事記です。天武天皇が崩御したため中断しましたが、元明天皇の命を受けて712年に完成しました。</div>
+
+      <div class="key-box">
+        <div class="box-label">🔑 古事記の特徴——なぜ「最古」なのか</div>
+        <div style="font-size:0.88rem;line-height:2.2;">
+          ①「最古」とは現存する歴史書の中で最も古いという意味です。<br>
+          ②漢字の音を借りて日本語を表記する<strong>「万葉仮名（まんようがな）」</strong>的な表記が使われています。<br>
+          ③神話・伝説・和歌が豊富で、<strong>文学書としての価値</strong>も非常に高い書物です。<br>
+          ④国内向けに書かれたため、<strong>日本語の音やリズムが大切にされています</strong>。
+        </div>
+      </div>
+
+      <div style="background:#1e293b;border-radius:10px;padding:16px 20px;margin:12px 0;">
+        <div style="font-size:0.75rem;color:#94a3b8;margin-bottom:8px;font-weight:700;">📖 古事記の構成（3巻）</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="background:#312e81;border-radius:6px;padding:8px 12px;font-size:0.83rem;line-height:1.8;">
+            <span style="color:#a5b4fc;font-weight:800;">上巻（かみつまき）：</span>
+            <span style="color:#e0e7ff;">神代（かみよ）の物語。国生み・アマテラス・スサノオ・オオクニヌシ・天孫降臨など</span>
+          </div>
+          <div style="background:#1e3a8a;border-radius:6px;padding:8px 12px;font-size:0.83rem;line-height:1.8;">
+            <span style="color:#93c5fd;font-weight:800;">中巻（なかつまき）：</span>
+            <span style="color:#e0e7ff;">初代・神武天皇から第15代・応神天皇まで。建国の物語</span>
+          </div>
+          <div style="background:#14532d;border-radius:6px;padding:8px 12px;font-size:0.83rem;line-height:1.8;">
+            <span style="color:#86efac;font-weight:800;">下巻（しもつまき）：</span>
+            <span style="color:#e0e7ff;">第16代・仁徳天皇から第33代・推古天皇まで</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. 日本書紀 -->
+  <div class="section-card">
+    <div class="section-header sh-blue">📘 2. 日本書紀——日本初の正史（せいし）</div>
+    <div class="section-body">
+      <div style="background:#eff6ff;border:2px solid #93c5fd;border-radius:10px;padding:14px 18px;margin-bottom:14px;">
+        <div style="font-weight:800;color:#1e40af;font-size:0.88rem;margin-bottom:8px;">📘 日本書紀（にほんしょき）の基本情報</div>
+        <div class="two-col">
+          <div style="font-size:0.85rem;line-height:1.9;color:#1e293b;">
+            <strong>成立：</strong> 720年（養老4年）<br>
+            <strong>編纂者：</strong> 舎人親王（とねりしんのう）ら<br>
+            <strong>巻数：</strong> 全30巻＋系譜1巻<br>
+            <strong>文体：</strong> 純粋な漢文
+          </div>
+          <div style="font-size:0.85rem;line-height:1.9;color:#1e293b;">
+            <strong>内容：</strong> 神代〜持統天皇まで<br>
+            <strong>目的：</strong> 対外向け（中国・朝鮮への示威）<br>
+            <strong>性格：</strong> 歴史的・客観的<br>
+            <strong>正史：</strong> 六国史（りっこくし）の第一
+          </div>
+        </div>
+      </div>
+
+      <div class="text-block">日本書紀は当時の国際標準語であった<strong>漢文（中国語の書き方）</strong>で書かれた、日本初の国家公式の歴史書（＝正史）です。中国の歴史書の様式を模範とし、複数の異説を注として併記する<strong>学術的・客観的</strong>なスタイルが特徴です。</div>
+
+      <div class="blue-box">
+        <div class="box-label">💡「正史（せいし）」とは？</div>
+        <div style="font-size:0.88rem;line-height:2;">
+          国家が公式に認めた歴史書のことです。日本書紀はその第一とされ、その後も続日本紀・日本後紀など合わせて「<strong>六国史（りっこくし）</strong>」と呼ばれる6冊の正史が編纂されました。
+        </div>
+      </div>
+
+      <div class="warn-block">⚠️ 「日本書記」と書くのは誤りです。正しくは「<strong>日本書<span style="color:#dc2626;">紀</span></strong>」（紀＝歴史の記録の意）です。試験でよく間違えるので注意！</div>
+    </div>
+  </div>
+
+  <!-- 3. 二書の比較 -->
+  <div class="section-card">
+    <div class="section-header sh-amber">⚖️ 3. 古事記と日本書紀の比較</div>
+    <div class="section-body">
+      <div class="text-block">二書は約8年の差で成立しており、内容が重なる部分も多いですが、<strong>目的・文体・性格が大きく異なります</strong>。</div>
+
+      <table class="chem-table">
+        <thead>
+          <tr><th>比較項目</th><th>📗 古事記</th><th>📘 日本書紀</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>成立年</strong></td><td>712年（和銅5年）</td><td>720年（養老4年）</td></tr>
+          <tr><td><strong>編纂者</strong></td><td>太安万侶（筆録）</td><td>舎人親王 ら</td></tr>
+          <tr><td><strong>文体</strong></td><td>和漢混交文</td><td>純粋な漢文</td></tr>
+          <tr><td><strong>巻数</strong></td><td>3巻</td><td>30巻＋系譜1巻</td></tr>
+          <tr><td><strong>終わり</strong></td><td>推古天皇</td><td>持統天皇</td></tr>
+          <tr><td><strong>目的</strong></td><td>国内向け</td><td>対外向け（正史）</td></tr>
+          <tr><td><strong>性格</strong></td><td>文学的・神話的</td><td>歴史的・客観的</td></tr>
+          <tr><td><strong>異説の扱い</strong></td><td>採用した説のみ</td><td>複数の異説を併記</td></tr>
+        </tbody>
+      </table>
+
+      <div class="key-box">
+        <div class="box-label">🔑 試験で使える覚え方</div>
+        <div style="font-size:0.88rem;line-height:2.2;">
+          <strong>古事記</strong>＝「<span style="color:#7c3aed;font-weight:800;">古</span>くから伝わる物語」→ 国内向け・文学的・日本語的<br>
+          <strong>日本書紀</strong>＝「<span style="color:#2563eb;font-weight:800;">紀</span>念碑的な正史」→ 対外向け・歴史的・漢文
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3.5 紀伝体 -->
+  <div class="section-card">
+    <div class="section-header sh-teal">📚 3-補. 紀伝体（きでんたい）とは——歴史書の「書き方」</div>
+    <div class="section-body">
+      <div class="text-block">日本書紀は中国の正史を手本に書かれました。その手本となった歴史書の「書き方（叙述形式）」が<strong>紀伝体</strong>です。大学入試・センター試験でも頻出の重要用語です。</div>
+
+      <div style="background:linear-gradient(135deg,#134e4a,#0d9488);border-radius:10px;padding:14px 18px;color:white;margin-bottom:14px;">
+        <div style="font-weight:800;font-size:0.95rem;margin-bottom:8px;text-align:center;">📖 紀伝体とは</div>
+        <div style="font-size:0.92rem;line-height:2.1;text-align:center;">
+          「<strong style="color:#99f6e4;">本紀（ほんぎ）</strong>」と「<strong style="color:#99f6e4;">列伝（れつでん）</strong>」を中心に構成された歴史書の形式。<br>
+          <span style="font-size:0.85rem;opacity:0.9;">年月日順ではなく、<strong style="color:#ccfbf1;">人物を主役にして歴史を記録する</strong>スタイル。</span>
+        </div>
+      </div>
+
+      <div style="font-size:0.88rem;font-weight:800;color:#134e4a;margin-bottom:8px;">📋 紀伝体の4つの構成要素</div>
+      <table class="chem-table">
+        <thead>
+          <tr><th>名称</th><th>読み</th><th>内容</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>本紀</strong></td><td>ほんぎ</td>
+            <td style="text-align:left;">皇帝・王の年代記。即位から崩御までの事跡を時系列で記す。「紀伝体」の「紀」はここから。</td>
+          </tr>
+          <tr>
+            <td><strong>列伝</strong></td><td>れつでん</td>
+            <td style="text-align:left;">重要人物（臣下・将軍・外国人など）の個人伝記。「紀伝体」の「伝」はここから。</td>
+          </tr>
+          <tr>
+            <td><strong>志・書</strong></td><td>し</td>
+            <td style="text-align:left;">制度・地理・天文・経済など、テーマ別の解説。</td>
+          </tr>
+          <tr>
+            <td><strong>表</strong></td><td>ひょう</td>
+            <td style="text-align:left;">年表・系譜・官職一覧などの一覧表。</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="green-box">
+        <div class="box-label">🌟 紀伝体の生みの親——司馬遷（しばせん）と『史記』</div>
+        <div style="font-size:0.88rem;line-height:2.1;">
+          中国・前漢時代の歴史家<strong>司馬遷</strong>が著した『<strong>史記（しき）</strong>』（紀元前91年頃）が紀伝体の原点です。<br>
+          本紀12篇・列伝70篇など全130篇からなり、伝説の黄帝から前漢の武帝までを記録。<br>
+          その後の中国の正史（二十四史）はすべてこの形式に倣いました。<br>
+          <strong>日本書紀もこの形式を手本</strong>として編纂されています。
+        </div>
+      </div>
+
+      <!-- 3形式の比較 -->
+      <div style="font-size:0.88rem;font-weight:800;color:#134e4a;margin:14px 0 8px;">⚖️ 歴史書の3つの叙述形式——比較</div>
+      <table class="chem-table">
+        <thead>
+          <tr><th>形式</th><th>特徴</th><th>視点</th><th>代表例</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>紀伝体</strong></td>
+            <td style="text-align:left;">人物中心・テーマ別に構成</td>
+            <td>人物</td>
+            <td>史記・日本書紀</td>
+          </tr>
+          <tr>
+            <td><strong>編年体</strong><br><span style="font-size:0.78rem;color:#64748b;">へんねんたい</span></td>
+            <td style="text-align:left;">年月日順に出来事を記述</td>
+            <td>時間</td>
+            <td>春秋・続日本紀</td>
+          </tr>
+          <tr>
+            <td><strong>紀事本末体</strong><br><span style="font-size:0.78rem;color:#64748b;">きじほんまつたい</span></td>
+            <td style="text-align:left;">事件・テーマごとに始終をまとめて記述</td>
+            <td>事件</td>
+            <td>通鑑紀事本末</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top:14px;">
+        <button onclick="toggleDeep('kiden')" id="kidenBtn" style="width:100%;padding:12px 16px;background:linear-gradient(135deg,#134e4a,#0d9488);color:white;border:none;border-radius:10px;font-weight:800;font-size:0.88rem;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:space-between;">
+          <span>🔬 深掘り：編年体と紀伝体——どちらが「わかりやすい」か？</span>
+          <span id="kidenArrow" style="font-size:1.1rem;transition:transform 0.3s;">▼</span>
+        </button>
+        <div id="kidenBody" style="display:none;background:#f0fdfa;border:2px solid #99f6e4;border-radius:0 0 10px 10px;padding:18px 20px;font-size:0.88rem;line-height:2;">
+          <div style="font-weight:800;color:#134e4a;margin-bottom:12px;">それぞれにメリット・デメリットがある</div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
+            <div style="background:white;border-radius:8px;padding:10px 14px;border-left:3px solid #0d9488;">
+              <div style="font-weight:800;font-size:0.85rem;margin-bottom:4px;">📅 編年体のメリット・デメリット</div>
+              <div style="font-size:0.83rem;line-height:1.8;">
+                ✅ 「いつ何が起きたか」が一目でわかる。同時代の出来事を比較しやすい。<br>
+                ❌ ある人物の生涯全体を追おうとすると、記述があちこちに散らばってしまう。
+              </div>
+            </div>
+            <div style="background:white;border-radius:8px;padding:10px 14px;border-left:3px solid #7c3aed;">
+              <div style="font-weight:800;font-size:0.85rem;margin-bottom:4px;">👤 紀伝体のメリット・デメリット</div>
+              <div style="font-size:0.83rem;line-height:1.8;">
+                ✅ 「この人がどんな人生を送ったか」が一まとめに読める。人物伝として読みやすい。<br>
+                ❌ 同時期に起きた複数の出来事を時系列で追いにくい。同じ出来事が複数箇所に出てくることも。
+              </div>
+            </div>
+          </div>
+          <div style="background:linear-gradient(135deg,#134e4a,#0d9488);color:white;border-radius:8px;padding:12px 14px;font-size:0.83rem;line-height:1.9;">
+            🔑 日本書紀が紀伝体を採用したのは「中国の正史と同じ形式で書くことで、日本が文明的な国家であることを示す」という政治的な意図もありました。形式そのものが「外交メッセージ」だったのです。
+          </div>
+        </div>
+      </div>
+
+      <div class="key-box" style="margin-top:14px;">
+        <div class="box-label">🔑 試験ポイントまとめ</div>
+        <div style="font-size:0.88rem;line-height:2.3;">
+          ① 紀伝体＝<strong>「本紀」＋「列伝」</strong>が中心の歴史書形式<br>
+          ② 生みの親は中国の<strong>司馬遷『史記』</strong>（前漢時代）<br>
+          ③ <strong>日本書紀</strong>はこの紀伝体の形式を採用した日本初の正史<br>
+          ④ 対比：<strong>編年体</strong>＝年月日順（続日本紀など）、<strong>紀伝体</strong>＝人物中心（史記・日本書紀）
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. 主な神話 -->
+  <div class="section-card">
+    <div class="section-header sh-orange">🌏 4. 主な神話の流れ</div>
+    <div class="section-body">
+      <div class="text-block">古事記・日本書紀に共通して登場する主な神話を順番に見ていきましょう。</div>
+
+      <div class="timeline">
+        <div class="tl-item">
+          <p class="tl-year">①　天地開闢（てんちかいびゃく）</p>
+          <p class="tl-event">世界の始まり——混沌から神が生まれる</p>
+          <p class="tl-detail">はじめ世界は混沌としており、そこから神々（造化三神など）が次々と生まれた。天と地が分かれ、世界が形作られていく。</p>
+        </div>
+        <div class="tl-item">
+          <p class="tl-year">②　国生み（くにうみ）</p>
+          <p class="tl-event">イザナギ・イザナミが日本列島を生む</p>
+          <p class="tl-detail">天つ神の命を受けたイザナギ（男神）とイザナミ（女神）が、天の沼矛（あめのぬぼこ）で海をかき混ぜ、淡路島をはじめとする日本の島々を次々と生み出した。</p>
+        </div>
+        <div class="tl-item">
+          <p class="tl-year">③　黄泉の国（よみのくに）</p>
+          <p class="tl-event">イザナミの死とイザナギの黄泉下り</p>
+          <p class="tl-detail">イザナミが火の神を産んで死亡。イザナギが黄泉の国（死者の国）に会いに行くが、腐敗したイザナミの姿を見て逃げ帰る。禊（みそぎ）を行い、アマテラス・ツクヨミ・スサノオが生まれた。</p>
+        </div>
+        <div class="tl-item">
+          <p class="tl-year">④　天の岩戸（あまのいわと）</p>
+          <p class="tl-event">アマテラスが岩戸に隠れ、世界が暗闇に</p>
+          <p class="tl-detail">スサノオの乱暴な行動に怒ったアマテラス（太陽神）が天の岩戸に隠れ、世界が暗闇に。八百万の神々が知恵を出し合い、踊りや笑い声でアマテラスを岩戸から呼び出すことに成功した。</p>
+        </div>
+        <div class="tl-item">
+          <p class="tl-year">⑤　出雲神話（いずもしんわ）</p>
+          <p class="tl-event">スサノオとオオクニヌシによる国造り</p>
+          <p class="tl-detail">スサノオが出雲に降り、八岐大蛇（ヤマタノオロチ）を退治し、クシナダヒメを救う。その子孫オオクニヌシが国造りを進め、豊かな「葦原中国（あしはらのなかつくに）」を完成させる。</p>
+        </div>
+        <div class="tl-item">
+          <p class="tl-year">⑥　国譲り（くにゆずり）</p>
+          <p class="tl-event">オオクニヌシが天津神に国を譲る</p>
+          <p class="tl-detail">天照大神は地上（葦原中国）をアマテラスの子孫が治めるべきだと考え、使者を派遣。オオクニヌシは話し合いの末、地上の支配権を天津神に譲る。見返りとして出雲大社が建てられた。</p>
+        </div>
+        <div class="tl-item">
+          <p class="tl-year">⑦　天孫降臨（てんそんこうりん）</p>
+          <p class="tl-event">ニニギノミコトが地上に降り立つ</p>
+          <p class="tl-detail">アマテラスの孫・ニニギノミコトが三種の神器（鏡・剣・玉）を授かり、高千穂（宮崎県）に降り立つ。天皇家はこのニニギノミコトの子孫とされる。</p>
+        </div>
+        <div class="tl-item">
+          <p class="tl-year">⑧　神武東征（じんむとうせい）</p>
+          <p class="tl-event">初代・神武天皇による建国</p>
+          <p class="tl-detail">ニニギの子孫・神倭伊波礼毘古命（カムヤマトイワレビコ）が九州から東に進み、大和（奈良）で初代天皇・神武天皇として即位。日本国家の始まりとされる。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. 深掘り：なぜ作られたか -->
+  <div class="section-card">
+    <div class="section-header sh-red">👑 5. なぜ記紀は作られたのか——政治的背景</div>
+    <div class="section-body">
+      <div class="text-block">古事記・日本書紀が作られた7〜8世紀は、天皇を中心とした律令国家（りつりょうこっか）を作ろうとしていた時代です。</div>
+
+      <div style="background:#1e293b;border-radius:12px;padding:16px 20px;margin:12px 0;">
+        <div style="color:#fbbf24;font-size:0.88rem;font-weight:800;margin-bottom:12px;">👑 記紀が作られた3つの理由</div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:0.83rem;line-height:1.9;">
+          <div style="background:#334155;border-radius:6px;padding:10px 12px;">
+            <span style="color:#a5b4fc;font-weight:800;">① 天皇家の正統性を示す：</span>
+            <span style="color:#e2e8f0;">「天皇はアマテラスの子孫である」という神話を記録し、天皇が日本を治める正当な理由を示した。</span>
+          </div>
+          <div style="background:#334155;border-radius:6px;padding:10px 12px;">
+            <span style="color:#86efac;font-weight:800;">② 歴史の統一：</span>
+            <span style="color:#e2e8f0;">各地に伝わっていたバラバラな神話・伝承を一つにまとめ、「日本という国の共通の歴史」を作り上げた。</span>
+          </div>
+          <div style="background:#7f1d1d;border-radius:6px;padding:10px 12px;border:1px solid #fca5a5;">
+            <span style="color:#fca5a5;font-weight:700;">③ 国際的な威信：</span>
+            <span style="color:#fef2f2;">漢文で書かれた日本書紀は「中国と対等な文明国」であることを内外に示す外交的な意味もあった。</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;">
+        <button onclick="toggleDeep('seiji')" id="seijiBtn" style="width:100%;padding:12px 16px;background:linear-gradient(135deg,#991b1b,#dc2626);color:white;border:none;border-radius:10px;font-weight:800;font-size:0.88rem;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:space-between;">
+          <span>🔬 深掘り：壬申の乱と古事記の誕生の関係</span>
+          <span id="seijiArrow" style="font-size:1.1rem;transition:transform 0.3s;">▼</span>
+        </button>
+        <div id="seijiBody" style="display:none;background:#fef2f2;border:2px solid #fca5a5;border-radius:0 0 10px 10px;padding:18px 20px;font-size:0.88rem;line-height:2;">
+          <div style="font-weight:800;color:#991b1b;margin-bottom:12px;">壬申の乱（672年）が古事記を生んだ</div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
+            <div style="background:white;border-radius:8px;padding:10px 14px;border-left:3px solid #dc2626;">
+              <div style="font-weight:800;font-size:0.85rem;margin-bottom:4px;">672年：壬申の乱</div>
+              <div style="font-size:0.83rem;line-height:1.8;">天智天皇の子・大友皇子と、弟・大海人皇子（のちの天武天皇）が皇位をめぐって武力で争った。大海人皇子が勝利し天武天皇となった。</div>
+            </div>
+            <div style="background:white;border-radius:8px;padding:10px 14px;border-left:3px solid #7c3aed;">
+              <div style="font-weight:800;font-size:0.85rem;margin-bottom:4px;">天武天皇の課題</div>
+              <div style="font-size:0.83rem;line-height:1.8;">「戦争で帝位についた」というイメージを払拭するため、天皇家の正統性を証明する歴史書の編纂が急務だった。そこで稗田阿礼に帝紀・旧辞を暗記させ、記録させることを命じた。</div>
+            </div>
+            <div style="background:white;border-radius:8px;padding:10px 14px;border-left:3px solid #059669;">
+              <div style="font-weight:800;font-size:0.85rem;margin-bottom:4px;">712年：古事記の完成</div>
+              <div style="font-size:0.83rem;line-height:1.8;">天武天皇の没後、元明天皇の命により太安万侶が完成させた。「神代から続く正統な天皇家の歴史」を文字にすることで、天皇家の絶対的な権威を示した。</div>
+            </div>
+          </div>
+          <div style="background:linear-gradient(135deg,#3b0764,#7c3aed);color:white;border-radius:8px;padding:12px 14px;font-size:0.83rem;line-height:1.9;">
+            🔑 古事記・日本書紀は単なる「神話集」ではなく、7〜8世紀の政治的必要性から生まれた国家プロジェクトの産物でした。これが今も日本の歴史・文化の根幹をなしています。
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. まとめ -->
+  <div class="section-card">
+    <div class="section-header sh-blue">✅ 6. 第1章のまとめ</div>
+    <div class="section-body">
+      <div class="timeline">
+        <div class="tl-item">
+          <p class="tl-year">672年</p>
+          <p class="tl-event">壬申の乱——天武天皇が即位</p>
+          <p class="tl-detail">天皇家の正統性を示す歴史書の編纂が急務となる。稗田阿礼に帝紀・旧辞の暗誦を命ずる。</p>
+        </div>
+        <div class="tl-item">
+          <p class="tl-year">712年</p>
+          <p class="tl-event">古事記の完成——日本最古の歴史書</p>
+          <p class="tl-detail">太安万侶が稗田阿礼の暗誦を筆録。和漢混交文・3巻。神代から推古天皇まで。国内向け・文学的性格。</p>
+        </div>
+        <div class="tl-item">
+          <p class="tl-year">720年</p>
+          <p class="tl-event">日本書紀の完成——日本初の正史</p>
+          <p class="tl-detail">舎人親王らが編纂。純漢文・30巻。神代から持統天皇まで。対外向け・歴史的性格。六国史の第一。</p>
+        </div>
+        <div class="tl-item">
+          <p class="tl-year">まとめ</p>
+          <p class="tl-event">二書を合わせて「記紀（きき）」と呼ぶ</p>
+          <p class="tl-detail">国生み・アマテラス・スサノオ・国譲り・天孫降臨・神武東征など、日本神話の原典。現代の神社・文化・芸術にも大きな影響を与え続けている。</p>
+        </div>
+      </div>
+
+      <div style="background:linear-gradient(135deg,#3b0764,#7c3aed);border-radius:10px;padding:14px 18px;color:white;margin-top:4px;">
+        <div style="font-weight:800;font-size:0.88rem;margin-bottom:8px;">💡 第2章への問い</div>
+        <div style="font-size:0.88rem;line-height:2;">
+          「イザナギとイザナミはどのようにして日本列島を生んだのか？」<br>
+          国生みの神話を詳しく読み解き、そこに込められた意味とは何か。<br>
+          <strong style="color:#ddd6fe;">次章は古事記最大の神話——「国生み・神生み」へ。</strong>
+        </div>
+      </div>
+
+      <div class="chapter-nav">
+        <button class="ch-nav-btn" onclick="alert('はじめの章です')">← 序章に戻る</button>
+        <button class="ch-nav-btn primary" onclick="alert('第2章は準備中です')">第2章へ進む →</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /tab-learn -->
+
+
+<!-- ========== 神話マップ ========== -->
+<div id="tab-myth" class="tab-content">
+  <div class="section-card">
+    <div class="section-header sh-purple">🌏 神話の流れ——ビジュアルマップ</div>
+    <div class="section-body">
+      <div style="font-size:0.85rem;color:var(--muted);margin-bottom:14px;line-height:1.8;">
+        古事記・日本書紀に登場する神話の流れを一覧で確認しましょう。各段階をタップすると詳しい説明が表示されます。
+      </div>
+
+      <div id="mythMap" style="display:flex;flex-direction:column;gap:8px;margin:12px 0;">
+      </div>
+
+      <div id="mythDetail" style="display:none;background:#f5f3ff;border:2px solid #c4b5fd;border-radius:10px;padding:16px;margin-top:12px;">
+        <div id="mythDetailTitle" style="font-weight:800;color:#3b0764;font-size:0.92rem;margin-bottom:8px;"></div>
+        <div id="mythDetailText" style="font-size:0.88rem;line-height:1.9;color:#1e293b;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="section-header sh-amber">🌟 主要な神々の関係図</div>
+    <div class="section-body">
+      <div style="overflow-x:auto;">
+        <svg width="100%" viewBox="0 0 600 320" style="display:block;background:#1e1b4b;border-radius:10px;min-width:520px;">
+          <!-- タイトル -->
+          <text x="300" y="22" text-anchor="middle" font-size="11" fill="#a5b4fc" font-weight="800">主要な神々の系譜（簡略版）</text>
+
+          <!-- イザナギ・イザナミ -->
+          <rect x="220" y="35" width="80" height="30" rx="6" fill="#312e81" stroke="#818cf8"/>
+          <text x="260" y="55" text-anchor="middle" font-size="10" fill="#e0e7ff" font-weight="700">イザナギ</text>
+          <rect x="310" y="35" width="80" height="30" rx="6" fill="#312e81" stroke="#818cf8"/>
+          <text x="350" y="55" text-anchor="middle" font-size="10" fill="#e0e7ff" font-weight="700">イザナミ</text>
+          <line x1="300" y1="65" x2="300" y2="80" stroke="#818cf8" stroke-width="1.5"/>
+          <line x1="300" y1="80" x2="120" y2="80" stroke="#818cf8" stroke-width="1.5"/>
+          <line x1="300" y1="80" x2="480" y2="80" stroke="#818cf8" stroke-width="1.5"/>
+
+          <!-- アマテラス -->
+          <line x1="120" y1="80" x2="120" y2="95" stroke="#fbbf24" stroke-width="2"/>
+          <rect x="60" y="95" width="120" height="32" rx="6" fill="#78350f" stroke="#fbbf24" stroke-width="2"/>
+          <text x="120" y="111" text-anchor="middle" font-size="10" fill="#fef3c7" font-weight="800">☀️ アマテラス</text>
+          <text x="120" y="122" text-anchor="middle" font-size="8" fill="#fcd34d">（天照大神）</text>
+          <text x="120" y="134" text-anchor="middle" font-size="8" fill="#fcd34d">太陽の女神・皇室の祖</text>
+
+          <!-- ツクヨミ -->
+          <line x1="300" y1="80" x2="300" y2="95" stroke="#93c5fd" stroke-width="1.5"/>
+          <rect x="240" y="95" width="120" height="32" rx="6" fill="#1e3a8a" stroke="#93c5fd"/>
+          <text x="300" y="111" text-anchor="middle" font-size="10" fill="#dbeafe" font-weight="700">🌙 ツクヨミ</text>
+          <text x="300" y="122" text-anchor="middle" font-size="8" fill="#93c5fd">（月読命）</text>
+          <text x="300" y="134" text-anchor="middle" font-size="8" fill="#93c5fd">月の神</text>
+
+          <!-- スサノオ -->
+          <line x1="480" y1="80" x2="480" y2="95" stroke="#86efac" stroke-width="1.5"/>
+          <rect x="420" y="95" width="120" height="32" rx="6" fill="#14532d" stroke="#86efac"/>
+          <text x="480" y="111" text-anchor="middle" font-size="10" fill="#dcfce7" font-weight="700">🌊 スサノオ</text>
+          <text x="480" y="122" text-anchor="middle" font-size="8" fill="#86efac">（須佐之男命）</text>
+          <text x="480" y="134" text-anchor="middle" font-size="8" fill="#86efac">海・嵐の神</text>
+
+          <!-- アマテラスの子孫 -->
+          <line x1="120" y1="127" x2="120" y2="150" stroke="#fbbf24" stroke-width="1.5"/>
+          <rect x="50" y="150" width="140" height="28" rx="6" fill="#451a03" stroke="#fbbf24"/>
+          <text x="120" y="169" text-anchor="middle" font-size="9" fill="#fef3c7">孫：ニニギノミコト</text>
+
+          <line x1="120" y1="178" x2="120" y2="195" stroke="#fbbf24" stroke-width="1.5"/>
+          <rect x="50" y="195" width="140" height="28" rx="6" fill="#451a03" stroke="#fbbf24"/>
+          <text x="120" y="214" text-anchor="middle" font-size="9" fill="#fef3c7">（天孫降臨）</text>
+
+          <line x1="120" y1="223" x2="120" y2="240" stroke="#fbbf24" stroke-width="1.5"/>
+          <rect x="30" y="240" width="180" height="32" rx="6" fill="#78350f" stroke="#f59e0b" stroke-width="2"/>
+          <text x="120" y="257" text-anchor="middle" font-size="10" fill="#fef3c7" font-weight="800">👑 神武天皇</text>
+          <text x="120" y="270" text-anchor="middle" font-size="8" fill="#fcd34d">初代天皇（建国の祖）</text>
+
+          <!-- スサノオの子孫 -->
+          <line x1="480" y1="127" x2="480" y2="150" stroke="#86efac" stroke-width="1.5"/>
+          <rect x="400" y="150" width="160" height="28" rx="6" fill="#052e16" stroke="#86efac"/>
+          <text x="480" y="169" text-anchor="middle" font-size="9" fill="#dcfce7">子孫：オオクニヌシ</text>
+
+          <line x1="480" y1="178" x2="480" y2="195" stroke="#86efac" stroke-width="1.5"/>
+          <rect x="400" y="195" width="160" height="28" rx="6" fill="#052e16" stroke="#86efac"/>
+          <text x="480" y="214" text-anchor="middle" font-size="9" fill="#dcfce7">国造り→国譲り</text>
+
+          <line x1="480" y1="223" x2="480" y2="240" stroke="#6ee7b7" stroke-width="1.5"/>
+          <rect x="395" y="240" width="170" height="32" rx="6" fill="#064e3b" stroke="#34d399" stroke-width="2"/>
+          <text x="480" y="257" text-anchor="middle" font-size="10" fill="#dcfce7" font-weight="800">🏛️ 出雲大社</text>
+          <text x="480" y="270" text-anchor="middle" font-size="8" fill="#6ee7b7">（国譲りの見返り）</text>
+
+          <!-- 矢印：国譲り -->
+          <line x1="395" y1="265" x2="215" y2="265" stroke="#f97316" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrMO)"/>
+          <defs>
+            <marker id="arrMO" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+              <path d="M2 1L8 5L2 9" fill="none" stroke="#f97316" stroke-width="1.5"/>
+            </marker>
+          </defs>
+          <text x="305" y="258" text-anchor="middle" font-size="8" fill="#f97316">国譲り</text>
+        </svg>
+      </div>
+      <div style="font-size:0.78rem;color:var(--muted);margin-top:8px;line-height:1.8;">※この図は主要な神々の関係のみを示した簡略版です。実際にはさらに多くの神々が登場します。</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ========== FILL ========== -->
+<div id="tab-fill" class="tab-content">
+  <div class="section-card">
+    <div class="section-header sh-amber">✏️ 穴埋めチャレンジ</div>
+    <div class="section-body">
+      <div class="timer-row">
+        <span class="timer-display" id="timerDisp">00:00</span>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-primary" id="btnStart" onclick="startChallenge()">▶ スタート</button>
+          <button class="btn btn-amber" id="btnHint" onclick="showHint()" style="display:none;">💡 ヒント</button>
+          <button class="btn btn-gray" id="btnReset" onclick="resetChallenge()" style="display:none;">↺ リセット</button>
+        </div>
+      </div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressBar" style="width:0%"></div></div>
+      <div class="progress-label" id="progressLabel">0 / 10 正解</div>
+      <div class="word-bank hidden" id="wordBank"></div>
+
+      <div class="fill-text" id="fillText" style="margin-top:16px;line-height:3.2;">
+        日本最古の歴史書は
+        <span class="blank" data-ans="古事記">古事記</span>
+        であり、<span class="blank" data-ans="712">712</span>年（和銅5年）に成立した。<br><br>
+
+        古事記の編纂者は<span class="blank" data-ans="太安万侶">太安万侶</span>であり、
+        <span class="blank" data-ans="稗田阿礼">稗田阿礼</span>の暗誦を筆録したものである。<br><br>
+
+        一方、日本初の正史（国家公式の歴史書）は
+        <span class="blank" data-ans="日本書紀">日本書紀</span>
+        であり、<span class="blank" data-ans="720">720</span>年に成立した。<br><br>
+
+        日本書紀は<span class="blank" data-ans="舎人親王">舎人親王</span>らが編纂し、
+        純粋な<span class="blank" data-ans="漢文">漢文</span>で書かれている。<br><br>
+
+        この二書を合わせて「<span class="blank" data-ans="記紀">記紀</span>」と呼ぶ。
+        どちらも<span class="blank" data-ans="天皇">天皇</span>家の正統性を示すために作られた。
+      </div>
+
+      <div class="score-board" id="scoreBoard" style="display:none;">
+        <div class="score-item"><div class="score-num" id="scoreCorrect">0</div><div class="score-sub">正解</div></div>
+        <div class="score-item"><div class="score-num" id="scoreMiss">0</div><div class="score-sub">ミス</div></div>
+        <div class="score-item"><div class="score-num" id="scoreTime">0:00</div><div class="score-sub">タイム</div></div>
+        <div class="grade-badge grade-A" id="gradeBadge">A</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ========== QUIZ ========== -->
+<div id="tab-quiz" class="tab-content">
+  <div class="section-card">
+    <div class="section-header sh-blue">📜 確認テスト（全8問）</div>
+    <div class="section-body">
+      <div id="quizContainer"></div>
+      <div style="margin-top:16px;">
+        <button class="btn btn-gray" onclick="resetQuiz()">↺ もう一度</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ========== FLASH CARD ========== -->
+<div id="tab-flash" class="tab-content">
+  <div class="section-card">
+    <div class="section-header sh-indigo">🃏 フラッシュカード（全10枚）</div>
+    <div class="section-body">
+      <div class="fc-speed-row">
+        <span class="fc-speed-lbl">自動めくり：</span>
+        <button class="fc-speed-btn active" id="fcBtn0" onclick="setFcSpeed(0)">手動</button>
+        <button class="fc-speed-btn" id="fcBtn1" onclick="setFcSpeed(1)">1秒</button>
+        <button class="fc-speed-btn" id="fcBtn2" onclick="setFcSpeed(2)">2秒</button>
+        <button class="fc-speed-btn" id="fcBtn3" onclick="setFcSpeed(3)">3秒</button>
+        <button class="fc-play-btn" id="fcPlayBtn" onclick="toggleFcAuto()">▶ 再生</button>
+      </div>
+      <div class="fc-wrap">
+        <div class="fc-inner" id="fcInner" onclick="flipFc()">
+          <div class="fc-face">
+            <p class="fc-tag">問い</p>
+            <p class="fc-q" id="fcQ"></p>
+            <span class="fc-hint">クリックして答えを見る</span>
+          </div>
+          <div class="fc-face fc-back-face">
+            <p class="fc-tag">答え</p>
+            <p class="fc-a" id="fcA"></p>
+            <span class="fc-hint">クリックして問いに戻る</span>
+          </div>
+        </div>
+      </div>
+      <div class="fc-progress"><div class="fc-bar" id="fcBar" style="width:0%"></div></div>
+      <div class="fc-nav">
+        <button class="fc-nav-btn" onclick="fcMove(-1)">← 前へ</button>
+        <span class="fc-counter" id="fcCounter">1 / 10</span>
+        <button class="fc-nav-btn" onclick="fcMove(1)">次へ →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ===== TAB =====
+function showTab(id,e){
+  document.querySelectorAll('.tab-content').forEach(function(t){t.classList.remove('active');});
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('tab-'+id).classList.add('active');
+  e.target.classList.add('active');
+  if(id==='myth') buildMythMap();
+}
+
+// ===== DEEP TOGGLE =====
+function toggleDeep(id){
+  var body=document.getElementById(id+'Body');
+  var arrow=document.getElementById(id+'Arrow');
+  if(!body)return;
+  var open=body.style.display==='block';
+  body.style.display=open?'none':'block';
+  if(arrow)arrow.style.transform=open?'':'rotate(180deg)';
+}
+
+// ===== 神話マップ =====
+var mythData=[
+  {num:'①',emoji:'🌌',title:'天地開闢（てんちかいびゃく）',subtitle:'世界の始まり',color:'#312e81',border:'#818cf8',
+   detail:'混沌とした世界から、最初の神々（造化三神：アメノミナカヌシ・タカミムスビ・カミムスビ）が自然に生まれた。天と地が分かれ、世界が徐々に形作られていく。この三神は姿を現さず、すぐに隠れてしまう謎めいた存在。'},
+  {num:'②',emoji:'🏝️',title:'国生み（くにうみ）',subtitle:'イザナギ・イザナミによる島々の誕生',color:'#1e3a8a',border:'#60a5fa',
+   detail:'天つ神の命を受けたイザナギとイザナミが、天の沼矛で海をかき混ぜ「おのごろ島」を作り降り立った。そこで結婚し、淡路島→四国→隠岐→九州→壱岐→対馬→本州の順に日本の島々を生んだ。'},
+  {num:'③',emoji:'🔥',title:'神生み・黄泉の国',subtitle:'イザナミの死とイザナギの逃走',color:'#7f1d1d',border:'#fca5a5',
+   detail:'イザナミが火の神カグツチを産んで死亡。悲しんだイザナギが黄泉の国（死者の世界）に会いに行くが、腐敗したイザナミの姿を見て逃げ出す。追いかけてくるイザナミと「離婚」し、黄泉比良坂（よもつひらさか）を巨大な岩で塞いだ。'},
+  {num:'④',emoji:'✨',title:'禊（みそぎ）と三貴子',subtitle:'アマテラス・ツクヨミ・スサノオの誕生',color:'#064e3b',border:'#6ee7b7',
+   detail:'黄泉の国の穢れを落とすため禊を行ったイザナギが、左目を洗うとアマテラス（太陽神）、右目を洗うとツクヨミ（月神）、鼻を洗うとスサノオ（嵐の神）が生まれた。この三柱を「三貴子（みはしらのうずのみこ）」と呼ぶ。'},
+  {num:'⑤',emoji:'🪨',title:'天の岩戸（あまのいわと）',subtitle:'世界が暗闇に——アマテラスの岩戸隠れ',color:'#78350f',border:'#fbbf24',
+   detail:'スサノオの乱暴な行動に怒ったアマテラスが天の岩戸に隠れ、世界が暗闇になった。八百万の神々が相談し、アメノウズメが踊り笑い声を上げると、不思議に思ったアマテラスが岩戸を少し開けたところを引き出した。'},
+  {num:'⑥',emoji:'🐉',title:'出雲神話',subtitle:'スサノオのヤマタノオロチ退治',color:'#134e4a',border:'#2dd4bf',
+   detail:'スサノオが高天原を追われ出雲に降りる。そこで八つの頭と尾を持つ大蛇・八岐大蛇（ヤマタノオロチ）が毎年少女を食べていると聞き、酒を飲ませて退治。尾から出てきた「天叢雲剣（あめのむらくものつるぎ）」は三種の神器の一つとなった。'},
+  {num:'⑦',emoji:'🏔️',title:'国造り・国譲り',subtitle:'オオクニヌシの国造りと天への譲渡',color:'#1e3a8a',border:'#818cf8',
+   detail:'スサノオの子孫・オオクニヌシが「葦原中国（あしはらのなかつくに）」を豊かな国に発展させた。しかしアマテラスは地上は自分の子孫が治めるべきと考え使者を送り、話し合いの末オオクニヌシは国を譲ることを決意。見返りとして出雲大社が建てられた。'},
+  {num:'⑧',emoji:'🌅',title:'天孫降臨（てんそんこうりん）',subtitle:'ニニギノミコトが地上へ',color:'#451a03',border:'#f97316',
+   detail:'アマテラスの孫・ニニギノミコトが三種の神器（八咫鏡・草薙剣・八尺瓊勾玉）を授かり、五神に先導されて高千穂（宮崎県）に降り立った。天孫降臨により天皇家は「神の子孫」としての正統性を持つとされる。'},
+];
+
+var selectedMyth=-1;
+function buildMythMap(){
+  var el=document.getElementById('mythMap');
+  el.innerHTML=mythData.map(function(m,i){
+    return '<div onclick="showMythDetail('+i+')" style="background:'+m.color+';border:2px solid '+m.border+';border-radius:10px;padding:12px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .2s;" onmouseover="this.style.opacity=\'0.85\'" onmouseout="this.style.opacity=\'1\'">'
+      +'<span style="font-size:1.4rem;">'+m.emoji+'</span>'
+      +'<div><div style="color:white;font-weight:800;font-size:0.9rem;">'+m.num+' '+m.title+'</div>'
+      +'<div style="color:rgba(255,255,255,0.7);font-size:0.78rem;margin-top:2px;">'+m.subtitle+'</div></div>'
+      +'<span style="margin-left:auto;color:rgba(255,255,255,0.5);font-size:0.8rem;">▶</span>'
+      +'</div>';
+  }).join('');
+}
+
+function showMythDetail(i){
+  var m=mythData[i];
+  var d=document.getElementById('mythDetail');
+  document.getElementById('mythDetailTitle').textContent=m.emoji+' '+m.num+' '+m.title;
+  document.getElementById('mythDetailText').textContent=m.detail;
+  d.style.display='block';
+  d.style.borderColor=m.border;
+  d.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ===== QUIZ =====
+var quizData=[
+  {q:'古事記が成立したのは何年か？',opts:['672年','710年','712年','720年'],ans:2,exp:'古事記は712年（和銅5年）に成立しました。太安万侶が稗田阿礼の暗誦を筆録した、現存する日本最古の歴史書です。'},
+  {q:'古事記を筆録した人物は誰か？',opts:['舎人親王','稗田阿礼','太安万侶','天武天皇'],ans:2,exp:'太安万侶（おおのやすまろ）が筆録者です。稗田阿礼が暗記していた内容を文字に書き記しました。なお「暗誦した人」は稗田阿礼です。'},
+  {q:'日本書紀の文体として正しいものはどれか？',opts:['和漢混交文','純粋な漢文','平仮名まじり文','万葉仮名のみ'],ans:1,exp:'日本書紀は当時の国際標準語であった純粋な漢文で書かれています。一方、古事記は和漢混交文（変体漢文）で書かれています。'},
+  {q:'古事記と日本書紀を合わせた呼び方は何か？',opts:['六国史','記紀','三史','正史'],ans:1,exp:'古事記と日本書紀を合わせて「記紀（きき）」と呼びます。六国史は日本書紀から始まる6冊の正史全体の呼び方です。'},
+  {q:'天の岩戸神話でアマテラスが隠れた理由は何か？',opts:['疲れて眠りたかったから','スサノオの乱暴な行動に怒ったから','嵐を呼んで世界を暗くするため','ツクヨミと喧嘩したから'],ans:1,exp:'スサノオが高天原で田畑を荒らしたり神殿を汚したりと乱暴を働いたため、怒ったアマテラスが天の岩戸に隠れました。世界は暗闇となり、八百万の神々が力を合わせて呼び出しました。'},
+  {q:'天孫降臨でニニギノミコトに授けられた「三種の神器」に含まれないものはどれか？',opts:['八咫鏡（やたのかがみ）','天叢雲剣（あめのむらくものつるぎ）','八尺瓊勾玉（やさかにのまがたま）','天の沼矛（あめのぬぼこ）'],ans:3,exp:'天の沼矛は国生みの際にイザナギとイザナミが使った矛です。三種の神器は「八咫鏡・天叢雲剣（草薙剣）・八尺瓊勾玉」の三つです。今日も皇位継承の際に受け継がれています。'},
+  {q:'「紀伝体」とはどのような歴史書の叙述形式か？',opts:['年月日順に出来事を記述する形式','本紀（皇帝の年代記）と列伝（人物伝）を中心に構成する形式','事件ごとに始終をまとめて記述する形式','神話と歴史を混在させて記述する形式'],ans:1,exp:'紀伝体は「本紀（ほんぎ）」と「列伝（れつでん）」を中心に構成する形式で、中国の司馬遷の史記が原点です。日本書紀もこの形式を採用。年月日順は「編年体」、事件順は「紀事本末体」です。'},
+  {q:'紀伝体を生み出した歴史書と著者の正しい組み合わせはどれか？',opts:['春秋—孔子','史記—司馬遷','漢書—班固','資治通鑑—司馬光'],ans:1,exp:'紀伝体の原点は前漢の司馬遷が著した史記（紀元前91年頃）です。本紀・列伝など全130篇からなり、後の中国正史（二十四史）すべての手本となりました。日本書紀もこれを模範にしています。'},
+];
+var quizState=[];
+function buildQuiz(){
+  quizState=quizData.map(function(){return{answered:false};});
+  var c=document.getElementById('quizContainer');
+  c.innerHTML=quizData.map(function(q,qi){
+    return '<div class="quiz-card" id="qc'+qi+'"><div class="quiz-q">Q'+(qi+1)+'. '+q.q+'</div><div class="quiz-opts">'+
+      q.opts.map(function(opt,oi){return '<button class="quiz-opt" onclick="answerQuiz('+qi+','+oi+')">'+opt+'</button>';}).join('')+
+      '</div><div class="quiz-feedback" id="qf'+qi+'"></div></div>';
+  }).join('');
+}
+function answerQuiz(qi,oi){
+  if(quizState[qi].answered)return;
+  quizState[qi].answered=true;
+  var q=quizData[qi];
+  var opts=document.querySelectorAll('#qc'+qi+' .quiz-opt');
+  var fb=document.getElementById('qf'+qi);
+  opts.forEach(function(o){o.disabled=true;});
+  if(oi===q.ans){opts[oi].classList.add('correct');fb.className='quiz-feedback show ok';fb.textContent='✅ 正解！ '+q.exp;launchConfetti(5);}
+  else{opts[oi].classList.add('wrong');opts[q.ans].classList.add('correct');fb.className='quiz-feedback show ng';fb.textContent='❌ 不正解。正解は「'+q.opts[q.ans]+'」。'+q.exp;}
+}
+function resetQuiz(){buildQuiz();}
+
+// ===== FLASH CARD =====
+var fcCards=[
+  {q:'古事記とは何か？成立年・編纂者・特徴を答えよ。',a:'712年（和銅5年）成立。太安万侶が稗田阿礼の暗誦を筆録。現存する日本最古の歴史書。和漢混交文・全3巻。神代〜推古天皇まで。国内向け・文学的性格が強い。'},
+  {q:'日本書紀とは何か？成立年・編纂者・特徴を答えよ。',a:'720年（養老4年）成立。舎人親王らが編纂。日本初の正史（国家公式の歴史書）。純粋な漢文・全30巻。神代〜持統天皇まで。対外向け・歴史的・客観的な性格。六国史の第一。'},
+  {q:'古事記と日本書紀の文体の違いは何か？',a:'古事記＝和漢混交文（変体漢文）。日本語の音を漢字で表す万葉仮名的な表記が使われ、文学的。日本書紀＝純粋な漢文。当時の国際標準語で書かれ、中国の正史に倣った客観的スタイル。'},
+  {q:'国生み神話とはどんな話か？',a:'イザナギ（男神）とイザナミ（女神）が天の沼矛で海をかき混ぜ「おのごろ島」を作った後、淡路島をはじめとする日本の島々を次々と生み出した神話。天つ神の命を受けておこなわれた。'},
+  {q:'天の岩戸神話のあらすじと意味を説明せよ。',a:'スサノオの乱暴に怒ったアマテラスが岩戸に隠れ世界が暗闇に。八百万の神々がアメノウズメの踊りと笑い声でアマテラスを呼び出した。太陽神アマテラスが世界を照らすことの大切さを示す神話。'},
+  {q:'国譲りとはどんな話か？また出雲大社との関係は？',a:'オオクニヌシが豊かに発展させた地上（葦原中国）を、アマテラスの使者と話し合い天津神に譲った神話。見返りとしてオオクニヌシを祀る出雲大社（島根県）が建てられた。国譲りの背景には政治的意味もあるとされる。'},
+  {q:'天孫降臨とは何か？三種の神器とは？',a:'アマテラスの孫・ニニギノミコトが地上（高千穂）に降り立った神話。授けられた「三種の神器」は①八咫鏡（やたのかがみ）②天叢雲剣・草薙剣③八尺瓊勾玉（やさかにのまがたま）。天皇家はニニギの子孫とされる。'},
+  {q:'なぜ古事記・日本書紀は作られたのか？3つ答えよ。',a:'①天皇家の正統性を示すため（アマテラスの子孫という神話の確立）。②各地のバラバラな神話・伝承を統一し「日本の共通の歴史」を作るため。③漢文の日本書紀は中国・朝鮮に対して「文明国・日本」を示す外交的な意味もあった。'},
+  {q:'紀伝体とは何か？名前の由来・原点・代表例を答えよ。',a:'本紀（皇帝の年代記）と列伝（人物伝）を中心に構成する歴史書の叙述形式。名称はこの「紀」と「伝」から。前漢の司馬遷が著した史記（紀元前91年頃）が原点で、中国の正史（二十四史）はすべてこの形式。日本では日本書紀がこれを採用した。'},
+  {q:'編年体・紀伝体・紀事本末体の違いを説明せよ。',a:'編年体＝年月日順に出来事を記述（春秋・続日本紀など）。視点は「時間」。紀伝体＝本紀と列伝を中心に人物中心で構成（史記・日本書紀）。視点は「人物」。紀事本末体＝事件の始終をまとめて記述（通鑑紀事本末）。視点は「事件」。'},
+];
+var fcIdx=0,fcFlipped=false,fcTimer=null,fcSpeed=0;
+function fcRender(){var c=fcCards[fcIdx];document.getElementById('fcQ').textContent=c.q;document.getElementById('fcA').textContent=c.a;document.getElementById('fcInner').className='fc-inner'+(fcFlipped?' flipped':'');document.getElementById('fcCounter').textContent=(fcIdx+1)+' / '+fcCards.length;document.getElementById('fcBar').style.width=Math.round(fcIdx/(fcCards.length-1)*100)+'%';}
+function flipFc(){fcFlipped=!fcFlipped;document.getElementById('fcInner').className='fc-inner'+(fcFlipped?' flipped':'');}
+function fcMove(dir){stopFcAuto();fcFlipped=false;fcIdx=(fcIdx+dir+fcCards.length)%fcCards.length;fcRender();}
+function setFcSpeed(s){fcSpeed=s;stopFcAuto();[0,1,2,3].forEach(function(i){document.getElementById('fcBtn'+i).classList.toggle('active',i===s);});fcRender();}
+function stopFcAuto(){if(fcTimer){clearInterval(fcTimer);fcTimer=null;}document.getElementById('fcPlayBtn').textContent='▶ 再生';document.getElementById('fcPlayBtn').classList.remove('stop');}
+function toggleFcAuto(){if(fcTimer){stopFcAuto();return;}if(fcSpeed===0)return;document.getElementById('fcPlayBtn').textContent='■ 停止';document.getElementById('fcPlayBtn').classList.add('stop');fcTimer=setInterval(function(){fcFlipped=false;fcIdx=(fcIdx+1)%fcCards.length;fcRender();if(fcIdx===0){stopFcAuto();}},fcSpeed*1000);}
+
+// ===== FILL BLANK =====
+var WORDS=['古事記','712','太安万侶','稗田阿礼','日本書紀','720','舎人親王','漢文','記紀','天皇'];
+var timerInterval=null,timerSeconds=0,timerRunning=false,totalBlanks=0,correctCount=0,missCount=0,activeBlank=null;
+function updateTimer(){timerSeconds++;var m=Math.floor(timerSeconds/60).toString().padStart(2,'0');var s=(timerSeconds%60).toString().padStart(2,'0');document.getElementById('timerDisp').textContent=m+':'+s;}
+function startChallenge(){
+  timerSeconds=0;correctCount=0;missCount=0;activeBlank=null;
+  document.getElementById('scoreBoard').style.display='none';
+  document.getElementById('btnStart').style.display='none';
+  document.getElementById('btnHint').style.display='';
+  document.getElementById('btnReset').style.display='';
+  var blanks=document.querySelectorAll('#fillText .blank');
+  totalBlanks=blanks.length;
+  blanks.forEach(function(b){b.classList.remove('revealed');b.classList.add('hidden');b.dataset.done='false';b.style.boxShadow='';b.style.cursor='pointer';b.onclick=function(){selectBlank(b);};});
+  var allW=WORDS.slice().sort(function(){return Math.random()-0.5;});
+  var wb=document.getElementById('wordBank');wb.innerHTML='';wb.classList.remove('hidden');
+  allW.forEach(function(w){var chip=document.createElement('span');chip.className='word-chip';chip.textContent=w;chip.onclick=function(){fillWithWord(w,chip);};wb.appendChild(chip);});
+  updateProgress();
+  if(timerInterval)clearInterval(timerInterval);
+  timerRunning=true;
+  timerInterval=setInterval(function(){if(timerRunning)updateTimer();},1000);
+}
+function selectBlank(b){if(b.dataset.done==='true')return;document.querySelectorAll('#fillText .blank').forEach(function(el){if(el.dataset.done!=='true')el.style.boxShadow='';});activeBlank=b;b.style.boxShadow='0 0 0 3px #7c3aed';}
+function fillWithWord(word,chip){
+  if(!activeBlank){var bl=document.querySelectorAll('#fillText .blank');for(var i=0;i<bl.length;i++){if(bl[i].dataset.done!=='true'){activeBlank=bl[i];break;}}}
+  if(!activeBlank)return;
+  if(word===activeBlank.dataset.ans){activeBlank.textContent=word;activeBlank.classList.remove('hidden');activeBlank.classList.add('revealed');activeBlank.dataset.done='true';activeBlank.style.boxShadow='';activeBlank.onclick=null;activeBlank.style.cursor='default';correctCount++;chip.style.opacity='0.35';chip.style.pointerEvents='none';launchConfetti(3);activeBlank=null;}
+  else{missCount++;var prev=activeBlank;prev.style.boxShadow='0 0 0 3px #dc2626';setTimeout(function(){if(prev.dataset.done!=='true')prev.style.boxShadow='0 0 0 3px #7c3aed';},600);}
+  updateProgress();
+  if(correctCount===totalBlanks)finishChallenge();
+}
+function updateProgress(){var pct=totalBlanks>0?Math.round(correctCount/totalBlanks*100):0;document.getElementById('progressBar').style.width=pct+'%';document.getElementById('progressLabel').textContent=correctCount+' / '+totalBlanks+' 正解';}
+function showHint(){timerRunning=false;document.querySelectorAll('#fillText .blank').forEach(function(b){b.textContent=b.dataset.ans;b.classList.remove('hidden');b.classList.add('revealed');});}
+function resetChallenge(){clearInterval(timerInterval);timerRunning=false;timerSeconds=0;activeBlank=null;document.getElementById('timerDisp').textContent='00:00';document.getElementById('progressBar').style.width='0%';document.getElementById('progressLabel').textContent='0 / 10 正解';document.getElementById('btnStart').style.display='';document.getElementById('btnHint').style.display='none';document.getElementById('btnReset').style.display='none';document.getElementById('wordBank').classList.add('hidden');document.getElementById('scoreBoard').style.display='none';document.querySelectorAll('#fillText .blank').forEach(function(b){b.textContent=b.dataset.ans;b.classList.remove('hidden','revealed');b.style.boxShadow='';b.style.cursor='default';b.onclick=null;b.dataset.done='false';});}
+function finishChallenge(){timerRunning=false;clearInterval(timerInterval);document.getElementById('wordBank').classList.add('hidden');var m=Math.floor(timerSeconds/60);var s=timerSeconds%60;document.getElementById('scoreCorrect').textContent=correctCount;document.getElementById('scoreMiss').textContent=missCount;document.getElementById('scoreTime').textContent=m+':'+s.toString().padStart(2,'0');var acc=correctCount/Math.max(1,correctCount+missCount);var grade,gc;if(acc>=0.9&&timerSeconds<120){grade='A';gc='grade-A';launchConfetti(30);}else if(acc>=0.7){grade='B';gc='grade-B';}else{grade='C';gc='grade-C';}var gb=document.getElementById('gradeBadge');gb.textContent=grade;gb.className='grade-badge '+gc;document.getElementById('scoreBoard').style.display='flex';}
+
+// ===== CONFETTI =====
+function launchConfetti(n){var colors=['#ddd6fe','#a78bfa','#34d399','#f87171','#fbbf24'];for(var i=0;i<n;i++){var el=document.createElement('div');el.className='confetti-piece';el.style.cssText='left:'+(30+Math.random()*40)+'vw;top:20vh;background:'+colors[Math.floor(Math.random()*colors.length)]+';animation-delay:'+(Math.random()*0.5)+'s';document.body.appendChild(el);setTimeout(function(e){return function(){e.remove();};}(el),2000);}}
+
+buildQuiz();
+fcRender();
+</script>
+</body>
+</html>
