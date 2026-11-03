@@ -1195,12 +1195,54 @@ button[aria-pressed="true"] { font-weight:700; }
     <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
     <h2>🌸 花の見どころ</h2>
     <p class="muted">季節の花の名所を、時期とお住まいからの近さで、ご紹介します。みごろは、その年の気温で前後します。出かける前に、公式の情報で、確かめてください。</p>
+    <button class="btn primary" data-go="garden" type="button" style="align-self:flex-start;min-height:52px">🌷 近くのフラワーガーデンを見る</button>
     <div class="card"><b>時期</b><div class="fl-chips" id="flWhen" role="group" aria-label="時期"></div>
     <b>地域</b><div class="fl-chips" id="flWhere" role="group" aria-label="地域"></div></div>
     <div class="card" id="visitCard"></div>
     <p class="msg" id="flMsg" role="status"></p>
     <div id="flList" style="display:flex;flex-direction:column;gap:12px"></div>
     <p class="muted">写真は、「写真を見る」のボタンで、検索の画面が開きます。お持ちの写真があれば、ケセラに入れることもできます。</p>
+  </section>
+
+  <!-- 近くのフラワーガーデン -->
+  <section class="view" id="v-garden" hidden aria-label="近くのフラワーガーデン">
+    <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
+    <h2>🌷 近くのフラワーガーデン</h2>
+    <p class="muted">一年を通して、花が楽しめる庭園や公園を、近い順にご紹介します。九州の11か所から始めています。</p>
+    <div class="notice"><b>出かける前に、かならず確認を</b>　令和8年熊本地震の影響で、休園や、一部しか入れない施設があるかもしれません。開園の状況と、花の咲きぐあいは、各施設の公式サイトか、電話で、お確かめください。花の時期は、例年の目安です。</div>
+
+    <div class="card" id="gdToday">
+      <h3>🏡 きょうの おうち花さんぽ</h3>
+      <p class="muted">出かけられない日も、おうちで、花の庭を歩く気分を。</p>
+      <p style="margin:0;font-weight:700;font-size:1.15rem" id="gdTName"></p>
+      <p style="margin:0" id="gdTSub"></p>
+      <div class="fl-btns" id="gdTBtns"></div>
+      <button class="btn" id="gdTNext" type="button" style="align-self:flex-start">ほかの庭も歩く</button>
+      <p class="muted">「ストリートビュー」は、地図の画面で、写真やストリートビューを押すと見られます。園の中が写っていない場所もあります。動画は、短いもの（4分未満）を優先して探します。</p>
+    </div>
+
+    <div class="card">
+      <b>どこから探しますか</b>
+      <div class="row">
+        <button class="btn primary" id="gdLocate" type="button" style="min-height:52px">📍 いまの場所から探す</button>
+      </div>
+      <p class="msg" id="gdMsg" role="status"></p>
+      <b>時期</b>
+      <div class="fl-chips" id="gdWhen" role="group" aria-label="時期"></div>
+    </div>
+
+    <div id="gdList" style="display:flex;flex-direction:column;gap:12px"></div>
+
+    <div class="card">
+      <h3>もっと近くを探す</h3>
+      <p class="muted">この一覧にない庭や公園は、地図で探せます。</p>
+      <div class="row">
+        <a class="btnlink" id="gdMapGarden" href="#" target="_blank" rel="noopener">🗺 フラワーガーデンを地図で探す</a>
+        <a class="btnlink" id="gdMapRose" href="#" target="_blank" rel="noopener">🌹 バラ園を探す</a>
+        <a class="btnlink" id="gdMapBotanic" href="#" target="_blank" rel="noopener">🌿 植物園を探す</a>
+      </div>
+    </div>
+    <p class="muted">情報は、公式サイトや、観光情報などをもとにしています。料金・営業時間・休園日は変わりますので、のせていません。かならず、公式の情報で、ご確認ください。</p>
   </section>
 
   <!-- 学ぶ -->
@@ -2518,7 +2560,7 @@ button[aria-pressed="true"] { font-weight:700; }
   });
 
   /* 画面の切り替え */
-  var views = ['hokago', 'yakata', 'club', 'haiku', 'dajare', 'album', 'laugh', 'up', 'mania', 'town', 'book', 'flower', 'settings', 'home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask', 'dress', 'prepare'];
+  var views = ['hokago', 'yakata', 'club', 'haiku', 'dajare', 'album', 'laugh', 'up', 'mania', 'town', 'book', 'flower', 'settings', 'home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask', 'dress', 'prepare', 'garden'];
   var navView = 'home', navDepth = 0;
   function show(v, fromPop) {
     if (v !== 'talk' && typeof chatOn !== 'undefined' && chatOn) chatStop();
@@ -3511,7 +3553,7 @@ button[aria-pressed="true"] { font-weight:700; }
   $('tvtest').addEventListener('click', sampleTalkVoice);
   try { window.speechSynthesis.addEventListener('voiceschanged', fillTalkVoices); } catch (e) {}
   fillTalkVoices();
-  var GUIDE_INFO = '\nケセラの画面の案内（これに沿って答える）：ホーム画面に、今日の天気と旬の花、メニューのボタンがあります。メニューは、学ぶ（折り紙ほか）、動く（プチ筋トレ）、旅する（熊本のバーチャル旅）、作る・飾る（10分ごはん・花の飾り方）、聴く・観る（思い出の歌・昭和歌謡・カラオケ・鉄道の旅）、眠る（ねむれない夜に・自然音）、調べる（わからないことを声や文字で聞く・詐欺かな？と思ったら）、万が一に備えて（3日分の備蓄・毎日の食事で入れかえる方法・Amazonでの探し方）、お話する（孫・お友達・ご近所の方・犬・猫・ウサギ・案内係）、倶楽部（自然農法研究倶楽部、試作）、装う（着こなし相談室、試作）です。どの画面でも、右下の「ホームへ」で、ホームにもどれます。お名前・お住まい・今日の天気は、ホームの登録で入れられ、「登録を修正する」で直せます。声の速さや種類は、声の設定で変えられます。お話の時間は、ふつうは1日1時間までで、たくさん話すコース（600円／月）・たっぷり話すコース（900円／月）があります。動画を探すときは、短い（ショート）動画を優先します。ここに書いていないことは、わからないと答えます。';
+  var GUIDE_INFO = '\nケセラの画面の案内（これに沿って答える）：ホーム画面に、今日の天気と旬の花、メニューのボタンがあります。メニューは、学ぶ（折り紙ほか）、動く（プチ筋トレ）、旅する（熊本のバーチャル旅）、作る・飾る（10分ごはん・花の飾り方）、聴く・観る（思い出の歌・昭和歌謡・カラオケ・鉄道の旅）、眠る（ねむれない夜に・自然音）、調べる（わからないことを声や文字で聞く・詐欺かな？と思ったら）、万が一に備えて（3日分の備蓄・毎日の食事で入れかえる方法・Amazonでの探し方）、近くのフラワーガーデン（近い順の一覧・おうち花さんぽ）、お話する（孫・お友達・ご近所の方・犬・猫・ウサギ・案内係）、倶楽部（自然農法研究倶楽部、試作）、装う（着こなし相談室、試作）です。どの画面でも、右下の「ホームへ」で、ホームにもどれます。お名前・お住まい・今日の天気は、ホームの登録で入れられ、「登録を修正する」で直せます。声の速さや種類は、声の設定で変えられます。お話の時間は、ふつうは1日1時間までで、たくさん話すコース（600円／月）・たっぷり話すコース（900円／月）があります。動画を探すときは、短い（ショート）動画を優先します。ここに書いていないことは、わからないと答えます。';
   function personaText() {
     var p = PARTNERS[tp], vn = p.variants ? p.variants[tv][0] : '', fn = curFavName(), me = load('kesera-name', '');
     var style = {
@@ -3984,6 +4026,7 @@ button[aria-pressed="true"] { font-weight:700; }
     make: 'ここは「作る・飾る」です。作りたい料理を選んで、「次へ」を押すと、手順がひとつずつ進みます。火を使うときは、そばを離れないでください。',
     farm: 'ここは自然農法研究倶楽部です。いまは試作で、書いたことは、この端末の中だけに残ります。家庭菜園やプランター菜園の栽培ノートに、作物と作業を書きとめてください。安全のための注意も、お読みください。',
     dress: 'ここは「装う」です。着こなし相談室で、服選びのお手伝いをします。画面の中を、指で上下にさわって、お使いください。もどるときは、右上の「ホームへ」を押してください。',
+    garden: 'ここは「近くのフラワーガーデン」です。「いまの場所から探す」を押すと、近い順に並びます。出かけられない日は、「おうち花さんぽ」で、ストリートビューや短い動画を見てください。出かける前に、公式の情報か電話で、開いているかを確かめましょう。',
     prepare: 'ここは「万が一に備えて」です。災害を経験した方が「困ったこと」と「あってよかったもの」のランキングを、先に載せています。そのあとの、準備したい順のチェックで、①から順にそろえましょう。人数を選ぶと、必要な量が出ます。毎日食べるものを少し多めに買い、古いものから食べる方法なら、無駄になりません。',
     ask: 'ここは「調べる」です。わからないことを、声か文字で聞いてください。詐欺かな、と思ったときの確かめ方と、相談先も、下にあります。お金の話が出たら、まず、詐欺を疑ってください。',
     talk: 'ここは「お話する」です。お話ししたい相手を選んでください。「声を聞く」を押すと、声と口の動きをお見せします。お話をはじめるを押すと、AIが演じる相手と、文字か声でお話しできます。'
@@ -6086,7 +6129,7 @@ button[aria-pressed="true"] { font-weight:700; }
     var CATS = [
       ['お出かけ・移動', 'c-g', [
         T('🚶', '歩く・電車・バス・タクシー', '', { click: '#tripOpen' }), T('🚃', '運行情報', '', { home: '#transCard' }), T('🏪', '近くのお店', '', { home: '#nearCard' }),
-        T('🧳', '旅する', '', { go: 'travel' }), T('🚶‍♀️', '動く', '', { go: 'move' }), T('🔎', 'まちの発見', '神社仏閣・散歩', { go: 'town' }), T('🌸', '花の見どころ', '', { go: 'flower' })]],
+        T('🧳', '旅する', '', { go: 'travel' }), T('🚶‍♀️', '動く', '', { go: 'move' }), T('🔎', 'まちの発見', '神社仏閣・散歩', { go: 'town' }), T('🌸', '花の見どころ', '', { go: 'flower' }), T('🌷', '近くのフラワーガーデン', 'おうち花さんぽ（バーチャル）', { go: 'garden' })]],
       ['楽しむ・学ぶ', 'c-p', [
         T('📚', '読書くん', '', { go: 'book' }), T('🎓', '学ぶ', '', { go: 'learn' }), T('🎧', '聴く・観る', '', { go: 'music' }),
         T('🖋', '俳句・短歌日誌', '', { go: 'haiku' }), T('😄', 'ダジャレバトル', '', { go: 'dajare' }), T('🤣', '笑ってすっきり', '', { go: 'laugh' }),
@@ -6756,6 +6799,138 @@ button[aria-pressed="true"] { font-weight:700; }
   if (!flData().length) flWhen = 'soon';
   flRender(); flHome();
   $('wxPref').addEventListener('change', function () { flRender(); flHome(); });
+
+  /* ---------- 近くのフラワーガーデン（おうち花さんぽ付き） ---------- */
+  (function () {
+    var G = [
+      { id: 'umi', n: '国営海の中道海浜公園', pf: '福岡県', ct: '福岡市東区', ll: [33.665, 130.350], ad: '福岡県福岡市東区西戸崎18-25',
+        ds: '博多湾と玄界灘に囲まれた、約350ヘクタールの国営公園です。四季の花が、一年中楽しめます。',
+        ss: [['冬〜早春', '菜の花', 1, 3], ['春', 'ネモフィラ・チューリップ', 4, 5], ['初夏', '春バラ', 5, 5], ['梅雨', 'あじさい', 6, 6], ['夏', 'スイレン・グリーンコキア', 7, 8], ['秋', 'コスモス・コキア・秋バラ', 10, 11]],
+        url: 'https://uminaka-park.jp/', tel: '0926031111', wk: '広いので、自転車を借りてまわる人が多いです。' },
+      { id: 'kuju', n: 'くじゅう花公園', pf: '大分県', ct: '竹田市', ll: [33.082, 131.238], ad: '大分県竹田市久住町久住4050',
+        ds: '久住高原にある、約22万平方メートルの花畑です。丘いちめんに、花が広がります。',
+        ss: [['春', 'チューリップ・ネモフィラ・ポピーなど', 4, 6], ['夏', 'ラベンダーなど', 7, 8], ['秋', 'マリーゴールド・コスモス・ケイトウ・コキアなど', 9, 11]],
+        close: [12, 1, 2], closeNote: '冬（12月下旬〜2月末）は、休園です。',
+        url: 'https://www.hanakoen.com/', tel: '0974761422', wk: '敷地が広いので、園内バスがあります。' },
+      { id: 'flo', n: 'フローランテ宮崎', pf: '宮崎県', ct: '宮崎市', ll: [31.868, 131.463], ad: '宮崎県宮崎市山崎町浜山414-16',
+        ds: '芝生広場と、テーマ別のガーデンがある、花の公園です。季節ごとの花のお祭りがあります。',
+        ss: [['春', 'チューリップなど', 3, 5], ['秋', 'コスモスなど秋の花', 10, 11], ['冬', 'イルミネーション（夜）', 12, 2]],
+        url: 'https://www.florante.or.jp/' },
+      { id: 'htb', n: 'ハウステンボス', pf: '長崎県', ct: '佐世保市', ll: [33.086, 129.787], ad: '長崎県佐世保市ハウステンボス町',
+        ds: '春のバラ、初夏のあじさいで知られる、花の多いテーマパークです。',
+        ss: [['春', 'チューリップ', 3, 4], ['春〜初夏', 'バラ', 4, 6], ['初夏', 'あじさい', 6, 7]],
+        url: 'https://www.huistenbosch.co.jp/', tel: '0570064110' },
+      { id: 'mifu', n: '御船山楽園', pf: '佐賀県', ct: '武雄市', ll: [33.195, 130.025], ad: '佐賀県武雄市 御船山楽園',
+        ds: '御船山を背にした、15万坪の池泉回遊式庭園です。桜、ツツジ、紅葉の名所です。',
+        ss: [['春', '桜・ツツジ', 3, 5], ['秋', '紅葉', 11, 12]] },
+      { id: 'kago', n: 'フラワーパークかごしま', pf: '鹿児島県', ct: '指宿市', ll: [31.19, 130.57], ad: '鹿児島県指宿市 フラワーパークかごしま',
+        ds: '長崎鼻の近くにある、約36.5ヘクタールの大きな花の公園です。温室や洋風庭園があり、冬はイルミネーションもあります。',
+        ss: [['一年中', '温室・亜熱帯の花', 1, 12]],
+        wk: '園内をまわるシャトルバスや、免許があれば借りられるカートがあります。' },
+      { id: 'noko', n: 'のこのしまアイランドパーク', pf: '福岡県', ct: '福岡市西区（能古島）', ll: [33.642, 130.300], ad: '福岡県福岡市西区能古島1624',
+        ds: '博多湾の能古島にある、大型の自然公園です。春は、海を背景に菜の花が広がります。フェリーで渡ります。',
+        ss: [['春', '菜の花', 3, 4]] },
+      { id: 'country', n: '熊本県農業公園カントリーパーク', pf: '熊本県', ct: '合志市', ll: [32.93, 130.78], ad: '熊本県合志市栄3802-4', eq: 1,
+        ds: '体験型の農業公園です。芝生広場のほか、約3000株のバラ園があり、5月と10月にバラ祭があります。',
+        ss: [['春', 'バラ', 5, 5], ['秋', '秋バラ', 10, 10]], tel: '0962487311' },
+      { id: 'foodpal', n: 'フードパル熊本', pf: '熊本県', ct: '熊本市北区', ll: [32.89, 130.72], ad: '熊本県熊本市北区貢町 フードパル熊本', eq: 1,
+        ds: '食をテーマにした施設です。春のバラ園は、約280種、1000株が咲きます（公開は5月ごろ）。',
+        ss: [['春', 'バラ', 5, 5]] },
+      { id: 'tamana', n: 'たまなフラワーパーク', pf: '熊本県', ct: '玉名市', ll: [32.89, 130.51], ad: '熊本県玉名市横島町 たまなフラワーパーク', eq: 1,
+        ds: '横島山の中腹にある観光農園です。バラ越しに、雲仙普賢岳と有明海が見えます。',
+        ss: [['春', 'バラ', 5, 6], ['秋', '秋バラ', 10, 11]] },
+      { id: 'aso', n: 'ASO MILK FACTORY（はな阿蘇美）', pf: '熊本県', ct: '阿蘇市', ll: [32.94, 131.04], ad: '熊本県阿蘇市小里 ASO MILK FACTORY', eq: 1,
+        ds: 'ドーム型温室のバラ園（はな阿蘇美）は、西日本最大級です。春と秋に、バラ祭があります。',
+        ss: [['春', 'バラ', 5, 6], ['秋', '秋バラ', 10, 11]] }
+    ];
+    var flat = []; // 位置の記憶は、画面を開いている間だけ（保存しません）
+    var userPos = null, when = 'now', today = 0;
+    var M = new Date().getMonth() + 1;
+    function inR(m, a, b) { return a <= b ? (m >= a && m <= b) : (m >= a || m <= b); }
+    function st(g) {
+      if (g.close && g.close.indexOf(M) >= 0) return 'closed';
+      var nm = M % 12 + 1, now = false, soon = false;
+      g.ss.forEach(function (x) { if (inR(M, x[2], x[3])) now = true; else if (inR(nm, x[2], x[3])) soon = true; });
+      return now ? 'now' : (soon ? 'soon' : 'later');
+    }
+    function base() { return userPos || PREF_LL[$('wxPref').value] || null; }
+    function dist(g) { var b = base(); if (!b) return null; return haversine(b[0], b[1], g.ll[0], g.ll[1]); }
+    function dtxt(d) { if (d === null) return ''; if (d < 5) return '5km未満'; return '約' + (Math.round(d / 5) * 5) + 'km'; }
+    function nowFl(g) { var a = g.ss.filter(function (x) { return inR(M, x[2], x[3]); }); return a.length ? a.map(function (x) { return x[1]; }).join('、') : ''; }
+    function mon(a, b) { return a === b ? a + '月' : (a === 1 && b === 12 ? '一年中' : a + '月〜' + b + '月'); }
+    function el(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; }
+    function A(txt, href, primary) { var a = el('a', 'btnlink' + (primary ? ' primary' : ''), txt); a.href = href; if (!/^tel:/.test(href)) { a.target = '_blank'; a.rel = 'noopener'; } return a; }
+    function mapUrl(g) { return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(g.n + ' ' + g.ad); }
+    function vidUrl(g) { return 'https://www.youtube.com/results?search_query=' + encodeURIComponent(g.n + ' 花') + '&sp=EgIYAQ%253D%253D'; }
+    function photoUrl(g) { return 'https://www.google.com/search?tbm=isch&q=' + encodeURIComponent(g.n + ' 花'); }
+    function tourBtns(g, box) {
+      box.appendChild(A('🕶 ストリートビューで歩く（地図）', mapUrl(g), true));
+      box.appendChild(A('🎬 短い動画で見る', vidUrl(g)));
+      box.appendChild(A('📷 写真を見る', photoUrl(g)));
+    }
+    function pickToday() {
+      var d = new Date(), doy = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 86400000);
+      var pool = G.filter(function (g) { return st(g) === 'now'; }); if (!pool.length) pool = G;
+      return pool[(doy + today) % pool.length];
+    }
+    function renderToday() {
+      var g = pickToday(), f = nowFl(g);
+      $('gdTName').textContent = g.n + '（' + g.pf + '）';
+      $('gdTSub').textContent = st(g) === 'closed' ? (g.closeNote || '') : (f ? 'いま：' + f : g.ds);
+      var b = $('gdTBtns'); b.innerHTML = ''; tourBtns(g, b);
+    }
+    function renderMaps() {
+      var b = userPos, suf = b ? '/@' + b[0].toFixed(4) + ',' + b[1].toFixed(4) + ',12z' : '';
+      $('gdMapGarden').href = 'https://www.google.com/maps/search/' + encodeURIComponent('フラワーガーデン') + suf;
+      $('gdMapRose').href = 'https://www.google.com/maps/search/' + encodeURIComponent('バラ園') + suf;
+      $('gdMapBotanic').href = 'https://www.google.com/maps/search/' + encodeURIComponent('植物園') + suf;
+    }
+    function render() {
+      var chips = $('gdWhen'); chips.innerHTML = '';
+      [['now', 'いま見ごろ'], ['all', 'ぜんぶ']].forEach(function (it) {
+        var c = el('button', 'chip', it[1]); c.type = 'button'; c.setAttribute('aria-pressed', String(it[0] === when));
+        c.addEventListener('click', function () { when = it[0]; render(); }); chips.appendChild(c);
+      });
+      var arr = G.map(function (g) { return { g: g, s: st(g), d: dist(g) }; });
+      if (when === 'now') arr = arr.filter(function (x) { return x.s === 'now'; });
+      arr.sort(function (a, b) { return (a.d === null ? 1e9 : a.d) - (b.d === null ? 1e9 : b.d); });
+      var bs = userPos ? '今いる場所から' : (PREF_LL[$('wxPref').value] ? 'お住まいの県から' : '');
+      $('gdMsg').className = 'msg';
+      $('gdMsg').textContent = (arr.length ? arr.length + 'か所。' : 'いま見ごろの庭は、見つかりませんでした。「ぜんぶ」を押してみてください。') + (bs && arr.length ? '　' + bs + '、近い順です。' : '');
+      var box = $('gdList'); box.innerHTML = '';
+      arr.forEach(function (x) {
+        var g = x.g, c = el('div', 'fl-card' + (x.s === 'now' ? ' now' : ''));
+        var hd = el('div', 'fl-head'), ic = el('div', 'fl-ic'); ic.innerHTML = flSvg(x.s === 'closed' ? '#b0b0b0' : '#e8688a');
+        var tw = el('div'), t = el('p', 'fl-title', g.n);
+        var bd = el('span', 'fl-badge' + (x.s === 'soon' || x.s === 'closed' ? ' soon' : ''), x.s === 'now' ? 'いま見ごろ' : (x.s === 'soon' ? 'もうすぐ' : (x.s === 'closed' ? '冬期休園' : ''))); if (bd.textContent) t.appendChild(bd);
+        tw.appendChild(t); tw.appendChild(el('p', 'fl-sub', g.pf + '　' + g.ct + (x.d !== null ? '　' + dtxt(x.d) : ''))); hd.appendChild(ic); hd.appendChild(tw); c.appendChild(hd);
+        function row(k, v) { var p = el('p', 'fl-row'); p.appendChild(el('b', '', k)); p.appendChild(document.createTextNode('　' + v)); c.appendChild(p); }
+        row('ここが特徴', g.ds);
+        row('花の時期（例年）', g.ss.map(function (z) { return z[0] + '（' + mon(z[2], z[3]) + '）：' + z[1]; }).join('／'));
+        if (g.closeNote) row('お休み', g.closeNote);
+        if (g.wk) row('歩きやすさ', g.wk);
+        if (g.eq) { var w = el('p', 'fl-row'); w.style.color = '#b3261e'; w.textContent = '※熊本県内です。地震の影響で、閉園や、一部しか入れない場合があります。出かける前に、かならず確かめてください。'; c.appendChild(w); }
+        var bt = el('div', 'fl-btns');
+        tourBtns(g, bt);
+        bt.appendChild(A('🧭 行き方（Googleマップ）', 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(g.n + ' ' + g.pf + g.ct)));
+        bt.appendChild(A(g.url ? '🌐 公式サイト（開園・開花）' : '🔎 公式の情報を探す', g.url || ('https://www.google.com/search?q=' + encodeURIComponent(g.n + ' 公式 開園 開花状況'))));
+        if (g.tel) bt.appendChild(A('📞 電話で確かめる', 'tel:' + g.tel));
+        c.appendChild(bt); box.appendChild(c);
+      });
+      renderMaps();
+    }
+    $('gdTNext').addEventListener('click', function () { today++; renderToday(); });
+    $('gdLocate').addEventListener('click', function () {
+      var m = $('gdMsg'); m.className = 'msg'; m.textContent = '場所を調べています…少しお待ちください。';
+      if (!navigator.geolocation || window.isSecureContext === false) { m.className = 'msg err'; m.textContent = 'この開き方では、場所を調べられません。県が出ている場合は、その県から近い順に並べています。'; return; }
+      try {
+        navigator.geolocation.getCurrentPosition(function (p) { userPos = [p.coords.latitude, p.coords.longitude]; render(); },
+          function () { m.className = 'msg err'; m.textContent = '場所を調べられませんでした。端末の位置情報を許可するか、下の一覧をそのままご覧ください。'; }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 });
+      } catch (e) { m.className = 'msg err'; m.textContent = '場所を調べられませんでした。'; }
+    });
+    var wp = $('wxPref'); if (wp) wp.addEventListener('change', render);
+    render(); renderToday();
+  })();
 
   /* ---------- 今日の花言葉・ラッキー ---------- */
   (function () {
