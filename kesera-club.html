@@ -718,7 +718,7 @@ button[aria-pressed="true"] { font-weight:700; }
     </div>
 
     <div class="card" id="safeNearCard">
-      <h2>🏥 近くの安心（病院・交番・避難所）</h2>
+      <h2>🏥 近くの安心（病院・交番・避難所・銀行・郵便局）</h2>
       <p class="muted">押すと、Googleマップが開いて、いまいる場所の近くが出ます。（位置情報の許可が出たら、「許可」を押してください）</p>
       <div class="row">
         <a class="btnlink" href="https://www.google.com/maps/search/?api=1&amp;query=%E7%97%85%E9%99%A2" target="_blank" rel="noopener">🏥 病院</a>
@@ -727,6 +727,9 @@ button[aria-pressed="true"] { font-weight:700; }
         <a class="btnlink" href="https://www.google.com/maps/search/?api=1&amp;query=%E8%96%AC%E5%B1%80" target="_blank" rel="noopener">💊 薬局</a>
         <a class="btnlink" href="https://www.google.com/maps/search/?api=1&amp;query=%E9%81%BF%E9%9B%A3%E6%89%80" target="_blank" rel="noopener">🏫 避難所</a>
         <a class="btnlink" href="https://www.google.com/maps/search/?api=1&amp;query=%E5%85%AC%E8%A1%86%E3%83%88%E3%82%A4%E3%83%AC" target="_blank" rel="noopener">🚻 トイレ</a>
+        <a class="btnlink" href="https://www.google.com/maps/search/?api=1&amp;query=%E9%8A%80%E8%A1%8C" target="_blank" rel="noopener">🏦 銀行</a>
+        <a class="btnlink" href="https://www.google.com/maps/search/?api=1&amp;query=%E9%83%B5%E4%BE%BF%E5%B1%80" target="_blank" rel="noopener">📮 郵便局</a>
+        <a class="btnlink" href="https://www.google.com/maps/search/?api=1&amp;query=%E4%BF%A1%E7%94%A8%E9%87%91%E5%BA%AB" target="_blank" rel="noopener">🏦 信用金庫</a>
       </div>
       <p class="muted">地図に出る場所は、目安です。病院は、診察の時間や科目を、電話や公式の案内で確かめてください。避難所は、災害のときに、開くかどうかが変わります。市町村の発表を、いちばんに確かめてください。</p>
       <div class="notice"><b>命にかかわるとき</b>は、まず119に電話してください。あぶない・こわいときは、110です。</div>
@@ -6203,7 +6206,7 @@ button[aria-pressed="true"] { font-weight:700; }
       ['ニュース・天気', 'c-o', [
         T('🌤', '今日の天気・花言葉', '', { home: '.greet' }), T('📰', 'ニュース', '', { home: '.news-card' })]],
       ['安心・設定', 'c-r', [
-        T('🎒', '万が一に備えて', '3日分の備蓄・買い忘れメモ', { go: 'prepare' }), T('🏥', '近くの病院・交番', '避難所・薬局も', { home: '#safeNearCard' }), T('📲', 'ケセラをすぐ出せるように', 'ホーム画面に追加', { go: 'settings' }), T('🆘', '困った・助けて', '', { help: 1 }), T('🤔', 'おかしい？と思ったら', '', { click: '#oddBtn' }), T('⚙', '設定', '文字の大きさなど', { go: 'settings' })]]
+        T('🎒', '万が一に備えて', '3日分の備蓄・買い忘れメモ', { go: 'prepare' }), T('🏥', '近くの病院・交番', '避難所・薬局・銀行・郵便局も', { home: '#safeNearCard' }), T('📲', 'ケセラをすぐ出せるように', 'ホーム画面に追加', { go: 'settings' }), T('🆘', '困った・助けて', '', { help: 1 }), T('🤔', 'おかしい？と思ったら', '', { click: '#oddBtn' }), T('⚙', '設定', '文字の大きさなど', { go: 'settings' })]]
     ];
     function soonDlg() {
       var d = E('dialog', 'design-dialog'); d.id = 'soonDlg'; d.setAttribute('aria-label', '地域の仲間探し（開発中）');
