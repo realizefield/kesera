@@ -201,7 +201,7 @@
     var c = E('div', 'card'); c.id = 'hottoCard'; c.style.cssText = 'background:#f3f8ee;border:2px solid #c9dfb8';
     c.appendChild(E('h3', '', '🍵 ほっとひと息'));
     var p = E('p', '', ''); p.innerHTML = 'よいことも、しんぱいごとも、何かのチャンス。<br>お茶を飲んで、ひといき。リセットしませんか。'; p.style.cssText = 'line-height:1.8;font-size:1.05rem;margin:4px 0'; c.appendChild(p);
-    var sub = E('p', 'muted', 'お茶の豆知識（全17話＋蛇足・約18分）を、音声で聞くか、文で読めます。'); sub.style.cssText = 'font-size:.9rem;margin:2px 0 6px'; c.appendChild(sub);
+    var sub = E('p', 'muted', 'お茶の豆知識（全17話・約16分）を、音声で聞くか、文で読めます。'); sub.style.cssText = 'font-size:.9rem;margin:2px 0 6px'; c.appendChild(sub);
     var a = E('button', 'btn primary', '🎧 音声で聞く'); a.type = 'button'; a.addEventListener('click', startAudio); c.appendChild(a);
     var b = E('button', 'btn', '📖 文で読む'); b.type = 'button'; b.style.marginTop = '8px'; b.addEventListener('click', startRead); c.appendChild(b);
     var l = E('a', 'btn', '🎵 ケセラセラを聞く'); l.target = '_blank'; l.rel = 'noopener'; l.style.cssText = 'display:block;text-align:center;text-decoration:none;margin-top:8px';
