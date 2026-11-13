@@ -2017,7 +2017,8 @@ button[aria-pressed="true"] { font-weight:700; }
     <label class="pf-opt pf-read" style="align-items:flex-start"><input type="checkbox" id="pfRead"><span><b>上の注意を読みました。</b>(チェックすると、入力の画面が出ます)</span></label>
     <div id="pfBody" hidden>
     <fieldset><legend>① お名前とお住まい</legend>
-      <div class="pf-row"><label class="pf-l" for="pfName">お名前</label><input type="text" id="pfName" maxlength="12" placeholder="例：野田" autocomplete="off"><span class="pf-unit">さん、とお呼びします</span></div>
+      <div class="pf-row"><label class="pf-l" for="pfName">呼び名</label><input type="text" id="pfName" maxlength="12" placeholder="例：のださん、花ちゃん" autocomplete="off"><span class="pf-unit">さん、とお呼びします</span></div>
+      <div class="pf-unit" style="margin:-4px 0 6px">本名でなくて、かまいません。お話の相手（AI）が、この名前で呼びかけるため、この呼び名は、AIに伝わります。</div>
       <div class="pf-row" style="margin-top:10px"><label class="pf-l" for="pfPref">お住まい</label><select id="pfPref" style="min-height:50px;font-size:1.08rem;padding:6px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg)"><option value="016000">北海道(札幌)</option><option value="020000">青森県</option><option value="030000">岩手県</option><option value="040000">宮城県</option><option value="050000">秋田県</option><option value="060000">山形県</option><option value="070000">福島県</option><option value="080000">茨城県</option><option value="090000">栃木県</option><option value="100000">群馬県</option><option value="110000">埼玉県</option><option value="120000">千葉県</option><option value="130000">東京都</option><option value="140000">神奈川県</option><option value="150000">新潟県</option><option value="160000">富山県</option><option value="170000">石川県</option><option value="180000">福井県</option><option value="190000">山梨県</option><option value="200000">長野県</option><option value="210000">岐阜県</option><option value="220000">静岡県</option><option value="230000">愛知県</option><option value="240000">三重県</option><option value="250000">滋賀県</option><option value="260000">京都府</option><option value="270000">大阪府</option><option value="280000">兵庫県</option><option value="290000">奈良県</option><option value="300000">和歌山県</option><option value="310000">鳥取県</option><option value="320000">島根県</option><option value="330000">岡山県</option><option value="340000">広島県</option><option value="350000">山口県</option><option value="360000">徳島県</option><option value="370000">香川県</option><option value="380000">愛媛県</option><option value="390000">高知県</option><option value="400000">福岡県</option><option value="410000">佐賀県</option><option value="420000">長崎県</option><option value="430000">熊本県</option><option value="440000">大分県</option><option value="450000">宮崎県</option><option value="460100">鹿児島県</option><option value="471000">沖縄県(本島)</option></select><span class="pf-unit">天気の予報に使います</span></div>
     </fieldset>
     <fieldset><legend>② 年齢・お誕生日・性別</legend>
@@ -2062,7 +2063,7 @@ button[aria-pressed="true"] { font-weight:700; }
       <p class="design-hint">その時間のあとに、ケセラを開くと、あいさつと「今日の人物」をお聞かせします。ケセラを閉じているときは、自動では鳴りません。スマホのカレンダーに入れると、毎日お知らせが届きます(登録後、ホームのボタンから)。</p>
     </fieldset>
     <fieldset><legend>⑧ お話の相手(AI)への伝え方</legend>
-      <label class="pf-opt" style="align-items:flex-start"><input type="checkbox" id="pfAI"><span>年齢・性別・歩くようす・これまでの病気を、お話の相手(AI)に、参考として伝えてもよい。<br><span class="pf-unit">身長・体重・血圧は、伝えません。チェックしなければ、伝えません。</span></span></label>
+      <label class="pf-opt" style="align-items:flex-start"><input type="checkbox" id="pfAI"><span>年齢・性別・歩くようす・これまでの病気（「そのほか」に書いた内容も）を、お話の相手(AI)に、参考として伝えてもよい。<br><span class="pf-unit">身長・体重・血圧、いのちのメモ、緊急連絡先、ご住所は、伝えません。チェックしなければ、これらの情報は伝えません（呼び名だけは、呼びかけのために伝わります）。お話の中で、お名前や住所・電話番号を、AIに話さないでください。</span></span></label>
     </fieldset>
     <p id="profMsg" role="alert" aria-live="assertive"></p>
     </div>
