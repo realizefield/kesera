@@ -497,15 +497,15 @@ const DATA = {"stages": [{"id": "s1", "name": "仙崎の浜", "years": "1903〜"
   const LIB = DATA.library || [];
   const KEY = 'kesera_misuzu_daily';
   const q = s => document.querySelector(s);
-  const getDaily = () => { try { return localStorage.getItem(KEY) === '1'; } catch(e){ return false; } };
+  const getDaily = () => { try { return localStorage.getItem(KEY) !== '0'; } catch(e){ return true; } };
   const setDaily = v => { try { localStorage.setItem(KEY, v ? '1' : '0'); } catch(e){} };
   function paintDaily(){
     const on = getDaily(), b = q('#dailyBtn');
     b.setAttribute('aria-pressed', on);
-    b.textContent = on ? '毎日見ています（やめる）' : '毎日見たい';
+    b.textContent = on ? 'トップの「今日の童謡」を出さない' : 'トップに「今日の童謡」を出す';
     q('#dailyState').textContent = on
-      ? 'ケセラのトップに「今日の童謡」ボタンが出ます（同じ端末・同じブラウザで有効です）。'
-      : '押すと、ケセラのトップに「今日の童謡」ボタンが出ます。';
+      ? 'ケセラのトップに「今日の童謡」ボタンが出ています。'
+      : 'ケセラのトップの「今日の童謡」ボタンは、この端末では出していません。';
   }
   q('#dailyBtn').addEventListener('click', () => { setDaily(!getDaily()); paintDaily(); });
   paintDaily();

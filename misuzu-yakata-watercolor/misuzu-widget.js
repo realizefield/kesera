@@ -3,11 +3,11 @@
    <div id="misuzu-daily"></div>
    <script src="misuzu-widget.js"></script>
    （misuzu-library.json は、このファイルと同じ場所に置きます）
-   金子みすゞの館で「毎日見たい」を押した人にだけ表示されます。 */
+   ふだんは常に表示されます（「表示をやめる」を押した端末だけ非表示）。 */
 (function(){
   var KEY='kesera_misuzu_daily';
   var host=document.getElementById('misuzu-daily'); if(!host) return;
-  try{ if(localStorage.getItem(KEY)!=='1') return; }catch(e){ return; }
+  try{ if(localStorage.getItem(KEY)==='0') return; }catch(e){}
   var base=(document.currentScript&&document.currentScript.src)||'';
   var url=base.replace(/[^\/]*$/,'')+'misuzu-library.json';
   var PINK='#d94f86';
