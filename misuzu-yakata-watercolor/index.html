@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>金子みすゞの館 ｜ ケセラ・金子みすゞを知る会</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Shippori+Mincho:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pink:#d94f86; --pink-deep:#b73a6d; --pink-soft:#fde8f0; --pink-mist:#fff5f9;
+  --wood:#9b6a45; --wood-deep:#6f4a2e; --wood-light:#d3a679;
+  --ink:#3b2b33; --muted:#7a6670; --paper:#fffaf5; --line:#efd5df;
+  --mincho:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho",serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"BIZ UDPGothic","Hiragino Kaku Gothic ProN","Meiryo",sans-serif;font-size:18px;line-height:1.9;color:var(--ink);background:linear-gradient(#fff5f9,#fffaf5 40%,#fff5f9);}
+a{color:var(--pink-deep)}
+.wrap{max-width:980px;margin:0 auto;padding:0 18px}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--pink);outline-offset:2px}
+
+/* ヒーロー */
+.hero{position:relative;text-align:center;padding:40px 18px 34px;color:#fff;background:linear-gradient(135deg,#e8709b,#d94f86 55%,#c2417a);overflow:hidden}
+.hero .banner{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55}
+.hero .inner{position:relative}
+.crumb{font-size:15px;opacity:.95;letter-spacing:.05em}
+.hero h1{margin:6px 0 4px;font-family:var(--mincho);font-weight:700;font-size:clamp(30px,6vw,46px);letter-spacing:.12em;text-shadow:0 2px 8px rgba(80,20,50,.35)}
+.hero p{margin:0;font-size:17px;text-shadow:0 1px 6px rgba(80,20,50,.4)}
+
+/* 今日の一首 */
+.section-title{font-family:var(--mincho);font-weight:700;font-size:24px;margin:38px 0 6px;color:var(--pink-deep)}
+.section-sub{margin:0 0 16px;color:var(--muted);font-size:16px}
+.today{background:#fff;border:2px solid var(--line);border-radius:18px;padding:22px 20px 20px;box-shadow:0 6px 22px rgba(217,79,134,.1);margin-top:-22px;position:relative}
+.badge{display:inline-block;background:var(--pink);color:#fff;border-radius:999px;padding:2px 14px;font-size:15px;font-weight:700}
+.badge.life{background:var(--wood)}
+.today h2{margin:8px 0 10px;font-size:20px;font-weight:700}
+.tanka-box{display:flex;justify-content:center;padding:14px 8px;background:var(--pink-mist);border-radius:14px}
+.tanka{font-family:var(--mincho);font-size:clamp(21px,4.2vw,28px);line-height:2;letter-spacing:.08em;margin:0}
+.tanka span{display:block}
+.tanka.vertical{writing-mode:vertical-rl;text-orientation:upright;line-height:1.9;min-height:300px}
+.tanka.vertical span{display:block}
+.note{margin:14px 2px 6px}
+.controls{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.btn{border:2px solid var(--pink);background:#fff;color:var(--pink-deep);border-radius:999px;padding:6px 18px;font-weight:700}
+.btn:hover{background:var(--pink-soft)}
+.btn.primary{background:var(--pink);color:#fff}
+.btn.primary:hover{background:var(--pink-deep)}
+
+/* 年表 */
+.timeline{display:flex;gap:0;overflow-x:auto;padding:14px 4px 18px;scroll-snap-type:x proximity;border-top:3px solid var(--pink);margin-top:6px;position:relative}
+.tl-item{flex:0 0 220px;scroll-snap-align:start;padding:0 12px 0 0;position:relative}
+.tl-item::before{content:"";position:absolute;top:-22px;left:0;width:14px;height:14px;border-radius:50%;background:var(--pink);border:3px solid #fff;box-shadow:0 0 0 2px var(--pink)}
+.tl-year{font-family:var(--mincho);font-weight:700;font-size:24px;color:var(--pink-deep);margin-top:2px}
+.tl-text{font-size:15.5px;line-height:1.7}
+.tl-item button{margin-top:4px;border:0;background:none;color:var(--pink-deep);padding:0;text-decoration:underline;font-size:14.5px}
+.tl-item.hit .tl-year{background:var(--pink-soft);border-radius:8px}
+
+/* 散歩道 */
+.walk{position:relative;margin-top:10px;padding-left:34px}
+.walk::before{content:"";position:absolute;left:11px;top:0;bottom:0;width:10px;border-radius:6px;background:repeating-linear-gradient(to bottom,#e9c6d4 0 18px,#f6e3ea 18px 30px)}
+.stage{position:relative;margin:0 0 46px;scroll-margin-top:16px}
+.stage::before{content:"";position:absolute;left:-33px;top:6px;width:28px;height:28px;border-radius:50%;background:var(--pink);border:4px solid #fff;box-shadow:0 0 0 2px var(--pink)}
+.stage h3{margin:0;font-family:var(--mincho);font-size:26px;color:var(--pink-deep)}
+.stage .years{color:var(--muted);font-size:16px;margin:0 0 4px}
+.scene{margin:10px 0 6px;border-radius:16px;overflow:hidden;border:2px solid var(--line);background:linear-gradient(180deg,#fdeef4,#f6f3df 70%,#e6efd4);min-height:150px;display:flex;align-items:center;justify-content:center}
+.scene img{display:block;width:100%;height:auto}
+.scene .ph{padding:22px;text-align:center;color:var(--muted);font-size:14.5px}
+.signs{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:26px 20px;margin-top:20px}
+.sign{position:relative}
+.sign .stand{position:relative;padding-bottom:0}
+.sign .board{position:relative;background:linear-gradient(#e0b98d,#c89b6d);border:3px solid var(--wood-deep);border-radius:8px 8px 4px 4px;padding:14px 14px 12px;box-shadow:0 4px 0 var(--wood-deep),0 10px 18px rgba(70,40,20,.2);color:#3a2616;cursor:pointer;text-align:left;width:100%}
+.sign .board:hover{filter:brightness(1.04)}
+.sign .board::before,.sign .board::after{content:"";position:absolute;top:9px;width:7px;height:7px;border-radius:50%;background:#6f4a2e}
+.sign .board::before{left:8px}.sign .board::after{right:8px}
+.sign .post{display:block;width:16px;height:34px;margin:0 auto;background:linear-gradient(90deg,#8a5d3a,#b98655,#8a5d3a);border-radius:0 0 3px 3px}
+.sign .day{font-size:13.5px;font-weight:700;color:#5a3b22}
+.sign .ttl{font-family:var(--mincho);font-weight:700;font-size:20px;margin:0 0 4px;padding-bottom:3px;border-bottom:1.5px dashed #7a5233}
+.sign .tk{font-family:var(--mincho);font-size:16.5px;line-height:1.75;margin:4px 0 0}
+.sign .tk span{display:block}
+.sign.today-mark .board{outline:4px solid var(--pink);outline-offset:3px}
+.sign .more{margin:6px 0 0;background:#fffaf0;border:2px solid #d6b68f;border-radius:8px;padding:10px 12px;font-size:15.5px;line-height:1.8;color:var(--ink)}
+.sign .more[hidden]{display:none}
+.sign .more .poem{margin-top:8px;padding-top:8px;border-top:1px dashed #d6b68f;font-family:var(--mincho);white-space:pre-line}
+.flower{position:absolute;right:-6px;bottom:0;width:64px;height:auto;pointer-events:none}
+
+/* 水彩の館・追加展示 */
+body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;background-image:radial-gradient(circle at 20% 20%,#e8bdca 0 1px,transparent 1.5px),radial-gradient(circle at 75% 40%,#c8d6ae 0 1px,transparent 1.5px);background-size:29px 31px,37px 41px;mix-blend-mode:multiply}
+.hero{min-height:340px;display:grid;place-items:center;padding:76px 18px 64px;background:#b85d7e}
+.hero .banner{opacity:.82;filter:saturate(.9) contrast(.95)}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(82,53,49,.26),rgba(255,249,240,.04) 38%,rgba(82,53,49,.2))}
+.hero .inner{z-index:1;padding:24px 30px;border-radius:50% 46% 48% 52%;background:rgba(73,49,43,.24);backdrop-filter:blur(1px)}
+.hero h1{font-size:clamp(38px,7vw,64px);text-shadow:0 3px 18px rgba(44,22,28,.6)}
+.today,.care,.room-card,.catalog-shell,.map-shell{background:rgba(255,252,247,.92);border-color:#e8cbd2;box-shadow:0 16px 44px rgba(112,73,79,.12)}
+.section-title::after{content:"";display:block;width:70px;height:7px;margin-top:4px;border-radius:50%;background:rgba(217,79,134,.18)}
+.scene{min-height:0;border-radius:26px 10px 28px 12px;border:5px solid rgba(255,255,255,.85);box-shadow:0 14px 32px rgba(77,57,48,.16);background:#f7efe2}
+.scene img{aspect-ratio:16/9;object-fit:cover}
+.stage{margin-bottom:64px}
+.stage::before{background:#bd738a;border-color:#fff9f2;box-shadow:0 0 0 2px #bd738a}
+.walk::before{background:repeating-linear-gradient(to bottom,#c8b09b 0 12px,#eadbd0 12px 23px)}
+.sign .board{background:radial-gradient(ellipse at 30% 20%,rgba(255,255,255,.36),transparent 34%),linear-gradient(145deg,#b9b1a4,#8f8b82 52%,#aaa69d);border:0;border-radius:46% 42% 38% 44% / 25% 32% 28% 31%;padding:24px 22px 20px;box-shadow:inset 0 0 0 2px rgba(70,65,58,.24),inset 8px 8px 14px rgba(255,255,255,.18),0 12px 0 #77736c,0 18px 22px rgba(61,53,45,.24);color:#312f2b;text-shadow:0 1px rgba(255,255,255,.42);min-height:190px}
+.sign .board::before,.sign .board::after{display:none}
+.sign .board:hover{filter:brightness(1.05);transform:translateY(-2px)}
+.sign .post{display:none}
+.sign .day{color:#4d4942}
+.sign .ttl{border-bottom:1px solid rgba(54,51,46,.36);font-size:21px}
+.sign .more{display:none!important}
+.sign.today-mark .board{outline:4px solid #d45f8a;outline-offset:5px}
+.flower{width:74px;right:-10px;bottom:-12px;filter:drop-shadow(0 5px 5px rgba(70,50,48,.18))}
+.room-card{border:2px solid var(--line);border-radius:28px 12px;padding:18px;margin:18px 0 44px;overflow:hidden}
+.room-card img{width:100%;display:block;border-radius:20px 8px;aspect-ratio:16/9;object-fit:cover}
+.room-copy{padding:12px 8px 2px}.room-copy h3{font-family:var(--mincho);font-size:25px;color:var(--pink-deep);margin:0 0 6px}.room-copy p{margin:0;color:var(--muted);font-size:15.5px}
+.bench-stop{margin:8px 0 70px;padding:16px 20px 22px;text-align:center;border-radius:42% 45% 20px 20px;background:linear-gradient(180deg,rgba(232,241,216,.72),rgba(255,250,243,.2));border-bottom:3px solid #d9c8b6}
+.bench-stop img{display:block;max-width:470px;width:82%;height:auto;margin:-10px auto -26px;filter:drop-shadow(0 12px 10px rgba(77,60,48,.15))}
+.bench-stop h3{font-family:var(--mincho);color:#6d7753;margin:0}.bench-stop p{margin:2px auto;max-width:620px;color:var(--muted);font-size:15px}
+.catalog-shell,.map-shell{border:2px solid var(--line);border-radius:24px;padding:20px;margin:12px 0 42px}
+.catalog-tools{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 18px}.catalog-tools input{flex:1 1 240px;border:2px solid #dfc7cd;border-radius:999px;padding:10px 16px;font:inherit;background:#fff}.filter-btn{border:2px solid #d8b9c4;background:#fff;border-radius:999px;padding:8px 14px;color:var(--pink-deep)}.filter-btn.active{background:var(--pink);color:#fff}
+.catalog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;max-height:760px;overflow:auto;padding:4px 5px 12px}
+.work-card{background:linear-gradient(150deg,#fffdf8,#f5eee4);border:1px solid #ded2c5;border-radius:18px 8px 20px 10px;padding:14px;box-shadow:0 7px 16px rgba(75,61,52,.08);display:flex;flex-direction:column;gap:8px}.work-card h3{font-family:var(--mincho);font-size:19px;margin:0;color:#4b3e3e}.work-card .meta{font-size:12.5px;color:var(--muted)}.work-card .open-work{border:0;background:none;color:var(--pink-deep);text-align:left;padding:0;text-decoration:underline;font-weight:700}
+.react-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}.react-btn{border:1px solid #d9bac5;background:#fff;border-radius:999px;padding:5px 9px;font-size:13px;color:#6b5260}.react-btn[aria-pressed="true"]{background:#d85e89;color:#fff;border-color:#d85e89}
+.reread{margin:16px 0;padding:14px;border-radius:16px;background:#fff7fa;border:1px dashed #dbaec0}.reread h3{font-family:var(--mincho);margin:0 0 8px}.reread-list{display:flex;gap:7px;flex-wrap:wrap}.reread-list button{border:1px solid #debcca;background:#fff;border-radius:999px;padding:5px 11px;color:#7b3f5a}
+.work-dialog{border:0;border-radius:24px;padding:0;max-width:min(680px,calc(100% - 28px));width:100%;box-shadow:0 30px 90px rgba(55,35,43,.34);background:#fffaf4}.work-dialog::backdrop{background:rgba(55,38,45,.55);backdrop-filter:blur(3px)}.dialog-inner{padding:26px;position:relative}.dialog-close{position:absolute;right:14px;top:12px;border:0;background:#f4e4e9;border-radius:50%;width:38px;height:38px;font-size:24px}.dialog-kicker{color:var(--pink-deep);font-weight:700;font-size:14px}.dialog-inner h2{font-family:var(--mincho);font-size:30px;margin:3px 42px 16px 0}.dialog-block{margin:12px 0;padding:13px 15px;border-radius:14px;background:#fff}.dialog-block h3{font-family:var(--mincho);font-size:18px;margin:0 0 4px;color:#765361}.dialog-block p{margin:0}.dialog-tanka{font-family:var(--mincho);font-size:20px;line-height:1.9;text-align:center}.dialog-note{font-size:13px;color:var(--muted)}
+.map-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.map-tab{border:2px solid #cbb9a3;background:#fff;border-radius:999px;padding:8px 14px}.map-tab.active{background:#77865c;color:#fff;border-color:#77865c}.map-frame{width:100%;height:420px;border:0;border-radius:18px;background:#eee}.route-links{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}.route-links a{display:inline-block;border-radius:999px;padding:8px 14px;background:#d65b87;color:#fff;text-decoration:none;font-weight:700}
+.route-progress{margin-top:20px;padding:16px;border-radius:18px;background:#faf5ec}.route-progress h3{font-family:var(--mincho);margin:0 0 4px}.progress-track{height:10px;border-radius:99px;background:#e2d8c9;overflow:hidden;margin:8px 0 16px}.progress-fill{height:100%;width:0;background:linear-gradient(90deg,#d75f8a,#88a069);transition:width .35s}.mini-map{display:grid;grid-template-columns:1fr 64px 1fr;grid-template-rows:auto 54px auto;align-items:center;text-align:center;max-width:560px;margin:10px auto}.map-node{border:2px solid #b9ad9d;background:#fff;border-radius:16px;padding:9px;font-size:14px}.map-node.done{background:#fff0f5;border-color:#d55e88}.map-node.start{grid-column:2;grid-row:2;background:#eef3e3;border-color:#899a6c}.map-node.school{grid-column:1;grid-row:1}.map-node.port{grid-column:3;grid-row:3}.map-line{height:4px;background:#cfc4b6;border-radius:4px;transform-origin:center}.map-line.done{background:#d55e88}.line-school{grid-column:1/3;grid-row:1/3;transform:rotate(-25deg);z-index:0}.line-port{grid-column:2/4;grid-row:2/4;transform:rotate(25deg);z-index:0}.map-node{z-index:1}.visit-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}.visit-btn{border:1px solid #c8b8a3;background:#fff;border-radius:999px;padding:7px 12px}.visit-btn.done{background:#7c9160;color:#fff}
+@media (max-width:600px){.hero{min-height:290px}.catalog-grid{grid-template-columns:1fr}.map-frame{height:330px}.mini-map{grid-template-columns:1fr 42px 1fr}.sign .board{min-height:175px}.room-card{padding:10px}.dialog-inner{padding:22px 18px}}
+
+/* フッター */
+.care{margin:30px 0 0;background:#fff;border:2px solid var(--line);border-radius:14px;padding:14px 18px;font-size:15.5px}
+footer{margin:34px 0 40px;font-size:14.5px;color:var(--muted);line-height:1.8}
+footer h4{margin:12px 0 2px;color:var(--ink);font-size:15.5px}
+@media (max-width:560px){ body{font-size:17px} .tl-item{flex-basis:200px} .walk{padding-left:30px} }
+@media print{ .controls,.hero .banner{display:none} .sign .more{display:block!important} }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <img class="banner" src="images/yakata_banner-retro.jpg" alt="大正期の仙崎を思わせる春の海辺の水彩画" onerror="this.remove()">
+  <div class="inner">
+    <div class="crumb">ケセラ ／ 放課後倶楽部 ／ 金子みすゞを知る会</div>
+    <h1>金子みすゞの館</h1>
+    <p>年表をひらき、花のさく散歩道を、みすゞさんと歩きます</p>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- 11月の作者 -->
+  <section class="today" id="todayCard" aria-live="polite">
+    <div class="section-sub" style="margin:0 0 4px">11月の作者「金子みすゞさんのさくひん」 ― 毎日ひとつ、詩を短歌にしてお届けします</div>
+    <span class="badge" id="tBadge"></span>
+    <h2 id="tTitle"></h2>
+    <div class="tanka-box"><p class="tanka" id="tTanka"></p></div>
+    <p class="note" id="tNote"></p>
+    <div class="controls">
+      <button class="btn" id="prevBtn" type="button">◀ まえの日</button>
+      <button class="btn" id="nextBtn" type="button">つぎの日 ▶</button>
+      <button class="btn" id="todayBtn" type="button">きょうにもどる</button>
+      <button class="btn" id="vertBtn" type="button" aria-pressed="false">縦書きで読む</button>
+      <button class="btn primary" id="goStage" type="button">この詩の散歩道へ</button>
+    </div>
+  </section>
+
+  <!-- 年表 -->
+  <h2 class="section-title">みすゞさんの年表</h2>
+  <p class="section-sub">横にすべらせて、歩みをたどれます。「道を歩く」を押すと、その時代の散歩道へ飛びます。</p>
+  <div class="timeline" id="timeline" role="list"></div>
+
+  <h2 class="section-title">窓辺で生まれたことば</h2>
+  <p class="section-sub">記念館に再現された、通りに面した二階の「みすゞの部屋」から想像した水彩画です。</p>
+  <section class="room-card">
+    <img src="images/yakata_room.jpg" alt="明るい二階の畳の部屋。机と本棚があり、窓の向こうに仙崎の通りと海が見える水彩画">
+    <div class="room-copy">
+      <h3>通りを見つめる、明るい二階</h3>
+      <p>記念館では、机・座布団・本棚を置いた簡素な部屋が再現されています。この絵は展示と町の景観をもとにした想像図で、実際の執筆時の室内をそのまま再現したものではありません。</p>
+    </div>
+  </section>
+
+  <!-- 散歩道 -->
+  <h2 class="section-title">花の散歩道</h2>
+  <p class="section-sub">道は、みすゞさんの歩んだ時代の順につづいています。詩が刻まれた岩を押すと、当時の背景とエピソードが開きます。</p>
+  <div class="walk" id="walk"></div>
+
+  <h2 class="section-title">100篇のことばの棚</h2>
+  <p class="section-sub">みすゞさんが遺した512篇のうち、100作品への入口です。30作品はケセラが新しく詠んだ短歌と解説つき。ほかは題名と収録情報から原詩へ出会うための案内です。</p>
+  <section class="catalog-shell" aria-labelledby="catalogTitle">
+    <div class="catalog-tools">
+      <input id="workSearch" type="search" placeholder="作品名をさがす" aria-label="100作品から検索">
+      <button class="filter-btn active" type="button" data-filter="all">すべて</button>
+      <button class="filter-btn" type="button" data-filter="liked">もう一度読む</button>
+    </div>
+    <div class="reread">
+      <h3>もう一度読む棚</h3>
+      <div class="reread-list" id="rereadList"><span class="section-sub">「すごくいい」「いいね」を押した作品が並びます。</span></div>
+    </div>
+    <div class="catalog-grid" id="catalogGrid"></div>
+  </section>
+
+  <h2 class="section-title">いまの仙崎を歩く</h2>
+  <p class="section-sub">金子みすゞ記念館から、学校跡と港へ。簡略図は達成記録用です。実際の道順はGoogleマップで確認してください。</p>
+  <section class="map-shell">
+    <div class="map-tabs" role="tablist" aria-label="散歩ルート">
+      <button class="map-tab active" type="button" data-route="school">記念館 → 瀬戸崎小学校跡</button>
+      <button class="map-tab" type="button" data-route="port">記念館 → 仙崎港</button>
+    </div>
+    <iframe id="mapFrame" class="map-frame" title="現在の仙崎のGoogleマップ" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?output=embed&amp;saddr=%E9%87%91%E5%AD%90%E3%81%BF%E3%81%99%E3%82%9E%E8%A8%98%E5%BF%B5%E9%A4%A8&amp;daddr=%E7%80%AC%E6%88%B8%E5%B4%8E%E5%B0%8F%E5%AD%A6%E6%A0%A1%E8%B7%A1&amp;dirflg=w"></iframe>
+    <div class="route-links">
+      <a id="routeExternal" href="https://www.google.com/maps/dir/?api=1&amp;origin=%E9%87%91%E5%AD%90%E3%81%BF%E3%81%99%E3%82%9E%E8%A8%98%E5%BF%B5%E9%A4%A8&amp;destination=%E7%80%AC%E6%88%B8%E5%B4%8E%E5%B0%8F%E5%AD%A6%E6%A0%A1%E8%B7%A1&amp;travelmode=walking" target="_blank" rel="noopener">Googleマップで徒歩ルートを開く</a>
+      <a href="https://www.google.com/maps/search/?api=1&amp;query=%E9%87%91%E5%AD%90%E3%81%BF%E3%81%99%E3%82%9E%E8%A8%98%E5%BF%B5%E9%A4%A8" target="_blank" rel="noopener">記念館周辺の現在の風景を見る</a>
+    </div>
+    <div class="route-progress">
+      <h3>わたしの踏破図</h3>
+      <p id="progressText" class="section-sub">0 / 2ルート達成</p>
+      <div class="progress-track" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="mini-map" aria-label="記念館から学校跡と港へ分かれる簡略図">
+        <div class="map-line line-school" data-line="school"></div>
+        <div class="map-line line-port" data-line="port"></div>
+        <div class="map-node start">金子みすゞ<br>記念館</div>
+        <div class="map-node school" data-node="school">瀬戸崎<br>小学校跡</div>
+        <div class="map-node port" data-node="port">仙崎港</div>
+      </div>
+      <div class="visit-actions">
+        <button class="visit-btn" type="button" data-visit="school">学校跡へ行った</button>
+        <button class="visit-btn" type="button" data-visit="port">仙崎港へ行った</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="care">
+    つらい気持ちが続くときは、ひとりで抱えこまず、身近な人や、お近くの相談窓口に話してみてください。
+  </div>
+
+  <footer>
+    <h4>この館について</h4>
+    短歌は、みすゞさんの詩に着想を得て、ケセラが新しく詠んだものです（詩そのものではありません）。岩面の紹介文もケセラによるものです。原詩の本文は、全集や記念館の展示でお読みください。
+    <br>散歩道の時代の分け方は、詩の主題にあわせた案内です。ほとんどの詩は、つくられた正確な時期がわかっていません（1923年9月『お魚』、1924年3月『大漁』、1926年4月『露』など、発表時期がわかるものだけ明記しています）。室内画と屋外画は史料を尊重した想像図で、復元図ではありません。
+    <h4>参考にした資料</h4>
+    大野惠美「中田喜直“金子みすゞ童謡歌曲集”」（湘北紀要 第32号 2011年）所収の金子みすゞ年譜／矢崎節夫「金子みすゞ 26歳で逝った幻の童謡詩人」（文藝春秋）／<a href="https://www.city.nagato.yamaguchi.jp/site/kanko/2200.html" target="_blank" rel="noopener">長門市・金子みすゞ記念館</a>／<a href="https://nanavi.jp/sightseeing/794/" target="_blank" rel="noopener">長門市観光サイト・瀬戸崎小学校跡</a>／<a href="https://www.u-canshop.jp/shop/g/uLEQ/" target="_blank" rel="noopener">全512篇の作品目録</a>
+  </footer>
+</main>
+
+<dialog class="work-dialog" id="workDialog">
+  <div class="dialog-inner">
+    <button class="dialog-close" type="button" aria-label="閉じる">×</button>
+    <div class="dialog-kicker" id="dialogKicker"></div>
+    <h2 id="dialogTitle"></h2>
+    <div id="dialogBody"></div>
+    <div class="react-row" id="dialogReactions"></div>
+  </div>
+</dialog>
+
+<script>
+const DATA = {"stages": [{"id": "s1", "name": "仙崎の浜", "years": "1903〜", "lead": "海と鯨と、小さな浜の町。みすゞさんの原風景から歩きはじめます。", "img": "images/yakata_stage1.jpg"}, {"id": "s2", "name": "家族と、さびしさの道", "years": "1906〜1919", "lead": "幼いころに父を亡くし、家族のかたちが変わっていった時期。こころや命をめぐる詩とかさねて歩きます。", "img": "images/yakata_stage2.jpg"}, {"id": "s3", "name": "少女のまなざし", "years": "1910〜1920", "lead": "小学校から女学校へ。見えないものを見つめる目が育った道です。", "img": "images/yakata_stage3.jpg"}, {"id": "s4", "name": "下関、投稿の日々", "years": "1923〜1924", "lead": "20歳で下関の書店へ。「みすゞ」の名で童謡を投稿し、西條八十に見いだされました。", "img": "images/yakata_stage4.jpg"}, {"id": "s5", "name": "結婚、そして王女の道", "years": "1926〜1928", "lead": "結婚と子育て。思うように詩が書けなくなっていく日々のなかで生まれた、王さまや王女の詩を歩きます。", "img": "images/yakata_stage5.jpg"}, {"id": "s6", "name": "三冊の手帳、そして今へ", "years": "1929〜", "lead": "遺された手帳が、半世紀をこえて、私たちのもとに届くまで。", "img": "images/yakata_stage6.jpg"}], "timeline": [{"year": "1903", "text": "4月11日、山口県大津郡仙崎村（いまの長門市）に生まれる。本名はテル。", "stage": "s1"}, {"year": "1906", "text": "2月、父が中国の営口で急逝。家は仙崎で金子文英堂書店を営む。", "stage": "s2"}, {"year": "1907", "text": "弟の正祐が、下関の上山文英堂の店主夫妻の養子となる。", "stage": "s2"}, {"year": "1910", "text": "瀬戸崎尋常小学校に入学。6年間、級長をつとめる。", "stage": "s3"}, {"year": "1916", "text": "4月、郡立大津高等女学校に入学。", "stage": "s3"}, {"year": "1919", "text": "母ミチが、上山文英堂の上山松蔵と再婚。", "stage": "s2"}, {"year": "1920", "text": "3月、女学校を卒業し、仙崎の金子文英堂を手伝う。", "stage": "s3"}, {"year": "1923", "text": "4月、下関の上山文英堂へ。6月に「みすゞ」の名で童謡を投稿しはじめ、9月、投稿した四誌すべてに載る。", "stage": "s4"}, {"year": "1924", "text": "雑誌『童話』の童謡欄に毎号作品が載る。選者の西條八十に高く評価される。", "stage": "s4"}, {"year": "1926", "text": "2月に結婚。4月、「露」が『童話』の特別募集で第一席。11月、長女ふさえが生まれる。", "stage": "s5"}, {"year": "1928", "text": "このころから、夫に童謡の創作や投稿仲間との文通を禁じられる。", "stage": "s5"}, {"year": "1929", "text": "夏から秋、童謡を3冊の手帳に清書し、西條八十と弟の正祐に託す。", "stage": "s6"}, {"year": "1930", "text": "2月に離婚し、母のいる上山文英堂へ。3月10日、26歳で亡くなる。", "stage": "s6"}, {"year": "1982", "text": "矢崎節夫さんが弟の上山雅輔さんに行き着き、手帳に書かれた512編の童謡に出会う。", "stage": "s6"}, {"year": "1984", "text": "『金子みすゞ全集』が出版される。", "stage": "s6"}, {"year": "2003", "text": "金子みすゞ記念館（長門市仙崎）が開館する。", "stage": "s6"}], "days": [{"day": 1, "stage": "s1", "kind": "life", "title": "仙崎に生まれる", "lines": ["四月の日", "仙崎の町", "テルという", "少女が生まれ", "のちのみすゞに"], "yomi": ["しがつのひ", "せんざきのまち", "てるという", "しょうじょがうまれ", "のちのみすずに"], "note": "1903年4月11日、仙崎に生まれたテルさんが、のちの金子みすゞです。11月のあいだ、みすゞさんの歩みと詩をたどります。"}, {"day": 2, "stage": "s1", "kind": "poem", "title": "鯨法会", "lines": ["春のくれ", "鐘の音わたる", "海のうえ", "子鯨は聞く", "亡き親しのび"], "yomi": ["はるのくれ", "かねのねわたる", "うみのうえ", "こくじらはきく", "なきおやしのび"], "note": "仙崎の春の鯨供養を題材にした詩です。人の営みの陰にある、海の命へのまなざしが重なります。"}, {"day": 3, "stage": "s1", "kind": "poem", "title": "帆", "lines": ["港の帆", "古びて黒く", "沖の帆は", "白くかがやき", "遠さゆえかも"], "yomi": ["みなとのほ", "ふるびてくろく", "おきのほは", "しろくかがやき", "とおさゆえかも"], "note": "港で見る古びた帆と、沖で白く光る帆。遠くのものが美しく見えることへの、ふしぎな気づきの詩です。"}, {"day": 4, "stage": "s1", "kind": "poem", "title": "王子山", "lines": ["桜枯れ", "切り株に出た", "若芽伸び", "木の間にひかる", "銀の海見ゆ"], "yomi": ["さくらがれ", "きりかぶにでた", "わかめのび", "このまにひかる", "ぎんのうみみゆ"], "note": "公園のために植えた桜が枯れ、切られた雑木の切り株から芽が出る詩です。強いのは、思いがけないところの命です。"}, {"day": 5, "stage": "s1", "kind": "poem", "title": "草原の夜", "lines": ["昼は牛", "青草をはむ", "その原を", "夜ふけの月が", "そっと歩けり"], "yomi": ["ひるはうし", "あおくさをはむ", "そのはらを", "よふけのつきが", "そっとあるけり"], "note": "昼は牛が草をはむ原を、夜は月の光が歩く。静かな一日の移り変わりを描いた詩です。"}, {"day": 6, "stage": "s1", "kind": "poem", "title": "このみち", "lines": ["この道の", "先には森が", "あるだろう", "ひとりの榎", "ともに行こうよ"], "yomi": ["このみちの", "さきにはもりが", "あるだろう", "ひとりのえのき", "ともにゆこうよ"], "note": "道の先には大きな森があるだろうと、ひとりぼっちの榎（えのき）に呼びかける詩です。"}, {"day": 7, "stage": "s2", "kind": "poem", "title": "さびしいとき", "lines": ["さびしさを", "知らぬ人には", "友笑い", "母はやさしく", "仏さびしき"], "yomi": ["さびしさを", "しらぬひとには", "ともわらい", "ははややさしく", "ほとけさびしき"], "note": "自分がさびしいとき、まわりの人はどうしているか。順にならべて、最後は仏さまのさびしさへと思いを広げる詩です。"}, {"day": 8, "stage": "s2", "kind": "poem", "title": "こころ", "lines": ["母の胸", "わたしで満ちて", "小さくて", "わたしの胸は", "母でも足りぬ"], "yomi": ["ははのむね", "わたしでみちて", "ちいさくて", "わたしのむねは", "ははでもたりぬ"], "note": "母と子、おたがいのこころの大きさを入れかえて見せる、あたたかい詩です。"}, {"day": 9, "stage": "s2", "kind": "poem", "title": "繭と墓", "lines": ["繭の中", "蚕は蝶へ", "人は墓", "暗がりの先", "羽ばたく空よ"], "yomi": ["まゆのなか", "かいこはちょうへ", "ひとははか", "くらがりのさき", "はばたくそらよ"], "note": "繭の中の蚕と、お墓に入る人を重ね、暗がりの先の明るさを思う詩です。"}, {"day": 10, "stage": "s2", "kind": "poem", "title": "花のたましい", "lines": ["散った花", "たましいはみな", "み仏の", "花園に咲く", "やさしいゆえに"], "yomi": ["ちったはな", "たましいはみな", "みほとけの", "はなぞのにさく", "やさしいゆえに"], "note": "散った花のたましいはどこへ行くのか。花のやさしさをたたえる詩です。"}, {"day": 11, "stage": "s2", "kind": "poem", "title": "土と草", "lines": ["草の子を", "ひとり育てる", "土のこと", "草が茂れば", "かくれてしまう"], "yomi": ["くさのこを", "ひとりそだてる", "つちのこと", "くさがしげれば", "かくれてしまう"], "note": "草を育てる土は、草が茂ると見えなくなります。だまって支える存在への、静かなまなざしの詩です。"}, {"day": 12, "stage": "s3", "kind": "poem", "title": "不思議", "lines": ["黒雲の", "雨が銀色", "夕顔が", "ひとり咲くのに", "あたりまえとは"], "yomi": ["くろぐもの", "あめがぎんいろ", "ゆうがおが", "ひとりさくのに", "あたりまえとは"], "note": "雨が銀色に光ること、蚕が白くなること。「あたりまえ」と言われる日常を、ふしぎとして見つめる詩です。"}, {"day": 13, "stage": "s3", "kind": "poem", "title": "星とたんぽぽ", "lines": ["昼の星", "枯れてなお根は", "見えねども", "たしかにあると", "空はささやく"], "yomi": ["ひるのほし", "かれてなおねは", "みえねども", "たしかにあると", "そらはささやく"], "note": "昼の星や、枯れたたんぽぽの根。目に見えなくても、たしかにあるものを教えてくれる詩です。"}, {"day": 14, "stage": "s3", "kind": "poem", "title": "蜂と神さま", "lines": ["蜂は花", "花は庭へと", "世界へと", "つつまれながら", "神は蜂にも"], "yomi": ["はちははな", "はなはにわへと", "せかいへと", "つつまれながら", "かみははちにも"], "note": "蜂、花、庭、町、世界と広がり、最後は小さな蜂のなかに神さまを見る詩です。"}, {"day": 15, "stage": "s3", "kind": "poem", "title": "積もった雪", "lines": ["上の雪", "寒かろ下は", "重かろと", "中の雪にも", "心を寄せる"], "yomi": ["うえのゆき", "さむかろしたは", "おもかろと", "なかのゆきにも", "こころをよせる"], "note": "上の雪、下の雪、そして中の雪。だれも気に留めない真ん中のさみしさまで見つめる詩です。"}, {"day": 16, "stage": "s3", "kind": "poem", "title": "明るい方へ", "lines": ["藪かげの", "草も夜虫も", "町の人", "みな明るさへ", "向かってゆくよ"], "yomi": ["やぶかげの", "くさもよむしも", "まちのひと", "みなあかるさへ", "むかってゆくよ"], "note": "草も、夜の虫も、町に住む人も、明るい方へ向かう。小さな命へのはげましの詩です。"}, {"day": 17, "stage": "s4", "kind": "life", "title": "「みすゞ」の名で投稿", "lines": ["みすゞの名", "はじめて出した", "童謡が", "九月の四誌に", "そろって載った"], "yomi": ["みすずのな", "はじめてだした", "どうようが", "くがつのししに", "そろってのった"], "note": "1923年6月、「みすゞ」の名で童謡を雑誌に投稿しはじめ、9月に、投稿した四誌すべてに作品が載りました。"}, {"day": 18, "stage": "s4", "kind": "poem", "title": "お魚", "lines": ["田の米も", "牛も鯉まで", "世話を受け", "海のお魚", "かなしかりけり"], "yomi": ["たのこめも", "うしもこいまで", "せわをうけ", "うみのおさかな", "かなしかりけり"], "note": "人に世話をされる米や牛と、何の世話にもならない海の魚。食べられる魚への思いを歌います。1923年9月、雑誌『童話』に載り、西條八十に評価されました。"}, {"day": 19, "stage": "s4", "kind": "poem", "title": "大漁", "lines": ["朝焼けの", "浜は祭りの", "にぎわいに", "海の底では", "弔いの声"], "yomi": ["あさやけの", "はまはまつりの", "にぎわいに", "うみのそこでは", "とむらいのこえ"], "note": "イワシの大漁でお祭りのような浜。けれど海の中では弔いが…と、人間の喜びの裏側を見る詩です。1924年3月号の『童話』に載りました。"}, {"day": 20, "stage": "s4", "kind": "poem", "title": "露", "lines": ["誰にもね", "言わずにおこう", "朝の庭", "花がこぼした", "涙のことは"], "yomi": ["だれにもね", "いわずにおこう", "あさのにわ", "はながこぼした", "なみだのことは"], "note": "朝の庭で花がこぼした涙（露）のことを、そっと秘密にしておこう、という詩です。1926年4月、『童話』の特別募集で第一席になりました。"}, {"day": 21, "stage": "s4", "kind": "poem", "title": "土", "lines": ["打たれ土", "畑となって", "麦を産む", "踏まれる土は", "道になり行く"], "yomi": ["うたれつち", "はたけとなって", "むぎをうむ", "ふまれるつちは", "みちになりゆく"], "note": "打たれる土は畑になり、踏まれる土は道になる。足もとの土に、役に立つ姿を見つめる詩です。"}, {"day": 22, "stage": "s5", "kind": "poem", "title": "さみしい王女", "lines": ["助けられ", "城に戻った", "王女さま", "さみしさ消えず", "空をみつめる"], "yomi": ["たすけられ", "しろにもどった", "おうじょさま", "さみしさきえず", "そらをみつめる"], "note": "助けられてお城へ戻った王女が、なぜかさみしく空を見つめる詩です。第三童謡集の表題にもなっています。"}, {"day": 23, "stage": "s5", "kind": "poem", "title": "金のすきな王さま", "lines": ["触れるもの", "みな金となり", "王さまの", "世界は金に", "されど空青"], "yomi": ["ふれるもの", "みなきんとなり", "おうさまの", "せかいはきんに", "されどそらあお"], "note": "手の届くものはみな金になっても、空だけは青いまま。手に入れられないものの尊さを思わせる詩です。"}, {"day": 24, "stage": "s5", "kind": "poem", "title": "世界中の王様", "lines": ["王様を", "世界中から", "集めたい", "天気ですよと", "空を見せたい"], "yomi": ["おうさまを", "せかいじゅうから", "あつめたい", "てんきですよと", "そらをみせたい"], "note": "世界中の王様を集めて、「お天気ですよ」と空を見せてあげたい、という詩です。"}, {"day": 25, "stage": "s5", "kind": "poem", "title": "桜の木", "lines": ["母さまが", "叱らなければ", "桜の木", "のぼって花の", "姫になりたい"], "yomi": ["かあさまが", "しからなければ", "さくらのき", "のぼってはなの", "ひめになりたい"], "note": "叱られなければ桜の木に登って、花に包まれたい。子どもの空想がふくらむ詩です。"}, {"day": 26, "stage": "s5", "kind": "poem", "title": "みんなを好きに", "lines": ["好ききらい", "なくしてすべて", "好きになる", "そんなわたしに", "なれたらいいな"], "yomi": ["すききらい", "なくしてすべて", "すきになる", "そんなわたしに", "なれたらいいな"], "note": "好ききらいをなくして、みんなを好きになりたい、という願いの詩です。"}, {"day": 27, "stage": "s6", "kind": "life", "title": "三冊の手帳", "lines": ["夏の日の", "手帳に写す", "三冊を", "師と弟の", "手へ託したり"], "yomi": ["なつのひの", "てちょうにうつす", "さんさつを", "しとおとうとの", "てへたくしたり"], "note": "1929年の夏から秋、童謡を3冊の手帳（美しい町・空のかあさま・さみしい王女）に清書し、西條八十と弟の正祐に託しました。"}, {"day": 28, "stage": "s6", "kind": "poem", "title": "私と小鳥と鈴と", "lines": ["空をゆく", "小鳥に鈴に", "わたしにも", "それぞれちがう", "よさがありけり"], "yomi": ["そらをゆく", "ことりにすずに", "わたしにも", "それぞれちがう", "よさがありけり"], "note": "空を飛べる小鳥、きれいな音の鈴、そして私。ちがいをそのままよしとする、いちばん知られた一編です。第三童謡集『さみしい王女』に収められています。"}, {"day": 29, "stage": "s6", "kind": "poem", "title": "こだまでしょうか", "lines": ["呼びかけは", "そのまま返る", "誘いにも", "きつい声にも", "ごめんねにさえ"], "yomi": ["よびかけは", "そのままかえる", "さそいにも", "きついこえにも", "ごめんねにさえ"], "note": "呼びかけた言葉が返ってくる。遊ぼうも、乱暴な言葉も、ごめんねも。2011年の東日本大震災のあと、ACジャパンのCMで広く知られました。"}, {"day": 30, "stage": "s6", "kind": "life", "title": "半世紀をこえて", "lines": ["五十年", "眠った言葉", "出会われて", "五百余りの", "詩が今に生く"], "yomi": ["ごじゅうねん", "ねむったことば", "であわれて", "ごひゃくあまりの", "しがいまにいく"], "note": "1982年、矢崎節夫さんが遺稿の手帳に出会い、1984年に全集が出版されました。みすゞさんの詩は今も読み継がれています。"}]};
+(function(){
+  const stages = DATA.stages, days = DATA.days, timeline = DATA.timeline;
+  const $ = s => document.querySelector(s);
+  const byStage = id => days.filter(d => d.stage === id);
+  const imageNames = ['yakata_stage1-rock.jpg','yakata_stage2-rock.jpg','yakata_stage3-rock.jpg','yakata_stage4-rock.jpg','yakata_stage5-rock.jpg','yakata_stage6-rock.jpg'];
+  stages.forEach((s,i) => s.img = 'images/' + imageNames[i]);
+
+  const FEATURED = days.filter(d => d.kind === 'poem').map(d => d.title);
+  const CATALOG_SOURCE = [
+    '障子','お魚','雲','芝居小屋','八百屋のお鳩','空のあちら','楽隊','打出の小槌','雛まつり','こぶとり',
+    'かぐやひめ','一寸法師','海のお宮','雀のおやど','月日貝','まつりの頃','雀のかあさん','月と雲','泣きむし','小さなうたがい',
+    'にわとり','夕顔','箱のお家','栗','さかむけ','お祭すぎ','げんげ畑','瀬戸の雨','内海外海','海のこども',
+    '麦藁編む子の唄','もくせい','睫毛の虹','洋燈','どんぐり','はつ秋','こおろぎ','なまけ時計','砂の王国','目のないお馬',
+    '草原','昼の花火','山いくつ','光る髪','七夕の笹','紋附き','噴水の亀','行軍将棋','鬼味噌','美しい町',
+    '魔法の杖','一軒屋の時計','博多人形','忙しい空','秋日和','燈籠ながし','郵便局の椿','手帳','四月','つばな',
+    '色紙','夜なかの風','昼の電燈','忘れた唄','空の色','木','海の鳥','トランプの女王','漁夫の小父さん','おとむらいの日',
+    'お正月と月','秋のおたより','かくれんぼ','峠','昼の月','私のお里','かるた','町の馬','月のお舟','おはなし',
+    'ころんだ所','夢売り','浮き島','大きな文字','おはじき','木の葉のボート','松かさ','天人','喧嘩のあと','子供の時計',
+    '話のお国','つつじ','親なし鴨','硝子','石ころ','とんび','月の出','桑の実','王様のお馬','お乳の川',
+    '幻燈','お堀のそば','赤いお舟','お葬いごっこ','鯨法会','帆','王子山','草原の夜','このみち','さびしいとき',
+    'こころ','繭と墓','花のたましい','土と草','不思議','星とたんぽぽ','蜂と神さま','積もった雪','明るい方へ','大漁',
+    '露','土','さみしい王女','金のすきな王さま','世界中の王様','桜の木','みんなを好きに','私と小鳥と鈴と','こだまでしょうか'
+  ];
+  const CATALOG = [...new Set([...FEATURED, ...CATALOG_SOURCE])].slice(0,100);
+  let reactions = {};
+  let visitState = {school:false,port:false};
+  let catalogFilter = 'all';
+  try { reactions = JSON.parse(localStorage.getItem('misuzu-reactions') || '{}'); } catch(e) {}
+  try { visitState = Object.assign(visitState, JSON.parse(localStorage.getItem('misuzu-visits') || '{}')); } catch(e) {}
+  const saveLocal = (key, value) => { try { localStorage.setItem(key, JSON.stringify(value)); } catch(e) {} };
+  const esc = v => String(v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const knownWork = title => days.find(d => d.kind === 'poem' && d.title === title);
+  const workIndex = title => CATALOG.indexOf(title) + 1;
+  const stageFor = d => d && stages.find(s => s.id === d.stage);
+
+  function reactionButtonsHTML(title){
+    const current = reactions[title] || '';
+    const encoded = encodeURIComponent(title);
+    return '<button class="react-btn" type="button" data-reaction="great" data-title="'+encoded+'" aria-pressed="'+(current==='great')+'">すごくいい</button>' +
+      '<button class="react-btn" type="button" data-reaction="good" data-title="'+encoded+'" aria-pressed="'+(current==='good')+'">いいね</button>';
+  }
+
+  function setReaction(title, value){
+    reactions[title] = reactions[title] === value ? '' : value;
+    if(!reactions[title]) delete reactions[title];
+    saveLocal('misuzu-reactions', reactions);
+    renderCatalog(); renderReread();
+    if($('#dialogTitle').textContent === title) $('#dialogReactions').innerHTML = reactionButtonsHTML(title);
+  }
+
+  function renderReread(){
+    const box = $('#rereadList');
+    const titles = CATALOG.filter(t => reactions[t]);
+    box.innerHTML = titles.length ? titles.map(t => '<button type="button" data-open-title="'+encodeURIComponent(t)+'">'+esc(t)+'</button>').join('') : '<span class="section-sub">「すごくいい」「いいね」を押した作品が並びます。</span>';
+  }
+
+  function renderCatalog(){
+    const q = ($('#workSearch').value || '').trim().toLowerCase();
+    const shown = CATALOG.filter(t => (!q || t.toLowerCase().includes(q)) && (catalogFilter !== 'liked' || reactions[t]));
+    $('#catalogGrid').innerHTML = shown.map(title => {
+      const d = knownWork(title);
+      return '<article class="work-card"><div class="meta">作品 '+workIndex(title)+' / 100'+(d?' ・ 短歌と解説つき':' ・ 原詩への入口')+'</div>'+
+        '<h3>'+esc(title)+'</h3>'+
+        '<button class="open-work" type="button" data-open-title="'+encodeURIComponent(title)+'">背景とエピソードをひらく</button>'+
+        '<div class="react-row">'+reactionButtonsHTML(title)+'</div></article>';
+    }).join('') || '<p class="section-sub">該当する作品がありません。</p>';
+  }
+
+  function openWorkModal(title){
+    const d = days.find(item => item.title === title), s = stageFor(d);
+    $('#dialogKicker').textContent = d && d.kind === 'life' ? 'みすゞの歩み' : '作品 ' + (workIndex(title) || '—') + ' / 100';
+    $('#dialogTitle').textContent = title;
+    if(d){
+      $('#dialogBody').innerHTML = '<section class="dialog-block"><h3>そのころのみすゞさん</h3><p>' + esc(s.years + '　' + s.lead) + '</p></section>'+
+        '<section class="dialog-block"><h3>作品をめぐるエピソード</h3><p>' + esc(d.note) + '</p></section>'+
+        '<section class="dialog-block"><h3>短歌でもう一度</h3><p class="dialog-tanka">' + d.lines.map(esc).join('<br>') + '</p><p class="dialog-note">この短歌は原詩そのものではなく、'+(d.kind === 'life' ? '歩みをもとに' : '作品に着想を得て')+'ケセラが新しく詠んだものです。</p></section>';
+    } else {
+      $('#dialogBody').innerHTML = '<section class="dialog-block"><h3>作品の背景</h3><p>三冊の遺稿集に収められ、現在まで伝わる作品の一つです。この館では作品名を、原詩へ出会う入口として紹介しています。</p></section>'+
+        '<section class="dialog-block"><h3>エピソードについて</h3><p>個別の制作年や、作品に直接結びつく出来事は、このページの確認資料では特定できません。想像を史実として補わず、原詩は全集や記念館の展示でお読みください。</p></section>'+
+        '<section class="dialog-block"><h3>もう一度読むために</h3><p>題名をゆっくり声に出し、どんな景色や音が浮かぶかを覚えておくと、原詩と出会ったときの楽しみが深まります。</p></section>';
+    }
+    $('#dialogReactions').innerHTML = d && d.kind === 'life' ? '' : reactionButtonsHTML(title);
+    const dialog = $('#workDialog');
+    if(typeof dialog.showModal === 'function') dialog.showModal(); else dialog.setAttribute('open','');
+  }
+
+  // 今日の番号（11月ならその日、それ以外は日替わりで巡回）
+  function todayIndex(){
+    const now = new Date();
+    if (now.getMonth() === 10) return Math.min(now.getDate(), days.length) - 1;
+    const start = new Date(now.getFullYear(),0,0);
+    const doy = Math.floor((now - start)/86400000);
+    return doy % days.length;
+  }
+  let cur = todayIndex();
+  let vertical = false;
+  const isNov = new Date().getMonth() === 10;
+
+  function tankaHTML(d){ return d.lines.map(l => '<span>'+l+'</span>').join(''); }
+
+  function renderToday(){
+    const d = days[cur];
+    $('#tBadge').textContent = (d.kind === 'life' ? '11月' + d.day + '日 ・ みすゞの歩み' : '11月' + d.day + '日 ・ 詩の短歌');
+    $('#tBadge').className = 'badge' + (d.kind === 'life' ? ' life' : '');
+    $('#tTitle').textContent = d.kind === 'life' ? d.title : '『' + d.title + '』より';
+    const t = $('#tTanka'); t.innerHTML = tankaHTML(d); t.className = 'tanka' + (vertical ? ' vertical' : '');
+    $('#tNote').textContent = d.note;
+    document.querySelectorAll('.sign').forEach(el => el.classList.toggle('today-mark', Number(el.dataset.day) === d.day));
+  }
+
+  function renderTimeline(){
+    const box = $('#timeline');
+    box.innerHTML = timeline.map(t =>
+      '<div class="tl-item" role="listitem" data-stage="'+t.stage+'">' +
+      '<div class="tl-year">'+t.year+'</div><div class="tl-text">'+t.text+'</div>' +
+      '<button type="button" data-go="'+t.stage+'">道を歩く ▼</button></div>').join('');
+    box.addEventListener('click', e => {
+      const b = e.target.closest('button[data-go]'); if(!b) return;
+      goStage(b.dataset.go);
+    });
+  }
+
+  function imgBlock(s){
+    return '<div class="scene"><img src="'+s.img+'" alt="'+s.name+'の風景" loading="lazy" ' +
+      'onerror="this.parentNode.innerHTML=\'<div class=ph>ここに「'+s.name+'」の絵が入ります<br>（'+s.img+'）</div>\'"></div>';
+  }
+
+  function renderWalk(){
+    const box = $('#walk');
+    box.innerHTML = stages.map(s => {
+      const signs = byStage(s.id).map(d =>
+        '<div class="sign" data-day="'+d.day+'">' +
+        '<div class="stand">' +
+        '<button type="button" class="board" aria-haspopup="dialog">' +
+          '<div class="day">'+(d.kind==='life'?'みすゞの歩み':'詩')+' ・ 11月'+d.day+'日</div>' +
+          '<div class="ttl">'+d.title+'</div>' +
+          '<p class="tk">'+tankaHTML(d)+'</p>' +
+        '</button>' +
+        '<span class="post" aria-hidden="true"></span>' +
+        '<img class="flower" src="images/yakata_flower.png" alt="" onerror="this.remove()">' +
+        '</div>' +
+        '<div class="more" hidden>'+d.note+(d.poem?'<div class="poem">'+d.poem+'</div>':'')+'</div>' +
+        '</div>').join('');
+      const bench = s.id === 's3' ? '<aside class="bench-stop"><img src="images/yakata_bench.png" alt="野の花に囲まれた木のベンチの水彩画"><h3>ここで、ひと休み</h3><p>散歩道の半分まで来ました。気になったことばを一つ思い出してから、投稿の日々へ進みましょう。</p></aside>' : '';
+      return '<section class="stage" id="'+s.id+'"><h3>'+s.name+'</h3><p class="years">'+s.years+'　'+s.lead+'</p>'+ 
+             imgBlock(s)+'<div class="signs">'+signs+'</div></section>'+bench;
+    }).join('');
+    box.addEventListener('click', e => {
+      const b = e.target.closest('.board'); if(!b) return;
+      const title = b.querySelector('.ttl').textContent;
+      openWorkModal(title);
+    });
+  }
+
+  function goStage(id){
+    const el = document.getElementById(id); if(!el) return;
+    el.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  $('#prevBtn').onclick = () => { cur = (cur - 1 + days.length) % days.length; renderToday(); };
+  $('#nextBtn').onclick = () => { cur = (cur + 1) % days.length; renderToday(); };
+  $('#todayBtn').onclick = () => { cur = todayIndex(); renderToday(); };
+  $('#vertBtn').onclick = e => { vertical = !vertical; e.currentTarget.setAttribute('aria-pressed', vertical); e.currentTarget.textContent = vertical ? '横書きにもどす' : '縦書きで読む'; renderToday(); };
+  $('#goStage').onclick = () => goStage(days[cur].stage);
+
+  document.addEventListener('click', e => {
+    const open = e.target.closest('[data-open-title]');
+    if(open) openWorkModal(decodeURIComponent(open.dataset.openTitle));
+    const react = e.target.closest('[data-reaction]');
+    if(react) setReaction(decodeURIComponent(react.dataset.title), react.dataset.reaction);
+  });
+  $('#workSearch').addEventListener('input', renderCatalog);
+  document.querySelectorAll('.filter-btn').forEach(btn => btn.addEventListener('click', () => {
+    catalogFilter = btn.dataset.filter;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b === btn));
+    renderCatalog();
+  }));
+  $('.dialog-close').onclick = () => $('#workDialog').close();
+  $('#workDialog').addEventListener('click', e => { if(e.target === $('#workDialog')) $('#workDialog').close(); });
+
+  const routes = {
+    school: {
+      embed:'https://www.google.com/maps?output=embed&saddr='+encodeURIComponent('金子みすゞ記念館')+'&daddr='+encodeURIComponent('瀬戸崎小学校跡')+'&dirflg=w',
+      external:'https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent('金子みすゞ記念館')+'&destination='+encodeURIComponent('瀬戸崎小学校跡')+'&travelmode=walking'
+    },
+    port: {
+      embed:'https://www.google.com/maps?output=embed&saddr='+encodeURIComponent('金子みすゞ記念館')+'&daddr='+encodeURIComponent('仙崎港')+'&dirflg=w',
+      external:'https://www.google.com/maps/dir/?api=1&origin='+encodeURIComponent('金子みすゞ記念館')+'&destination='+encodeURIComponent('仙崎港')+'&travelmode=walking'
+    }
+  };
+  document.querySelectorAll('.map-tab').forEach(btn => btn.addEventListener('click', () => {
+    const r = routes[btn.dataset.route];
+    $('#mapFrame').src = r.embed; $('#routeExternal').href = r.external;
+    document.querySelectorAll('.map-tab').forEach(b => b.classList.toggle('active', b === btn));
+  }));
+  function renderVisits(){
+    const count = Number(visitState.school) + Number(visitState.port);
+    $('#progressText').textContent = count + ' / 2ルート達成' + (count === 2 ? '　おめでとうございます！' : '');
+    $('#progressFill').style.width = (count * 50) + '%';
+    document.querySelectorAll('[data-visit]').forEach(b => { const done=!!visitState[b.dataset.visit]; b.classList.toggle('done',done); b.textContent=(b.dataset.visit==='school'?'学校跡':'仙崎港')+(done?'へ行きました ✓':'へ行った'); });
+    document.querySelectorAll('[data-node],[data-line]').forEach(el => el.classList.toggle('done', !!visitState[el.dataset.node || el.dataset.line]));
+  }
+  document.querySelectorAll('[data-visit]').forEach(btn => btn.addEventListener('click', () => {
+    visitState[btn.dataset.visit] = !visitState[btn.dataset.visit];
+    saveLocal('misuzu-visits', visitState); renderVisits();
+  }));
+
+  renderTimeline(); renderWalk(); renderToday(); renderCatalog(); renderReread(); renderVisits();
+})();
+</script>
+</body>
+</html>
