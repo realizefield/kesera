@@ -2016,11 +2016,12 @@ button[aria-pressed="true"] { font-weight:700; }
     <p class="pf-safe">答えていただいた内容は、お使いの端末の中にだけ保存します。ケセラは、診断や治療の判断はしません。体のことで気になることは、かならず、かかりつけのお医者さんに相談してください。</p>
     <label class="pf-opt pf-read" style="align-items:flex-start"><input type="checkbox" id="pfRead"><span><b>上の注意を読みました。</b>(チェックすると、入力の画面が出ます)</span></label>
     <div id="pfBody" hidden>
-    <fieldset><legend>① お名前とお住まい</legend>
+    <fieldset><legend>① 呼び名とお住まい</legend>
       <div class="pf-row"><label class="pf-l" for="pfName">呼び名</label><input type="text" id="pfName" maxlength="12" placeholder="例：のださん、花ちゃん" autocomplete="off"><span class="pf-unit">さん、とお呼びします</span></div>
       <div class="pf-unit" style="margin:-4px 0 6px">本名でなくて、かまいません。お話の相手（AI）が、この名前で呼びかけるため、この呼び名は、AIに伝わります。</div>
       <div class="pf-row" style="margin-top:10px"><label class="pf-l" for="pfPref">お住まい</label><select id="pfPref" style="min-height:50px;font-size:1.08rem;padding:6px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg)"><option value="016000">北海道(札幌)</option><option value="020000">青森県</option><option value="030000">岩手県</option><option value="040000">宮城県</option><option value="050000">秋田県</option><option value="060000">山形県</option><option value="070000">福島県</option><option value="080000">茨城県</option><option value="090000">栃木県</option><option value="100000">群馬県</option><option value="110000">埼玉県</option><option value="120000">千葉県</option><option value="130000">東京都</option><option value="140000">神奈川県</option><option value="150000">新潟県</option><option value="160000">富山県</option><option value="170000">石川県</option><option value="180000">福井県</option><option value="190000">山梨県</option><option value="200000">長野県</option><option value="210000">岐阜県</option><option value="220000">静岡県</option><option value="230000">愛知県</option><option value="240000">三重県</option><option value="250000">滋賀県</option><option value="260000">京都府</option><option value="270000">大阪府</option><option value="280000">兵庫県</option><option value="290000">奈良県</option><option value="300000">和歌山県</option><option value="310000">鳥取県</option><option value="320000">島根県</option><option value="330000">岡山県</option><option value="340000">広島県</option><option value="350000">山口県</option><option value="360000">徳島県</option><option value="370000">香川県</option><option value="380000">愛媛県</option><option value="390000">高知県</option><option value="400000">福岡県</option><option value="410000">佐賀県</option><option value="420000">長崎県</option><option value="430000">熊本県</option><option value="440000">大分県</option><option value="450000">宮崎県</option><option value="460100">鹿児島県</option><option value="471000">沖縄県(本島)</option></select><span class="pf-unit">天気の予報に使います</span></div>
     </fieldset>
+    <details id="pfMore"><summary style="min-height:56px;display:flex;align-items:center;font-size:1.15rem;font-weight:800;padding:8px 14px;border:2px solid var(--line);border-radius:12px;cursor:pointer;margin:8px 0">もっと答える（あとからでも、だいじょうぶです）</summary>
     <fieldset><legend>② 年齢・お誕生日・性別</legend>
       <div class="pf-row"><label class="pf-l" for="pfAge">年齢</label><input type="number" id="pfAge" min="18" max="110" inputmode="numeric"><span class="pf-unit">歳</span></div>
       <div class="pf-row" style="margin-top:10px"><label class="pf-l" for="pfBM">お誕生日</label><input type="number" id="pfBM" min="1" max="12" inputmode="numeric" aria-label="お誕生日の月"><span class="pf-unit">月</span><input type="number" id="pfBD" min="1" max="31" inputmode="numeric" aria-label="お誕生日の日"><span class="pf-unit">日</span></div>
@@ -2030,15 +2031,19 @@ button[aria-pressed="true"] { font-weight:700; }
         <label class="pf-opt"><input type="radio" name="pfGender" value="答えない">答えない</label>
       </div>
     </fieldset>
-    <fieldset><legend>③ 身長と体重</legend>
-      <div class="pf-row"><label class="pf-l" for="pfH">身長</label><input type="number" id="pfH" min="100" max="220" inputmode="decimal" step="0.1"><span class="pf-unit">cm</span></div>
-      <div class="pf-row" style="margin-top:10px"><label class="pf-l" for="pfW">体重</label><input type="number" id="pfW" min="20" max="200" inputmode="decimal" step="0.1"><span class="pf-unit">kg</span></div>
+    <fieldset><legend>③ 身長（おおよそで、だいじょうぶです）</legend>
+      <div class="pf-row"><label class="pf-l" for="pfH">身長</label><select id="pfH" style="min-height:50px;font-size:1.08rem;padding:6px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg)"><option value="">答えない</option><option value="142">〜144cm</option><option value="147">145〜149cm</option><option value="152">150〜154cm</option><option value="157">155〜159cm</option><option value="162">160〜164cm</option><option value="167">165〜169cm</option><option value="172">170〜174cm</option><option value="177">175cm〜</option></select></div>
+    </fieldset>
+    <details id="pfNum"><summary style="min-height:56px;display:flex;align-items:center;font-size:1.15rem;font-weight:800;padding:8px 14px;border:2px solid var(--line);border-radius:12px;cursor:pointer;margin:8px 0">くわしい数字（体重・血圧。わかるときだけ）</summary>
+    <fieldset><legend>体重</legend>
+      <div class="pf-row"><label class="pf-l" for="pfW">体重</label><input type="number" id="pfW" min="20" max="200" inputmode="decimal" step="0.1"><span class="pf-unit">kg</span></div>
     </fieldset>
     <fieldset><legend>④ 血圧(わかるときだけ)</legend>
       <p class="muted" style="margin:0 0 8px">健康診断や、血圧計の数字をお書きください。</p>
       <div class="pf-row"><label class="pf-l" for="pfSys">最高(上)</label><input type="number" id="pfSys" min="70" max="260" inputmode="numeric"><span class="pf-unit">mmHg</span></div>
       <div class="pf-row" style="margin-top:10px"><label class="pf-l" for="pfDia">最低(下)</label><input type="number" id="pfDia" min="40" max="160" inputmode="numeric"><span class="pf-unit">mmHg</span></div>
     </fieldset>
+    </details>
     <fieldset><legend>⑤ これまでの病気(あてはまるものだけ)</legend>
       <div class="pf-opts">
         <label class="pf-opt"><input type="checkbox" name="pfHist" value="高血圧">高血圧</label>
@@ -2065,9 +2070,10 @@ button[aria-pressed="true"] { font-weight:700; }
     <fieldset><legend>⑧ お話の相手(AI)への伝え方</legend>
       <label class="pf-opt" style="align-items:flex-start"><input type="checkbox" id="pfAI"><span>年齢・性別・歩くようす・これまでの病気（「そのほか」に書いた内容も）を、お話の相手(AI)に、参考として伝えてもよい。<br><span class="pf-unit">身長・体重・血圧、いのちのメモ、緊急連絡先、ご住所は、伝えません。チェックしなければ、これらの情報は伝えません（呼び名だけは、呼びかけのために伝わります）。お話の中で、お名前や住所・電話番号を、AIに話さないでください。</span></span></label>
     </fieldset>
+    </details>
     <p id="profMsg" role="alert" aria-live="assertive"></p>
     </div>
-    <div class="design-footer" style="position:static;padding:0;border:0;background:none"><button class="btn primary" id="profSave" type="submit">これで登録する</button><button class="btn" id="profLater" type="button">あとで答える</button></div>
+    <div class="design-footer" style="position:static;padding:0;border:0;background:none"><button class="btn primary" id="profSave" type="submit">はじめる</button><button class="btn" id="profLater" type="button">あとで答える</button></div>
     <p class="design-hint">あとから、ホームの「ご登録内容」でいつでも直せます。</p>
   </form>
 </dialog>
@@ -2460,10 +2466,11 @@ button[aria-pressed="true"] { font-weight:700; }
     if (!a.length) return '';
     return '話し相手がご自分で伝えてよいとした情報（参考だけ）：' + a.join('、') + '。診断や治療の助言はしない。体の話になったら「かかりつけのお医者さんに相談してください」とだけ伝える。この情報を、こちらから持ち出して繰り返さない。\n';
   }
+  function bandH(h) { h = Number(h); if (!h) return ''; if (h < 145) return '142'; if (h >= 175) return '177'; return String(147 + 5 * Math.floor((h - 145) / 5)); }
   function fillProf() {
     var p = loadProf() || {};
     $('pfName').value = load('kesera-name', '');
-    $('pfAge').value = p.age || ''; $('pfBM').value = p.bm || ''; $('pfBD').value = p.bd || ''; $('pfH').value = p.h || ''; $('pfW').value = p.w || '';
+    $('pfAge').value = p.age || ''; $('pfBM').value = p.bm || ''; $('pfBD').value = p.bd || ''; $('pfH').value = bandH(p.h); $('pfW').value = p.w || '';
     $('pfSys').value = p.sys || ''; $('pfDia').value = p.dia || ''; $('pfOther').value = p.other || '';
     document.querySelectorAll('[name="pfGender"]').forEach(function (el) { el.checked = el.value === p.gender; });
     document.querySelectorAll('[name="pfWalk"]').forEach(function (el) { el.checked = el.value === p.walk; });
@@ -2473,7 +2480,7 @@ button[aria-pressed="true"] { font-weight:700; }
   function showProfBody() { var on = $('pfRead').checked; $('pfBody').hidden = !on; $('profSave').hidden = !on; }
   $('pfRead').addEventListener('change', function () { showProfBody(); if (this.checked) setTimeout(function () { try { $('pfName').focus(); } catch (e) {} }, 50); });
   function openProf() {
-    fillProf(); $('pfRead').checked = !!load('kesera-profile', null); showProfBody(); profScroll = document.body.style.overflow; document.body.style.overflow = 'hidden';
+    fillProf(); $('pfRead').checked = !!load('kesera-profile', null); showProfBody(); $('pfMore').open = !!load('kesera-profile', null); (function () { var q = load('kesera-profile', null) || {}; $('pfNum').open = !!(q.w || q.sys || q.dia); })(); profScroll = document.body.style.overflow; document.body.style.overflow = 'hidden';
     if (!profDlg.open) profDlg.showModal();
   }
   function closeProf() { if (profDlg.open) profDlg.close(); document.body.style.overflow = profScroll; }
