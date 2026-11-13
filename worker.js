@@ -42,12 +42,27 @@ function json(env, origin, status, body) {
   return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', ...cors(env, origin) } });
 }
 
+// 個人情報の伏せ字：電話番号・口座やカードの番号・マイナンバーのような長い数字、メールアドレス、郵便番号を、AIに送る前に伏せる
+// （全角の数字や記号は、半角にそろえて調べる。見つからなければ、元の文のまま通す）
+const MASK = '［伏せました］';
+function maskPII(text) {
+  const n = String(text).normalize('NFKC');
+  let hit = false;
+  let out = n.replace(/\d[\d\-\s]{7,}\d/g, (m) => {
+    if (m.replace(/\D/g, '').length >= 9) { hit = true; return MASK; }
+    return m;
+  });
+  out = out.replace(/〒?\s?\d{3}[-\s]?\d{4}(?!\d)/g, () => { hit = true; return MASK; });
+  out = out.replace(/[A-Za-z0-9._%+\-]+@[A-Za-z0-9\-]+(\.[A-Za-z0-9\-]+)+/g, () => { hit = true; return MASK; });
+  return hit ? out : text;
+}
+
 // 会話の形を整える：最初は user、user と assistant が交互、長さの上限
 function cleanMessages(msgs) {
   const out = [];
   for (const m of (Array.isArray(msgs) ? msgs : []).slice(-12)) {
     if (!m || (m.role !== 'user' && m.role !== 'assistant') || typeof m.content !== 'string') continue;
-    const text = m.content.slice(0, 800).trim();
+    const text = maskPII(m.content.slice(0, 800)).trim();
     if (!text) continue;
     if (out.length && out[out.length - 1].role === m.role) out[out.length - 1].content += '\n' + text;
     else out.push({ role: m.role, content: text });

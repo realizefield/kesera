@@ -1155,6 +1155,60 @@ button[aria-pressed="true"] { font-weight:700; }
     <div id="ykRooms" style="display:flex;flex-direction:column;gap:8px"></div>
   </section>
 
+  <section class="view" id="v-horoyoi" hidden aria-label="ちょこっとほろ酔い倶楽部">
+    <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
+    <h2>🏮 ちょこっとほろ酔い倶楽部</h2>
+    <p class="muted" style="margin:0;line-height:1.8">「あのお店、気になるけど、一人では…」を、ちいさな一歩に。のれんをくぐって、ボタンを選ぶだけです。</p>
+    <style>
+      #v-horoyoi .hy-door { display:block; width:100%; padding:0; border:0; background:none; cursor:pointer; text-align:center; font:inherit; color:inherit }
+      #v-horoyoi .hy-door svg { width:100%; max-width:440px; height:auto; display:block; margin:0 auto; border-radius:14px; box-shadow:0 2px 10px rgba(0,0,0,.18) }
+      #v-horoyoi .hy-door .hy-cap { display:inline-block; margin-top:10px; font-size:1.25rem; font-weight:800; padding:12px 22px; border-radius:999px; background:var(--accent); color:#fff }
+      #v-horoyoi .hy-p { transform-box:fill-box; transform-origin:50% 0; animation:hySway 5s ease-in-out infinite }
+      #v-horoyoi .hy-p:nth-child(2) { animation-delay:-1.2s } #v-horoyoi .hy-p:nth-child(3) { animation-delay:-2.4s } #v-horoyoi .hy-p:nth-child(4) { animation-delay:-3.6s }
+      #v-horoyoi .hy-door.open .hy-p { animation:none; transition:transform .6s ease }
+      #v-horoyoi .hy-door.open .hy-p:nth-child(1) { transform:translateX(-34px) rotate(-6deg) } #v-horoyoi .hy-door.open .hy-p:nth-child(2) { transform:translateX(-14px) rotate(-3deg) }
+      #v-horoyoi .hy-door.open .hy-p:nth-child(3) { transform:translateX(14px) rotate(3deg) } #v-horoyoi .hy-door.open .hy-p:nth-child(4) { transform:translateX(34px) rotate(6deg) }
+      @keyframes hySway { 0%,100% { transform:rotate(-1.2deg) } 50% { transform:rotate(1.2deg) } }
+      @media (prefers-reduced-motion: reduce) { #v-horoyoi .hy-p { animation:none } #v-horoyoi .hy-door.open .hy-p { transition:none } }
+      #v-horoyoi #hyFlow:not([hidden]) { display:flex; flex-direction:column; gap:12px }
+      #v-horoyoi .hy-opt { min-height:62px; font-size:1.2rem; text-align:left }
+      #v-horoyoi .hy-chip { display:inline-block; padding:4px 10px; border-radius:999px; background:var(--accent-soft); font-size:.95rem; font-weight:700 }
+      #v-horoyoi .hy-star { color:#c47a00; font-weight:900; letter-spacing:.05em }
+    </style>
+    <div id="hyEntrance">
+      <button class="hy-door" id="hyDoor" type="button" aria-label="のれんをくぐって、お店さがしをはじめる">
+        <svg viewBox="0 0 360 300" role="img" aria-label="夕暮れの店先。藍色ののれんに「ほろよい」と書かれ、赤い提灯がともっています。">
+          <defs>
+            <filter id="hyWc" x="-6%" y="-6%" width="112%" height="112%"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G" result="d"/><feGaussianBlur in="d" stdDeviation="0.7"/></filter>
+            <filter id="hyWc2" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="9" xChannelSelector="R" yChannelSelector="G" result="d"/><feGaussianBlur in="d" stdDeviation="1.6"/></filter>
+            <filter id="hyGrain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="11" result="t"/><feColorMatrix in="t" type="matrix" values="0 0 0 0 0.45  0 0 0 0 0.35  0 0 0 0 0.25  0 0 0 0.16 0"/></filter>
+            <radialGradient id="hyGlow" cx="50%" cy="62%" r="55%"><stop offset="0" stop-color="#ffd77a" stop-opacity=".95"/><stop offset=".6" stop-color="#f6a85a" stop-opacity=".45"/><stop offset="1" stop-color="#f6a85a" stop-opacity="0"/></radialGradient>
+            <linearGradient id="hySky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9c7b8"/><stop offset="1" stop-color="#f3e4cf"/></linearGradient>
+          </defs>
+          <rect width="360" height="300" fill="url(#hySky)"/>
+          <g filter="url(#hyWc2)"><rect x="0" y="0" width="360" height="90" fill="#b9a4a0" opacity=".35"/><ellipse cx="60" cy="40" rx="90" ry="26" fill="#e8d3c6" opacity=".55"/><ellipse cx="300" cy="28" rx="80" ry="20" fill="#e2c9bd" opacity=".5"/></g>
+          <g filter="url(#hyWc)"><rect x="20" y="70" width="320" height="205" rx="6" fill="#8b6a4b" opacity=".9"/><rect x="34" y="84" width="292" height="186" fill="#5a4030" opacity=".55"/></g>
+          <ellipse cx="180" cy="190" rx="130" ry="95" fill="url(#hyGlow)"/>
+          <g filter="url(#hyWc)"><rect x="40" y="86" width="280" height="14" rx="3" fill="#3b281c"/><rect x="48" y="76" width="264" height="8" rx="3" fill="#6b4a2f"/></g>
+          <g filter="url(#hyWc)"><rect x="44" y="102" width="272" height="5" rx="2.5" fill="#2a1b12"/></g>
+          <g>
+            <g class="hy-p"><path filter="url(#hyWc)" d="M52 106 L112 106 L111 208 Q94 214 80 208 Q66 213 53 209 Z" fill="#2f4a7a" opacity=".93"/><path filter="url(#hyWc)" d="M56 112 L108 112 L107 200 Q92 205 80 200 Q68 204 57 201 Z" fill="#4b6aa0" opacity=".28"/><text x="82" y="170" text-anchor="middle" font-family="'Yu Mincho','Hiragino Mincho ProN','Noto Serif JP',serif" font-weight="700" font-size="38" fill="#f4efe2">ほ</text></g>
+            <g class="hy-p"><path filter="url(#hyWc)" d="M118 106 L178 106 L177 212 Q160 218 146 212 Q132 217 119 213 Z" fill="#2c4673" opacity=".93"/><path filter="url(#hyWc)" d="M122 112 L174 112 L173 204 Q158 209 146 204 Q134 208 123 205 Z" fill="#4b6aa0" opacity=".28"/><text x="148" y="172" text-anchor="middle" font-family="'Yu Mincho','Hiragino Mincho ProN','Noto Serif JP',serif" font-weight="700" font-size="38" fill="#f4efe2">ろ</text></g>
+            <g class="hy-p"><path filter="url(#hyWc)" d="M184 106 L244 106 L243 209 Q226 215 212 209 Q198 214 185 210 Z" fill="#314c7d" opacity=".93"/><path filter="url(#hyWc)" d="M188 112 L240 112 L239 201 Q224 206 212 201 Q200 205 189 202 Z" fill="#4b6aa0" opacity=".28"/><text x="214" y="170" text-anchor="middle" font-family="'Yu Mincho','Hiragino Mincho ProN','Noto Serif JP',serif" font-weight="700" font-size="38" fill="#f4efe2">よ</text></g>
+            <g class="hy-p"><path filter="url(#hyWc)" d="M250 106 L310 106 L309 207 Q292 213 278 207 Q264 212 251 208 Z" fill="#2e4977" opacity=".93"/><path filter="url(#hyWc)" d="M254 112 L306 112 L305 199 Q290 204 278 199 Q266 203 255 200 Z" fill="#4b6aa0" opacity=".28"/><text x="280" y="170" text-anchor="middle" font-family="'Yu Mincho','Hiragino Mincho ProN','Noto Serif JP',serif" font-weight="700" font-size="38" fill="#f4efe2">い</text></g>
+          </g>
+          <g filter="url(#hyWc)"><line x1="318" y1="100" x2="318" y2="128" stroke="#2a1b12" stroke-width="2"/><ellipse cx="318" cy="150" rx="17" ry="24" fill="#c8352b" opacity=".92"/><ellipse cx="318" cy="150" rx="11" ry="22" fill="#e86a52" opacity=".5"/><rect x="308" y="124" width="20" height="6" rx="2" fill="#2a1b12"/><rect x="308" y="172" width="20" height="6" rx="2" fill="#2a1b12"/></g>
+          <ellipse cx="318" cy="150" rx="34" ry="42" fill="#ffcf70" opacity=".3" filter="url(#hyWc2)"/>
+          <g filter="url(#hyWc)"><rect x="20" y="268" width="320" height="22" fill="#6d6a66" opacity=".75"/><rect x="40" y="274" width="60" height="8" rx="3" fill="#8e8a84" opacity=".6"/><rect x="150" y="276" width="70" height="8" rx="3" fill="#8e8a84" opacity=".6"/><rect x="250" y="274" width="54" height="8" rx="3" fill="#8e8a84" opacity=".6"/></g>
+          <rect width="360" height="300" filter="url(#hyGrain)" opacity=".6"/>
+        </svg>
+        <span class="hy-cap">🏮 のれんをくぐる</span>
+      </button>
+      <p class="fl-sub" style="line-height:1.8;margin:10px 0 0">お酒は20歳から。お酒を飲む日は、運転しません。ノンアルで楽しむのも、大歓迎です。</p>
+    </div>
+    <div id="hyFlow" hidden></div>
+  </section>
+
   <section class="view" id="v-hokago" hidden aria-label="放課後倶楽部（部活）">
     <button class="btn" data-go="home" style="align-self:flex-start">ホームにもどる</button>
     <h2>🎒 放課後倶楽部（部活）</h2>
@@ -2016,10 +2070,12 @@ button[aria-pressed="true"] { font-weight:700; }
     <p class="pf-safe">答えていただいた内容は、お使いの端末の中にだけ保存します。ケセラは、診断や治療の判断はしません。体のことで気になることは、かならず、かかりつけのお医者さんに相談してください。</p>
     <label class="pf-opt pf-read" style="align-items:flex-start"><input type="checkbox" id="pfRead"><span><b>上の注意を読みました。</b>(チェックすると、入力の画面が出ます)</span></label>
     <div id="pfBody" hidden>
-    <fieldset><legend>① お名前とお住まい</legend>
-      <div class="pf-row"><label class="pf-l" for="pfName">お名前</label><input type="text" id="pfName" maxlength="12" placeholder="例：野田" autocomplete="off"><span class="pf-unit">さん、とお呼びします</span></div>
+    <fieldset><legend>① 呼び名とお住まい</legend>
+      <div class="pf-row"><label class="pf-l" for="pfName">呼び名</label><input type="text" id="pfName" maxlength="12" placeholder="例：のださん、花ちゃん" autocomplete="off"><span class="pf-unit">さん、とお呼びします</span></div>
+      <div class="pf-unit" style="margin:-4px 0 6px">本名でなくて、かまいません。お話の相手（AI）が、この名前で呼びかけるため、この呼び名は、AIに伝わります。</div>
       <div class="pf-row" style="margin-top:10px"><label class="pf-l" for="pfPref">お住まい</label><select id="pfPref" style="min-height:50px;font-size:1.08rem;padding:6px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg)"><option value="016000">北海道(札幌)</option><option value="020000">青森県</option><option value="030000">岩手県</option><option value="040000">宮城県</option><option value="050000">秋田県</option><option value="060000">山形県</option><option value="070000">福島県</option><option value="080000">茨城県</option><option value="090000">栃木県</option><option value="100000">群馬県</option><option value="110000">埼玉県</option><option value="120000">千葉県</option><option value="130000">東京都</option><option value="140000">神奈川県</option><option value="150000">新潟県</option><option value="160000">富山県</option><option value="170000">石川県</option><option value="180000">福井県</option><option value="190000">山梨県</option><option value="200000">長野県</option><option value="210000">岐阜県</option><option value="220000">静岡県</option><option value="230000">愛知県</option><option value="240000">三重県</option><option value="250000">滋賀県</option><option value="260000">京都府</option><option value="270000">大阪府</option><option value="280000">兵庫県</option><option value="290000">奈良県</option><option value="300000">和歌山県</option><option value="310000">鳥取県</option><option value="320000">島根県</option><option value="330000">岡山県</option><option value="340000">広島県</option><option value="350000">山口県</option><option value="360000">徳島県</option><option value="370000">香川県</option><option value="380000">愛媛県</option><option value="390000">高知県</option><option value="400000">福岡県</option><option value="410000">佐賀県</option><option value="420000">長崎県</option><option value="430000">熊本県</option><option value="440000">大分県</option><option value="450000">宮崎県</option><option value="460100">鹿児島県</option><option value="471000">沖縄県(本島)</option></select><span class="pf-unit">天気の予報に使います</span></div>
     </fieldset>
+    <details id="pfMore"><summary style="min-height:56px;display:flex;align-items:center;font-size:1.15rem;font-weight:800;padding:8px 14px;border:2px solid var(--line);border-radius:12px;cursor:pointer;margin:8px 0">もっと答える（あとからでも、だいじょうぶです）</summary>
     <fieldset><legend>② 年齢・お誕生日・性別</legend>
       <div class="pf-row"><label class="pf-l" for="pfAge">年齢</label><input type="number" id="pfAge" min="18" max="110" inputmode="numeric"><span class="pf-unit">歳</span></div>
       <div class="pf-row" style="margin-top:10px"><label class="pf-l" for="pfBM">お誕生日</label><input type="number" id="pfBM" min="1" max="12" inputmode="numeric" aria-label="お誕生日の月"><span class="pf-unit">月</span><input type="number" id="pfBD" min="1" max="31" inputmode="numeric" aria-label="お誕生日の日"><span class="pf-unit">日</span></div>
@@ -2029,15 +2085,19 @@ button[aria-pressed="true"] { font-weight:700; }
         <label class="pf-opt"><input type="radio" name="pfGender" value="答えない">答えない</label>
       </div>
     </fieldset>
-    <fieldset><legend>③ 身長と体重</legend>
-      <div class="pf-row"><label class="pf-l" for="pfH">身長</label><input type="number" id="pfH" min="100" max="220" inputmode="decimal" step="0.1"><span class="pf-unit">cm</span></div>
-      <div class="pf-row" style="margin-top:10px"><label class="pf-l" for="pfW">体重</label><input type="number" id="pfW" min="20" max="200" inputmode="decimal" step="0.1"><span class="pf-unit">kg</span></div>
+    <fieldset><legend>③ 身長（おおよそで、だいじょうぶです）</legend>
+      <div class="pf-row"><label class="pf-l" for="pfH">身長</label><select id="pfH" style="min-height:50px;font-size:1.08rem;padding:6px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--bg)"><option value="">答えない</option><option value="142">〜144cm</option><option value="147">145〜149cm</option><option value="152">150〜154cm</option><option value="157">155〜159cm</option><option value="162">160〜164cm</option><option value="167">165〜169cm</option><option value="172">170〜174cm</option><option value="177">175cm〜</option></select></div>
+    </fieldset>
+    <details id="pfNum"><summary style="min-height:56px;display:flex;align-items:center;font-size:1.15rem;font-weight:800;padding:8px 14px;border:2px solid var(--line);border-radius:12px;cursor:pointer;margin:8px 0">くわしい数字（体重・血圧。わかるときだけ）</summary>
+    <fieldset><legend>体重</legend>
+      <div class="pf-row"><label class="pf-l" for="pfW">体重</label><input type="number" id="pfW" min="20" max="200" inputmode="decimal" step="0.1"><span class="pf-unit">kg</span></div>
     </fieldset>
     <fieldset><legend>④ 血圧(わかるときだけ)</legend>
       <p class="muted" style="margin:0 0 8px">健康診断や、血圧計の数字をお書きください。</p>
       <div class="pf-row"><label class="pf-l" for="pfSys">最高(上)</label><input type="number" id="pfSys" min="70" max="260" inputmode="numeric"><span class="pf-unit">mmHg</span></div>
       <div class="pf-row" style="margin-top:10px"><label class="pf-l" for="pfDia">最低(下)</label><input type="number" id="pfDia" min="40" max="160" inputmode="numeric"><span class="pf-unit">mmHg</span></div>
     </fieldset>
+    </details>
     <fieldset><legend>⑤ これまでの病気(あてはまるものだけ)</legend>
       <div class="pf-opts">
         <label class="pf-opt"><input type="checkbox" name="pfHist" value="高血圧">高血圧</label>
@@ -2062,11 +2122,12 @@ button[aria-pressed="true"] { font-weight:700; }
       <p class="design-hint">その時間のあとに、ケセラを開くと、あいさつと「今日の人物」をお聞かせします。ケセラを閉じているときは、自動では鳴りません。スマホのカレンダーに入れると、毎日お知らせが届きます(登録後、ホームのボタンから)。</p>
     </fieldset>
     <fieldset><legend>⑧ お話の相手(AI)への伝え方</legend>
-      <label class="pf-opt" style="align-items:flex-start"><input type="checkbox" id="pfAI"><span>年齢・性別・歩くようす・これまでの病気を、お話の相手(AI)に、参考として伝えてもよい。<br><span class="pf-unit">身長・体重・血圧は、伝えません。チェックしなければ、伝えません。</span></span></label>
+      <label class="pf-opt" style="align-items:flex-start"><input type="checkbox" id="pfAI"><span>年齢・性別・歩くようす・これまでの病気（「そのほか」に書いた内容も）を、お話の相手(AI)に、参考として伝えてもよい。<br><span class="pf-unit">身長・体重・血圧、いのちのメモ、緊急連絡先、ご住所は、伝えません。チェックしなければ、これらの情報は伝えません（呼び名だけは、呼びかけのために伝わります）。お話の中で、お名前や住所・電話番号を、AIに話さないでください。</span></span></label>
     </fieldset>
+    </details>
     <p id="profMsg" role="alert" aria-live="assertive"></p>
     </div>
-    <div class="design-footer" style="position:static;padding:0;border:0;background:none"><button class="btn primary" id="profSave" type="submit">これで登録する</button><button class="btn" id="profLater" type="button">あとで答える</button></div>
+    <div class="design-footer" style="position:static;padding:0;border:0;background:none"><button class="btn primary" id="profSave" type="submit">はじめる</button><button class="btn" id="profLater" type="button">あとで答える</button></div>
     <p class="design-hint">あとから、ホームの「ご登録内容」でいつでも直せます。</p>
   </form>
 </dialog>
@@ -2459,10 +2520,11 @@ button[aria-pressed="true"] { font-weight:700; }
     if (!a.length) return '';
     return '話し相手がご自分で伝えてよいとした情報（参考だけ）：' + a.join('、') + '。診断や治療の助言はしない。体の話になったら「かかりつけのお医者さんに相談してください」とだけ伝える。この情報を、こちらから持ち出して繰り返さない。\n';
   }
+  function bandH(h) { h = Number(h); if (!h) return ''; if (h < 145) return '142'; if (h >= 175) return '177'; return String(147 + 5 * Math.floor((h - 145) / 5)); }
   function fillProf() {
     var p = loadProf() || {};
     $('pfName').value = load('kesera-name', '');
-    $('pfAge').value = p.age || ''; $('pfBM').value = p.bm || ''; $('pfBD').value = p.bd || ''; $('pfH').value = p.h || ''; $('pfW').value = p.w || '';
+    $('pfAge').value = p.age || ''; $('pfBM').value = p.bm || ''; $('pfBD').value = p.bd || ''; $('pfH').value = bandH(p.h); $('pfW').value = p.w || '';
     $('pfSys').value = p.sys || ''; $('pfDia').value = p.dia || ''; $('pfOther').value = p.other || '';
     document.querySelectorAll('[name="pfGender"]').forEach(function (el) { el.checked = el.value === p.gender; });
     document.querySelectorAll('[name="pfWalk"]').forEach(function (el) { el.checked = el.value === p.walk; });
@@ -2472,7 +2534,7 @@ button[aria-pressed="true"] { font-weight:700; }
   function showProfBody() { var on = $('pfRead').checked; $('pfBody').hidden = !on; $('profSave').hidden = !on; }
   $('pfRead').addEventListener('change', function () { showProfBody(); if (this.checked) setTimeout(function () { try { $('pfName').focus(); } catch (e) {} }, 50); });
   function openProf() {
-    fillProf(); $('pfRead').checked = !!load('kesera-profile', null); showProfBody(); profScroll = document.body.style.overflow; document.body.style.overflow = 'hidden';
+    fillProf(); $('pfRead').checked = !!load('kesera-profile', null); showProfBody(); $('pfMore').open = !!load('kesera-profile', null); (function () { var q = load('kesera-profile', null) || {}; $('pfNum').open = !!(q.w || q.sys || q.dia); })(); profScroll = document.body.style.overflow; document.body.style.overflow = 'hidden';
     if (!profDlg.open) profDlg.showModal();
   }
   function closeProf() { if (profDlg.open) profDlg.close(); document.body.style.overflow = profScroll; }
@@ -2620,7 +2682,7 @@ button[aria-pressed="true"] { font-weight:700; }
   });
 
   /* 画面の切り替え */
-  var views = ['hokago', 'yakata', 'club', 'haiku', 'dajare', 'album', 'laugh', 'up', 'mania', 'town', 'book', 'flower', 'settings', 'home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask', 'dress', 'prepare', 'garden', 'rank'];
+  var views = ['hokago', 'yakata', 'club', 'haiku', 'dajare', 'album', 'laugh', 'up', 'mania', 'town', 'book', 'flower', 'settings', 'home', 'learn', 'move', 'travel', 'music', 'sleep', 'make', 'talk', 'farm', 'ask', 'dress', 'prepare', 'garden', 'rank', 'horoyoi'];
   var navView = 'home', navDepth = 0;
   function show(v, fromPop) {
     if (v !== 'talk' && typeof chatOn !== 'undefined' && chatOn) chatStop();
@@ -4062,6 +4124,7 @@ button[aria-pressed="true"] { font-weight:700; }
   /* ---------- 案内係（女性・AI） ---------- */
   var GUIDE = {
     hokago: 'ここは「放課後倶楽部」です。好きな部活に入って、のんびり活動できます。入るのも、やめるのも、自由です。「部活を探す」か「わたしの部活」を押してください。',
+    horoyoi: 'ここは「ちょこっとほろ酔い倶楽部」です。のれんをくぐって、だれと行くか、ご予算はいくらかを、ボタンで選ぶだけです。お店に着いたら、「お店に見せる画面」を見せてください。お酒は20歳から。飲む日は、運転しないでくださいね。',
     yakata: 'ここは「自然治癒力の館」です。眠る、食べる、動く、笑う、呼吸する。毎日の小さな習慣を、見つめる場所です。病気をなおすものではありません。痛みや熱、息苦しさがあるときは、すぐ医療機関へ行ってください。',
     club: 'ここは「ケセラ部」です。あなたの「好き」で、毎日にスパイスを。気軽に入って、気軽にやめて、かまいません。調子がよくないときは、お休みしてください。',
     haiku: 'ここは「俳句・短歌の日誌」です。心が動いた一瞬を、ことばにして残します。俳句は五・七・五、短歌は五・七・五・七・七です。',
@@ -6173,7 +6236,7 @@ button[aria-pressed="true"] { font-weight:700; }
         T('🩺', '気になる予防知識', '腰・血圧・糖尿病など', { href: 'yobou-chishiki.html?from=kesera' }),
         T('📷', '思い出の記録', '', { go: 'album' }), T('📝', '今日の予定・メモ', '', { home: '#memoCard' })]],
       ['仲間・お話', 'c-b', [
-        T('🤝', '地域の仲間探し', '開発中', { soon: 'region' }), T('🎭', 'ケセラ部', '', { go: 'club' }), T('🎒', '放課後倶楽部', '', { go: 'hokago' }), T('💬', 'お話する', '', { go: 'talk' }), T('🔍', '調べる', '', { go: 'ask' })]],
+        T('🤝', '地域の仲間探し', '開発中', { soon: 'region' }), T('🎭', 'ケセラ部', '', { go: 'club' }), T('🎒', '放課後倶楽部', '', { go: 'hokago' }), T('🏮', 'ちょこっとほろ酔い倶楽部', '', { go: 'horoyoi' }), T('💬', 'お話する', '', { go: 'talk' }), T('🔍', '調べる', '', { go: 'ask' })]],
       ['ニュース・天気', 'c-o', [
         T('🌤', '今日の天気・花言葉', '', { home: '.greet' }), T('📰', 'ニュース', '', { home: '.news-card' })]],
       ['安心・設定', 'c-r', [
@@ -8199,6 +8262,259 @@ button[aria-pressed="true"] { font-weight:700; }
     $('hkDate').value = isoToday(); buildMode(); showEx(); renderAll();
     window.__hkKc = kc;
   })();
+  /* ---------- ちょこっとほろ酔い倶楽部（見本版） ---------- */
+  (function () {
+    var door = $('hyDoor'); if (!door) return;
+    var KEY = 'kesera-hy';
+    var mem = load(KEY, {}) || {};
+    function E(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x !== undefined) e.textContent = x; return e; }
+    function yen(n) { return Math.round(n).toLocaleString('ja-JP') + '円'; }
+    function saveMem() { save(KEY, { budget: S.budget, mood: S.mood, who: S.who }); }
+
+    var WHO = [
+      { id: 'alone', label: '一人で', a: 1, k: 0 }, { id: 'partner', label: 'パートナーと', a: 2, k: 0 }, { id: 'kin', label: '親類と', a: 2, k: 0 },
+      { id: 'grand', label: 'お孫さんと', a: 1, k: 1 }, { id: 'grandc', label: 'お孫さんご夫婦と', a: 3, k: 0 }
+    ];
+    var BUDGETS = [[500, '500円まで'], [1000, '1000円まで'], [1500, '1500円まで'], [2000, '2000円まで'], [0, '気にしない']];
+    var WHEN = [['lunch', '☀ 昼'], ['evening', '🌇 夕方'], ['night', '🌙 夜'], ['any', 'いつでも']];
+    var MOODS = [
+      { id: 'care', label: '周りに気をつかうほう', hint: '落ち着ける席へご案内ください。注文のしかたを、ていねいに教えてください。急かさずに、ひと声かけてください。' },
+      { id: 'some', label: '少し気になるほう', hint: '端の席だとうれしいです。困っていそうなときは、声をかけてください。' },
+      { id: 'my', label: 'マイペース', hint: '自由に過ごしたいです。声かけは、少なめで大丈夫です。' }
+    ];
+    var BACKS = [['walk', '🚶 歩いて'], ['taxi', '🚕 タクシー'], ['daiko', '🚗 代行'], ['pick', '👪 迎えに来てもらう'], ['bus', '🚌 バス・電車']];
+    var CHECKS = [['counter', 'カウンター席あり'], ['soloMany', '一人のお客さんが多い'], ['photoMenu', '写真・値段つきメニュー'], ['visible', '外から店内が見える'], ['staffTalk', '声をかけてくれる'], ['quiet', '静かな時間帯あり'], ['smokeFree', '禁煙・分煙']];
+    /* 見本のお店（架空）。実際の協力店が決まったら、ここを差し替えます */
+    var STORES = [
+      { id: 's1', name: 'のんびり酒房 まる', area: '水前寺のあたり', lat: 32.7869, lng: 130.7285, sample: true,
+        checks: { counter: 1, soloMany: 1, photoMenu: 1, visible: 1, staffTalk: 1, quiet: 1, smokeFree: 1 },
+        set: { name: 'ちょこっとセット（お酒かノンアル1杯＋小鉢2品）', price: 800 }, kid: { name: 'おこさまセット（ジュース＋ミニおにぎり）', price: 500 },
+        items: [{ n: 'ソフトクリーム', p: 300 }, { n: 'ソフトドリンク', p: 200 }, { n: '小鉢', p: 250 }],
+        pay: ['現金', 'カード', 'QR決済'], slots: { lunch: 1, evening: 1, night: 1 }, hours: '11:30〜22:00', reserve: '前日までの予約があると安心です', nonAlc: true,
+        care: ['端の席にご案内', '声かけ（おすすめの説明）', '少なめ・ハーフサイズ', '会話歓迎'] },
+      { id: 's2', name: '昼のみ処 ひだまり', area: '新屋敷のあたり', lat: 32.7905, lng: 130.7202, sample: true,
+        checks: { counter: 1, photoMenu: 1, quiet: 1, smokeFree: 1 },
+        set: { name: '昼の小皿セット（お酒かノンアル1杯＋小皿3品）', price: 1200 }, kid: null,
+        items: [{ n: '甘味', p: 400 }, { n: 'ドリンク', p: 250 }],
+        pay: ['現金', 'カード'], slots: { lunch: 1 }, hours: '11:00〜16:00', reserve: '予約なしで大丈夫です', nonAlc: true,
+        care: ['静かな席にご案内', '声かけ（注文のしかた）'] },
+      { id: 's3', name: '夜の小料理 みなと', area: '下通のあたり', lat: 32.8014, lng: 130.7078, sample: true,
+        checks: { counter: 1, smokeFree: 1 },
+        set: { name: 'おまかせ小鉢セット（お酒1杯＋小鉢3品）', price: 1800 }, kid: null,
+        items: [{ n: '一品料理', p: 600 }, { n: 'お酒（追加1杯）', p: 500 }],
+        pay: ['現金'], slots: { night: 1 }, hours: '18:00〜23:00', reserve: '予約をおすすめします（当日の昼まで）', nonAlc: false,
+        care: ['声かけ'] }
+    ];
+    function stars(s) { var n = 0; CHECKS.forEach(function (c) { if (s.checks[c[0]]) n++; }); return n >= 6 ? 3 : (n >= 3 ? 2 : 1); }
+
+    var S = { step: 0, who: mem.who || '', a: 1, k: 0, budget: (mem.budget === undefined ? -1 : mem.budget), when: '', drink: '', mood: mem.mood || '', back: '', pos: null, ex: {}, safeOnly: false };
+    var flow = $('hyFlow');
+
+    function whoObj() { return WHO.filter(function (w) { return w.id === S.who; })[0]; }
+    function solo() { return S.a === 1 && S.k === 0; }
+    function stepsList() { var l = ['who', 'people', 'budget', 'when', 'drink']; if (solo()) l.push('mood'); l.push('result'); return l; }
+
+    function head(title, hint) {
+      var l = stepsList(), i = l.indexOf(l[S.step]) + 1;
+      var w = E('div'); w.style.cssText = 'display:flex;flex-direction:column;gap:6px';
+      var p = E('span', 'fl-sub', (S.step + 1) + ' / ' + l.length); p.style.margin = '0'; w.appendChild(p);
+      var h = E('h3', '', title); h.style.cssText = 'margin:0;font-size:1.4rem;line-height:1.5'; w.appendChild(h);
+      if (hint) { var q = E('p', 'muted', hint); q.style.cssText = 'margin:0;line-height:1.7'; w.appendChild(q); }
+      return w;
+    }
+    function optBtn(label, on, fn) { var b = E('button', 'btn hy-opt' + (on ? ' primary' : ''), label); b.type = 'button'; b.addEventListener('click', fn); return b; }
+    function backBtn() { var b = E('button', 'btn', '← ひとつ前にもどる'); b.type = 'button'; b.style.cssText = 'align-self:flex-start;min-height:48px'; b.addEventListener('click', function () { if (S.step > 0) { S.step--; render(); } else leave(); }); return b; }
+    function next() { S.step++; render(); }
+
+    function counter(label, key, max) {
+      var r = E('div', 'card'); r.style.cssText = 'display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:10px';
+      var t = E('b', '', label); t.style.fontSize = '1.2rem';
+      var c = E('div'); c.style.cssText = 'display:flex;align-items:center;gap:12px';
+      var m = E('button', 'btn', '－'), v = E('span', '', String(S[key])), p = E('button', 'btn', '＋');
+      [m, p].forEach(function (b) { b.type = 'button'; b.style.cssText = 'min-width:60px;min-height:60px;font-size:1.6rem'; }); v.style.cssText = 'font-size:1.8rem;font-weight:800;min-width:1.6em;text-align:center'; v.setAttribute('aria-live', 'polite');
+      m.setAttribute('aria-label', label + 'を減らす'); p.setAttribute('aria-label', label + 'を増やす');
+      m.addEventListener('click', function () { var lo = key === 'a' ? 1 : 0; if (S[key] > lo) { S[key]--; v.textContent = S[key]; } });
+      p.addEventListener('click', function () { if (S[key] < max) { S[key]++; v.textContent = S[key]; } });
+      c.appendChild(m); c.appendChild(v); c.appendChild(p); r.appendChild(t); r.appendChild(c); return r;
+    }
+
+    function render() {
+      flow.innerHTML = ''; var kind = stepsList()[S.step]; window.scrollTo(0, 0);
+      if (kind === 'result') { renderResult(); return; }
+      flow.appendChild(backBtn());
+      if (kind === 'who') {
+        flow.appendChild(head('だれと、行きますか？', 'ひとつ、選んでください。'));
+        WHO.forEach(function (w) { flow.appendChild(optBtn(w.label, S.who === w.id, function () { S.who = w.id; S.a = w.a; S.k = w.k; S.ex = {}; saveMem(); next(); })); });
+      } else if (kind === 'people') {
+        flow.appendChild(head('人数は、これでよいですか？', 'ご自身を入れた人数です。ちがうときは、＋－で直してください。'));
+        flow.appendChild(counter('大人（19歳以上）', 'a', 8)); flow.appendChild(counter('子ども（18歳以下）', 'k', 6));
+        var ok = E('button', 'btn primary hy-opt', 'これでよい'); ok.type = 'button'; ok.addEventListener('click', function () { S.ex = {}; next(); }); flow.appendChild(ok);
+      } else if (kind === 'budget') {
+        flow.appendChild(head('1人あたり、いくらまでが安心ですか？', '目安で大丈夫です。お店に、ていねいにお伝えします。'));
+        BUDGETS.forEach(function (b) { flow.appendChild(optBtn(b[1], S.budget === b[0], function () { S.budget = b[0]; saveMem(); next(); })); });
+      } else if (kind === 'when') {
+        flow.appendChild(head('いつごろ、行きますか？'));
+        WHEN.forEach(function (w) { flow.appendChild(optBtn(w[1], S.when === w[0], function () { S.when = w[0]; next(); })); });
+      } else if (kind === 'drink') {
+        flow.appendChild(head('お酒は、飲みますか？', 'お酒は20歳から。ノンアルでも、じゅうぶん楽しめます。'));
+        flow.appendChild(optBtn('🍶 少し、いただきます', S.drink === 'drink', function () { S.drink = 'drink'; next(); }));
+        flow.appendChild(optBtn('🍵 ノンアルがよい', S.drink === 'soft', function () { S.drink = 'soft'; next(); }));
+      } else if (kind === 'mood') {
+        flow.appendChild(head('今日の気分は、どれに近いですか？', 'お店の方に、ご案内のめやすとして伝わります。その日の気分で、選んでください。'));
+        MOODS.forEach(function (m) { flow.appendChild(optBtn(m.label, S.mood === m.id, function () { S.mood = m.id; saveMem(); next(); })); });
+      }
+    }
+    function leave() { flow.hidden = true; $('hyEntrance').hidden = false; door.classList.remove('open'); }
+
+    /* 距離 */
+    function km(a, b, c, d) { var R = 6371, t = Math.PI / 180, x = (c - a) * t, y = (d - b) * t, q = Math.sin(x / 2) * Math.sin(x / 2) + Math.cos(a * t) * Math.cos(c * t) * Math.sin(y / 2) * Math.sin(y / 2); return 2 * R * Math.asin(Math.sqrt(q)); }
+    function distText(s) {
+      if (!S.pos) return ''; var d = km(S.pos.lat, S.pos.lng, s.lat, s.lng);
+      if (d > 60) return '（見本のお店です。距離は出していません）';
+      return d < 1 ? 'ここから 約' + Math.max(10, Math.round(d * 100) * 10) + 'm' : 'ここから 約' + d.toFixed(1) + 'km';
+    }
+    function mapNear(q) {
+      if (S.pos) return 'https://www.google.com/maps/search/' + encodeURIComponent(q) + '/@' + S.pos.lat.toFixed(5) + ',' + S.pos.lng.toFixed(5) + ',16z';
+      var c = (load('kesera-city', '') || '').trim(); return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent((c ? c + ' ' : '') + q);
+    }
+    function link(label, href) { var a = E('a', 'btnlink', label); a.href = href; a.target = '_blank'; a.rel = 'noopener'; a.style.minHeight = '52px'; return a; }
+
+    function estimate(s) {
+      var kid = s.kid ? s.kid.price : s.set.price, base = s.set.price * S.a + kid * S.k, ex = 0;
+      s.items.forEach(function (it, i) { ex += it.p * (S.ex[s.id + ':' + i] || 0); });
+      return { base: base, ex: ex, total: base + ex };
+    }
+    function pass(s) {
+      if (S.budget > 0 && s.set.price > S.budget) return false;
+      if (S.when && S.when !== 'any' && !s.slots[S.when]) return false;
+      if (S.drink === 'soft' && !s.nonAlc) return false;
+      if (S.safeOnly && stars(s) < 3) return false;
+      return true;
+    }
+
+    function renderResult() {
+      flow.appendChild(backBtn());
+      var w = whoObj(), wl = w ? w.label : '';
+      var top = E('div', 'card'); top.style.gap = '8px';
+      top.appendChild(E('b', '', 'お店のご案内'));
+      var chips = E('div'); chips.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px';
+      [wl, '大人' + S.a + '・子ども' + S.k, S.budget > 0 ? '1人' + S.budget + '円まで' : '予算は気にしない', (WHEN.filter(function (x) { return x[0] === S.when; })[0] || ['', ''])[1], S.drink === 'soft' ? 'ノンアル' : 'お酒も少し'].forEach(function (t) { if (t) chips.appendChild(E('span', 'hy-chip', t)); });
+      top.appendChild(chips);
+      var ch = E('button', 'btn', '条件を変える'); ch.type = 'button'; ch.style.minHeight = '48px'; ch.addEventListener('click', function () { S.step = 0; render(); }); top.appendChild(ch);
+      flow.appendChild(top);
+
+      var sm = E('div', 'notice', '🔰 いまは、見本のお店（架空）だけです。実際の協力店が決まり次第、ふえていきます。'); sm.style.lineHeight = '1.8'; flow.appendChild(sm);
+
+      /* 現在地 */
+      var loc = E('div', 'card'); loc.style.gap = '8px';
+      loc.appendChild(E('b', '', '📍 いまいる場所の近くで探す'));
+      var lm = E('p', 'fl-sub', S.pos ? '現在地を使っています（誤差：約' + S.pos.acc + 'm）。場所は、この画面の中だけで使い、保存も、送信もしません。' : '「現在地を使う」を押すと、近い順に並びます。場所は、この画面の中だけで使い、保存も、送信もしません。'); lm.style.cssText = 'margin:0;line-height:1.7'; lm.setAttribute('role', 'status');
+      var lb = E('button', 'btn primary hy-opt', S.pos ? '📍 もう一度、現在地を調べる' : '📍 現在地を使う'); lb.type = 'button';
+      lb.addEventListener('click', function () {
+        if (!navigator.geolocation) { lm.textContent = 'この端末では、場所を調べられません。お住まいの市町名で、Googleマップを開きます。'; return; }
+        lm.textContent = '場所を調べています。許可の確認が出たら、「許可」を押してください。';
+        navigator.geolocation.getCurrentPosition(function (p) { S.pos = { lat: p.coords.latitude, lng: p.coords.longitude, acc: Math.round(p.coords.accuracy || 0) }; render(); }, function () { lm.textContent = '場所を取れませんでした（許可がない、または電波が弱い可能性があります）。お住まいの市町名で、Googleマップを開きます。'; }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 });
+      });
+      loc.appendChild(lm); loc.appendChild(lb);
+      var mg = E('div'); mg.style.cssText = 'display:flex;flex-direction:column;gap:8px';
+      mg.appendChild(link('🍺 近くの居酒屋を、Googleマップで見る', mapNear('居酒屋')));
+      mg.appendChild(link('☀ 昼から飲めるお店を、Googleマップで見る', mapNear('昼飲み 居酒屋')));
+      mg.appendChild(link('🪑 カウンターのあるお店を、Googleマップで見る', mapNear('カウンター 居酒屋 一人')));
+      loc.appendChild(mg); flow.appendChild(loc);
+
+      /* 安全 */
+      var sf = E('div', 'card'); sf.style.cssText = 'gap:8px;border:2px solid #b3261e';
+      sf.appendChild(E('b', '', '🛡 おでかけの前に（安全）'));
+      var sl = E('p', '', S.drink === 'drink' ? 'お酒を飲む日は、運転しません。帰りの方法を、先に決めておくと安心です。' : '帰りの方法を、先に決めておくと安心です。'); sl.style.cssText = 'margin:0;line-height:1.8;font-weight:700'; sf.appendChild(sl);
+      if (S.drink === 'drink' && S.k > 0) { var kd = E('p', '', 'お酒は20歳から。18歳・19歳の方は、ノンアルで楽しんでください。'); kd.style.cssText = 'margin:0;line-height:1.8'; sf.appendChild(kd); }
+      var bk = E('div'); bk.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px';
+      var bm = E('p', 'fl-sub', S.back ? '帰りは「' + (BACKS.filter(function (x) { return x[0] === S.back; })[0] || ['', ''])[1] + '」ですね。気をつけて、ゆっくり。' : ''); bm.style.cssText = 'margin:0'; bm.setAttribute('role', 'status');
+      BACKS.forEach(function (b) { var bt = E('button', 'btn' + (S.back === b[0] ? ' primary' : ''), b[1]); bt.type = 'button'; bt.style.minHeight = '52px'; bt.addEventListener('click', function () { S.back = b[0]; bk.querySelectorAll('button').forEach(function (x) { x.classList.remove('primary'); }); bt.classList.add('primary'); bm.textContent = '帰りは「' + b[1] + '」ですね。気をつけて、ゆっくり。'; }); bk.appendChild(bt); });
+      sf.appendChild(bk); sf.appendChild(bm);
+      sf.appendChild(E('p', 'fl-sub', '持病やお薬のある方は、お酒を控えめに。気になるときは、かかりつけのお医者さんに、ご相談ください。'));
+      flow.appendChild(sf);
+
+      /* 絞り込み：ひとりでも安心 */
+      if (solo()) {
+        var sb = E('button', 'btn' + (S.safeOnly ? ' primary' : ''), (S.safeOnly ? '✔ ' : '') + '「ひとりでも安心（★★★）」のお店だけ'); sb.type = 'button'; sb.style.minHeight = '52px';
+        sb.addEventListener('click', function () { S.safeOnly = !S.safeOnly; render(); }); flow.appendChild(sb);
+      }
+
+      var list = STORES.filter(pass);
+      list.sort(function (x, y) { if (S.pos) { return km(S.pos.lat, S.pos.lng, x.lat, x.lng) - km(S.pos.lat, S.pos.lng, y.lat, y.lng); } return stars(y) - stars(x) || x.set.price - y.set.price; });
+      if (S.pos) { var near = list.filter(function (s) { return km(S.pos.lat, S.pos.lng, s.lat, s.lng) <= 60; }); if (near.length) list = near.concat(list.filter(function (s) { return near.indexOf(s) < 0; })); }
+      flow.appendChild(E('h3', '', 'ケセラ協力店（' + list.length + '軒）')).style.margin = '4px 0 0';
+      if (!list.length) {
+        var no = E('div', 'card'); no.style.gap = '8px'; no.appendChild(E('span', '', '条件に合うお店が、まだありません。予算や時間を、少し広げてみてください。'));
+        var rb = E('button', 'btn primary hy-opt', '条件を変える'); rb.type = 'button'; rb.addEventListener('click', function () { S.safeOnly = false; S.step = 0; render(); }); no.appendChild(rb); flow.appendChild(no);
+      }
+      list.forEach(function (s) { flow.appendChild(storeCard(s)); });
+
+      var dc = E('div', 'notice', 'お店の情報（値段・配慮・支払い方法を含む）は、お店の自己申告で、目安です。実際の内容は、お店でご確認ください。ケセラは、お店とのやりとりや、体調不良、掲載内容の誤りについて、責任を負いません。'); dc.style.lineHeight = '1.8'; flow.appendChild(dc);
+    }
+
+    function storeCard(s) {
+      var c = E('div', 'card'); c.style.gap = '8px';
+      var n = stars(s);
+      var h = E('b', '', s.name); h.style.fontSize = '1.25rem'; c.appendChild(h);
+      if (s.sample) { var sb = E('span', 'hy-chip', '見本（架空のお店）'); sb.style.alignSelf = 'flex-start'; c.appendChild(sb); }
+      var ar = E('span', 'fl-sub', s.area + (distText(s) ? '　' + distText(s) : '')); ar.style.margin = '0'; c.appendChild(ar);
+      var st = E('div'); st.style.cssText = 'display:flex;align-items:center;gap:8px;flex-wrap:wrap';
+      var sp = E('span', 'hy-star', '入りやすさ ' + '★★★'.slice(0, n) + '☆☆☆'.slice(0, 3 - n)); sp.setAttribute('aria-label', '入りやすさ 3段階中の' + n); st.appendChild(sp);
+      var lab = n === 3 ? 'ひとりでも安心' : (n === 2 ? 'ふつうに入れます' : 'はじめての方は、少し緊張するかもしれません'); st.appendChild(E('span', 'fl-sub', lab)); c.appendChild(st);
+      var tg = E('div'); tg.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px';
+      CHECKS.forEach(function (k) { if (s.checks[k[0]]) tg.appendChild(E('span', 'hy-chip', '✔ ' + k[1])); }); c.appendChild(tg);
+      var sv = E('div'); sv.style.cssText = 'border-top:1px solid var(--line);padding-top:8px;display:flex;flex-direction:column;gap:4px';
+      sv.appendChild(E('b', '', '🍱 ' + s.set.name + '　' + yen(s.set.price) + '（税込・1人）'));
+      if (S.k > 0 && s.kid) sv.appendChild(E('span', '', '👶 ' + s.kid.name + '　' + yen(s.kid.price)));
+      c.appendChild(sv);
+      /* 合計の目安 */
+      var ex = E('div'); ex.style.cssText = 'display:flex;flex-direction:column;gap:6px';
+      ex.appendChild(E('span', 'fl-sub', 'ほかに食べたいものが、あれば押してください（押すたびに、ふえます）'));
+      var ch = E('div'); ch.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px';
+      var tot = E('div'); tot.style.cssText = 'font-size:1.3rem;font-weight:800'; tot.setAttribute('aria-live', 'polite');
+      function upd() { var e = estimate(s), pp = (S.a + S.k) > 0 ? e.total / (S.a + S.k) : 0; tot.textContent = '💴 合計の目安：約' + yen(e.total) + '（1人あたり約' + yen(Math.round(pp / 10) * 10) + '）'; }
+      s.items.forEach(function (it, i) {
+        var key = s.id + ':' + i, b = E('button', 'btn', ''); b.type = 'button'; b.style.minHeight = '48px';
+        function lbl() { var q = S.ex[key] || 0; b.textContent = '＋' + it.n + ' ' + yen(it.p) + (q ? '　×' + q : ''); b.classList.toggle('primary', q > 0); }
+        b.addEventListener('click', function () { S.ex[key] = ((S.ex[key] || 0) + 1) % 6; lbl(); upd(); }); lbl(); ch.appendChild(b);
+      });
+      ex.appendChild(ch); ex.appendChild(tot); var tn = E('span', 'fl-sub', '目安です。実際の金額は、お店でご確認ください。'); tn.style.margin = '0'; ex.appendChild(tn); c.appendChild(ex); upd();
+      var pay = E('span', '', '💳 支払い：' + s.pay.join('・') + (s.pay.length === 1 ? '（のみ）' : '')); c.appendChild(pay);
+      c.appendChild(E('span', '', '🕒 ' + s.hours + (s.slots.lunch ? '　☀ 昼から OK' : '')));
+      c.appendChild(E('span', '', '📞 予約：' + s.reserve));
+      if (solo()) { var cr = E('div'); cr.style.cssText = 'display:flex;flex-direction:column;gap:4px'; cr.appendChild(E('b', '', '🤝 このお店の、ひとり配慮')); s.care.forEach(function (x) { cr.appendChild(E('span', '', '・' + x)); }); c.appendChild(cr); }
+      var bt = E('div'); bt.style.cssText = 'display:flex;flex-direction:column;gap:8px';
+      var show = E('button', 'btn primary hy-opt', '👀 お店に見せる画面'); show.type = 'button'; show.addEventListener('click', function () { showCard(s); }); bt.appendChild(show);
+      bt.appendChild(link('🗺 Googleマップで場所を見る', s.sample ? mapNear('居酒屋') : 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.name + ' ' + s.area)));
+      var tel = E('button', 'btn', s.sample ? '📞 予約の電話（見本のため、かかりません）' : '📞 予約の電話をかける'); tel.type = 'button'; tel.style.minHeight = '52px'; tel.disabled = !!s.sample; if (!s.sample && s.tel) tel.addEventListener('click', function () { location.href = 'tel:' + s.tel; }); bt.appendChild(tel);
+      c.appendChild(bt);
+      return c;
+    }
+
+    function showCard(s) {
+      var old = document.getElementById('hyShow'); if (old) old.remove();
+      var d = E('dialog', 'design-dialog location-dialog'); d.id = 'hyShow'; d.setAttribute('aria-label', 'お店に見せる画面'); d.style.cssText = 'width:min(96vw,640px)';
+      var w = E('div'); w.style.cssText = 'display:flex;flex-direction:column;gap:10px;padding:10px';
+      var h = E('div', '', '🏮 ケセラを見て、来ました'); h.style.cssText = 'font-size:1.7rem;font-weight:900;color:#fff;background:#2f4a7a;border-radius:12px;padding:14px;text-align:center'; w.appendChild(h);
+      if (s.sample) { var sm = E('p', '', 'これは見本の画面です（架空のお店です）。'); sm.style.cssText = 'margin:0;font-weight:700;color:#b3261e'; w.appendChild(sm); }
+      function row(l, v) { var b = E('div'); b.style.cssText = 'border:2px solid var(--line);border-radius:10px;padding:8px 12px'; var t = E('div', 'muted', l); t.style.fontSize = '.95rem'; var x = E('div', '', v); x.style.cssText = 'font-size:1.45rem;font-weight:800;line-height:1.5'; b.appendChild(t); b.appendChild(x); w.appendChild(b); }
+      row('お店', s.name);
+      row('人数', (solo() ? 'ひとり 1名' : '大人' + S.a + '名') + (S.k ? '・子ども' + S.k + '名' : ''));
+      row('ご予算', S.budget > 0 ? '1人 ' + yen(S.budget) + ' くらいまででお願いできますか' : '予算は、とくに決めていません');
+      row('お酒', S.drink === 'soft' ? 'ノンアルでお願いします' : '少し、いただきます');
+      if (solo() && S.mood) { var m = MOODS.filter(function (x) { return x.id === S.mood; })[0]; row('ご案内のめやす（' + m.label + '）', m.hint); }
+      var note = E('p', 'fl-sub', 'この画面は、お店の方に見ていただくためのものです。お名前や年齢は、お伝えしていません。'); note.style.margin = '0'; w.appendChild(note);
+      var x = E('button', 'btn', '閉じる'); x.type = 'button'; x.style.minHeight = '56px'; x.addEventListener('click', function () { d.close(); }); w.appendChild(x);
+      d.appendChild(w); d.addEventListener('close', function () { d.remove(); }); document.body.appendChild(d); if (d.showModal) d.showModal(); else d.setAttribute('open', '');
+    }
+
+    door.addEventListener('click', function () {
+      door.classList.add('open'); var rm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      setTimeout(function () { $('hyEntrance').hidden = true; flow.hidden = false; S.step = 0; render(); }, rm ? 0 : 650);
+    });
+  })();
+
   renderWxIcon();
   renderSun(); updateNews();
   loadWeather();
