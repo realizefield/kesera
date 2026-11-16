@@ -10,10 +10,15 @@
   try{ if(localStorage.getItem(KEY)==='0') return; }catch(e){}
   var base=(document.currentScript&&document.currentScript.src)||'';
   var url=base.replace(/[^\/]*$/,'')+'misuzu-library.json';
+  var HOME=base.replace(/[^\/]*$/,'')+'index.html';
   var PINK='#d94f86';
   function el(tag,css,text){var e=document.createElement(tag); if(css)e.style.cssText=css; if(text!=null)e.textContent=text; return e;}
   function btn(text,primary){
     return el('button','font:inherit;font-size:1.1rem;padding:10px 18px;margin:4px 8px 4px 0;border-radius:999px;cursor:pointer;border:2px solid '+PINK+';'+(primary?'background:'+PINK+';color:#fff':'background:#fff;color:'+PINK),text);
+  }
+  function yakata(){
+    var a=el('a','display:inline-block;text-decoration:none;font:inherit;font-size:1.1rem;padding:10px 18px;margin:4px 8px 4px 0;border-radius:999px;border:2px solid '+PINK+';background:#fff;color:'+PINK,'金子みすゞの館へ');
+    a.href=HOME; return a;
   }
   function doy(){var n=new Date(),s=new Date(n.getFullYear(),0,0);return Math.floor((n-s)/86400000);}
   fetch(url).then(function(r){return r.json();}).then(function(D){
@@ -35,6 +40,7 @@
         var b=btn('今日の童謡 ― 金子みすゞ',true);
         b.onclick=function(){state=1;more=0;draw();};
         wrap.appendChild(b);
+        wrap.appendChild(yakata());
         var off=el('button','font:inherit;font-size:.95rem;background:none;border:none;color:#7a5a68;text-decoration:underline;cursor:pointer','表示をやめる');
         off.onclick=function(){try{localStorage.setItem(KEY,'0');}catch(e){} wrap.remove();};
         wrap.appendChild(off);
@@ -55,6 +61,7 @@
       if(canMore){ more_b.onclick=function(){state=2;more++;draw();}; wrap.appendChild(more_b); }
       close_b.onclick=function(){ if(state===2){state=1;more=0;} else {state=0;} draw(); };
       wrap.appendChild(close_b);
+      wrap.appendChild(yakata());
     }
     draw();
   }).catch(function(){});
