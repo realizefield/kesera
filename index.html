@@ -400,7 +400,8 @@ button[aria-pressed="true"] { font-weight:700; }
 .wx-alert ul { margin:0; padding-left:1.2em; }
 .wx-alert li { line-height:1.7; font-weight:700; }
 .wx-btns { display:flex; gap:8px; flex-wrap:wrap; margin:6px 0 4px; }
-.wx-btns .btn { flex:1 1 150px; min-height:54px; font-size:1.08rem; font-weight:700; border-color:var(--accent); }
+.wx-btns .btn { flex:1 1 120px; min-height:54px; font-size:1.05rem; font-weight:700; border-color:var(--accent); }
+.wx-btns .btn[aria-pressed="true"] { background:var(--accent); color:var(--accent-ink); }
 .wxd-body { display:flex; flex-direction:column; gap:10px; padding:14px; }
 .wxd-body h2 { margin:0; font-size:1.3rem; }
 .wxd-row { display:flex; align-items:center; gap:10px; border-bottom:1px solid var(--line); padding:8px 0; }
@@ -553,9 +554,11 @@ button[aria-pressed="true"] { font-weight:700; }
     <div class="card memo-due" id="memoDue" hidden role="alert"><h2>📌 きょうの うっかりメモ・予定</h2><div id="memoDueList"></div></div>
     <div class="card greet">
       <h2 id="greet"></h2>
+      <div class="wx-btns" role="tablist" aria-label="今日・明日・1週間の天気"><button class="btn" id="wxTabToday" type="button" role="tab" aria-pressed="true">☀ 今日の天気</button><button class="btn" id="wxTabTmr" type="button" role="tab" aria-pressed="false">📅 明日の天気</button><button class="btn" id="wxTabWeek" type="button" role="tab" aria-pressed="false">🗓 ここ1週間の天気</button></div>
+      <div id="wxPanel" hidden style="flex-direction:column;gap:8px"></div>
       <div class="wx-row"><div class="wx-icon" id="wxIcon" aria-hidden="false"></div><p id="wx"></p></div>
       <p id="wxWords" style="font-weight:700;font-size:1.12rem;margin:8px 0 4px"></p>
-      <div class="wx-btns" role="group" aria-label="明日と1週間の天気"><button class="btn" id="wxTmrBtn" type="button">📅 明日の天気</button><button class="btn" id="wxWeekBtn" type="button">🗓 ここ1週間の天気</button></div>
+      
       <p id="tyLine" style="margin:6px 0;font-weight:700;font-size:1.1rem" hidden></p>
       <p id="flLine" style="margin:4px 0 8px;font-weight:700" hidden></p>
       <p id="wxSun" style="margin:4px 0 8px;font-weight:700"></p>
@@ -4662,6 +4665,7 @@ button[aria-pressed="true"] { font-weight:700; }
     renderNext(r);
     ['tmin', 'tmax', 'wxsel'].forEach(function (id) { $(id).dispatchEvent(new Event('input')); });
     renderHome(); renderWxIcon();
+    try { if (wxTab !== 'today') showWxTab(); } catch (e) {}
     var hm = ''; try { var d = new Date(r.rep); hm = (d.getMonth() + 1) + '月' + d.getDate() + '日 ' + d.getHours() + '時' + (d.getMinutes() < 10 ? '0' : '') + d.getMinutes() + '分発表'; } catch (e) {}
     $('wxAutoNote').textContent = '天気は、気象庁の予報から自動で出しています。' + (r.area ? '(' + r.area + ')　' : '') + r.text + '' + (hm ? '　' + hm : '') + (fromCache ? '　※通信できなかったため、前に取った内容です' : '') + '　出典：気象庁ホームページ';
   }
@@ -4684,26 +4688,9 @@ button[aria-pressed="true"] { font-weight:700; }
     }
     return out;
   }
-  function wxDialog(title, build) {
-    var old = document.getElementById('wxDlg'); if (old) old.remove();
-    var ov = document.createElement('div'); ov.id = 'wxDlg'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', title);
-    ov.style.cssText = 'position:fixed;left:0;top:0;right:0;bottom:0;z-index:99999;background:rgba(20,30,45,.55);display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 10px';
-    var w = document.createElement('div'); w.className = 'wxd-body';
-    w.style.cssText = 'width:100%;max-width:560px;box-sizing:border-box;background:var(--surface,#fff);color:var(--fg,#222);border:1px solid var(--line,#ccc);border-radius:16px;margin:auto 0;box-shadow:0 10px 40px rgba(0,0,0,.35)';
-    var h = document.createElement('h2'); h.textContent = title; w.appendChild(h);
-    try { build(w); } catch (e) { var er = document.createElement('p'); er.textContent = '天気の表示で、うまくいかないことがありました。「閉じる」をおして、もう一度おためしください。'; w.appendChild(er); }
-    var n = document.createElement('p'); n.className = 'muted'; n.style.margin = '0'; n.textContent = '出典：気象庁ホームページ。警報・避難の判断は、必ず気象庁や市町村の発表をご確認ください。'; w.appendChild(n);
-    var x = document.createElement('button'); x.type = 'button'; x.className = 'btn primary'; x.style.minHeight = '54px'; x.textContent = '閉じる';
-    function shut() { ov.remove(); document.removeEventListener('keydown', esc); }
-    function esc(ev) { if (ev.key === 'Escape') shut(); }
-    x.addEventListener('click', shut); document.addEventListener('keydown', esc);
-    ov.addEventListener('click', function (ev) { if (ev.target === ov) shut(); });
-    w.appendChild(x); ov.appendChild(w); document.body.appendChild(ov);
-    try { ov.scrollTop = 0; x.focus({ preventScroll: true }); } catch (e) {}
-  }
-  function wxNone(w) { var p = document.createElement('p'); p.textContent = '天気を取っています。数秒たってから、もう一度ボタンをおしてください。（通信がつながっているか、ご確認ください）'; w.appendChild(p); try { loadWeather(); } catch (e) {} }
-  function showTomorrow() {
-    wxDialog('📅 明日の天気', function (w) {
+  function wxNone(w) { var p = document.createElement('p'); p.textContent = '天気を取っています。しばらくお待ちください。（通信がつながっているか、ご確認ください）'; w.appendChild(p); }
+  function buildTomorrow(w) {
+    {
       var r = lastWx || load('kesera-wxauto', null);
       if (!r || !r.tmr) { wxNone(w); return; }
       var t = r.tmr, tp = []; if (t.min != null) tp.push('最低 ' + t.min + '℃'); if (t.max != null) tp.push('最高 ' + t.max + '℃');
@@ -4713,10 +4700,10 @@ button[aria-pressed="true"] { font-weight:700; }
       w.appendChild(big);
       var al = wxAlerts(r);
       if (al.length) { var box = document.createElement('div'); box.className = 'wx-alert'; box.setAttribute('role', 'status'); var b = document.createElement('b'); b.textContent = '⚠ 気をつけたいこと'; box.appendChild(b); var ul = document.createElement('ul'); al.forEach(function (a) { var li = document.createElement('li'); li.textContent = a.t; ul.appendChild(li); }); box.appendChild(ul); w.appendChild(box); }
-    });
+    }
   }
-  function showWeek() {
-    wxDialog('🗓 ここ1週間の天気', function (w) {
+  function buildWeek(w) {
+    {
       var r = lastWx || load('kesera-wxauto', null);
       if (!r) { wxNone(w); return; }
       var list = [{ date: today, code: r.code, kind: wxKindFrom(r.code, r.text), pop: r.pop, min: r.min, max: r.max, text: r.text ? wxPart(r.text) : '' }].concat(r.week || []).slice(0, 7);
@@ -4736,10 +4723,24 @@ button[aria-pressed="true"] { font-weight:700; }
         row.appendChild(info); w.appendChild(row);
       });
       if (list.length < 2) { var m = document.createElement('p'); m.className = 'muted'; m.textContent = '週間の予報は、まだ取れていません。'; w.appendChild(m); }
-    });
+    }
   }
-  $('wxTmrBtn').addEventListener('click', showTomorrow);
-  $('wxWeekBtn').addEventListener('click', showWeek);
+  var wxTab = 'today';
+  function showWxTab(name) {
+    wxTab = name || wxTab;
+    var tabs = { today: 'wxTabToday', tmr: 'wxTabTmr', week: 'wxTabWeek' };
+    Object.keys(tabs).forEach(function (k) { $(tabs[k]).setAttribute('aria-pressed', k === wxTab ? 'true' : 'false'); });
+    var pn = $('wxPanel'), isT = wxTab === 'today', off = isT ? '' : 'none';
+    var row = document.querySelector('#v-home .wx-row'); if (row) row.style.display = off;
+    ['wxWords', 'tyLine', 'flLine', 'wxSun'].forEach(function (id) { var e = $(id); if (e) e.style.display = off; });
+    var nx = $('wxNext'); if (nx) nx.style.display = off;
+    pn.hidden = isT; pn.style.display = isT ? 'none' : 'flex'; pn.innerHTML = '';
+    if (isT) return;
+    try { if (wxTab === 'tmr') buildTomorrow(pn); else buildWeek(pn); } catch (e) { pn.textContent = '天気の表示で、うまくいきませんでした。もう一度おためしください。'; }
+  }
+  $('wxTabToday').addEventListener('click', function () { showWxTab('today'); });
+  $('wxTabTmr').addEventListener('click', function () { showWxTab('tmr'); });
+  $('wxTabWeek').addEventListener('click', function () { showWxTab('week'); });
 
   function loadWeather() {
     var pref = load('kesera-pref', PREFS_DEFAULT);
