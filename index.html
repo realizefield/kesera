@@ -399,6 +399,18 @@ button[aria-pressed="true"] { font-weight:700; }
 .wx-alert b { display:block; margin-bottom:4px; }
 .wx-alert ul { margin:0; padding-left:1.2em; }
 .wx-alert li { line-height:1.7; font-weight:700; }
+.wx-btns { display:flex; gap:8px; flex-wrap:wrap; margin:6px 0 4px; }
+.wx-btns .btn { flex:1 1 150px; min-height:54px; font-size:1.08rem; font-weight:700; border-color:var(--accent); }
+.wxd-body { display:flex; flex-direction:column; gap:10px; padding:14px; }
+.wxd-body h2 { margin:0; font-size:1.3rem; }
+.wxd-row { display:flex; align-items:center; gap:10px; border-bottom:1px solid var(--line); padding:8px 0; }
+.wxd-row:last-of-type { border-bottom:0; }
+.wxd-row .wx-mini { width:52px; height:52px; }
+.wxd-day { flex:none; width:5.6em; font-weight:700; line-height:1.4; }
+.wxd-info { flex:1 1 auto; line-height:1.6; min-width:0; }
+.wxd-big { display:flex; align-items:center; gap:12px; }
+.wxd-big .wx-mini { width:88px; height:88px; }
+.wxd-big p { margin:0; font-size:1.12rem; line-height:1.7; }
 .pf-read { margin:12px 0; padding:12px 14px; border:2px solid var(--line); border-radius:12px; font-size:1.05rem; }
 #pfBody[hidden] { display:none; }
 .site-tagline { margin:10px 0 0; text-align:center; font-size:clamp(.92rem,3.6vw,1.1rem); font-weight:700; color:var(--accent); letter-spacing:.04em; line-height:1.4; }
@@ -543,6 +555,7 @@ button[aria-pressed="true"] { font-weight:700; }
       <h2 id="greet"></h2>
       <div class="wx-row"><div class="wx-icon" id="wxIcon" aria-hidden="false"></div><p id="wx"></p></div>
       <p id="wxWords" style="font-weight:700;font-size:1.12rem;margin:8px 0 4px"></p>
+      <div class="wx-btns" role="group" aria-label="明日と1週間の天気"><button class="btn" id="wxTmrBtn" type="button">📅 明日の天気</button><button class="btn" id="wxWeekBtn" type="button">🗓 ここ1週間の天気</button></div>
       <p id="tyLine" style="margin:6px 0;font-weight:700;font-size:1.1rem" hidden></p>
       <p id="flLine" style="margin:4px 0 8px;font-weight:700" hidden></p>
       <p id="wxSun" style="margin:4px 0 8px;font-weight:700"></p>
@@ -4632,9 +4645,11 @@ button[aria-pressed="true"] { font-weight:700; }
     var pp = null; for (var j = 0; j < ts.length; j++) { if (ts[j].areas[0] && ts[j].areas[0].pops) { pp = ts[j]; break; } }
     if (pp) { var mx = -1; for (var m = 0; m < pp.timeDefines.length; m++) { if (pp.timeDefines[m].slice(0, 10) === today && pp.areas[0].pops[m] !== '') mx = Math.max(mx, Number(pp.areas[0].pops[m])); } if (mx >= 0) res.pop = mx; for (var q = 0; q < pp.timeDefines.length; q++) { if (pp.timeDefines[q].slice(0, 10) !== today || pp.areas[0].pops[q] === '') continue; var h2 = pp.timeDefines[q].slice(11, 13); if (h2 === '06') res.popAm = Number(pp.areas[0].pops[q]); if (h2 === '12') res.popPm = Number(pp.areas[0].pops[q]); } }
     try { extendJma(data, res); } catch (e) {}
+    try { res.week = parseWeek(data); } catch (e) {}
     return res;
   }
   function applyWeather(r, fromCache) {
+    lastWx = r;
     var c0 = load('kesera-wxauto', null);
     if (c0 && c0.date === today) { if (r.max == null && c0.max != null) r.max = c0.max; if (r.min == null && c0.min != null) r.min = c0.min; }
     var sel = { '1': '晴れ', '2': 'くもり', '3': '雨', '4': '雪' }[String(r.code).charAt(0)] || 'くもり';
@@ -4642,7 +4657,7 @@ button[aria-pressed="true"] { font-weight:700; }
     if (r.max !== null) $('tmax').value = r.max;
     if (r.min !== null) $('tmin').value = r.min; else if (r.max !== null) $('tmin').value = Math.max(-20, r.max - 7);
     save('kesera-wx', { min: Number($('tmin').value), max: Number($('tmax').value), wx: $('wxsel').value });
-    save('kesera-wxauto', { date: today, kind: wxKindFrom(r.code, r.text), text: r.text, pop: r.pop, popAm: r.popAm, popPm: r.popPm, rep: r.rep, area: r.area, min: r.min, max: r.max, code: r.code, night: r.night, tmr: r.tmr });
+    save('kesera-wxauto', { date: today, kind: wxKindFrom(r.code, r.text), text: r.text, pop: r.pop, popAm: r.popAm, popPm: r.popPm, rep: r.rep, area: r.area, min: r.min, max: r.max, code: r.code, night: r.night, tmr: r.tmr, week: r.week });
     $('wxWords').textContent = wxWords(r.text, r.popAm, r.popPm);
     renderNext(r);
     ['tmin', 'tmax', 'wxsel'].forEach(function (id) { $(id).dispatchEvent(new Event('input')); });
@@ -4650,6 +4665,76 @@ button[aria-pressed="true"] { font-weight:700; }
     var hm = ''; try { var d = new Date(r.rep); hm = (d.getMonth() + 1) + '月' + d.getDate() + '日 ' + d.getHours() + '時' + (d.getMinutes() < 10 ? '0' : '') + d.getMinutes() + '分発表'; } catch (e) {}
     $('wxAutoNote').textContent = '天気は、気象庁の予報から自動で出しています。' + (r.area ? '(' + r.area + ')　' : '') + r.text + '' + (hm ? '　' + hm : '') + (fromCache ? '　※通信できなかったため、前に取った内容です' : '') + '　出典：気象庁ホームページ';
   }
+  /* 明日の天気・ここ1週間の天気（ボタンで、すぐ見られます） */
+  var lastWx = null;
+  var WX_CODE = {'100':'晴れ','101':'晴れ時々くもり','102':'晴れ一時雨','103':'晴れ時々雨','104':'晴れ一時雪','105':'晴れ時々雪','110':'晴れのちくもり','111':'晴れのちくもり','112':'晴れのち一時雨','113':'晴れのち時々雨','114':'晴れのち雨','115':'晴れのち一時雪','116':'晴れのち時々雪','117':'晴れのち雪','200':'くもり','201':'くもり時々晴れ','202':'くもり一時雨','203':'くもり時々雨','204':'くもり一時雪','205':'くもり時々雪','206':'くもり一時雨か雪','207':'くもり時々雨か雪','208':'くもり一時雨か雷雨','209':'霧','210':'くもりのち時々晴れ','211':'くもりのち晴れ','212':'くもりのち一時雨','213':'くもりのち時々雨','214':'くもりのち雨','215':'くもりのち一時雪','216':'くもりのち時々雪','217':'くもりのち雪','218':'くもりのち雨か雪','219':'くもりのち雨か雷雨','300':'雨','301':'雨時々晴れ','302':'雨時々止む','303':'雨時々雪','304':'雨か雪','306':'大雨','308':'暴風雨','309':'雨一時雪','311':'雨のち晴れ','313':'雨のちくもり','314':'雨のち時々雪','315':'雨のち雪','400':'雪','401':'雪時々晴れ','402':'雪時々止む','403':'雪時々雨','405':'大雪','406':'風雪強い','407':'暴風雪','409':'雪一時雨','411':'雪のち晴れ','413':'雪のちくもり','414':'雪のち雨'};
+  function wxCodeText(code) {
+    code = String(code || ''); if (WX_CODE[code]) return WX_CODE[code];
+    var d = code.charAt(0); return { '1': '晴れ', '2': 'くもり', '3': '雨', '4': '雪' }[d] ? ({ '1': '晴れ', '2': 'くもり', '3': '雨', '4': '雪' }[d] + '（変わりやすい空）') : '';
+  }
+  function parseWeek(data) {
+    var out = [], w = data[1] && data[1].timeSeries; if (!w || !w[0]) return out;
+    var s0 = w[0], s1 = w[1], a = s0.areas[0], b = s1 && s1.areas && s1.areas[0];
+    for (var k = 0; k < s0.timeDefines.length; k++) {
+      var date = s0.timeDefines[k].slice(0, 10); if (date <= today) continue;
+      var code = a.weatherCodes && a.weatherCodes[k], mn = null, mx = null;
+      if (b) for (var j = 0; j < s1.timeDefines.length; j++) { if (s1.timeDefines[j].slice(0, 10) !== date) continue; mn = numOrNull(b.tempsMin && b.tempsMin[j]); mx = numOrNull(b.tempsMax && b.tempsMax[j]); }
+      if (mn !== null && mx !== null && mn >= mx) mn = null;
+      out.push({ date: date, code: code, kind: wxKindFrom(code, ''), pop: numOrNull(a.pops && a.pops[k]), min: mn, max: mx });
+    }
+    return out;
+  }
+  function wxDialog(title, build) {
+    var old = document.getElementById('wxDlg'); if (old) old.remove();
+    var d = document.createElement('dialog'); d.id = 'wxDlg'; d.className = 'design-dialog location-dialog'; d.style.maxWidth = '560px';
+    var w = document.createElement('div'); w.className = 'wxd-body';
+    var h = document.createElement('h2'); h.textContent = title; w.appendChild(h);
+    build(w);
+    var n = document.createElement('p'); n.className = 'muted'; n.style.margin = '0'; n.textContent = '出典：気象庁ホームページ。警報・避難の判断は、必ず気象庁や市町村の発表をご確認ください。'; w.appendChild(n);
+    var x = document.createElement('button'); x.type = 'button'; x.className = 'btn primary'; x.style.minHeight = '54px'; x.textContent = '閉じる'; x.addEventListener('click', function () { d.close(); }); w.appendChild(x);
+    d.appendChild(w); d.addEventListener('close', function () { d.remove(); }); document.body.appendChild(d);
+    if (d.showModal) d.showModal(); else d.setAttribute('open', '');
+  }
+  function wxNone(w) { var p = document.createElement('p'); p.textContent = 'まだ、天気をとれていません。少し待ってから、もう一度おしてください。通信がつながっているか、ご確認ください。'; w.appendChild(p); }
+  function showTomorrow() {
+    wxDialog('📅 明日の天気', function (w) {
+      var r = lastWx || load('kesera-wxauto', null);
+      if (!r || !r.tmr) { wxNone(w); return; }
+      var t = r.tmr, tp = []; if (t.min != null) tp.push('最低 ' + t.min + '℃'); if (t.max != null) tp.push('最高 ' + t.max + '℃');
+      var big = document.createElement('div'); big.className = 'wxd-big';
+      var ic = document.createElement('div'); ic.className = 'wx-mini'; ic.innerHTML = svgWx(t.kind); big.appendChild(ic);
+      var p = document.createElement('p'); p.textContent = '明日は、' + tmrWords(t.text) + 'の予想です。' + (tp.length ? '　' + tp.join('、') + '。' : '') + (t.pop != null ? '　雨の確率は ' + t.pop + '%。' : ''); big.appendChild(p);
+      w.appendChild(big);
+      var al = wxAlerts(r);
+      if (al.length) { var box = document.createElement('div'); box.className = 'wx-alert'; box.setAttribute('role', 'status'); var b = document.createElement('b'); b.textContent = '⚠ 気をつけたいこと'; box.appendChild(b); var ul = document.createElement('ul'); al.forEach(function (a) { var li = document.createElement('li'); li.textContent = a.t; ul.appendChild(li); }); box.appendChild(ul); w.appendChild(box); }
+    });
+  }
+  function showWeek() {
+    wxDialog('🗓 ここ1週間の天気', function (w) {
+      var r = lastWx || load('kesera-wxauto', null);
+      if (!r) { wxNone(w); return; }
+      var list = [{ date: today, code: r.code, kind: wxKindFrom(r.code, r.text), pop: r.pop, min: r.min, max: r.max, text: r.text ? wxPart(r.text) : '' }].concat(r.week || []).slice(0, 7);
+      var WDN = ['日', '月', '火', '水', '木', '金', '土'], tm = ymd(new Date(Date.now() + 864e5));
+      list.forEach(function (e) {
+        if (e.date === tm && r.tmr) { if (e.min == null) e.min = r.tmr.min; if (e.max == null) e.max = r.tmr.max; if (e.pop == null) e.pop = r.tmr.pop; if (!e.code) e.code = r.tmr.code; if (!WX_CODE[String(e.code)]) e.text = tmrWords(r.tmr.text); }
+        var tx = WX_CODE[String(e.code)] || e.text || ''; if (tx) e.kind = kindOfText(tx);
+      });
+      list.forEach(function (e) {
+        var p = e.date.split('-'), dt = new Date(+p[0], +p[1] - 1, +p[2]);
+        var row = document.createElement('div'); row.className = 'wxd-row';
+        var day = document.createElement('div'); day.className = 'wxd-day'; day.textContent = (e.date === today ? 'きょう' : (e.date === tm ? 'あした' : '')) + (e.date === today || e.date === tm ? '\n' : '') + (+p[1]) + '/' + (+p[2]) + '（' + WDN[dt.getDay()] + '）'; day.style.whiteSpace = 'pre-line'; row.appendChild(day);
+        var ic = document.createElement('div'); ic.className = 'wx-mini'; ic.innerHTML = svgWx(e.kind); row.appendChild(ic);
+        var info = document.createElement('div'); info.className = 'wxd-info';
+        var tp = []; if (e.min != null) tp.push('最低 ' + e.min + '℃'); if (e.max != null) tp.push('最高 ' + e.max + '℃');
+        info.textContent = (wxCodeText(e.code) || e.text || '') + (tp.length ? '\n' + tp.join('　') : '') + (e.pop != null ? '\n雨の確率 ' + e.pop + '%' : ''); info.style.whiteSpace = 'pre-line';
+        row.appendChild(info); w.appendChild(row);
+      });
+      if (list.length < 2) { var m = document.createElement('p'); m.className = 'muted'; m.textContent = '週間の予報は、まだ取れていません。'; w.appendChild(m); }
+    });
+  }
+  $('wxTmrBtn').addEventListener('click', showTomorrow);
+  $('wxWeekBtn').addEventListener('click', showWeek);
+
   function loadWeather() {
     var pref = load('kesera-pref', PREFS_DEFAULT);
     var cached = load('kesera-wxauto', null);
@@ -4660,7 +4745,7 @@ button[aria-pressed="true"] { font-weight:700; }
       .then(function (data) { clearTimeout(to); applyWeather(parseJma(data), false); })
       .catch(function () {
         clearTimeout(to);
-        if (cached && cached.date === today && cached.text) { applyWeather({ text: cached.text, code: cached.code, min: cached.min, max: cached.max, pop: cached.pop, popAm: cached.popAm, popPm: cached.popPm, rep: cached.rep, area: cached.area, night: cached.night, tmr: cached.tmr }, true); }
+        if (cached && cached.date === today && cached.text) { applyWeather({ text: cached.text, code: cached.code, min: cached.min, max: cached.max, pop: cached.pop, popAm: cached.popAm, popPm: cached.popPm, rep: cached.rep, area: cached.area, night: cached.night, tmr: cached.tmr, week: cached.week }, true); }
         else { $('wxAutoNote').textContent = '天気を、自動で取れませんでした。「お名前・お住まい・今日の天気を入れる」から、手で入れてください。'; }
       });
   }
