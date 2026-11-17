@@ -4686,16 +4686,22 @@ button[aria-pressed="true"] { font-weight:700; }
   }
   function wxDialog(title, build) {
     var old = document.getElementById('wxDlg'); if (old) old.remove();
-    var d = document.createElement('dialog'); d.id = 'wxDlg'; d.className = 'design-dialog location-dialog'; d.style.maxWidth = '560px';
+    var ov = document.createElement('div'); ov.id = 'wxDlg'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', title);
+    ov.style.cssText = 'position:fixed;left:0;top:0;right:0;bottom:0;z-index:99999;background:rgba(20,30,45,.55);display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 10px';
     var w = document.createElement('div'); w.className = 'wxd-body';
+    w.style.cssText = 'width:100%;max-width:560px;box-sizing:border-box;background:var(--surface,#fff);color:var(--fg,#222);border:1px solid var(--line,#ccc);border-radius:16px;margin:auto 0;box-shadow:0 10px 40px rgba(0,0,0,.35)';
     var h = document.createElement('h2'); h.textContent = title; w.appendChild(h);
-    build(w);
+    try { build(w); } catch (e) { var er = document.createElement('p'); er.textContent = '天気の表示で、うまくいかないことがありました。「閉じる」をおして、もう一度おためしください。'; w.appendChild(er); }
     var n = document.createElement('p'); n.className = 'muted'; n.style.margin = '0'; n.textContent = '出典：気象庁ホームページ。警報・避難の判断は、必ず気象庁や市町村の発表をご確認ください。'; w.appendChild(n);
-    var x = document.createElement('button'); x.type = 'button'; x.className = 'btn primary'; x.style.minHeight = '54px'; x.textContent = '閉じる'; x.addEventListener('click', function () { d.close(); }); w.appendChild(x);
-    d.appendChild(w); d.addEventListener('close', function () { d.remove(); }); document.body.appendChild(d);
-    if (d.showModal) d.showModal(); else d.setAttribute('open', '');
+    var x = document.createElement('button'); x.type = 'button'; x.className = 'btn primary'; x.style.minHeight = '54px'; x.textContent = '閉じる';
+    function shut() { ov.remove(); document.removeEventListener('keydown', esc); }
+    function esc(ev) { if (ev.key === 'Escape') shut(); }
+    x.addEventListener('click', shut); document.addEventListener('keydown', esc);
+    ov.addEventListener('click', function (ev) { if (ev.target === ov) shut(); });
+    w.appendChild(x); ov.appendChild(w); document.body.appendChild(ov);
+    try { ov.scrollTop = 0; x.focus({ preventScroll: true }); } catch (e) {}
   }
-  function wxNone(w) { var p = document.createElement('p'); p.textContent = 'まだ、天気をとれていません。少し待ってから、もう一度おしてください。通信がつながっているか、ご確認ください。'; w.appendChild(p); }
+  function wxNone(w) { var p = document.createElement('p'); p.textContent = '天気を取っています。数秒たってから、もう一度ボタンをおしてください。（通信がつながっているか、ご確認ください）'; w.appendChild(p); try { loadWeather(); } catch (e) {} }
   function showTomorrow() {
     wxDialog('📅 明日の天気', function (w) {
       var r = lastWx || load('kesera-wxauto', null);
